@@ -1,0 +1,108 @@
+#config path
+config_path: "no_hybrid+rerank.yaml"
+
+# Database initialization parameters
+vectordb_provider: "Qdrant" #'Chroma'
+persist_directory: "data/vector_stores/qdrant_semantic_bge_v7"  #data/vector_stores/qdrant_semantic_bge_80_4 #Directory to store the index
+splitting_method: "semantic"  # Method to split the documents into chunks (semantic or "recursive")
+path: "data/" # Path of the root folder of the documents you want to put in the index
+process_log_file: "processed_docs.log"
+
+#Knowledge graph index parameters
+build_knowledge_graph: false  # Enable or disable the building of the knowledge graph when initializing the database
+nb_nodes: 1  # Number of nodes to retrieve from the knowledge graph when asking a query (analogous to the number of chunks)
+allow_kg_retrieval: false  # Enable or disable the retrieval of info from the knowledge graph during the generation
+
+# Chunking parameters (only for recursive splitting)
+chunk_size: 1000  # Chunk size for the documents in ters of number of characters (only for recursive splitting)
+chunk_overlap: 0  # Overlap between chunks in terms of number of characters (only for recursive splitting)
+semantic_threshold: 85  # Threshold for the semantic similarity between two chunks #75 avant
+chunking_embedding_model: "BAAI/bge-m3" #"ollama/bge-m3"     #BAAI/bge-m3"  # Embedding model to use for the chunking
+
+# Database cloning parameters
+clone_database: false  # Enable or disable the cloning of chunks of an existing index when initializing a database
+clone_persist: "./data/vector_stores/chroma_semantic_mapnet_v2"  # Directory from which to clone the index
+clone_embedding_model: "all-mpnet-base-v2"  # Embedding of the index from which to clone
+
+# Search parameters
+nb_chunks: 10  # Number of chunks to retrieve for the database
+search_type: "similarity"  # Type of search to use for the documents (similarity or exact) <E2><80><9C>similarity<E2><80><9D> (default), <E2><80><9C>mmr<E<E2><80><9D>, or <E2><80><9C>similarity_score_threshold<E2><80><9D>.
+hybrid_search: false  # Enable or disable the hybrid search (keyword + similarity)
+length_threshold: 40  # Threshold for the length of the chunks (number of words)
+auto_hybrid_search: false  # Enable or disable the ability for the model to find itself the keyword
+use_multi_query: false  # Enable or disable the multi-query
+advanced_hybrid_search: false # Enable or disable the advanced hybrid search (merge retrievers + routing if activated)
+alpha: 0.5 # Alpha parameter for the Advanced Hybrid Search
+enable_routing: false # Enable or disable the routing of the queries to lexical/semantic search
+data_sources: {
+    "drive_docs": "Euranova Drive",
+    "drive_happeo": "Happeo Drive",
+    "gitlab": "GitLab Readmes",
+    "mattermost": "Mattermost Channels",
+    "pages": "Happeo Pages",
+    "test_docs": "Test Docs",
+}
+    #"meeting_transcriptions": "Meeting Transcriptions",
+    #"chatbot_history": "Chatbot History",
+
+
+# Search filters
+filter_on_length: true  # Filter the chunks based on the length (number of words)
+enable_source_filter: false  # Enable or disable the source filter
+word_filter: alice  # Filter the results based on the keyword
+source_filter: []  # Filter the results based on the source
+source_filter_type: "$eq"  # Type of source filter (include or exclude)
+field_filter: []  # Field to filter on (source or length)
+field_filter_type: "$eq"  # Type of field filter (include or exclude)
+
+
+# Embedding models parameters
+embedding_model: "BAAI/bge-m3" #"all-MiniLM-L6-v2" #"all-mpnet-base-v2" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"sentence_transformers/all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"  #"BAAI/bge-m3" #Embedding model to use for vectorstore creation, retrieval and semantic chunking
+sparse_embedding_model: "naver/splade-v3" #Embedding model to use for sparse retrieval
+sparse_embedding_size: 1024 #Size of the sparse embedding model
+
+
+# Reranker parameters
+reranker_token_target: 8000 #We give documents to the reranker until this number of tokens is reached (sum of the tokens of the documents)
+token_compression: false  # Enable or disable the token compressor
+nb_rerank: 5  # Number of documents to rerank (input 10 documents, output 5 documents)
+use_reranker: true # Enable or disable the reranker
+reranker_model: "jinaai/jina-reranker-v2-base-multilingual" #"BAAI/bge-reranker-large" #"jinaai/jina-reranker-v2-base-multilingual" # Reranker model to us
+
+# Auto-merging parameters
+auto_merging: false  # Enable or disable the automatic merging of the chunks
+auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of concomitant sources)
+
+
+# Generation parameters
+llm_provider: "ollama"  # Provider of the LLM model ('huggingface or ollama or groq') don't forget to change the provider if you change the llm !
+model_name: "phi3:mini-128k" #"llama2" #"phi3:mini-128k" #"llama3" #"gemma2:2b" #"llama3" #-3.1-8b-instant"  #"llama-3.1-8b-instant" #"llama3" #"gemma2:2b" 
+cot_enabled: false  # Enable or disable the Chain-Of-Thoughts (COT) feature for the LLM answer
+stream: false  # Enable or disable the streaming of the generation
+temperature: 1  # Temperature for the generation
+llm_token_target: 0 #2000 # We give documents to the llm until this number of tokens is reached (sum of the tokens of the documents) , 0 means we don't use this parameter !
+save_answer: false
+fragmented_answer: false
+prompt_language: "en"  # Language of the prompt
+
+# EVAL parameters
+top_k: 5  # Evaluation is valid if the ground truth is in the top k chunks retrieved
+evaluate_generation: false  # Enable or disable the evaluation of the generation
+answer_relevancy_llm: "gemma2" #"gemma2-9b-it"  # LLM model to use for the artificial queries
+answer_relevancy_provider: "ollama"  # Provider of the LLM model for the artificial queries
+answer_relevancy_embedding: "BAAI/bge-m3"  # Embedding model to use for the artificial queries
+metrics_list: ["latency","answer_relevancy","hallucination_score"] # List of metrics to evaluate
+
+#Entity/Relation Extraction parameters
+entity_model_name: "gliner-community/gliner_large-v2.5"     #"urchade/gliner_multi-v2.1",
+relation_model_name: "knowledgator/gliner-multitask-large-v0.5"
+allowed_entities_path: "src/allowed_entities.json"
+allowed_relations_path: "src/allowed_relations.json"
+allowed_precise_relations_path: "src/allowed_detailled_relations.json"
+entity_detection_threshold: 0.5
+relation_extraction_threshold: 0.5 
+disambiguate_threshold: 50
+
+#Community summarisation / entity description parameters
+description_model_name: "gemma2:2b"
+description_llm_provider: "ollama"

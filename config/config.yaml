@@ -1,0 +1,114 @@
+#config path
+config_path: "config/config.yaml"
+
+# Database initialization parameters
+vectordb_provider: "Qdrant" #'Chroma'
+persist_directory: "data/vector_stores/qdrant_semantic_bge_v11"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"
+splitting_method: "semantic"  # Method to split the documents into chunks (semantic or "recursive")
+path: "data/" # Path of the root folder of the documents you want to put in the index 
+process_log_file: "processed_docs.log"
+
+#Knowledge graph index parameters
+build_knowledge_graph: true  # Enable or disable the building of the knowledge graph when initializing the database
+nb_nodes: 1  # Number of nodes to retrieve from the knowledge graph when asking a query (analogous to the number of chunks)
+allow_kg_retrieval: false  # Enable or disable the retrieval of info from the knowledge graph during the generation
+kg_target_context: 1500
+min_relations_pct: 0.1
+min_descriptions_pct: 0.2
+min_communities_pct: 0.2
+
+# Chunking parameters (only for recursive splitting)
+chunk_size: 1000  # Chunk size for the documents in ters of number of characters (only for recursive splitting)
+chunk_overlap: 0  # Overlap between chunks in terms of number of characters (only for recursive splitting)
+semantic_threshold: 85  # Threshold for the semantic similarity between two chunks #75 avant
+chunking_embedding_model: "all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"     #BAAI/bge-m3"  # Embedding model to use for the chunking
+
+# Database cloning parameters
+clone_database: false  # Enable or disable the cloning of chunks of an existing index when initializing a database
+clone_persist: "./data/vector_stores/chroma_semantic_mapnet_v2"  # Directory from which to clone the index
+clone_embedding_model: "all-mpnet-base-v2"  # Embedding of the index from which to clone
+
+# Search parameters
+nb_chunks: 10  # Number of chunks to retrieve for the database (not taken into account is using reranker target)
+search_type: "similarity"  # Type of search to use for the documents (similarity or exact)
+hybrid_search: false  # Enable or disable the hybrid search (keyword + similarity)
+length_threshold: 40  # Threshold for the length of the chunks (number of words)
+auto_hybrid_search: false  # Enable or disable the ability for the model to find itself the keyword
+use_multi_query: false  # Enable or disable the multi-query
+advanced_hybrid_search: true # Enable or disable the advanced hybrid search (merge retrievers + routing if activated)
+deep_search: true # Enable or disable the advanced RAG answer (Multi step answer generation)
+alpha: 0.5 # Alpha parameter for the Advanced Hybrid Search
+enable_routing: false # Enable or disable the routing of the queries to lexical/semantic search
+suggestions_enabled: false # Enable or disable the query suggestions
+use_history: true # Enable or disable the history of the chat to be used for answering the queries
+chat_history: 'no_chat' # Chat history to use for the queries
+data_sources: {
+    "drive_docs": "Euranova Drive",
+    "drive_happeo": "Happeo Drive",
+    "gitlab": "GitLab Readmes",
+    "mattermost": "Mattermost Channels",
+    "pages": "Happeo Pages",
+    "test_docs": "Test Docs",
+}
+   
+# Search filters
+use_autocut: true  # Enable or disable the autocut
+autocut_beta: 2.5  # Beta parameter for the autocut (number of std that the downward movement is allowed)
+filter_on_length: true  # Filter the chunks based on the length (number of words)
+enable_source_filter: false  # Enable or disable the source filter
+word_filter: alice  # Filter the results based on the keyword
+source_filter: []  # Filter the results based on the source
+source_filter_type: "$eq"  # Type of source filter (include or exclude)
+field_filter: []  # Field to filter on (source or length)
+field_filter_type: "$eq"  # Type of field filter (include or exclude)
+
+
+# Embedding models parameters
+embedding_model: "BAAI/bge-m3" #"BAAI/bge-m3" #"all-mpnet-base-v2" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"sentence_transformers/all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"  #"BAAI/bge-m3" #Embedding model to use for vectorstore creation, retrieval and semantic chunking
+sparse_embedding_model: "naver/splade-v3" #Embedding model to use for sparse retrieval
+sparse_embedding_size: 1024 #Size of the sparse embedding model
+
+
+# Reranker parameters
+reranker_token_target: 8000 #We give documents to the reranker until this number of tokens is reached (sum of the tokens of the documents)
+token_compression: false  # Enable or disable the token compressor
+nb_rerank: 5  # Number of documents to rerank (input 10 documents, output 5 documents)
+use_reranker: true # Enable or disable the reranker
+reranker_model: "jinaai/jina-reranker-v2-base-multilingual" #"BAAI/bge-reranker-large" #"jinaai/jina-reranker-v2-base-multilingual" # Reranker model to us
+
+# Auto-merging parameters
+auto_merging: false  # Enable or disable the automatic merging of the chunks
+auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of concomitant sources)
+
+
+# Generation parameters
+llm_provider: "ollama" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
+model_name: "llama3.1" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)" 
+cot_enabled: false  # Enable or disable the Chain-Of-Thoughts (COT) feature for the LLM answer
+stream: false  # Enable or disable the streaming of the generation (if all the output text is generated and then printed in the interface or if the tokens are generated and printed one by one)
+temperature: 1  # Temperature for the generation
+llm_token_target: 7000 # We give documents to the llm until this number of tokens is reached (sum of the tokens of the documents) , 0 means we don't use this parameter, if autocut is enabled, this parameter is not used !!
+save_answer: false # Enable or disable the saving of the answer
+prompt_language: "en"  # Language used for all the prompts (and consequently the LLM)
+
+# EVAL parameters
+top_k: 5  # Evaluation is valid if the ground truth is in the top k chunks retrieved (you cannot modify this parameter for now)
+evaluate_generation: false  # Enable or disable the evaluation of the generation (only evaluate the retrieval if disabled)
+answer_relevancy_llm: "gemma2" # LLM model to use for generating the artificial queries
+answer_relevancy_provider: "ollama"  # Provider of the LLM model for the artificial queries
+answer_relevancy_embedding: "BAAI/bge-m3"  # Embedding model to use for the artificial queries
+metrics_list: ["latency","answer_relevancy","hallucination_score"] # List of metrics to evaluate, if a metric is not in the list, it is not computed
+
+#Entity/Relation Extraction parameters
+entity_model_name: "knowledgator/gliner-poly-small-v1.0" #Entity extraction model, can be in: "knowledgator/gliner-poly-base-v1.0" #"knowledgator/gliner-bi-large-v1.0" #"gliner-community/gliner_large-v2.5" (check on Huggingface for the latest models)
+relation_model_name: "knowledgator/gliner-multitask-large-v0.5" #Relation extraction model, can be in: "knowledgator/gliner-multitask-large-v0.5" (check on Huggingface for the latest models)
+allowed_entities_path: "src/allowed_entities.json" #Path to the file containing the allowed entity types (you can modify this file)
+allowed_relations_path: "src/allowed_relations.json" #Path to the file containing the allowed relations types (you can modify this file)
+allowed_precise_relations_path: "src/allowed_detailled_relations.json" #Path to the file containing the allowed precise relations types (you can modify this file)
+entity_detection_threshold: 0.5 #Threshold for the entity detection (be careful when changing this parameter)
+relation_extraction_threshold: 0.5  #Threshold for the relation extraction (be careful when changing this parameter)
+disambiguate_threshold: 50 #Threshold for the disambiguation of the entities (be careful when changing this parameter)
+
+#Community summarisation / entity description parameters
+description_model_name: "gemma2:2b" #LLM model to use for generating the entity descriptions (smaller LLMs are faster but less accurate)
+description_llm_provider: "ollama" # Provider of the LLM model for the entity descriptions

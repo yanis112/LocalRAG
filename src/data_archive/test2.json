@@ -1,0 +1,1757 @@
+{
+"node": {
+    "assets": [
+        {
+            "__typename": "URLAsset",
+            "created": "2022-06-23T14:07:29.316583Z",
+            "lang": null,
+            "metadata": [],
+            "url": "https://www.theseattledataguy.com/data-platforms-vs-data-warehouses-vs-data-virtualization-and-federated-sql-engine-how-to-store-your-data/#page-content",
+            "uuid": "8e16ce8e-f6d6-4fa1-8924-9f287d3d37af"
+        },
+        {
+            "__typename": "StoryAsset",
+            "created": "2022-06-23T16:10:15.334641Z",
+            "lang": null,
+            "metadata": [],
+            "story": {
+                "id": "U3Rvcnk6WyJ0aWxlIiwgMTQ1MzRd",
+                "slug": 14534
+            },
+            "uuid": "2d541e24-4e7f-4462-86fd-6f0b9920efc7"
+        },
+        {
+            "__typename": "URLAsset",
+            "created": "2022-06-24T10:29:23.109945Z",
+            "lang": null,
+            "metadata": [],
+            "url": "https://hudi.apache.org/docs/overview",
+            "uuid": "96347e94-6e91-4879-b7e9-a3e04576bb2f"
+        },
+        {
+            "__typename": "URLAsset",
+            "created": "2022-06-24T10:29:23.113735Z",
+            "lang": null,
+            "metadata": [],
+            "url": "https://blog.picnic.nl/picnics-lakeless-data-warehouse-8ec02801d50b",
+            "uuid": "daf4342e-804e-4780-accb-cbe4db83255f"
+        },
+        {
+            "__typename": "URLAsset",
+            "created": "2022-06-24T10:29:23.116494Z",
+            "lang": null,
+            "metadata": [],
+            "url": "https://medium.com/hashmapinc/using-dbt-to-execute-elt-pipelines-in-snowflake-dbe76d5beed5",
+            "uuid": "d5dc090e-f43c-498d-8d09-63b98cd889ec"
+        },
+        {
+            "__typename": "StoryAsset",
+            "created": "2022-06-30T09:34:43.920490Z",
+            "lang": null,
+            "metadata": [],
+            "story": {
+                "id": "U3Rvcnk6WyJ0aWxlIiwgMTAzMDFd",
+                "slug": 10301
+            },
+            "uuid": "d1a37f60-6ca8-4dac-b20f-a9a7d02b03fa"
+        },
+        {
+            "__typename": "StoryAsset",
+            "created": "2022-06-30T09:34:43.944650Z",
+            "lang": null,
+            "metadata": [],
+            "story": {
+                "id": "U3Rvcnk6WyJ0aWxlIiwgMTAzMDNd",
+                "slug": 10303
+            },
+            "uuid": "d3e64662-2b4d-4cea-bfab-ab9900d5d124"
+        },
+        {
+            "__typename": "StoryAsset",
+            "created": "2022-10-20T13:52:45.870301Z",
+            "lang": null,
+            "metadata": [],
+            "story": {
+                "id": "U3Rvcnk6WyJ0aWxlIiwgOTg5NV0=",
+                "slug": 9895
+            },
+            "uuid": "8c8f62c7-4ab3-4a4e-8e8c-759e5012da0f"
+        }
+    ],
+    "attributes": [],
+    "author": {
+        "id": "VXNlcjoxMg==",
+        "slug": 12
+    },
+    "body": {
+        "__typename": "SlateRichContent",
+        "format": "SLATE",
+        "state": {
+            "document": {
+                "data": {
+                    "version": 4
+                },
+                "key": "mHi2B94RzJemLkndEwJKv2",
+                "nodes": [
+                    {
+                        "data": {
+                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                            "level": 1
+                        },
+                        "key": "bk47XVcFejEokbCk9gbvJ8",
+                        "nodes": [
+                            {
+                                "key": "pj3oEgJqnYNbY5hQgJLLX5",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {
+                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                            "level": 1
+                        },
+                        "key": "7X3kzMsTZJtmDfdN34PH2x",
+                        "nodes": [
+                            {
+                                "key": "nJ928gyiQHbjKKs1hpApr6",
+                                "marks": [],
+                                "object": "text",
+                                "text": "This first pillar aims at defining the best data infrastructure for a given customer and context. At the time of writing this page, there are five main patterns:"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "id8Q1P9ZebH5VQYyDqQSi7",
+                        "nodes": [
+                            {
+                                "data": {},
+                                "key": "51pMvhutccgpA5s9Qot8kD",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "8xumR2sXww21xwzYri5N4n",
+                                        "nodes": [
+                                            {
+                                                "key": "aET1phrpuPsEbHXT8nWn55",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": "data warehouse"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "pCNsdrarbRxJspPBc5mB4b",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "dHPeCpKu8X86sQciYo3zkq",
+                                        "nodes": [
+                                            {
+                                                "key": "4iLR4y7VUMrUbWPbPCgAQS",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": "data lake"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "oN3oDCQcGPoDSEMWRxapYD",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "srXPRKQ78RyBu5WnttMqEV",
+                                        "nodes": [
+                                            {
+                                                "key": "4c3x4QekrjsFj7SaeCieFD",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": "data hub"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "42LdmPsmfYX6hmdDVL7rQc",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "mwTmBVHdxEntvLRzyXoWAE",
+                                        "nodes": [
+                                            {
+                                                "key": "c6Wx8hHZoWyaD6wPxP3pcb",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": "data lakehouse"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "imWtdJzYw5HjreF4asAxtV",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "s9AhJ7BEHsYK5WQ2vU3S3E",
+                                        "nodes": [
+                                            {
+                                                "key": "2r8AcbNNtnyCxqVkVmR1rb",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": "data virtualisation"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "numbered-list"
+                    },
+                    {
+                        "data": {
+                            "asset": "8e16ce8e-f6d6-4fa1-8924-9f287d3d37af",
+                            "isExpanded": false,
+                            "type": "URL"
+                        },
+                        "key": "pFKgYCX17wfy58yciqy5Vr",
+                        "nodes": [
+                            {
+                                "key": "aER1ApoKiaiXBM8ss3fRUg",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "id": "d4e35c76-d983-435e-9d73-056583f18abf",
+                            "level": 2
+                        },
+                        "key": "sE2CfdRcaRkdpLwSURs7VG",
+                        "nodes": [
+                            {
+                                "key": "sd6VkqNBEmK2SzKZgWxjtZ",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Training & documentation"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {},
+                        "key": "dTCWScKDJqYPosf2RMEzti",
+                        "nodes": [
+                            {
+                                "key": "5MryCJveBdJUdcgAzpTY2U",
+                                "marks": [],
+                                "object": "text",
+                                "text": "We recommend the following training and documentation:"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "aE5LBApNujAqGovhWy7fcD",
+                        "nodes": [
+                            {
+                                "key": "cw4ToLYcSHTGHHFrbYwhTC",
+                                "marks": [],
+                                "object": "text",
+                                "text": "For data warehouse and BI, this"
+                            },
+                            {
+                                "data": {
+                                    "url": "https://euranova.talentlms.com/unit/view/id:2053"
+                                },
+                                "key": "guUiGcNLWEMn82dEoURm9z",
+                                "nodes": [
+                                    {
+                                        "key": "33fdZm7TFenWJYVHraPNi5",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": " talentLMS training "
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "mEev2yR1Qz74J5WYRz2T8R",
+                                "marks": [],
+                                "object": "text",
+                                "text": "will give you the foundation of this domain.  The Data lake, data hub and datalakehouse are described in the Data architecture section of the "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/9894#df6db62d-acfb-4144-b3ed-a9b8fa4e7a60"
+                                },
+                                "key": "tamnBmPSXK4EbGPRjJtNok",
+                                "nodes": [
+                                    {
+                                        "key": "oWfTUrh6H1gLDcyqdnC2gz",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "Software architecture page"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "jdEAFBbmj4c37fG8xtWnsv",
+                                "marks": [],
+                                "object": "text",
+                                "text": ". We strongly recommand to read and study the entire data architecture section of this page."
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "type": "info"
+                        },
+                        "key": "cyV23HTHbgTcTTcQtDem4F",
+                        "nodes": [
+                            {
+                                "key": "ssaRN3woVEv84HjMcf1Qtv",
+                                "marks": [],
+                                "object": "text",
+                                "text": "After these readings, prepare your questions and  organise a meeting with an Archtitect ( "
+                            },
+                            {
+                                "data": {
+                                    "id": 10,
+                                    "name": "Charles Bonneau",
+                                    "type": "user"
+                                },
+                                "key": "8wotjNNfJ2vruhh4ciXyPV",
+                                "nodes": [
+                                    {
+                                        "key": "2LfYezykyPBABN5yatV7FA",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": ""
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "mention"
+                            },
+                            {
+                                "key": "39HkQJkGYqav3kxm5HPjHW",
+                                "marks": [],
+                                "object": "text",
+                                "text": "  , "
+                            },
+                            {
+                                "data": {
+                                    "id": 12,
+                                    "name": "Sabri Skhiri",
+                                    "type": "user"
+                                },
+                                "key": "4AthxmmWxYBD428GxixZPi",
+                                "nodes": [
+                                    {
+                                        "key": "9ixUdTEkzKMJrdwwc7KX8h",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": ""
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "mention"
+                            },
+                            {
+                                "key": "mKHx4sfwXQMUmRiPPSH2kh",
+                                "marks": [],
+                                "object": "text",
+                                "text": " or "
+                            },
+                            {
+                                "data": {
+                                    "id": 241,
+                                    "name": "Philippe Delvaux",
+                                    "type": "user"
+                                },
+                                "key": "j8s6vup2SBDxivHMK566Qu",
+                                "nodes": [
+                                    {
+                                        "key": "26Rr7jk3X2a1ynqmrsgJeG",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": ""
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "mention"
+                            },
+                            {
+                                "key": "f2iGpShStZxABK7QUW7Fdw",
+                                "marks": [],
+                                "object": "text",
+                                "text": " ). Make sure that all the concepts you saw are well understood. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "callout"
+                    },
+                    {
+                        "data": {},
+                        "key": "o1vjUeriJJJa29HVEvkLMu",
+                        "nodes": [
+                            {
+                                "key": "5NDisZqyEYtzRwq8oL3CTW",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Now that you have all the concepts mind, it is time to a have technical overview of distributed storage, distributed computing & stream processing to understand the different implementation of data lake and streaming data platform. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "vnJTjRC4x4h1SsPAvFpg7X",
+                        "nodes": [
+                            {
+                                "key": "1pZ6ddRuJ86etVL36h5cc4",
+                                "marks": [],
+                                "object": "text",
+                                "text": "These "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://drive.google.com/drive/folders/1nbrcnZESlfCW9cCO7jFbNEET3BuhmRCE?usp=sharing"
+                                },
+                                "key": "bQcGDeURhqGdM5Gxip47yD",
+                                "nodes": [
+                                    {
+                                        "key": "rmmWXtHJDFyVBDRu5GmNrh",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "trainings"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "rNL1AiBFXieEiBuwSUrYig",
+                                "marks": [],
+                                "object": "text",
+                                "text": " are supposed to be given in person, but you can still read and collect all the questions you could have. After a deep reading,  organize a technical meeting with one of the architects and be sure that all your questions are answered. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "id": "8ba05620-5ebe-4f3d-867b-8332f941805a",
+                            "level": 2
+                        },
+                        "key": "ejrsgYBwNaT2FQJnhXjLFa",
+                        "nodes": [
+                            {
+                                "key": "xpZwLXB7cNm39r8tefZfjW",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Architecture pattern taxonomy"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {},
+                        "key": "7a4K5zNSwxMJQFeHWSHkXK",
+                        "nodes": [
+                            {
+                                "key": "kXN1FX76mwBJddcf1jt38x",
+                                "marks": [],
+                                "object": "text",
+                                "text": "When we speak about data infrastructure patterns, it is not always simple to map them to needs and data requirements. We try to give a high level overview in this section. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "ex3WWweRApytoTJdmXLawo",
+                        "nodes": [
+                            {
+                                "data": {},
+                                "key": "cWn7LokyMiwpAGA5AK1WQf",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "8zukLtk2W7BWtCcoxfnb8W",
+                                        "nodes": [
+                                            {
+                                                "key": "7AJ4wjj3xeaBbqKQU4WiMW",
+                                                "marks": [
+                                                    {
+                                                        "data": {},
+                                                        "object": "mark",
+                                                        "type": "bold"
+                                                    }
+                                                ],
+                                                "object": "text",
+                                                "text": "Data warehouse"
+                                            },
+                                            {
+                                                "key": "8HYf61Z9QeHYbCjP2ihkn5",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": ": In the scope of multidimensional analysis, data marts, business intelligence and reports, the data warehouse architecture remains a good solution. Immon & Kimball architectures remains the standards. However, in terms of non-functional constraints, it also means that it should not support any operational load. Data freshness should not be less than 6h max and industrialized query should not query more than once every 3h.  In terms of implementation, it can vary between:"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    },
+                                    {
+                                        "data": {},
+                                        "key": "dqPY2x8aVH78Zrrm75jh5T",
+                                        "nodes": [
+                                            {
+                                                "data": {},
+                                                "key": "tWQ4sMHZzMFuoVLTTphC2h",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "mVBigPdZrZ5ZuodsbdwkAg",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "qqy2WiVBB3hq32GFHEsGwd",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "A typical EDWH in a relational storage such as Orable, PostgreSQL or vertica DB (notice that the column-oriented storages are a good option for OLAP cubes)"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "nfBVuNzcfwSJ1iaS7zvdAw",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "ui6AoY7akweEhuzuPP9tpc",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "eNCw9wA3gBskJZ5FnRFFsJ",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Data vault architecture ("
+                                                            },
+                                                            {
+                                                                "data": {
+                                                                    "url": "https://www.youtube.com/watch?v=PXJ0qhBis3c"
+                                                                },
+                                                                "key": "s2R5kQkPChoWW3hG9KX7Ja",
+                                                                "nodes": [
+                                                                    {
+                                                                        "key": "wDxrNXPikxJuLQ8yccnzFT",
+                                                                        "marks": [],
+                                                                        "object": "text",
+                                                                        "text": "short introduction video)"
+                                                                    }
+                                                                ],
+                                                                "object": "inline",
+                                                                "type": "link"
+                                                            },
+                                                            {
+                                                                "key": "cTbQJAxwVtL8qaLkNnAp3D",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": ""
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "v7eX2HqXhaqBQz94QttUDu",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "gs2U6BCZ4TZfe4XtF8GcH4",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "gKgtgBuEBW8wYQG3F4Kqic",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Cloud based RDBMS such as distributed SQL server"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "hEVXo8zMDVTLLzfSXcUHZ4",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "vUSUEviqxWfJKAwtAzuJjS",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "qhVT3DUna7LF2EFj8adKWJ",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Cloud based EDWH such as Snowflake. Note that this kind of tech implements the separation between compute and storage (CF AI & Data architecture lecture part 1) for cost and evolution reasons mainly. This also means that "
+                                                            },
+                                                            {
+                                                                "key": "t8iGCjSghWaQbNpm9JC1ig",
+                                                                "marks": [
+                                                                    {
+                                                                        "data": {},
+                                                                        "object": "mark",
+                                                                        "type": "italic"
+                                                                    }
+                                                                ],
+                                                                "object": "text",
+                                                                "text": "the compute"
+                                                            },
+                                                            {
+                                                                "key": "uMdXhD1BXRxRppcU9CTnTP",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": " layer is the most costly, as a result, it is not aimed at being queried continuously. Otherwise, you lose the advantage to separate storage and compute. "
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "numbered-list"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "a2LcqrdUNqsrjNgjnncbFA",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "iVSBTCMxZsYNd33VMDSBhr",
+                                        "nodes": [
+                                            {
+                                                "key": "9E6LU8GwuMHPXDd8tAbFqZ",
+                                                "marks": [
+                                                    {
+                                                        "data": {},
+                                                        "object": "mark",
+                                                        "type": "bold"
+                                                    }
+                                                ],
+                                                "object": "text",
+                                                "text": "Data lake:"
+                                            },
+                                            {
+                                                "key": "uMDmMoxdNjxi1JLHZzr3S4",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": " this is the first data pattern appearing between 2012 and 2015 with the rise of the hadoop platform. The idea is to have all data in one location. This implements the idea of data centralization. In this central place, every data consumer could have access to data and create its own data pipeline for feeding its apps/report/model.  In terms of functions, a data lake stores data.: historization, time travel (ability to rebuild a data as it was at a given point in time), retention management, ect. If at the beginning, hadoop platform were considered, they had this significant flaw that it was mixing computing and storage. Even if it is not a real issue on prem, it becomes to be highly costly on could, since the compute machine are way more expensive. "
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    },
+                                    {
+                                        "data": {},
+                                        "key": "jFDXsedA6r5RRZzfLP6vjz",
+                                        "nodes": [
+                                            {
+                                                "data": {},
+                                                "key": "tzyRnHK1MCsgs4ypr1etGw",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "ehCU5YwwSMHZvEUDaSWdn4",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "5bpM5zKmkioYFQFoVtkWjh",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Data folder organisation: per source application code ? per data domain ? "
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "gEiVYSZNYSivbAEtGH4oKK",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "8ePRKKnQHJDLMNHA1ne9RD",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "2jnxVU9MLLMNaiMGkHoAHY",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Data file layout: are you going to use CSV file ? Avro ? Json? if you use a portioned file such as parquet, how are going to map the partition of the file on the distributed storage ?"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "dB9VTwJ9HinJD3Gq3qVHp5",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "2J8QmPaZgg24gXHWm9TjzB",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "gpet5H2LMZ5ojasvEnJryy",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Queries on files, do we need an external index ?"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "6dbvHZbM7Cfy3FythcgTd8",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "44kv8Y3f11JvyqBjsfqe7t",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "qHHs4D6TC4U6WYgggWwy4e",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Incremental update, when to make the update on read or on write ?"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            },
+                                            {
+                                                "data": {},
+                                                "key": "3Pusz49geEWCYjNUArXYEU",
+                                                "nodes": [
+                                                    {
+                                                        "data": {
+                                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                                            "level": 1
+                                                        },
+                                                        "key": "cZPre5rk2Gcfam1Fqczz3f",
+                                                        "nodes": [
+                                                            {
+                                                                "key": "fHf1tzFdRN3QQzWM98kahr",
+                                                                "marks": [],
+                                                                "object": "text",
+                                                                "text": "Concurrent request management?"
+                                                            }
+                                                        ],
+                                                        "object": "block",
+                                                        "type": "paragraph"
+                                                    }
+                                                ],
+                                                "object": "block",
+                                                "type": "list-item"
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "numbered-list"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "dWAmv5XkLDJtzEPSyNpxEy",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "n2jhv232PekrQWgvkCSUkC",
+                                        "nodes": [
+                                            {
+                                                "key": "wExsEb2G2P2GcifL64KmeF",
+                                                "marks": [
+                                                    {
+                                                        "data": {},
+                                                        "object": "mark",
+                                                        "type": "bold"
+                                                    }
+                                                ],
+                                                "object": "text",
+                                                "text": "Data hub:"
+                                            },
+                                            {
+                                                "key": "d73CW8dg44r59i6JALAjMz",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": " This is the DAV and digazu architecture. It is based on the Kafka/linkedIn Stream Data management platform pattern. This is the usual architecture when we need to mix real time (or ~ second freshness of the data) and batch data. We can cite the real time click stream analytics, connected cars, fraud detection, event-driven marketing, etc."
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "c2vcREy8cbNhrN6krvLQwK",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "w76v4z9WMh64sjDYXRTFCJ",
+                                        "nodes": [
+                                            {
+                                                "key": "3vjncqWwCQbknK8keGegDp",
+                                                "marks": [
+                                                    {
+                                                        "data": {},
+                                                        "object": "mark",
+                                                        "type": "bold"
+                                                    }
+                                                ],
+                                                "object": "text",
+                                                "text": "Data lakehouse"
+                                            },
+                                            {
+                                                "key": "1JHxMJtuDycXcTy69V9w5j",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": ": Concept launched by Databricks with "
+                                            },
+                                            {
+                                                "data": {
+                                                    "url": "https://delta.io/"
+                                                },
+                                                "key": "mVMqeNSdwfseHFsPY65FPQ",
+                                                "nodes": [
+                                                    {
+                                                        "key": "pQFWiZ8o7jL4kdrVPv49M5",
+                                                        "marks": [],
+                                                        "object": "text",
+                                                        "text": "delta lake"
+                                                    }
+                                                ],
+                                                "object": "inline",
+                                                "type": "link"
+                                            },
+                                            {
+                                                "key": "5iSVmLRLwTMycmmKo6Lsf2",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": ". This suited when the demand in terms of data freshness is ~ 5 to 10 mins. It allows to use the same architecture for DWH and for a a data lake. "
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            },
+                            {
+                                "data": {},
+                                "key": "nVtk4KpKQY4sG5YqXBkaaM",
+                                "nodes": [
+                                    {
+                                        "data": {
+                                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                                            "level": 1
+                                        },
+                                        "key": "dHzAm8Q8odn5hQHy8WsPyJ",
+                                        "nodes": [
+                                            {
+                                                "key": "bujhSp7bSjpR1dUr8XKF5x",
+                                                "marks": [
+                                                    {
+                                                        "data": {},
+                                                        "object": "mark",
+                                                        "type": "bold"
+                                                    }
+                                                ],
+                                                "object": "text",
+                                                "text": "Data virtualisation"
+                                            },
+                                            {
+                                                "key": "x4zP3mQr3iMRPiMcf8cMkr",
+                                                "marks": [],
+                                                "object": "text",
+                                                "text": ": Mainly used when you absolutely cannot move the data. "
+                                            }
+                                        ],
+                                        "object": "block",
+                                        "type": "paragraph"
+                                    }
+                                ],
+                                "object": "block",
+                                "type": "list-item"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "numbered-list"
+                    },
+                    {
+                        "data": {
+                            "id": "b7ea0cd0-a9d1-4ce7-8839-fd9359edbcbc",
+                            "level": 1
+                        },
+                        "key": "4xhoSX6Jg1QFWBfWaz37Qs",
+                        "nodes": [
+                            {
+                                "key": "kNfWY57piJsXs6ZzLSsbEn",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "type": "info"
+                        },
+                        "key": "j4w1VbyEVt7Ag28qVdXj5y",
+                        "nodes": [
+                            {
+                                "key": "bMke1G4Yv4FiN2nJY13X1S",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Recommended reading: the concepts section of the documentation of Apache Hudi adresses many of the technical question raised in this section "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://hudi.apache.org/docs/overview"
+                                },
+                                "key": "xq4UVcrokzWSPEaB4XLMMT",
+                                "nodes": [
+                                    {
+                                        "key": "fzyUsQH6PJWAgzNAmBXafy",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "https://hudi.apache.org/docs/overview"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "49zpZGkWCkXeZ7r7Q7afS6",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "callout"
+                    },
+                    {
+                        "data": {
+                            "asset": "96347e94-6e91-4879-b7e9-a3e04576bb2f",
+                            "isExpanded": false,
+                            "type": "URL"
+                        },
+                        "key": "3g3QWpKZvHjZmV8fEQ9Nwm",
+                        "nodes": [
+                            {
+                                "key": "sjBQzXSSxBiJ7XNeGpnvGD",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "id": "17c3f9ef-7f66-45d7-b035-6cc06f61e83a",
+                            "level": 2
+                        },
+                        "key": "s7hq5dMkaCymnqiKePKMV8",
+                        "nodes": [
+                            {
+                                "key": "uT3hjf9zwtEjWatR9f9J3n",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Implementations"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {},
+                        "key": "wJCixv56HZcsiCK934V6r9",
+                        "nodes": [
+                            {
+                                "key": "wWbUDmYDAdtAUSXeCDwNhC",
+                                "marks": [],
+                                "object": "text",
+                                "text": "You can see that as soon as you do not have a real time needs, you can choose between data lake, data warehouse and datalake house. A good example is how you can use a large scale distributed and cloud based "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://blog.picnic.nl/picnics-lakeless-data-warehouse-8ec02801d50b"
+                                },
+                                "key": "7pB38YM5FSduvzi8ggnXiQ",
+                                "nodes": [
+                                    {
+                                        "key": "uaCx9xPE4dBQUNVDU66Uxw",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "data warehouse without data lakes."
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "dJ6yXqpHkSg7QQvQyXYuZ9",
+                                "marks": [],
+                                "object": "text",
+                                "text": " Or even using snwoflake as your SQL data lake (and directly connecting your BI tooling on top) and for all other use, like in a lake you can still create your Spark ETL pipeline as described in "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://medium.com/hashmapinc/using-dbt-to-execute-elt-pipelines-in-snowflake-dbe76d5beed5"
+                                },
+                                "key": "6F42ZVytikLPEZNzknpEbs",
+                                "nodes": [
+                                    {
+                                        "key": "x13CtiTEWrqv2imZFxH1Fm",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": ""
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "txSrY696JJ7sCNauq97StF",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            },
+                            {
+                                "data": {
+                                    "url": "https://medium.com/hashmapinc/using-dbt-to-execute-elt-pipelines-in-snowflake-dbe76d5beed5"
+                                },
+                                "key": "gFvchuPA3JuxoJonDtWJtS",
+                                "nodes": [
+                                    {
+                                        "key": "bMeFYm3BTxcBVrTX4v9Gh4",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "here"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "h4MhVewYTazP9MfUdcQqtg",
+                                "marks": [],
+                                "object": "text",
+                                "text": ". In this context, the most important element is that you can setup an entire data lake at 0 cost (except the Snowflake cost). You can rely on Snow flake ingestion layer. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "6wBwm2eMb5vEoaiXWgag3X",
+                        "nodes": [
+                            {
+                                "key": "tXm6QeQTAysiJhV7NQPB6L",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Finally, whatever pattern you use do not forget "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://towardsdatascience.com/what-is-data-observability-40b337971e3e"
+                                },
+                                "key": "r1bLTfFEMPtyj51ckKCqCv",
+                                "nodes": [
+                                    {
+                                        "key": "c9NjZw2qydD2AwLSQP8GrZ",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "data observability"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "sSDCr1WXYnuHMLcxRp69Av",
+                                "marks": [],
+                                "object": "text",
+                                "text": " and how software engineering observability (Logging, monitoring and tracing) can be applied on data. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "asset": "d5dc090e-f43c-498d-8d09-63b98cd889ec",
+                            "isExpanded": false,
+                            "type": "URL"
+                        },
+                        "key": "5vmVvDLEBm7hAaXtvfcut2",
+                        "nodes": [
+                            {
+                                "key": "5rSzmzdqGbk8MdWT47gkPK",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "asset": "daf4342e-804e-4780-accb-cbe4db83255f",
+                            "isExpanded": false,
+                            "type": "URL"
+                        },
+                        "key": "xcYZpwu95PcoYfjm2iDir8",
+                        "nodes": [
+                            {
+                                "key": "w55NYsreAKCPjN8DHRcgSQ",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {},
+                        "key": "2w2HY673pBrUVeRk5fvuZ6",
+                        "nodes": [
+                            {
+                                "key": "jM3SF26TxMb8V7UBVqkppq",
+                                "marks": [],
+                                "object": "text",
+                                "text": "For data hub, there are interesting implementations such as "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://hudi.apache.org/"
+                                },
+                                "key": "i1UGURrFoanWnFnaCjgz3i",
+                                "nodes": [
+                                    {
+                                        "key": "umMgtwN9vPLSUgDC7zwLqe",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "Apache hudi"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "c4PA5aCCA6KEWQTEgmNNtY",
+                                "marks": [],
+                                "object": "text",
+                                "text": " and "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://digazu.com/"
+                                },
+                                "key": "f7b6LLnPyKUFqiDBGtTj9W",
+                                "nodes": [
+                                    {
+                                        "key": "2DK1ZVjaMtNpUnQ7DGoRq9",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "digazu"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "jm2kByG7juccByPiTosEfP",
+                                "marks": [],
+                                "object": "text",
+                                "text": ".  For data lake, Apache Iceberg or directly on Azure ADLS V2. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "uAtJkBs45w4JB22MVEUkrd",
+                        "nodes": [
+                            {
+                                "key": "bmZzTsxE3q44qZ5GSRmwjH",
+                                "marks": [],
+                                "object": "text",
+                                "text": "In addition, we recommend reading these pages "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "8MQNzP9mqV2Pui9qFf1bfx",
+                        "nodes": [
+                            {
+                                "key": "xhztcQbJyX1EruggU9yH35",
+                                "marks": [],
+                                "object": "text",
+                                "text": "The Euranova Data Architecture Vision "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/9895"
+                                },
+                                "key": "qeTPZFkrXra6TsJVWiK2cn",
+                                "nodes": [
+                                    {
+                                        "key": "kaR4bAGtVj8TzTmUYiE37D",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "https://knowledge.euranova.eu/tile/view/9895"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "qxQZ8swb4U3H1zPzyHfgn7",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "asset": "8c8f62c7-4ab3-4a4e-8e8c-759e5012da0f",
+                            "displayMode": "card",
+                            "isExpanded": false,
+                            "type": "STORY"
+                        },
+                        "key": "n8W3gKmxMbZkp51C7UGJfw",
+                        "nodes": [
+                            {
+                                "key": "6tp7zzX22N2DuishcWor4V",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {},
+                        "key": "keG5XTJsgMoratU8gSWqVZ",
+                        "nodes": [
+                            {
+                                "key": "5x6fYfPDM2SbwEQgRgWz2e",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/10301"
+                                },
+                                "key": "q4xpoLZitrSwuhe9tWyJ21",
+                                "nodes": [
+                                    {
+                                        "key": "iKi2z4xu7MxwpyFQ2d2hhp",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "https://knowledge.euranova.eu/tile/view/10301"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "16NTfS8L4i1PYvYTWPeeZY",
+                                "marks": [],
+                                "object": "text",
+                                "text": " & "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/10303"
+                                },
+                                "key": "dBzR9rg48csZCGvBhW77Fp",
+                                "nodes": [
+                                    {
+                                        "key": "ubvgWwhAgB1TFf6TzGLFHy",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "https://knowledge.euranova.eu/tile/view/10303"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "6rHpRVr96rJpkdVpm75NA9",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "asset": "d3e64662-2b4d-4cea-bfab-ab9900d5d124",
+                            "displayMode": "card",
+                            "isExpanded": false,
+                            "type": "STORY"
+                        },
+                        "key": "2aVxZ16hBZoPEFT7AzHuBE",
+                        "nodes": [
+                            {
+                                "key": "sKFx9Nuz6tQ1imuKkQzLcz",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "asset": "d1a37f60-6ca8-4dac-b20f-a9a7d02b03fa",
+                            "displayMode": "card",
+                            "isExpanded": false,
+                            "type": "STORY"
+                        },
+                        "key": "tXVmirZ1iwnEJ8tyM6VGUD",
+                        "nodes": [
+                            {
+                                "key": "4j1nzrQcCJWWBJQvDetMGc",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "id": "0abecd4a-46db-4ff0-a6b1-7184da2f6b01",
+                            "level": 2
+                        },
+                        "key": "k6B5cA3mHmN3pFDWSzmbf7",
+                        "nodes": [
+                            {
+                                "key": "v3UAi5uK1Z1P27baoS3LcG",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Data virtualization: the new kids on the block for data management"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {},
+                        "key": "dT3tHQokHmmmLinehnMxZ2",
+                        "nodes": [
+                            {
+                                "key": "ieswbeCpPTk232hUCMh8pR",
+                                "marks": [],
+                                "object": "text",
+                                "text": "This technology has been used in BI and OLAP for a while. But more recently it was advertised by Gartner as a data management technology. "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/14534"
+                                },
+                                "key": "burNwQFc1vjU9FYW6h6XGU",
+                                "nodes": [
+                                    {
+                                        "key": "my8SY7JBeNZQSCqnHqcAdK",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "This page explains the pros and cons"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "2tDnDrsLJqAQjSyYUXUhFW",
+                                "marks": [],
+                                "object": "text",
+                                "text": " and the usages of virtualization. "
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {
+                            "asset": "2d541e24-4e7f-4462-86fd-6f0b9920efc7",
+                            "displayMode": "card",
+                            "isExpanded": false,
+                            "type": "STORY"
+                        },
+                        "key": "4KT2JqdBeVABYcfYbALW2r",
+                        "nodes": [
+                            {
+                                "key": "hr5xqeafSjMGRE4vaVzSkW",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "asset"
+                    },
+                    {
+                        "data": {
+                            "type": "info"
+                        },
+                        "key": "4yEK4NKqSs61FfjG8sR1V8",
+                        "nodes": [
+                            {
+                                "key": "bmMm36y8AGaE5343M1yNB2",
+                                "marks": [],
+                                "object": "text",
+                                "text": "Organize a check with an Architect here. Be sure that you understand the roles that a virtualisation layer can play and how it can be integrated with the other design patterns."
+                            }
+                        ],
+                        "object": "block",
+                        "type": "callout"
+                    },
+                    {
+                        "data": {
+                            "id": "f47e7f5b-d83c-450f-a127-0cfe56070f3a",
+                            "level": 2
+                        },
+                        "key": "rMjHFRxZQWwc8KZ1RiGu9k",
+                        "nodes": [
+                            {
+                                "key": "afSktjPaKdXqssMpoQLS5r",
+                                "marks": [],
+                                "object": "text",
+                                "text": "A data infrastructure needs an operating model: link with data governance"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "heading"
+                    },
+                    {
+                        "data": {
+                            "id": "57d60806-e5db-45d9-92c1-e782d16b231b",
+                            "level": 2
+                        },
+                        "key": "jQog1DwpGT9rmWRfJnScEo",
+                        "nodes": [
+                            {
+                                "key": "r6HcrtVWSQ6HMWCRhsZ6X3",
+                                "marks": [],
+                                "object": "text",
+                                "text": "This is where the data governance enters the game. It gives the operating model for using the platform and the data. This is also where the GDPR must be enforced. I strongly recommend following the "
+                            },
+                            {
+                                "data": {
+                                    "url": "https://euranova.talentlms.com/unit/viewtestsurvey/id:1832,mode:test"
+                                },
+                                "key": "qTR5EaNXMqFZcEYai5zRw9",
+                                "nodes": [
+                                    {
+                                        "key": "dZ9sm9LnBxBgKWFor7WyFQ",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": "GDPR training on talent LM"
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "4CdXtAx836WMc6bY9q5yYd",
+                                "marks": [],
+                                "object": "text",
+                                "text": "S."
+                            },
+                            {
+                                "data": {
+                                    "url": "https://knowledge.euranova.eu/tile/view/9894#df6db62d-acfb-4144-b3ed-a9b8fa4e7a60"
+                                },
+                                "key": "tmp5dnxGtCJn2w5yvASgrp",
+                                "nodes": [
+                                    {
+                                        "key": "1Tfhoh7n8EuRvcnfmv9AgA",
+                                        "marks": [],
+                                        "object": "text",
+                                        "text": ""
+                                    }
+                                ],
+                                "object": "inline",
+                                "type": "link"
+                            },
+                            {
+                                "key": "9Lj31dkwyk7fpnK8ztLuse",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "4DUzQGnMixNjpactET8gUQ",
+                        "nodes": [
+                            {
+                                "key": "vuFnagUEZ8aadPoKpwVtDg",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "ntpDuQGipRea3XnTvDaaxj",
+                        "nodes": [
+                            {
+                                "key": "9yPy8YnvZcyQPKyH7u446s",
+                                "marks": [],
+                                "object": "text",
+                                "text": ""
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    },
+                    {
+                        "data": {},
+                        "key": "w7ZdyiNP9Q6K5J3fMy3bmp",
+                        "nodes": [
+                            {
+                                "key": "o5nXcQ2EyMBWpRAoFnWRpQ",
+                                "marks": [],
+                                "object": "text",
+                                "text": "\n"
+                            }
+                        ],
+                        "object": "block",
+                        "type": "paragraph"
+                    }
+                ],
+                "object": "document"
+            },
+            "object": "value"
+        }
+    },
+    "builtins": [
+        {
+            "key": "TITLE",
+            "type": "STRING",
+            "value": {
+                "__typename": "StringWrapper",
+                "valueString": "Pillar 1: Data infrastructure patterns"
+            }
+        }
+    ],
+    "changes": [
+        {
+            "asset": null,
+            "builtin": "BODY",
+            "change": "UPDATED",
+            "key": null
+        },
+        {
+            "asset": "8c8f62c7-4ab3-4a4e-8e8c-759e5012da0f",
+            "builtin": null,
+            "change": "ADDED",
+            "key": null
+        }
+    ],
+    "comment": null,
+    "coverAsset": null,
+    "created": "2022-10-20T13:52:45.896099Z",
+    "id": "U3RvcnlWZXJzaW9uOls0MDc1NiwgbnVsbF0=",
+    "isLatestEditable": true,
+    "isLatestPublished": true,
+    "lang": null,
+    "mainAsset": null,
+    "published": true,
+    "publishedAt": "2022-10-20T13:52:45.911909Z",
+    "publisher": {
+        "id": "VXNlcjoxMg==",
+        "slug": 12
+    },
+    "title": "Pillar 1: Data infrastructure patterns",
+    "translations": [],
+    "uuid": "1087206b-8119-4b06-946a-f6d2c0e7420f",
+    "viewLang": null
+}
+}

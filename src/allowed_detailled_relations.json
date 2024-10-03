@@ -1,0 +1,13 @@
+{
+    "r1": ["person", "works_for", "company"],
+    "r2": ["person", "contributes_to", "project"],
+    "r3": ["person", "works_with", "person"],
+    "r4": ["person", "makes_use_of", "tool"],
+    "r5": ["company", "located_in", "location"],
+    "r6": ["project", "makes_use_of", "tool"],
+    "r7": ["product", "included_in", "project"],
+    "r8": ["service", "included_in", "project"],
+    "r9": ["person", "contributes_to", "service"],
+    "r10": ["person", "contributes_to", "product"]
+  }
+  

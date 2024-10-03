@@ -1,0 +1,2722 @@
+
+{
+"node": {
+    "assets": [
+      {
+        "__typename": "UserAsset",
+        "created": "2021-07-28T13:00:35.909802Z",
+        "lang": null,
+        "metadata": [],
+        "user": {
+          "id": "VXNlcjoxMg==",
+          "slug": 12
+        },
+        "uuid": "196bbaa2-d4f1-4ce0-a1c8-57ade18e3d11"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:00:35.923432Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5ODdd",
+          "slug": 13987
+        },
+        "uuid": "a497af87-7a10-47a4-80d5-bce8ec3ef733"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:08:07.410122Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5ODhd",
+          "slug": 13988
+        },
+        "uuid": "d91ec528-4fa1-4303-bc25-5a5832e3d3f5"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:14:29.509677Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5ODld",
+          "slug": 13989
+        },
+        "uuid": "7b40bbfe-f3bb-4fde-8630-6746249a9e85"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:14:29.517278Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5OTNd",
+          "slug": 13993
+        },
+        "uuid": "91a24e47-e94c-4215-81ec-b6f9c7412479"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:14:29.523873Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5OTJd",
+          "slug": 13992
+        },
+        "uuid": "19d8bca6-536b-456f-9d88-7642009c2e4a"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:14:29.530467Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5OTFd",
+          "slug": 13991
+        },
+        "uuid": "295205c5-23cb-4299-9e44-92fce03df890"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2021-07-28T13:14:29.538947Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTM5OTBd",
+          "slug": 13990
+        },
+        "uuid": "18fee05a-c33a-4042-85c2-e49ecb2b039e"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-07-28T14:02:04.650806Z",
+        "digest": "95107ea914c664541c54e9836d9fc3206c4beb7eaeddaabb5993750f0374e1fc",
+        "filename": "summary-data-governance-data-policies_en.pdf",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "application/pdf",
+        "uuid": "67713737-b8dd-41c8-a3ad-18e5ecf9a3f6"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-07-28T14:02:04.658401Z",
+        "digest": "ebf97ab5857a5d763357facc18c6e81240e46111b72be5a5a7744eb003345e18",
+        "filename": "WP_FR_DG_Talend_DefinitiveGuide_DataGovernance.pdf",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "application/pdf",
+        "uuid": "5c751504-59d3-495b-adb4-d51ae6b31fdd"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-10-29T15:16:13.113523Z",
+        "digest": "40dabda5f695a2ecd7a68031341e28d06fa3a58c975881bffe8f67a19b07e199",
+        "filename": "Data Governance Night_ pitch.pdf",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "application/pdf",
+        "uuid": "a9341f54-22c4-4124-aae5-50b7f70fd003"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-10-29T15:16:13.121610Z",
+        "digest": "cab2ef72380f9fc81dbeacce9599fc2dcf4ffff7c06aaf67e181f2edd297b403",
+        "filename": "Data Governance Night_ detailed presentation.pdf",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "application/pdf",
+        "uuid": "67115841-5876-4405-8bcc-eb681c61c2f4"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-11-11T14:47:00.163041Z",
+        "digest": "cbd268d6573103680c2d5db204ae68a619128f6024d022d5e5af4e63530cb070",
+        "filename": "blog-oict-data-gov.png",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "image/png",
+        "uuid": "94dd2df8-cf61-4900-b480-babc67dc95de"
+      },
+      {
+        "__typename": "FileAsset",
+        "created": "2021-11-12T13:32:38.535829Z",
+        "digest": "cbd268d6573103680c2d5db204ae68a619128f6024d022d5e5af4e63530cb070",
+        "filename": "blog-oict-data-gov.png",
+        "lang": null,
+        "metadata": [],
+        "mimetype": "image/png",
+        "uuid": "bece1588-f6e2-48c5-b88b-6ec75e839469"
+      },
+      {
+        "__typename": "StoryAsset",
+        "created": "2022-09-23T09:09:46.021638Z",
+        "lang": null,
+        "metadata": [],
+        "story": {
+          "id": "U3Rvcnk6WyJ0aWxlIiwgMTQzNjJd",
+          "slug": 14362
+        },
+        "uuid": "0b67e2ee-6a1f-4c8c-908b-1a4e2ae72685"
+      }
+    ],
+    "attributes": [],
+    "author": {
+      "id": "VXNlcjo0MTg=",
+      "slug": 418
+    },
+    "body": {
+      "__typename": "SlateRichContent",
+      "format": "SLATE",
+      "state": {
+        "document": {
+          "data": {
+            "version": 4
+          },
+          "key": "oqVDeE7dQCzTBc8LoAr2JH",
+          "nodes": [
+            {
+              "data": {},
+              "key": "jd3YFpj9cqkGw6JZX37gC4",
+              "nodes": [
+                {
+                  "key": "aA72JzeTrBAvRD4rMVEDhB",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "2F9G1cVhPSC1avCELN9iFX",
+              "nodes": [
+                {
+                  "key": "4zJS4ku3jsCNY4XBedtakB",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Welcome!"
+                },
+                {
+                  "key": "pegc5g1mR9cFZdTHLd7TKh",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "                                                                                                                               Here you will find all the information you need to learn and expand your knowledge on Data Governance and contribute to the community.                                                           [This is a new CoP page, for any feedback contact: "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/323/profile/profile"
+                  },
+                  "key": "uFk4meNLaMdEbFq9eM4fpd",
+                  "nodes": [
+                    {
+                      "key": "fCG6YXv9xtNM1RY8frDtjm",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Oumaima"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "anqSvFFRvJh4LUxutuWpUV",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/418/profile/profile"
+                  },
+                  "key": "rmfDfdB5YbaegysLbxEsCY",
+                  "nodes": [
+                    {
+                      "key": "272KcnXym1tNPXfYCcRHyH",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Antoine"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "tsnYqAdqs5YiKutBRpXpgu",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", or "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/289/profile/profile"
+                  },
+                  "key": "7cC58MHyBagcanrZ1aeHFt",
+                  "nodes": [
+                    {
+                      "key": "eiFRtEFWL5Kko8Yr4FM4yT",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Sophie"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "acy5u8cMvvmyoajn1JfdiW",
+                  "marks": [],
+                  "object": "text",
+                  "text": "]"
+                }
+              ],
+              "object": "block",
+              "type": "callout"
+            },
+            {
+              "data": {
+                "id": "c2406ff9-3000-48b6-b256-549aac69fc04",
+                "level": 1
+              },
+              "key": "q6upMJnQg8xiHMHGLXHAWP",
+              "nodes": [
+                {
+                  "key": "pqKfSmeM3w3RVwQDN8UX6y",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "First steps"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "cDXgbCdC3ZkrqNo6UTwNJp",
+              "nodes": [
+                {
+                  "key": "2i12T1HUTLfbSVeRN2kJac",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "First, read the following "
+                },
+                {
+                  "key": "ttatkNbWq8YofBpaWsW31S",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    },
+                    {
+                      "data": {
+                        "color": "#FFC845"
+                      },
+                      "object": "mark",
+                      "type": "background"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "slides"
+                },
+                {
+                  "key": "tVzB2w6deuQ1TAPyrNTAbh",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", and the "
+                },
+                {
+                  "data": {
+                    "url": "https://docs.google.com/document/d/1H1AV7Q2BSVtBroikT7ofJ1xU-0fqiTmaWldBZh13phE/edit"
+                  },
+                  "key": "e68p76QQD3AjTESa5reCkY",
+                  "nodes": [
+                    {
+                      "key": "aFBGaRvJozxMtZN4F1YX7g",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#FFFFFF"
+                          },
+                          "object": "mark",
+                          "type": "background"
+                        },
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "10-page summary"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "ieiuj1AzM8pEEijfd2cnLJ",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": " of the "
+                },
+                {
+                  "key": "8qrVxnDCyfe2UgRTUjdJ3m",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Data Governance mindset"
+                },
+                {
+                  "key": "jxihB7N1sZA4Sfdd4suWHt",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": " at EURA NOVA. "
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "asset": "a9341f54-22c4-4124-aae5-50b7f70fd003",
+                "isExpanded": true,
+                "mimetype": "application/pdf",
+                "type": "FILE"
+              },
+              "key": "x5pLKqJ6JMd6gLoT46f7LK",
+              "nodes": [
+                {
+                  "key": "eU1tr86V5P2rVXjTgtUChe",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "ezRZn8bD2mGt1nLaSiN9Fx",
+              "nodes": [
+                {
+                  "key": "7kxaXyNhCorS3UBGt1Msde",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#222222"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Then, contact the "
+                },
+                {
+                  "key": "8rxsEGJEungMdNcTcchwY5",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#222222"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "italic"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "ambassador"
+                },
+                {
+                  "key": "xAPnts2pibNX1HH5bHghah",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#222222"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": " of the Community's PoC"
+                },
+                {
+                  "key": "oqTD1UKtCZSReaYTftRVoX",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "6BbqQMMBSuaK6KpPAa5zXR",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "to follow the"
+                },
+                {
+                  "key": "sAR2M7qLyXeETgRP5JM3AF",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "euvLYnaP7sqjcrY8jdVVRQ",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Data Gov. Pitch"
+                },
+                {
+                  "key": "ix5YseEKz3EfB3CktpUx9p",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#222222"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ":"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "asset": "196bbaa2-d4f1-4ce0-a1c8-57ade18e3d11",
+                "isExpanded": false,
+                "type": "USER"
+              },
+              "key": "f3z8ws639nzYvBJwGfw1H2",
+              "nodes": [
+                {
+                  "key": "wztB55g6oN35ZPfyx1khPq",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "cqQxgHob6hEGuhXcEzmDiM",
+              "nodes": [
+                {
+                  "key": "wLndmvM9rUBUSudwxGPGan",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Do not forget to say hello and introduce yourself on the"
+                },
+                {
+                  "key": "iodRrWChCiP22RchbNgg58",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "data": {
+                    "url": "https://chat.euranova.eu/euranova/channels/data-governance"
+                  },
+                  "key": "kFFZdGRKP4JZMXdWdLJkRd",
+                  "nodes": [
+                    {
+                      "key": "8iYYAEpi9skYuDDkgR4YZi",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Mattermost Data Gov. channel"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "i7S74UKRpZdQMBzjorMaFj",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "! ;-)"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "47gp37SMqAzgL4rtg7nwQh",
+              "nodes": [
+                {
+                  "key": "ivoVZh7YeUGB9r8MNfic46",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "It is also important to "
+                },
+                {
+                  "key": "nTmZa9PJhU9Pgm5DrgpyVh",
+                  "marks": [
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "underline"
+                    },
+                    {
+                      "data": {
+                        "color": "#1b8fb1ff"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "meet the community at the HQ during the Data Governance Friday afternoon"
+                },
+                {
+                  "key": "qffD7fXoTp3iVrZbkN7z3D",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ". It is the perfect moment to ask questions and discuss issues before a well-deserved after-work."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "id": "ae56d7e0-e6af-4e56-9aba-0423e8a66359",
+                "level": 1
+              },
+              "key": "wmu7LeVeq3Y3KYdjaDAn2D",
+              "nodes": [
+                {
+                  "key": "39kP6b1TfFWahCVoKdNUnu",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "The Experts"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "8Q7ik3edrnBicNf9ns2iyf",
+              "nodes": [
+                {
+                  "key": "jPndXPj6JiYB3NNiaEXNsK",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Here is a list of the experts you can contact in case you have specific questions related to their fields of predilection:"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {},
+              "key": "o7qE2X9ycpc5fLmPGvVafv",
+              "nodes": [
+                {
+                  "data": {},
+                  "key": "eqmdWdaYDghnEjZRuiX53K",
+                  "nodes": [
+                    {
+                      "data": {
+                        "align": "justify"
+                      },
+                      "key": "mBRu9iQVpwYFABRNfDtE5n",
+                      "nodes": [
+                        {
+                          "key": "n1at2oq8tLrj6jV3ePhULx",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Questions about "
+                        },
+                        {
+                          "key": "wRc3JWUXQC5PE7cipgq1F3",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            },
+                            {
+                              "data": {},
+                              "object": "mark",
+                              "type": "bold"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Data Governance Organization, Business Glossary, Data Taxonomy, Data Quality Management, Privacy/legal"
+                        },
+                        {
+                          "key": "msrAHQTLD4msLFeo4DTM2c",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "; contact ﻿"
+                        },
+                        {
+                          "data": {
+                            "url": "carmen.cercelescu@euranova.eu"
+                          },
+                          "key": "fFj2ruSGDsV6SDUAU6Vy6E",
+                          "nodes": [
+                            {
+                              "key": "9U8ypiBnasHUGkzUJKHV4V",
+                              "marks": [
+                                {
+                                  "data": {
+                                    "color": "#48A9C5"
+                                  },
+                                  "object": "mark",
+                                  "type": "color"
+                                }
+                              ],
+                              "object": "text",
+                              "text": "Carmen"
+                            }
+                          ],
+                          "object": "inline",
+                          "type": "link"
+                        },
+                        {
+                          "key": "7x5xKkgtL4ryjEBEnx6BRr",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#48A9C5"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": ", "
+                        },
+                        {
+                          "data": {
+                            "url": "https://knowledge.euranova.eu/member/323/profile/profile"
+                          },
+                          "key": "imanKdSyZDf82yPCyZYR5N",
+                          "nodes": [
+                            {
+                              "key": "koe2mWqMyyXAoF7yUK9sNS",
+                              "marks": [
+                                {
+                                  "data": {
+                                    "color": "#48A9C5"
+                                  },
+                                  "object": "mark",
+                                  "type": "color"
+                                }
+                              ],
+                              "object": "text",
+                              "text": "Oumaima"
+                            }
+                          ],
+                          "object": "inline",
+                          "type": "link"
+                        },
+                        {
+                          "key": "9BvLdDZPe4g2tnXwvai3y1",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#48A9C5"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": ", Cyrine."
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                }
+              ],
+              "object": "block",
+              "type": "bulleted-list"
+            },
+            {
+              "data": {
+                "id": "cb226362-2fdb-45c8-96fc-e13ce92d3f23",
+                "level": 1
+              },
+              "key": "4TLtd4w1A59zFgBqzqdaA5",
+              "nodes": [
+                {
+                  "key": "mvXRyQVULA7mbZTfduLiSN",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "A solid background"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "zLMz1A6xRPBus7xLSXvx6",
+              "nodes": [
+                {
+                  "key": "pvoRbRiAsKgXaGxBBze7ya",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "We suggest that you choose a mentor who is available enough ("
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/323/profile/profile"
+                  },
+                  "key": "je2vdacH9L1whV9fWTs3yW",
+                  "nodes": [
+                    {
+                      "key": "nTth8SPVLDScPFEDyyVTbQ",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Oumaima"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "jWJSCpUAncE3c4QW6rBLfW",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/324/profile/profile"
+                  },
+                  "key": "goysdE8H11txZc9rySYv8G",
+                  "nodes": [
+                    {
+                      "key": "6wu4GNGPNHcRxmwwKxMJJC",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Cyrine"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "4q16dtXujjik6vo17zgJR1",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/418/profile/profile"
+                  },
+                  "key": "oGq8aK9RJNDCSq7PbNupmX",
+                  "nodes": [
+                    {
+                      "key": "fQADxRxcsxTfRQ4az7vCPk",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Antoine"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "iB9KJ1GGhgRQHnLXaEtMXQ",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/415/profile/profile"
+                  },
+                  "key": "5zA83Let9hSRMDPeFuhREf",
+                  "nodes": [
+                    {
+                      "key": "iuxAny7NHt6bdgoArN3HsH",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Maxime"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "7QXpQ1HLgXwXyeH3jMa3vX",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#555555"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ", "
+                },
+                {
+                  "data": {
+                    "url": "https://knowledge.euranova.eu/member/424/profile/profile"
+                  },
+                  "key": "q52XcVj3jkXBdizCrAMzfc",
+                  "nodes": [
+                    {
+                      "key": "irhQaATXGSsjiLAuXUGQF7",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#555555"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Thibaut"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "qTFJnZtzvq43PTHTd6iKqc",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "), and ask them all your questions about the theory and/or the practice. Please ask the members of this CoP to say more about their past or current data governance projects."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "eFsnqLNX5Hqv1YVBFShVxY",
+              "nodes": [
+                {
+                  "key": "spjLm5vcGveEzuwJURiZ74",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "In addition to mentoring, it is significant to ask questions on the"
+                },
+                {
+                  "key": "2D4XhxMq9x6kh4qT7dEsQd",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "data": {
+                    "url": "https://chat.euranova.eu/euranova/channels/data-governance"
+                  },
+                  "key": "sAu77t6PebmKsdhaa4HByM",
+                  "nodes": [
+                    {
+                      "key": "xtmtSsrwhh4AWXm8dbjJvq",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#ff0000"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "channel Mattermost"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "vjZ9uMqyCq5ackjbjh9A1X",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "m1aSxjdUuJKg7GedhVakzN",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "and to actively participate in the open forums."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "9AjScW9o5DHdNW5NgauUhe",
+              "nodes": [
+                {
+                  "key": "umjfy45Lvb2mRtqLyAiuud",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Find back the"
+                },
+                {
+                  "key": "xqJXckXSPLY7PBCN6QWatx",
+                  "marks": [
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    }
+                  ],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "5MepiT9FX6xHK97X5qdXMh",
+                  "marks": [
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    },
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "5 pillars"
+                },
+                {
+                  "key": "be6FemmhzsoGqzvKkydX5c",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "rtEwQWXq4SA1i72LbPjhK4",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "we are talking about in the "
+                },
+                {
+                  "data": {
+                    "url": "https://docs.google.com/document/d/1H1AV7Q2BSVtBroikT7ofJ1xU-0fqiTmaWldBZh13phE/edit#heading=h.rjdcbptz7n40"
+                  },
+                  "key": "ergCZf6rsiDGya66EN4usz",
+                  "nodes": [
+                    {
+                      "key": "4ZzV2jroaNvHJXhMJFfgyk",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Data Gov. in 10 pages document"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "ryNEPS5DZtGeuJTBBX5PLY",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "."
+                },
+                {
+                  "key": "vSTxM1bLPKT7r64boreR3E",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": " They are the theoretical modules to discover. The following slides will introduce them:"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "asset": "67115841-5876-4405-8bcc-eb681c61c2f4",
+                "isExpanded": false,
+                "mimetype": "application/pdf",
+                "type": "FILE"
+              },
+              "key": "6RXxGc4bcX9nA8kBNrYXJq",
+              "nodes": [
+                {
+                  "key": "4N2EeS4vPBw7PqtZA5Q5MF",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "ozR15GwzEGNiDNnWZC2ddh",
+              "nodes": [
+                {
+                  "key": "4SgA8KtVJrP3ng8MsV2ria",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "In the next step, we recommend "
+                },
+                {
+                  "key": "d3igkfBpnUeuYF46Mdj3cg",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "bold"
+                    },
+                    {
+                      "data": {},
+                      "object": "mark",
+                      "type": "underline"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "reading the modules"
+                },
+                {
+                  "key": "ogpXY2wy96o1KjRQaEAHo1",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": ". Do not hesitate to challenge or ask your questions to the author. If needed, ask the authorization to access the "
+                },
+                {
+                  "data": {
+                    "url": "https://drive.google.com/drive/u/1/folders/0AGC7IoNxu7LhUk9PVA"
+                  },
+                  "key": "44b4AjEQEPQVdjqkBDRbbn",
+                  "nodes": [
+                    {
+                      "key": "g9QQuj1AzSo6AQv1eMSQb4",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#48A9C5"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "Drive"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "hTjh1xcksz9bNQsD5QYMza",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "asset": "a497af87-7a10-47a4-80d5-bce8ec3ef733",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "9z2uJziGmxgxcSnbjsfQ1e",
+              "nodes": [
+                {
+                  "key": "hYj8HbgyFJjbfv3RHDrFFP",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "18fee05a-c33a-4042-85c2-e49ecb2b039e",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "nrESp6qaQHJjanBYh6s8s1",
+              "nodes": [
+                {
+                  "key": "8TFrQksn8WdKwDC9tRSd5F",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "7b40bbfe-f3bb-4fde-8630-6746249a9e85",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "9wQgEyNYfojJ6H47hkTHzV",
+              "nodes": [
+                {
+                  "key": "w6nZRZKqA9PLYZ3jsWocpJ",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "295205c5-23cb-4299-9e44-92fce03df890",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "tnXhjebbeWubZweojSqvdq",
+              "nodes": [
+                {
+                  "key": "n6jptEZVXC6BJAksVQivdh",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "19d8bca6-536b-456f-9d88-7642009c2e4a",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "c7Vg3GUGoJvscxTqvgZTL9",
+              "nodes": [
+                {
+                  "key": "wWVY6D3d7o4m1rVxaD3E2s",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "91a24e47-e94c-4215-81ec-b6f9c7412479",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "puEduDm1dojFT6HYnEzCYs",
+              "nodes": [
+                {
+                  "key": "jgmwJEqiGBUVYu9YZUiq5n",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "tmobwvKDFtjYwUqCDGEFL9",
+              "nodes": [
+                {
+                  "key": "xmKymztn6xMBAC5zP824zV",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "After each module, please organize a 30 min Q/A meeting with 2 members of the practice (10 min to present what you learned, 10 min to challenge the module and to be challenged, and 10 min of open discussion about the subject). Do not forget to discuss this with your career manager and your BM to make room for all of this."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "rTKQfPMyPnQk79b71ntxro",
+              "nodes": [
+                {
+                  "key": "qjEXYkQV4vxYGC2Q8yXh9y",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "The aim is to quickly become an active player, when you got the knowledge, go challenge it with the material done on practical cases."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "id": "a4c4cea5-4f66-4582-8816-3f8027bc7de5",
+                "level": 1
+              },
+              "key": "8WDf2wWGRvXiHCwJyXa2fE",
+              "nodes": [
+                {
+                  "key": "qEah5GmSBuRkcWAkzELXKT",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Let’s practice"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {},
+              "key": "rpUBEcLsFQQ96K9xa29uAC",
+              "nodes": [
+                {
+                  "key": "xsZ3T8wS7WA9gS3SSYuXC5",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "The Practical’s module"
+                },
+                {
+                  "key": "gQgzQSdbx9zzPWcPJW4bJ5",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "hAr2SGgQq2USkkmhdbCWd4",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "is an"
+                },
+                {
+                  "data": {
+                    "url": "https://docs.google.com/document/d/1GniTu0txdVx0_BwGAJxu0n-nDsfHljfhVhlcbgsGiIM/edit#heading=h.rjdcbptz7n40"
+                  },
+                  "key": "jkMGBycUFhJeaJDBWWfD7s",
+                  "nodes": [
+                    {
+                      "key": "4dyfjqkd2gWG5REKpxhZXS",
+                      "marks": [],
+                      "object": "text",
+                      "text": ""
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "nduZSCA8xf1au1fnqjZCsP",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "r3U5hcJ2CBXH3aC1ZHm5Cr",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "introductory document on the methodology:"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "asset": "d91ec528-4fa1-4303-bc25-5a5832e3d3f5",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "714x27wYxxqDhmAxCDQALS",
+              "nodes": [
+                {
+                  "key": "jqh49pR1g2DMbtczALxpwc",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {},
+              "key": "d8jAZiqZFkBajgbLarzvf7",
+              "nodes": [
+                {
+                  "key": "8iM5eZyL8AQyRJkWjnEciU",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "After reading it, please organize another 30 min Q/A session with 2 members of the practice (same structure). "
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {},
+              "key": "qyFD1Gx5Ebnw3KCDdMHAiC",
+              "nodes": [
+                {
+                  "key": "rri6kRsoiAWaBDVZuFwyre",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "It is up to you to take inspiration from this methodology, to be able to propose the most suitable one for each of our clients."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "nm6uEAKjEt1oke65weSDqn",
+              "nodes": [
+                {
+                  "key": "kEgw3eXdEKtEyEbnpQ25T5",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Finally, offer to help and support someone on a current DG project."
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "id": "580a7cd1-d96e-4372-aba7-fc5a70417c3a",
+                "level": 1
+              },
+              "key": "o6LDXNwiz6FeHjMgnozQzA",
+              "nodes": [
+                {
+                  "key": "wMr9ebQ8n8z17bE7ByFBv",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Enhancing the community as a knowledgeable member"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "9CiZgcqQ98s4DxPtvYZERy",
+              "nodes": [
+                {
+                  "key": "6S7FLfwCvxa5RfKfcBDAYS",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "If you think you can challenge and/or improve the CoP with your experience, do not hesitate to reach out to the community."
+                },
+                {
+                  "data": {
+                    "url": "https://docs.google.com/document/d/1GniTu0txdVx0_BwGAJxu0n-nDsfHljfhVhlcbgsGiIM/edit?usp=sharing"
+                  },
+                  "key": "9ALwWpRLgLnrAbmum6ZJqc",
+                  "nodes": [
+                    {
+                      "key": "29FinEWww4BBzS2LduRR2F",
+                      "marks": [
+                        {
+                          "data": {
+                            "color": "#000000"
+                          },
+                          "object": "mark",
+                          "type": "color"
+                        }
+                      ],
+                      "object": "text",
+                      "text": "﻿"
+                    }
+                  ],
+                  "object": "inline",
+                  "type": "link"
+                },
+                {
+                  "key": "9YXnpVRFdsLoyiPVfEDLXj",
+                  "marks": [],
+                  "object": "text",
+                  "text": " "
+                },
+                {
+                  "key": "3e5hx4CAywoxeyxrY4e4d4",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    },
+                    {
+                      "data": {
+                        "color": "#FFB25B"
+                      },
+                      "object": "mark",
+                      "type": "background"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Knowledge sharing is power!"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "tPBcZKWx2DN4V6yWAmY2RZ",
+              "nodes": [
+                {
+                  "key": "hh4zeraWLiXA6mvometW4L",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "The concrete actions you could take:"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {},
+              "key": "ntmqcEAeyFU9JKLrpKaKsS",
+              "nodes": [
+                {
+                  "data": {},
+                  "key": "jtP53CX3biuYzur7awSGjt",
+                  "nodes": [
+                    {
+                      "data": {
+                        "align": "justify"
+                      },
+                      "key": "ns32fGfcDDd5XCz5E7Zb5r",
+                      "nodes": [
+                        {
+                          "key": "dx1Hn4pHPYX4uku3W4GCLC",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Come to the HQ on Friday afternoon to discuss with the community and share your knowledge with colleagues, especially the novices."
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "vg7xmWj1ohqyasTeNTD5K1",
+                  "nodes": [
+                    {
+                      "data": {
+                        "align": "justify"
+                      },
+                      "key": "5JdwCJjbW3R9dX4hE8XKYW",
+                      "nodes": [
+                        {
+                          "key": "oJ7YmzB5jWFB58ddhEJRTL",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Complete your learning journey by going through all the modules on this page"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "h6n6dmwZKL1PxrRhGgQ12P",
+                  "nodes": [
+                    {
+                      "data": {
+                        "align": "justify"
+                      },
+                      "key": "7ve1BSFpck5FqA4CKgPDz9",
+                      "nodes": [
+                        {
+                          "key": "oCugosFxR67gQoUiqZ9NmZ",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Discover and improve the hot-topics knowledge at the end of this page."
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "b4ciSgZJ8jaEckLchxZ9Ao",
+                  "nodes": [
+                    {
+                      "data": {
+                        "align": "justify"
+                      },
+                      "key": "cp6whe8KMdBbSiv6XafkxH",
+                      "nodes": [
+                        {
+                          "key": "bVHEXFh7qmEm1ncTNbuBbu",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#000000"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Share some interesting articles that you found on the NoLi continuous flow with the appropriate Data Governance tags"
+                        },
+                        {
+                          "key": "tsoCFE5Hm4Tto7ccoGio9x",
+                          "marks": [],
+                          "object": "text",
+                          "text": "."
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                }
+              ],
+              "object": "block",
+              "type": "bulleted-list"
+            },
+            {
+              "data": {
+                "id": "db17112b-be8c-4332-87d9-414520ae2a33",
+                "level": 1
+              },
+              "key": "txhEdymdcWxiAqMtMhQMk8",
+              "nodes": [
+                {
+                  "key": "mvYJ1A5EVtp3fnYiokAGsK",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#48A9C5"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Explore knowledge"
+                }
+              ],
+              "object": "block",
+              "type": "heading"
+            },
+            {
+              "data": {
+                "align": "justify"
+              },
+              "key": "2Kp4Gy4X9igzMx3MysLVRP",
+              "nodes": [
+                {
+                  "key": "778admgkukRwu1Ugmdf5ee",
+                  "marks": [
+                    {
+                      "data": {
+                        "color": "#000000"
+                      },
+                      "object": "mark",
+                      "type": "color"
+                    }
+                  ],
+                  "object": "text",
+                  "text": "Speaking of sharing… Don't hesitate to search for certain words related to Data Governance in Nova Libris. You might come across some very interesting pages, of which here is an overview:"
+                }
+              ],
+              "object": "block",
+              "type": "paragraph"
+            },
+            {
+              "data": {},
+              "key": "b6XZDpFo8BKmGFF5qGtVXx",
+              "nodes": [
+                {
+                  "data": {},
+                  "key": "7AzwZo8jfDiXjbEkfKtx5A",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "gd2JRj5VaTEHLfQmzE4q35",
+                      "nodes": [
+                        {
+                          "key": "1Ya4D1BQoELSowogT2uRM9",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Links:"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    },
+                    {
+                      "data": {},
+                      "key": "ks2sodsfr8VohJUyvNfwdX",
+                      "nodes": [
+                        {
+                          "data": {},
+                          "key": "5aeUDdhmrXzGuJpxM9wf2F",
+                          "nodes": [
+                            {
+                              "data": {},
+                              "key": "nbTPfw9TCKcVu4pEdqWj69",
+                              "nodes": [
+                                {
+                                  "key": "inEHzVUEXarsXjhpGx2q93",
+                                  "marks": [
+                                    {
+                                      "data": {
+                                        "color": "#555555"
+                                      },
+                                      "object": "mark",
+                                      "type": "color"
+                                    }
+                                  ],
+                                  "object": "text",
+                                  "text": "..."
+                                }
+                              ],
+                              "object": "block",
+                              "type": "paragraph"
+                            }
+                          ],
+                          "object": "block",
+                          "type": "list-item"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "bulleted-list"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "q6a5Y7VcFmdoRd6ij2vXvL",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "srqcJa69vjjY6hg23eav5V",
+                      "nodes": [
+                        {
+                          "key": "ifU6v4E47MKc4rDeMrGzM2",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Webinar:"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    },
+                    {
+                      "data": {},
+                      "key": "uPgwyUGo1kjxxDXLZR2bPz",
+                      "nodes": [
+                        {
+                          "data": {},
+                          "key": "txz4nKpANMkGAikyY5XDpB",
+                          "nodes": [
+                            {
+                              "data": {},
+                              "key": "9Z5TbQHWCwA5nXTsLDSd9p",
+                              "nodes": [
+                                {
+                                  "key": "ssViVgjvN18C4RjgDkhWzu",
+                                  "marks": [
+                                    {
+                                      "data": {
+                                        "color": "#E03E52"
+                                      },
+                                      "object": "mark",
+                                      "type": "color"
+                                    }
+                                  ],
+                                  "object": "text",
+                                  "text": ""
+                                },
+                                {
+                                  "data": {
+                                    "url": "https://www.informatica.com/about-us/webinars/data-experts.html"
+                                  },
+                                  "key": "63Gzgtr2JpkJwZMXzCdq55",
+                                  "nodes": [
+                                    {
+                                      "key": "nN66QgYrkT9m66Shgbo58a",
+                                      "marks": [
+                                        {
+                                          "data": {
+                                            "color": "#E03E52"
+                                          },
+                                          "object": "mark",
+                                          "type": "color"
+                                        }
+                                      ],
+                                      "object": "text",
+                                      "text": "Informatica's List"
+                                    }
+                                  ],
+                                  "object": "inline",
+                                  "type": "link"
+                                },
+                                {
+                                  "key": "aTmcu2N5vCgXTa36M2vRp2",
+                                  "marks": [
+                                    {
+                                      "data": {
+                                        "color": "#E03E52"
+                                      },
+                                      "object": "mark",
+                                      "type": "color"
+                                    }
+                                  ],
+                                  "object": "text",
+                                  "text": ""
+                                }
+                              ],
+                              "object": "block",
+                              "type": "paragraph"
+                            }
+                          ],
+                          "object": "block",
+                          "type": "list-item"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "bulleted-list"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "jRkKfUaYoJAeJy8Pr6J5nV",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "mKvGbBPfW7EVsLDh5eME55",
+                      "nodes": [
+                        {
+                          "key": "sSqSDQoBsZVWaybTaPu1rU",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Formation:"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    },
+                    {
+                      "data": {},
+                      "key": "5z4SFxjWm4FszXzDPtaaPS",
+                      "nodes": [
+                        {
+                          "data": {},
+                          "key": "3BTKFrNiuDuEAMs9BDCUtH",
+                          "nodes": [
+                            {
+                              "data": {},
+                              "key": "i3Vq7ZVimGWD9a7FHbuaeu",
+                              "nodes": [
+                                {
+                                  "key": "mrXTtZjzT4H4SxQyPzFrxY",
+                                  "marks": [
+                                    {
+                                      "data": {
+                                        "color": "#555555"
+                                      },
+                                      "object": "mark",
+                                      "type": "color"
+                                    }
+                                  ],
+                                  "object": "text",
+                                  "text": ""
+                                },
+                                {
+                                  "data": {
+                                    "url": "https://university.collibra.com/learn/learning_plan/view/45/collibra-data-governance-lead-learning-path"
+                                  },
+                                  "key": "sMmJr2AajgSMFnKfbUvWBR",
+                                  "nodes": [
+                                    {
+                                      "key": "6BLFRmFqw7A3RuAxrNVfRy",
+                                      "marks": [
+                                        {
+                                          "data": {
+                                            "color": "#555555"
+                                          },
+                                          "object": "mark",
+                                          "type": "color"
+                                        }
+                                      ],
+                                      "object": "text",
+                                      "text": "Collibra Data Governance Lead Learning Path"
+                                    }
+                                  ],
+                                  "object": "inline",
+                                  "type": "link"
+                                },
+                                {
+                                  "key": "jFtdLa5wLMNYse2ogS5dUd",
+                                  "marks": [
+                                    {
+                                      "data": {
+                                        "color": "#555555"
+                                      },
+                                      "object": "mark",
+                                      "type": "color"
+                                    }
+                                  ],
+                                  "object": "text",
+                                  "text": ""
+                                }
+                              ],
+                              "object": "block",
+                              "type": "paragraph"
+                            }
+                          ],
+                          "object": "block",
+                          "type": "list-item"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "bulleted-list"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "5SPRBFraidDpRgY2Rm4ouT",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "4SQ4m1oRAg1BrzGrktUmFW",
+                      "nodes": [
+                        {
+                          "key": "euxp7sggXg35cwMNn5kAve",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Data Governance Methodology - Alation"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                },
+                {
+                  "data": {},
+                  "key": "oq4N3274otMJ2tXAELQUQC",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "a7RwNT2tJqRAwHNbSUnaJZ",
+                      "nodes": [
+                        {
+                          "key": "gJuKXCzurvrumMoZRynjpi",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Some NoLi Pages:"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                }
+              ],
+              "object": "block",
+              "type": "bulleted-list"
+            },
+            {
+              "data": {
+                "asset": "0b67e2ee-6a1f-4c8c-908b-1a4e2ae72685",
+                "displayMode": "collapsed",
+                "isExpanded": false,
+                "type": "STORY"
+              },
+              "key": "6E1WYDU7cJssnRFBxuGXWh",
+              "nodes": [
+                {
+                  "key": "bbuEX2ZXnwmsMQxiZtVhdp",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {},
+              "key": "iWVCbEZ5eN2PSDixQHQ2AG",
+              "nodes": [
+                {
+                  "data": {},
+                  "key": "oPV1SQSRdgSXmKvS4eSvqb",
+                  "nodes": [
+                    {
+                      "data": {},
+                      "key": "uYp2ZzJhKyWpopPPyxMWzo",
+                      "nodes": [
+                        {
+                          "key": "b7YPZTBR6SbMwJoGosrwVt",
+                          "marks": [
+                            {
+                              "data": {
+                                "color": "#555555"
+                              },
+                              "object": "mark",
+                              "type": "color"
+                            }
+                          ],
+                          "object": "text",
+                          "text": "Some pdf:"
+                        }
+                      ],
+                      "object": "block",
+                      "type": "paragraph"
+                    }
+                  ],
+                  "object": "block",
+                  "type": "list-item"
+                }
+              ],
+              "object": "block",
+              "type": "bulleted-list"
+            },
+            {
+              "data": {
+                "asset": "67713737-b8dd-41c8-a3ad-18e5ecf9a3f6",
+                "isExpanded": false,
+                "mimetype": "application/pdf",
+                "type": "FILE"
+              },
+              "key": "u78zRSS8wbiJhacp4wbVnP",
+              "nodes": [
+                {
+                  "key": "dCfnYbJAYVwcFsTvDNKWoZ",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            },
+            {
+              "data": {
+                "asset": "5c751504-59d3-495b-adb4-d51ae6b31fdd",
+                "isExpanded": false,
+                "mimetype": "application/pdf",
+                "type": "FILE"
+              },
+              "key": "95EPHXGXqZ6jot4LM2sh8u",
+              "nodes": [
+                {
+                  "key": "nhsSd7HF2PKCstEBtE8UEv",
+                  "marks": [],
+                  "object": "text",
+                  "text": ""
+                }
+              ],
+              "object": "block",
+              "type": "asset"
+            }
+          ],
+          "object": "document"
+        },
+        "object": "value"
+      }
+    },
+    "builtins": [
+      {
+        "key": "TITLE",
+        "type": "STRING",
+        "value": {
+          "__typename": "StringWrapper",
+          "valueString": "Data Governance CoP"
+        }
+      }
+    ],
+    "changes": [
+      {
+        "asset": null,
+        "builtin": "BODY",
+        "change": "UPDATED",
+        "key": null
+      },
+      {
+        "asset": "0b67e2ee-6a1f-4c8c-908b-1a4e2ae72685",
+        "builtin": null,
+        "change": "ADDED",
+        "key": null
+      }
+    ],
+    "comment": null,
+    "coverAsset": {
+      "__typename": "FileAsset",
+      "created": "2021-11-11T14:47:00.163041Z",
+      "digest": "cbd268d6573103680c2d5db204ae68a619128f6024d022d5e5af4e63530cb070",
+      "filename": "blog-oict-data-gov.png",
+      "lang": null,
+      "metadata": [],
+      "mimetype": "image/png",
+      "uuid": "94dd2df8-cf61-4900-b480-babc67dc95de"
+    },
+    "created": "2022-09-23T09:09:46.046465Z",
+    "id": "U3RvcnlWZXJzaW9uOls0MDY4MCwgbnVsbF0=",
+    "isLatestEditable": true,
+    "isLatestPublished": true,
+    "lang": null,
+    "mainAsset": {
+      "__typename": "FileAsset",
+      "created": "2021-11-12T13:32:38.535829Z",
+      "digest": "cbd268d6573103680c2d5db204ae68a619128f6024d022d5e5af4e63530cb070",
+      "filename": "blog-oict-data-gov.png",
+      "lang": null,
+      "metadata": [],
+      "mimetype": "image/png",
+      "uuid": "bece1588-f6e2-48c5-b88b-6ec75e839469"
+    },
+    "published": true,
+    "publishedAt": "2022-09-23T09:09:46.059745Z",
+    "publisher": {
+      "id": "VXNlcjo0MTg=",
+      "slug": 418
+    },
+    "title": "Data Governance CoP",
+    "translations": [],
+    "uuid": "44880f9b-2911-4ad0-9357-351529d66ae2",
+    "viewLang": null
+  }
+}
