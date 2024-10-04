@@ -8,7 +8,7 @@ import time
 from functools import wraps
 from typing import AsyncIterator, List
 
-import easyocr
+#import easyocr
 import numpy as np
 import pandas as pd
 import spacy

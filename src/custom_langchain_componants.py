@@ -572,8 +572,9 @@ class CustomCrossEncoderReranker(BaseDocumentCompressor):
     class Config:
         """Configuration for this pydantic object."""
 
-        extra = Extra.forbid
+        extra = 'forbid'   #Extra.forbid
         arbitrary_types_allowed = True
+        
 
     def compress_documents(
         self,

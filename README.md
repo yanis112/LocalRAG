@@ -26,6 +26,7 @@ This project is a **Retrieval Augmented Generation (RAG)** based question-answer
 
    ```bash
    cd llms-rag
+   $env:PYTHONPATH = "$env:PYTHONPATH;$(Get-Location)"
    ```
 
 3. **Build the Docker Image**
@@ -52,6 +53,10 @@ This project is a **Retrieval Augmented Generation (RAG)** based question-answer
 
    ```bash
    docker run -d --restart=always --gpus '"device=0"' -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest  
+   ```
+
+  ```bash
+   docker run -d --restart=always -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest  
    ```
 
 5. **Run the Streamlit Application**

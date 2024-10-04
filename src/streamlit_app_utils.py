@@ -6,7 +6,6 @@ import time
 from pathlib import Path
 
 import pandas as pd
-import qrcode
 import streamlit as st
 import streamlit_pills as stp
 import yaml
@@ -49,26 +48,26 @@ def save_audio_as_wav(uploaded_file, output_dir):
     return file_path
 
 
-def generate_qr_code(url):
-    """
-    Generates a QR code image for the given URL.
+# def generate_qr_code(url):
+#     """
+#     Generates a QR code image for the given URL.
 
-    Parameters:
-    url (str): The URL to encode into the QR code.
+#     Parameters:
+#     url (str): The URL to encode into the QR code.
 
-    Returns:
-    PIL.Image.Image: The generated QR code image.
-    """
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_H,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(url)
-    qr.make(fit=True)
-    img = qr.make_image(fill="black", back_color="white")
-    return img
+#     Returns:
+#     PIL.Image.Image: The generated QR code image.
+#     """
+#     qr = qrcode.QRCode(
+#         version=1,
+#         error_correction=qrcode.constants.ERROR_CORRECT_H,
+#         box_size=10,
+#         border=4,
+#     )
+#     qr.add_data(url)
+#     qr.make(fit=True)
+#     img = qr.make_image(fill="black", back_color="white")
+#     return img
 
 
 def load_config():
@@ -138,13 +137,13 @@ def initialize_session_state():
     Returns:
         None
     """
-    if "qr_code" not in st.session_state:
-        STREAMLIT_URL = os.getenv("STREAMLIT_URL")
-        qr_code = generate_qr_code(STREAMLIT_URL)
-        byte_arr = io.BytesIO()
-        qr_code.save(byte_arr, format="PNG")
-        byte_arr = byte_arr.getvalue()
-        st.session_state["qr_code"] = byte_arr
+    # if "qr_code" not in st.session_state:
+    #     STREAMLIT_URL = os.getenv("STREAMLIT_URL")
+    #     qr_code = generate_qr_code(STREAMLIT_URL)
+    #     byte_arr = io.BytesIO()
+    #     qr_code.save(byte_arr, format="PNG")
+    #     byte_arr = byte_arr.getvalue()
+    #     st.session_state["qr_code"] = byte_arr
 
     if "messages" not in st.session_state:
         st.session_state.messages = []

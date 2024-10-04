@@ -5,7 +5,7 @@ from typing import List
 import numpy as np
 import yaml
 from dotenv import load_dotenv
-from langchain_core.pydantic_v1 import BaseModel
+from pydantic import BaseModel
 from pydantic.main import create_model
 from rouge import Rouge
 from sentence_transformers import SentenceTransformer

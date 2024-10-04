@@ -9,7 +9,7 @@ import yaml
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
-from langchain_core.pydantic_v1 import BaseModel
+from pydantic import BaseModel
 from langsmith import traceable
 import streamlit as st
 

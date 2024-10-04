@@ -16,10 +16,8 @@ import streamlit as st
 import torch
 import yaml
 from dotenv import load_dotenv
-from langchain.retrievers import (
-    ContextualCompressionRetriever,
-    EnsembleRetriever,
-)
+from langchain.retrievers import ContextualCompressionRetriever,EnsembleRetriever
+
 from langchain.retrievers.document_compressors import (
     DocumentCompressorPipeline,
 )
@@ -70,16 +68,16 @@ from src.utils import (
 load_dotenv()
 
 # Download the necessary nltk resources
-nltk.download("punkt")
-nltk.download("punkt_tab")
-nltk.download("wordnet")
-nltk.download("averaged_perceptron_tagger")
-nltk.download("stopwords")
-nltk.download("maxent_ne_chunker")
-nltk.download("words")
-nltk.download("omw-1.4")
-nltk.download("treebank")
-nltk.download("dependency_treebank")
+# nltk.download("punkt")
+# nltk.download("punkt_tab")
+# nltk.download("wordnet")
+# nltk.download("averaged_perceptron_tagger")
+# nltk.download("stopwords")
+# nltk.download("maxent_ne_chunker")
+# nltk.download("words")
+# nltk.download("omw-1.4")
+# nltk.download("treebank")
+# nltk.download("dependency_treebank")
 
 
 # Configure logging
@@ -395,6 +393,60 @@ def process_file(args):
     return None
 
 
+# def process_documents(path, log_file_path, processed_docs):
+#     """
+#     Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
+
+#     Args:
+#         path (str): The path to the directory containing the documents.
+#         chunk_size (int): The size of each chunk in number of characters.
+#         chunk_overlap (int): The overlap between consecutive chunks in number of characters.
+#         log_file_path (str): The path to the log file.
+#         processed_docs (list): A list to store the processed documents.
+#         total_chunks (int): The total number of chunks.
+#         splitting_method (str): The method used for splitting the documents.
+#         embedding_model (str): The embedding model to use for semantic analysis.
+#         semantic_threshold (float): The threshold for semantic similarity.
+
+#     Returns:
+#         None
+#     """
+
+#     total_chunks = []
+
+#     allowed_formats = json.loads(os.getenv("ALLOWED_FORMATS"))
+#     # print("ALLOWED FORMATS: ", allowed_formats)
+
+#     total_files = sum([len(files) for r, d, files in os.walk(path)])
+#     with tqdm(total=total_files, desc="Processing files") as pbar:
+#         with Manager() as manager:
+#             processed_docs = manager.list(processed_docs)
+#             pool = Pool()
+#             args_list = []
+
+#             for root, dirs, files in os.walk(path):
+#                 for name in files:
+#                     full_path = os.path.join(root, name)
+#                     args_list.append(
+#                         (
+#                             name,
+#                             full_path,
+#                             allowed_formats,
+#                             processed_docs,
+#                             log_file_path,
+#                         )
+#                     )
+
+#             for result in pool.imap_unordered(process_file, args_list):
+#                 if result:
+#                     total_chunks.append(result)
+#                 pbar.update()
+
+#             pool.close()
+#             pool.join()
+
+#     return total_chunks
+
 def process_documents(path, log_file_path, processed_docs):
     """
     Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
@@ -421,33 +473,24 @@ def process_documents(path, log_file_path, processed_docs):
 
     total_files = sum([len(files) for r, d, files in os.walk(path)])
     with tqdm(total=total_files, desc="Processing files") as pbar:
-        with Manager() as manager:
-            processed_docs = manager.list(processed_docs)
-            pool = Pool()
-            args_list = []
-
-            for root, dirs, files in os.walk(path):
-                for name in files:
-                    full_path = os.path.join(root, name)
-                    args_list.append(
-                        (
-                            name,
-                            full_path,
-                            allowed_formats,
-                            processed_docs,
-                            log_file_path,
-                        )
+        for root, dirs, files in os.walk(path):
+            for name in files:
+                full_path = os.path.join(root, name)
+                result = process_file(
+                    (
+                        name,
+                        full_path,
+                        allowed_formats,
+                        processed_docs,
+                        log_file_path,
                     )
-
-            for result in pool.imap_unordered(process_file, args_list):
+                )
                 if result:
                     total_chunks.append(result)
                 pbar.update()
 
-            pool.close()
-            pool.join()
-
     return total_chunks
+
 
 
 @log_execution_time

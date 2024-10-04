@@ -5,12 +5,10 @@ import ollama
 import torch
 import transformers
 from dotenv import load_dotenv
-from langchain_community.chat_models import ChatOllama
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-from langchain_cerebras import ChatCerebras
-from langchain_huggingface import ChatHuggingFace, HuggingFacePipeline
+#from langchain_cerebras import ChatCerebras
 
 # load environment variables
 load_dotenv()
@@ -65,27 +63,9 @@ class CustomChatModel:
         self.llm_temperature = temperature
         self.llm_provider = llm_provider
 
-        if llm_provider == "huggingface_api":
-            # Initialize HuggingFaceEndpoint
-            self.llm = HuggingFaceEndpoint(
-                repo_id=f"HuggingFaceH4/{self.llm_name}",
-                task="text-generation",
-                max_new_tokens=1000,
-                top_k=30,
-                temperature=self.llm_temperature,
-                repetition_penalty=1.03,
-            )
-            self.context_window_size = 4096
+    
 
-            system = "You are a helpful assistant."  # Define the system message
-            human = "{text}"  # Define the human input
-            prompt_template = ChatPromptTemplate.from_messages(
-                [("system", system), ("human", human)]
-            )  # Define the chat prompt template
-            self.chat_prompt_template = prompt_template
-            self.chat_model = self.llm
-
-        elif self.llm_provider == "groq":
+        if self.llm_provider == "groq":
             self.context_window_size = 131072
             self.chat_model = ChatGroq(
                 temperature=self.llm_temperature,

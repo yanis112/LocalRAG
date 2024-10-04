@@ -2,12 +2,10 @@ import json
 import os
 
 import streamlit as st
-from audiorecorder import audiorecorder
+#from audiorecorder import audiorecorder
 
 # load environment variables
 from dotenv import load_dotenv
-
-from src.agentic_rag_utils import SummaryMemory
 
 # custom imports
 from src.streamlit_app_utils import (
@@ -40,7 +38,7 @@ st.title(
 )
 
 
-st.sidebar.image("assets/logo_v5.png", output_format="PNG")
+#st.sidebar.image("assets/logo_v5.png", output_format="PNG")
 
 
 # load configuration
