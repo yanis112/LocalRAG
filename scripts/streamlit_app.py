@@ -22,6 +22,7 @@ from src.streamlit_app_utils import (
     transcribe_audio,
 )
 from streamlit_lottie import st_lottie
+from st_copy_to_clipboard import st_copy_to_clipboard
 from src.utils import save_question_answer_pairs
 
 load_dotenv()
@@ -55,6 +56,11 @@ if st.sidebar.button(
     label="Clear Chat 🧹", help="Clear the chat history on the visual interface 🧹"
 ):
     clear_chat_history()
+    
+#add a copy to clipboard button to cpoy last chabot answer
+if "messages" in st.session_state and len(st.session_state['messages']) > 0:
+    print("MESSAGES: ", st.session_state['messages'])
+    st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
 
 # Initialize theme state if it doesn't exist
 if 'theme' not in st.session_state:
@@ -206,6 +212,12 @@ if uploaded_file and "uploaded_file" not in st.session_state:
 
         show_submission_form()
 
+#add a toogle for auto_job tool use
+auto_job=st.sidebar.toggle(
+    "Enable Auto Job Tool 📝",
+    value=False,
+    help="Enable or disable the use of the Auto Job Tool. This tool is used to help you to write a job application letter. You will be asked to provide some informations and the tool will generate a prompt for you to write the letter.",
+)
 
 # Display the chat history
 display_chat_history()
@@ -217,6 +229,7 @@ streamlit_config = {
     "deep_search": deep_search,
     "chat_history": str("## Chat History: \n\n "+str(st.session_state['messages'])), #we keep track of the chat history,
     "use_history": False, #this functionnality is in work in progress
+    "auto_job": auto_job,
 }
 
 #print the chat history

@@ -29,6 +29,7 @@ barcode/
 
 # Fichiers
 cookies.pkl
+info.yaml
 histogram_word_count.png
 knowledge_graph.png
 feedback.json

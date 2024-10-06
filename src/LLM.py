@@ -7,6 +7,7 @@ import transformers
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.chat_models.sambanova import ChatSambaNovaCloud
 from langchain_groq import ChatGroq
 #from langchain_cerebras import ChatCerebras
 
@@ -167,6 +168,23 @@ class CustomChatModel:
                 ]
             )
             self.chat_model = self.llm
+            
+        elif self.llm_provider == "sambanova":
+            os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
+            self.context_window_size = 1024  # Example context window size
+            self.chat_model = ChatSambaNovaCloud(
+                model=self.llm_name,
+                max_tokens=2048,
+                temperature=self.llm_temperature,
+                top_k=1,
+                top_p=0.01,
+            )
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", "You are a helpful assistant."),
+                    ("human", "{text}"),
+                ]
+            )
 
         else:
             raise ValueError(

@@ -20,7 +20,7 @@ from src.agentic_rag_utils import (
     QueryBreaker,
 )
 
-from src.generation_utils import RAG_answer,advanced_RAG_answer
+from src.generation_utils import RAG_answer,advanced_RAG_answer,LLM_answer_v3
 from src.knowledge_graph import KnowledgeGraph
 from src.utils import (
     StructuredAudioLoaderV2,
@@ -419,8 +419,6 @@ def process_query_v2(query, streamlit_config):
     
     st.chat_message("user").write(query)
 
-    nb_tokens = token_calculation_prompt(str(query))
-
     if config["field_filter"] != []:
         enable_source_filter = True
         config["enable_source_filter"] = enable_source_filter
@@ -451,6 +449,10 @@ def process_query_v2(query, streamlit_config):
             )
             docs = []
             
+        elif config["auto_job"]:
+            from src.auto_job import auto_job_writter
+            answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
+            sources=[]
         else:
             answer, docs, sources = RAG_answer(
                 query,

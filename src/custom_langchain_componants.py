@@ -49,7 +49,7 @@ from langchain_core.language_models import BaseLanguageModel
 from langchain_core.load.dump import dumpd
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
-from langchain_core.pydantic_v1 import Extra, Field
+from pydantic import Field
 from langchain_core.retrievers import BaseRetriever, RetrieverLike
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.runnables.config import ensure_config, patch_config

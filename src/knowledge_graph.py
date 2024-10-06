@@ -13,8 +13,7 @@ import yaml
 from gliner import GLiNER
 from grandcypher import GrandCypher
 from langchain_core.documents import Document
-from langchain_core.pydantic_v1 import  Field
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain_qdrant import Qdrant
 from networkx.drawing.nx_pydot import graphviz_layout
 from sentence_transformers import SentenceTransformer

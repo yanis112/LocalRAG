@@ -2,7 +2,7 @@ import yaml
 from bayes_opt import BayesianOptimization
 
 # custom imports
-from evaluate_pipeline import launch_eval
+from scripts.deprecated_scripts.evaluate_pipeline import launch_eval
 
 
 # Step 1: Define a function to generate config files

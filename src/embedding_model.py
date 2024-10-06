@@ -12,7 +12,6 @@ from langchain_community.embeddings import (
     OllamaEmbeddings,
 )
 from langchain_core.embeddings import Embeddings
-from langchain_core.pydantic_v1 import Extra, root_validator
 from pydantic import BaseModel
 
 
@@ -145,7 +144,7 @@ class CustomFastEmbedEmbeddings(BaseModel, Embeddings):
 
         extra = 'forbid'
 
-    @root_validator(allow_reuse=True)
+    #@root_validator(allow_reuse=True)
     def validate_environment(cls, values: Dict) -> Dict:
         """Validate that FastEmbed has been installed."""
         model_name = values.get("model_name")
