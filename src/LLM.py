@@ -171,10 +171,10 @@ class CustomChatModel:
             
         elif self.llm_provider == "sambanova":
             os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
-            self.context_window_size = 1024  # Example context window size
+            self.context_window_size = 8000  # Example context window size
             self.chat_model = ChatSambaNovaCloud(
                 model=self.llm_name,
-                max_tokens=2048,
+                max_tokens=1024,
                 temperature=self.llm_temperature,
                 top_k=1,
                 top_p=0.01,

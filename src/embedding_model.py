@@ -143,6 +143,7 @@ class CustomFastEmbedEmbeddings(BaseModel, Embeddings):
         """Configuration for this pydantic object."""
 
         extra = 'forbid'
+        protected_namespaces = ()
 
     #@root_validator(allow_reuse=True)
     def validate_environment(cls, values: Dict) -> Dict:

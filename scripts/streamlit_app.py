@@ -59,7 +59,7 @@ if st.sidebar.button(
     
 #add a copy to clipboard button to cpoy last chabot answer
 if "messages" in st.session_state and len(st.session_state['messages']) > 0:
-    print("MESSAGES: ", st.session_state['messages'])
+    #print("MESSAGES: ", st.session_state['messages'])
     st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
 
 # Initialize theme state if it doesn't exist

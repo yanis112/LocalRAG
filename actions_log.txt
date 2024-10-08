@@ -1,34 +1,17 @@
-1728236396.9077415 - Mouse Position: x=1286, y=756
-1728236398.919177 - Mouse Position: x=1419, y=836
-1728236399.962 - Event Type: click - Tag: BUTTON - ID: bnp_btn_accept - Class: bnp_btn_accept - CSS Selector: button#bnp_btn_accept - Frame Path: []
-1728236400.9374602 - Mouse Position: x=593, y=570
-1728236402.9432986 - Mouse Position: x=593, y=570
-1728236404.9644878 - Mouse Position: x=593, y=570
-1728236405.99 - Event Type: click - Tag: A - ID: create_btn_c - Class: land_login_create gi_btn_p gi_ns - CSS Selector: a#create_btn_c - Frame Path: []
-1728236405.996 - Event Type: click - Tag: SPAN - ID: create_btn - Class: N/A - CSS Selector: span#create_btn - Frame Path: []
-1728236406.980166 - Mouse Position: x=532, y=600
-1728236408.983127 - Mouse Position: x=550, y=707
-1728236411.001185 - Mouse Position: x=550, y=707
-1728236413.024068 - Mouse Position: x=801, y=530
-1728236412.807 - Event Type: click - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: []
-1728236415.0435107 - Mouse Position: x=801, y=530
-1728236417.0667903 - Mouse Position: x=801, y=530
-1728236419.0707371 - Mouse Position: x=904, y=664
-1728236419.184 - Event Type: change - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: [] - Value: yanisyanis545@gmail.com
-1728236419.291 - Event Type: click - Tag: DIV - ID: N/A - Class: ext-button-field-container ___30qpg70 f1euv43f f1yab3r1 fly5x3f fes3tcz f1vtoa19 fmp27j1 f16ez161 - CSS Selector: form#i0281 > div:nth-of-type(5) > div > div > div - Frame Path: []
-1728236421.0758734 - Mouse Position: x=1102, y=652
-1728236420.911 - Event Type: click - Tag: BUTTON - ID: idSIButton9 - Class: ext-primary ext-button ___n08lmr0 f1nxs5xn f1ern45e f1n71otn f1h8hb77 f1deefiw fxdtvjf fytdu2e f14t3ns0 f10ra9hq f11qrl6u f1y2xyjm fjlbh76 f10pi13n f6dzj5z f17mccla fz5stix f1p9o1ba f1sil6mw fmrv4ls f1cmbuwj f1cyt9o8 f1iretw8 fv6p4nl fnsf7x1 f8491dx fj5daoo fnmhfyr f1e35ql2 fatbyko f1grzc83 fb0xa7e fljg2da f1c2uykm f1eqj1rd f7n145z ft0kson ff472gp f4yyc7m fggejwh ft2aflc f9f7vaa fmjaa5u flutoqy f12qb2w f1s9iqzn f1o2wvfq fkbkaou fjk9nze f10kbna7 f9ex757 f1bn7qby f1yx5976 fqv895b - CSS Selector: button#idSIButton9 - Frame Path: []
-1728236422.175 - Event Type: click - Tag: INPUT - ID: i0118 - Class: N/A - CSS Selector: input#i0118 - Frame Path: []
-1728236423.1086566 - Mouse Position: x=839, y=543
-1728236425.1307135 - Mouse Position: x=839, y=543
-1728236427.137668 - Mouse Position: x=814, y=728
-1728236427.064 - Event Type: change - Tag: INPUT - ID: i0118 - Class: N/A - CSS Selector: input#i0118 - Frame Path: [] - Value: labeyrie07
-1728236427.184 - Event Type: click - Tag: DIV - ID: lightbox-cover - Class: ___1rbaixl fy6ml6n fk73vx1 f1ve553k f1bsuimh f1l02sjl fly5x3f f1euv43f f15twtuk f1vgc2s3 f1sr5fc f8kefer f9eofwr f1xxrpeh - CSS Selector: div#lightbox-cover - Frame Path: []
-1728236428.649 - Event Type: click - Tag: BUTTON - ID: idSIButton9 - Class: ext-primary ext-button ___n08lmr0 f1nxs5xn f1ern45e f1n71otn f1h8hb77 f1deefiw fxdtvjf fytdu2e f14t3ns0 f10ra9hq f11qrl6u f1y2xyjm fjlbh76 f10pi13n f6dzj5z f17mccla fz5stix f1p9o1ba f1sil6mw fmrv4ls f1cmbuwj f1cyt9o8 f1iretw8 fv6p4nl fnsf7x1 f8491dx fj5daoo fnmhfyr f1e35ql2 fatbyko f1grzc83 fb0xa7e fljg2da f1c2uykm f1eqj1rd f7n145z ft0kson ff472gp f4yyc7m fggejwh ft2aflc f9f7vaa fmjaa5u flutoqy f12qb2w f1s9iqzn f1o2wvfq fkbkaou fjk9nze f10kbna7 f9ex757 f1bn7qby f1yx5976 fqv895b - CSS Selector: button#idSIButton9 - Frame Path: []
-1728236429.142136 - Mouse Position: x=1094, y=699
-1728236431.1460986 - Mouse Position: x=913, y=632
-1728236430.869 - Event Type: click - Tag: SPAN - ID: N/A - Class: N/A - CSS Selector: div#pageContent > div > form > div:nth-of-type(3) > div > div > label > span - Frame Path: []
-1728236430.87 - Event Type: click - Tag: INPUT - ID: checkboxField - Class: N/A - CSS Selector: input#checkboxField - Frame Path: []
-1728236433.155249 - Mouse Position: x=1116, y=674
-1728236435.161035 - Mouse Position: x=1310, y=1033
-1728236437.186887 - Mouse Position: x=1144, y=959
+1728325754.673 - Event Type: click - Tag: A - ID: N/A - Class: N/A - CSS Selector: button#bnp_btn_accept > a - Frame Path: []
+1728325757.497 - Event Type: click - Tag: A - ID: create_btn_c - Class: land_login_create gi_btn_p gi_ns - CSS Selector: a#create_btn_c - Frame Path: []
+1728325757.498 - Event Type: click - Tag: SPAN - ID: create_btn - Class: N/A - CSS Selector: span#create_btn - Frame Path: []
+1728325760.96 - Event Type: click - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: []
+1728325761.3 - Event Type: click - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: []
+1728325768.113 - Event Type: click - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: []
+1728325768.793 - Event Type: click - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: []
+1728325769.528 - Event Type: change - Tag: INPUT - ID: i0116 - Class: N/A - CSS Selector: input#i0116 - Frame Path: [] - Value: yanisyanis545@gmail.com
+1728325769.631 - Event Type: click - Tag: DIV - ID: lightbox-cover - Class: ___1rbaixl fy6ml6n fk73vx1 f1ve553k f1bsuimh f1l02sjl fly5x3f f1euv43f f15twtuk f1vgc2s3 f1sr5fc f8kefer f9eofwr f1xxrpeh - CSS Selector: div#lightbox-cover - Frame Path: []
+1728325775.652 - Event Type: click - Tag: INPUT - ID: i0118 - Class: N/A - CSS Selector: input#i0118 - Frame Path: []
+1728325779.755 - Event Type: click - Tag: INPUT - ID: i0118 - Class: N/A - CSS Selector: input#i0118 - Frame Path: []
+1728325780.214 - Event Type: change - Tag: INPUT - ID: i0118 - Class: N/A - CSS Selector: input#i0118 - Frame Path: [] - Value: labeyrie07
+1728325780.322 - Event Type: click - Tag: DIV - ID: N/A - Class: ext-button-field-container ___30qpg70 f1euv43f f1yab3r1 fly5x3f fes3tcz f1vtoa19 fmp27j1 f16ez161 - CSS Selector: form#i0281 > div:nth-of-type(5) > div > div > div - Frame Path: []
+1728325785.153 - Event Type: click - Tag: SPAN - ID: N/A - Class: N/A - CSS Selector: div#pageContent > div > form > div:nth-of-type(3) > div > div > label > span - Frame Path: []
+1728325785.155 - Event Type: click - Tag: INPUT - ID: checkboxField - Class: N/A - CSS Selector: input#checkboxField - Frame Path: []
+1728325787.158 - Event Type: click - Tag: BUTTON - ID: acceptButton - Class: ext-primary ext-button ___n08lmr0 f1nxs5xn f1ern45e f1n71otn f1h8hb77 f1deefiw fxdtvjf fytdu2e f14t3ns0 f10ra9hq f11qrl6u f1y2xyjm fjlbh76 f10pi13n f6dzj5z f17mccla fz5stix f1p9o1ba f1sil6mw fmrv4ls f1cmbuwj f1cyt9o8 f1iretw8 fv6p4nl fnsf7x1 f8491dx fj5daoo fnmhfyr f1e35ql2 fatbyko f1grzc83 fb0xa7e fljg2da f1c2uykm f1eqj1rd f7n145z ft0kson ff472gp f4yyc7m fggejwh ft2aflc f9f7vaa fmjaa5u flutoqy f12qb2w f1s9iqzn f1o2wvfq fkbkaou fjk9nze f10kbna7 f9ex757 f1bn7qby f1yx5976 fqv895b - CSS Selector: button#acceptButton - Frame Path: []
+1728325791.161 - Event Type: click - Tag: A - ID: N/A - Class: gi_n_cls - CSS Selector: div#b_content > div:nth-of-type(5) > a - Frame Path: []

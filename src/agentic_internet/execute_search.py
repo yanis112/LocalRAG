@@ -45,7 +45,7 @@ def read_log_file(log_file_path):
     return actions
 
 if __name__ == "__main__":
-    acceleration_factor = 2  # Ajuster cette valeur pour accélérer ou ralentir les actions
+    acceleration_factor = 1  # Ajuster cette valeur pour accélérer ou ralentir les actions
 
     # Chemin vers le fichier de log
     log_file_path = "actions_log.txt"
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         pyautogui.click(100, 100)
 
     # Initialiser WebDriverWait
-    wait = WebDriverWait(driver, 20)
+    wait = WebDriverWait(driver, 5)
 
     # Enregistrer le temps de début
     start_time = time.time()
@@ -136,27 +136,38 @@ if __name__ == "__main__":
             css_selector = action.get('css_selector')
             frame_path = action.get('framepath', [])
             if css_selector:
-                try:
-                    switch_to_frame(frame_path)
-                    # Attendre que l'élément soit cliquable
-                    element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
-                    # Scroll l'élément dans la vue
-                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-                    time.sleep(0.5)
-                    element.click()
-                    print(f"Clic effectué sur l'élément avec le sélecteur CSS '{css_selector}'.")
-                except Exception as e:
-                    print(f"Erreur lors du clic sur l'élément avec le sélecteur CSS '{css_selector}': {e}")
+                max_attempts = 5
+                attempt = 0
+                element_found = False
+                while attempt < max_attempts and not element_found:
                     try:
-                        # Utiliser JavaScript pour cliquer sur l'élément
-                        driver.execute_script("arguments[0].click();", element)
+                        switch_to_frame(frame_path)
+                        # Attendre que l'élément soit présent
+                        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
+                        # Vérifier que l'élément est cliquable
+                        element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
+                        # Scroll l'élément dans la vue
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                        time.sleep(0.5)
+                        element.click()
+                        print(f"Clic effectué sur l'élément avec le sélecteur CSS '{css_selector}'.")
+                        element_found = True
+                    except Exception as e:
+                        attempt += 1
+                        print(f"Tentative {attempt} : Erreur lors du clic sur l'élément avec le sélecteur CSS '{css_selector}': {e}")
+                        time.sleep(1)  # Attendre avant de réessayer
+                    finally:
+                        driver.switch_to.default_content()
+                if not element_found:
+                    print(f"Échec du clic sur l'élément avec le sélecteur CSS '{css_selector}' après {max_attempts} tentatives.")
+                    # Essayer de cliquer via JavaScript
+                    try:
+                        driver.execute_script(f"document.querySelector('{css_selector}').click();")
                         print(f"Clic effectué via JavaScript sur l'élément avec le sélecteur CSS '{css_selector}'.")
                     except Exception as js_e:
                         print(f"Erreur lors du clic via JavaScript sur l'élément avec le sélecteur CSS '{css_selector}': {js_e}")
                         # Utiliser pyautogui en dernier recours
                         pyautogui.click()
-                finally:
-                    driver.switch_to.default_content()
             else:
                 # Si aucun sélecteur CSS n'est fourni, effectuer un clic via pyautogui
                 pyautogui.click()
@@ -165,19 +176,30 @@ if __name__ == "__main__":
             value = action.get('value')
             frame_path = action.get('framepath', [])
             if css_selector and value is not None:
-                try:
-                    switch_to_frame(frame_path)
-                    # Attendre que l'élément soit présent
-                    element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
-                    element.clear()
-                    element.send_keys(value)
-                    print(f"Valeur '{value}' saisie dans l'élément avec le sélecteur CSS '{css_selector}'.")
-                except Exception as e:
-                    print(f"Erreur lors de la modification de l'élément avec le sélecteur CSS '{css_selector}': {e}")
+                max_attempts = 5
+                attempt = 0
+                element_found = False
+                while attempt < max_attempts and not element_found:
+                    try:
+                        switch_to_frame(frame_path)
+                        # Attendre que l'élément soit présent
+                        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
+                        # S'assurer que l'élément est interactif
+                        element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
+                        element.clear()
+                        element.send_keys(value)
+                        print(f"Valeur '{value}' saisie dans l'élément avec le sélecteur CSS '{css_selector}'.")
+                        element_found = True
+                    except Exception as e:
+                        attempt += 1
+                        print(f"Tentative {attempt} : Erreur lors de la modification de l'élément avec le sélecteur CSS '{css_selector}': {e}")
+                        time.sleep(1)  # Attendre avant de réessayer
+                    finally:
+                        driver.switch_to.default_content()
+                if not element_found:
+                    print(f"Échec de la saisie dans l'élément avec le sélecteur CSS '{css_selector}' après {max_attempts} tentatives.")
                     # Utiliser pyautogui en dernier recours
                     pyautogui.typewrite(value, interval=0.05 / acceleration_factor)
-                finally:
-                    driver.switch_to.default_content()
             else:
                 print(f"Sélecteur CSS ou valeur manquant dans l'action : {action}")
         elif action['type'] == 'navigate':

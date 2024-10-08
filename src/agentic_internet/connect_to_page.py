@@ -3,16 +3,16 @@ import threading
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 import pyautogui
-import re
-import sys
-import platform
 from selenium.webdriver.common.by import By
 
 # Délais d'attente
 PAGE_LOAD_WAIT = 2  # Temps d'attente pour le chargement complet de la page
 URL_CHANGE_WAIT = 1  # Temps d'attente après un changement d'URL
-EVENT_RETRIEVE_INTERVAL = 0.01  # Intervalle de temps pour récupérer les événements
-MOUSE_TRACK_INTERVAL = 1  # Intervalle de temps pour suivre la position de la souris
+EVENT_RETRIEVE_INTERVAL = 0.005  # Intervalle de temps pour récupérer les événements
+MOUSE_TRACK_INTERVAL = 0.05  # Intervalle de temps pour suivre la position de la souris
+
+# Paramètre pour activer/désactiver le suivi de la position de la souris
+log_positions = False  # Définir sur True pour activer le suivi
 
 # Configuration du WebDriver
 driver = webdriver.Firefox(service=FirefoxService())  # Assurez-vous que geckodriver est dans votre PATH
@@ -98,6 +98,8 @@ event_listener_script = """
         if (win.hasEventListenersAdded) return;
         win.hasEventListenersAdded = true;
 
+        if (!win.eventLog) win.eventLog = [];
+
         win.document.addEventListener('click', function(event) {
             var element = getClickableParent(event.target) || event.target;
             var info = {
@@ -109,8 +111,9 @@ event_listener_script = """
                 cssSelector: getCssSelector(element),
                 framePath: getFramePath(win)
             };
-            if (!win.eventLog) win.eventLog = [];
             win.eventLog.push(info);
+            // Délai pour s'assurer que l'événement est loggé avant la navigation
+            setTimeout(function() {}, 100);
         }, true);
 
         win.document.addEventListener('change', function(event) {
@@ -125,7 +128,6 @@ event_listener_script = """
                 value: element.value || 'N/A',
                 framePath: getFramePath(win)
             };
-            if (!win.eventLog) win.eventLog = [];
             win.eventLog.push(info);
         }, true);
 
@@ -133,7 +135,18 @@ event_listener_script = """
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.addedNodes.length > 0) {
-                    // Vous pouvez attacher des écouteurs d'événements aux nouveaux éléments ici si nécessaire
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            // Si le nœud ajouté est une frame, ajouter des écouteurs
+                            if (node.tagName.toLowerCase() === 'iframe' || node.tagName.toLowerCase() === 'frame') {
+                                try {
+                                    addEventListeners(node.contentWindow);
+                                } catch (e) {
+                                    // Impossible d'accéder aux frames cross-origin
+                                }
+                            }
+                        }
+                    });
                 }
             });
         });
@@ -205,11 +218,12 @@ def retrieve_events():
             # Récupérer les événements de la fenêtre principale et des frames accessibles
             events = []
             def retrieve_events_from_window(win):
-                events.extend(win.execute_script("""
-                    var events = window.eventLog || [];
-                    window.eventLog = [];
-                    return events;
-                """))
+                win_events = win.execute_script("""
+                    return window.eventLog || [];
+                """)
+                # Effacer les événements récupérés
+                win.execute_script("window.eventLog = [];")
+                events.extend(win_events)
                 frames = win.find_elements(By.TAG_NAME, "iframe") + win.find_elements(By.TAG_NAME, "frame")
                 for frame in frames:
                     try:
@@ -225,12 +239,9 @@ def retrieve_events():
                 event_time = event['time'] / 1000.0  # millisecondes en secondes
                 if event_time > last_timestamp:
                     last_timestamp = event_time
-                    if event['type'] == 'navigate':
-                        action = f"Event Type: {event['type']} - Direction: {event.get('direction', '')} - URL: {event.get('url', '')}"
-                    else:
-                        action = f"Event Type: {event['type']} - Tag: {event['tag']} - ID: {event['id']} - Class: {event['class']} - CSS Selector: {event['cssSelector']} - Frame Path: {event.get('framePath', [])}"
-                        if event['type'] == 'change':
-                            action += f" - Value: {event.get('value', '')}"
+                    action = f"Event Type: {event['type']} - Tag: {event['tag']} - ID: {event['id']} - Class: {event['class']} - CSS Selector: {event['cssSelector']} - Frame Path: {event.get('framePath', [])}"
+                    if 'value' in event:
+                        action += f" - Value: {event.get('value', '')}"
                     log_action(action, event_time)
             time.sleep(EVENT_RETRIEVE_INTERVAL)
         except Exception as e:
@@ -254,10 +265,11 @@ def track_mouse_position():
         except:
             break
 
-# Démarrer le thread de suivi de la souris (facultatif)
-mouse_thread = threading.Thread(target=track_mouse_position)
-mouse_thread.daemon = True
-mouse_thread.start()
+# Démarrer le thread de suivi de la souris si log_positions est True
+if log_positions:
+    mouse_thread = threading.Thread(target=track_mouse_position)
+    mouse_thread.daemon = True
+    mouse_thread.start()
 
 # Attendre que l'utilisateur appuie sur Entrée pour arrêter l'enregistrement
 try:
