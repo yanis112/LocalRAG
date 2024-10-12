@@ -64,6 +64,11 @@ from src.utils import (
     text_preprocessing,
 )
 
+
+import logging
+
+from src.utils import log_execution_time
+
 # Load the environment variables (API keys, etc...)
 load_dotenv()
 
@@ -605,10 +610,9 @@ def truncate_path_to_data(path):
         return path
 
 
-@log_execution_time
 def remove_duplicate_chunks(chunks):
     """
-    Remove duplicate chunks from a list of chunks and create Document objects, add chunk length and fied to metadata, and clean the content.
+    Remove duplicate chunks from a list of chunks and create Document objects, add chunk length and field to metadata, and clean the content.
 
     Args:
         chunks (list): A list of Chunk objects.
@@ -635,13 +639,15 @@ def remove_duplicate_chunks(chunks):
 
         source = truncate_path_to_data(chunk.metadata["source"])
 
-        source_field = source.split("/")[1]  # Get the field from the source
-
-        # if "chatbot_history" in source:
-        #     print("Source_field:", source_field)
+        # Handle both forward and backward slashes and get the folder before the last part
+        source_parts = source.replace("\\", "/").split("/")
+        source_field = source_parts[-2] if len(source_parts) > 1 else source_parts[0]
 
         # obtain the modification date of the chunk based on the source
         modif_date = get_modif_date(chunk.metadata["source"])
+        
+        print("FIELD:", source_field)
+        print("Source:", source)
 
         total_chunks.append(
             Document(
@@ -655,7 +661,6 @@ def remove_duplicate_chunks(chunks):
             )
         )
     return total_chunks
-
 
 @log_execution_time
 def clone_database_chunks(
@@ -1766,86 +1771,51 @@ def query_database_v2(query, default_config, config={}):
     # Merge default_config and config. Values in config will override those in default_config.
     config = {**default_config, **config}
 
-    # we load the embedding model
-    embedding_model = get_embedding_model(model_name=config["embedding_model"])
-
     # We define the raw database
-    if "chroma" in config["persist_directory"]:
-        raw_database = Chroma(
-            persist_directory=config["persist_directory"],
-            embedding_function=embedding_model,
-        )  # database not in retriever form
-    elif "qdrant" in config["persist_directory"]:
-        get_vram_logging()
-        logging.info("Trying to load the qdrant database...")
-        raw_database = get_existing_qdrant(
-            persist_directory=config["persist_directory"],
-            embedding_model_name=config["embedding_model"],
+    get_vram_logging()
+    logging.info("Trying to load the qdrant database...")
+    raw_database = get_existing_qdrant(
+        persist_directory=config["persist_directory"],
+        embedding_model_name=config["embedding_model"],
+    )
+
+   
+    get_vram_logging()
+    logging.info("USING QDRANT SEARH KWARGS !")
+    search_kwargs = get_filtering_kwargs_qdrant(
+        source_filter=config["source_filter"],
+        source_filter_type=config["source_filter_type"],
+        field_filter=config["field_filter"],
+        field_filter_type=config["field_filter_type"],
+        length_threshold=config["length_threshold"],
+    )
+
+    # add a 'k' key to the search_kwargs dictionary
+    search_kwargs["k"] = config["nb_chunks"]
+    
+    print("SEARCH KWARGS:", search_kwargs)
+
+    logging.info("QUERY: %s", query)
+    logging.info("USED SEARCH KWARGS: %s", search_kwargs)
+
+    # if auto_hybrid_search is True, we extract the first word of the query and use it as a filter
+    if config["auto_hybrid_search"]:
+        config["hybrid_search"], config["word_filter"] = (
+            apply_auto_hybrid_search(query)
         )
 
-    # we define the search kwargs
-    if config["vectordb_provider"] == "Chroma":
-        search_kwargs = {"k": config["nb_chunks"]}
-        if config["filter_on_length"]:  # we filter on the length of the chunks
-            search_kwargs["filter"] = {
-                "chunk_length": {"$gt": config["length_threshold"]}
-            }
-
-        if config["enable_source_filter"]:  # we filter on the metadata
-            search_kwargs = apply_source_filter(
-                search_kwargs,
-                config["source_filter"],
-                config["source_filter_type"],
-            )
-            logging.info("FINAL_SEARCH_KWARGS:", search_kwargs)
-
-        # if auto_hybrid_search is True, we extract the first word of the query and use it as a filter
-        if config["auto_hybrid_search"]:
-            config["hybrid_search"], config["word_filter"] = (
-                apply_auto_hybrid_search(query)
-            )
-
-        # if hybrid_search is True, we use the hybrid search
-        if config["hybrid_search"]:  # we use the hybrid search
-            search_kwargs["where_document"] = {
-                "$contains": config["word_filter"]
-            }
-
-    elif config["vectordb_provider"] == "Qdrant":
-        get_vram_logging()
-        logging.info("USING QDRANT SEARH KWARGS !")
-        search_kwargs = get_filtering_kwargs_qdrant(
-            source_filter=config["source_filter"],
-            source_filter_type=config["source_filter_type"],
-            field_filter=config["field_filter"],
-            field_filter_type=config["field_filter_type"],
-            length_threshold=config["length_threshold"],
+    # if hybrid_search is True, we use the hybrid search
+    if config["hybrid_search"]:  # we use the hybrid search
+        search_kwargs["where_document"] = qdrant_models.Filter(
+            must=[
+                qdrant_models.FieldCondition(
+                    key="word_filter",
+                    match=qdrant_models.MatchValue(
+                        value=config["word_filter"]
+                    ),
+                )
+            ]
         )
-
-        # add a 'k' key to the search_kwargs dictionary
-        search_kwargs["k"] = config["nb_chunks"]
-
-        logging.info("QUERY: %s", query)
-        logging.info("USED SEARCH KWARGS: %s", search_kwargs)
-
-        # if auto_hybrid_search is True, we extract the first word of the query and use it as a filter
-        if config["auto_hybrid_search"]:
-            config["hybrid_search"], config["word_filter"] = (
-                apply_auto_hybrid_search(query)
-            )
-
-        # if hybrid_search is True, we use the hybrid search
-        if config["hybrid_search"]:  # we use the hybrid search
-            search_kwargs["where_document"] = qdrant_models.Filter(
-                must=[
-                    qdrant_models.FieldCondition(
-                        key="word_filter",
-                        match=qdrant_models.MatchValue(
-                            value=config["word_filter"]
-                        ),
-                    )
-                ]
-            )
 
     # DEFINE THE BASE RETRIEVER (Qdrant or Chroma)
     base_retriever = raw_database.as_retriever(
@@ -1857,15 +1827,6 @@ def query_database_v2(query, default_config, config={}):
         base_retriever = apply_multi_query_retriever(
             base_retriever, config["nb_chunks"]
         )
-
-    # BASE RETRIEVER TRANSFORMED INTO TOKEN COMPRESSION RETRIEVER
-    # if config["token_compression"]:
-    #     compressor = LLMLinguaCompressor(
-    #         model_name="microsoft/phi-2", device_map="cpu", target_token=4000 #ATTENTION: we use the CPU here
-    #     )
-    #     token_compression_retriever = ContextualCompressionRetriever(
-    #         base_compressor=compressor, base_retriever=base_retriever
-    #     )
 
     # LAUNCHING THE ADVANCED HYBRID SEARCH
     if config["advanced_hybrid_search"]:
@@ -2107,9 +2068,6 @@ def query_knowledge_graph_v2(
         }
 
 
-import logging
-
-from src.utils import log_execution_time
 
 
 @log_execution_time

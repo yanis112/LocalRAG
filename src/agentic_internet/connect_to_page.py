@@ -1,5 +1,6 @@
 import time
 import threading
+import browser_cookie3
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 import pyautogui
@@ -14,6 +15,9 @@ MOUSE_TRACK_INTERVAL = 0.05  # Intervalle de temps pour suivre la position de la
 # Paramètre pour activer/désactiver le suivi de la position de la souris
 log_positions = False  # Définir sur True pour activer le suivi
 
+# Charger les cookies depuis Brave
+cj = browser_cookie3.brave()
+
 # Configuration du WebDriver
 driver = webdriver.Firefox(service=FirefoxService())  # Assurez-vous que geckodriver est dans votre PATH
 
@@ -21,8 +25,30 @@ driver = webdriver.Firefox(service=FirefoxService())  # Assurez-vous que geckodr
 driver.set_window_position(0, 0)
 driver.maximize_window()
 
+# Ouvrir une page pour définir le domaine des cookies
+driver.get("https://www.instagram.com/aiandcivilization")
+
+# Ajouter les cookies au WebDriver
+print("Adding cookies to the WebDriver...")
+for cookie in cj:
+    cookie_dict = {
+        'name': cookie.name,
+        'value': cookie.value,
+        'domain': cookie.domain,
+        'path': cookie.path,
+        'expiry': int(cookie.expires) if cookie.expires else None,
+        'secure': bool(cookie.secure),
+        'httpOnly': bool(cookie.has_nonstandard_attr('HttpOnly'))
+    }
+    try:
+        driver.add_cookie(cookie_dict)
+    except Exception as e:
+        pass
+
+print("Cookies added successfully!")
+
 # Naviguer vers l'URL spécifiée
-url = "https://www.bing.com/images/create"
+url = "https://www.instagram.com/aiandcivilization"
 driver.get(url)
 
 # Attendre que la page se charge complètement

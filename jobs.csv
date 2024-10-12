@@ -1,0 +1,2055 @@
+"id","site","job_url","job_url_direct","title","company","location","job_type","date_posted","salary_source","interval","min_amount","max_amount","currency","is_remote","job_level","job_function","company_industry","listing_type","emails","description","company_url","company_url_direct","company_addresses","company_num_employees","company_revenue","company_description","logo_photo_url","banner_photo_url","ceo_name","ceo_photo_url"
+"1009478497518","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009478497518","","Business Analyst DATA / Reprise de données ERP","Reactis","Aix","","2024-10-08","direct_data","yearly",45000.0,55000.0,"EUR",False,"","","","organic","","Description de la prestation  
+
+  
+
+Dans le cadre de la mise en ?uvre de l?ERP IFS, nous recherchons un profil confirmé sur les travaux en lien avec la reprise de données.  
+
+  
+
+ Activités et tâches  
+
+  
+
+Analyse des besoins liés à la reprise des données  
+
+  
+
+  
+
+Spécifications fonctionnelles détaillées et mapping des données Source ? Cible  
+
+  
+
+  
+
+Accompagnement des développeurs  
+
+  
+
+  
+
+Analyse des données source, qualité et besoin de transcodification  
+
+  
+
+  
+
+Testing  
+
+  
+
+  
+
+Il faut que le profil ait déjà réalisé de la reprise de données dans le cadre d?un projet ERP et qu?il ait un profil plutôt comptable.  
+
+  
+
+  
+
+  
+
+Profil candidat:  
+
+De formation supérieure en informatique, vous justifiez d?une expérience significative sur un poste similaire.  
+
+  
+
+ Compétences requises :  
+
+  
+
+* Formalisation de spécifications
+
+
+  
+
+* Maîtrise du SQL
+
+
+  
+
+* Expérience Data / RDD : manipulation des données, qualité et fiabilisation
+
+
+  
+
+* Expérience ERP idéalement IFS
+
+
+  
+
+* Expérience sur les flux métier P2P et O2C
+
+
+  
+
+Vous êtes reconnu(e) pour votre autonomie, votre rigueur, votre sens du résultat et votre qualité rédactionnelle.","https://www.glassdoor.fr/Overview/W-EI_IE1314328.htm","","","","","","https://media.glassdoor.com/sql/1314328/réactis-groupe-squareLogo-1704979394804.png","","",""
+"1009478724609","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009478724609","","Supply Chain Data Analyst & Improver (H/F)","Airbus Helicopters SAS","","","2024-10-08","","","","","",False,"","","","sponsored","emsom@airbus.com","**Job Description:**
+
+Venez rejoindre notre équipe en tant que Supply Chain Data Analyst & Improver!
+
+
+**Votre environnement de travail :**
+
+  
+
+Pôle économique majeur avec l'aéroport Marseille-Provence, Marignane est une ville dynamique du sud-est de la France. Elle est située à proximité des villes d'Aix-en-Provence et de Marseille, qui abritent une riche offre culturelle et touristique.
+
+
+A proximité des plages de la Côte Bleue, elle offre de nombreuses possibilités d'activités nautiques.
+
+
+**Parce que nous prenons soin de vous :**
+
+* Avantages financiers : Salaire attractif, accords d’intéressement et de participation, plan d'épargne salariale abondé par Airbus, plan d’actionnariat salarié sur la base du volontariat, avec attribution d'actions gratuites en fonction du nombre d’actions souscrites.
+* Équilibre vie privée / professionnelle : Des jours de congés supplémentaires pour occasions spéciales et des options de transfert de congés, un comité d'entreprise proposant de nombreuses activités socio-culturelles et d’autres services.
+* Bien-être / santé : couverture complémentaire des frais de santé et de prévoyance (incapacité, invalidité, décès). Selon le site : centre de services de santé, services de conciergerie, salle de sport, application de covoiturage.
+* Développement individuel: des opportunités d’évolution et des possibilités de formations nombreuses (catalogue de plus de 10.000 e-formations disponibles en libre accès pour développer votre employabilité, certifications, programmes de développement accéléré, parcours expert, mobilité nationale et internationale).
+
+*Chez Airbus, nous vous aidons à travailler, à vous connecter et à collaborer plus facilement et de manière plus flexible. Partout où cela est possible, nous favorisons la flexibilité dans nos modes de travail afin de stimuler l'esprit d'innovation.*
+
+EDSM est responsable de la supply chain Airframe et travaille en collaboration avec le departement de gestion de la performance et de la mise en place de projets d’amélioration pour le Département Operational Procurement d’Airbus Helicopters (EDS), et nous recherchons actuellement la personne qui nous proposera des solutions de monitoring et d’analyse de performance pour alimenter notre amélioration continue.
+
+
+Avec notre équipe, vous supporterez la transformation digitale de notre département en utilisant les plateformes mises à disposition par l'informatique (Skywise, Spotfire,...)
+
+
+Vous devrez récolter les besoins managériaux et opérationnels de notre département, afin de concevoir et développer des analyses automatisées, avec leurs designs.
+
+
+Experience Utilisateur & Experience Interface.
+
+
+Cela signifie comprendre les processus et datas associées, savoir où les trouver (SAP, NCM, BW, Hdata,..), comment les traiter et les intégrer dans les plateformes informatiques.
+
+
+Vous soutiendrez enfin la montée en compétences de nos collaborateurs sur ces sujets. En développant et maintenant nos outils de pilotage de demain, vous serez au cœur de l'amélioration du département et participerez au succès de l'entreprise !
+
+
+Vos challenges:
+
+
+Vous supporterez la transformation digitale du département en utilisant les plateformes mises à disposition par l'informatique (Skywise, Spotfire,...)
+
+
+Vous participerez également au deploiement de l'ensemble des projets transverse et serait le reférent Improver chez EDSM et l'interface avec le secteur EDSPI pour le deploiement opérationel.
+
+
+Vous aurez également à charge de synthetiser la performance chez EDSM et proposez des axes d'amélioation.
+
+
+En développant et maintenant nos outils de pilotage de demain, vous serez au cœur de l'amélioration du département et participerez au succès de l'entreprise
+
+
+Votre profil:
+
+
+* Niveau BAC +5 Ingénieur ou Master généraliste, ou en Informatique, en Supply Chain ou équivalent
+* Bonnes connaissances de l'ERP SAP et de son architecture de données
+* Maîtrise de la plateforme Skywise et de Hdata
+* Compréhension de la data gouvernance
+* Codage (Python, VBA, Javascript, Spotfire)
+* Définition de use cases, user stories et force de proposition en UX / UI
+* Connaissances en supply chain (gestion de stock, adéquation ressource / besoin, planification, etc…)
+* Maîtrise Pack Office / Google Suite
+* Analyse et statistique
+* Méthodologie d’analyse de non performance et d’identification de root causes (5 whys / 8D etc)
+* Vous êtes rigoureux, curieux, et aimez trouver des solutions Vous avez de bonnes aptitudes en communication, savez animer des workshops, et avez une vraie capacité à présenter des sujets techniques complexes de manière simple et convaincante
+* Vous aimez apprendre des autres et savez être pédagogue
+* Vous avez déjà de l’expérience en pilotage de projet et en change conduct
+* Vous savez faire preuve d’autonomie et de prise d’initiative
+
+Niveau Linguistique:
+
+
+Anglais: courant (environnement interantional)
+
+
+Français: courant
+
+
+Ce poste nécessite une habilitation de sécurité ou nécessite d'être éligible à une habilitation par les autorités reconnues.
+
+
+*Vous ne matchez pas à 100%? Pas d'inquiétude! Airbus vous accompagnera dans votre plan de développement.*
+
+*Donnez une nouvelle dimension à votre carrière en candidatant maintenant!*
+
+*#LI-MN1*
+
+This job requires an awareness of any potential compliance risks and a commitment to act with integrity, as the foundation for the Company’s success, reputation and sustainable growth.
+
+
+**Company:**
+
+Airbus Helicopters SAS
+**Employment Type:**
+
+Permanent
+-
+
+
+Classe Emploi (France): Classe F12
+**Experience Level:**
+
+Professional
+**Job Family:**
+
+Digital <JF-IM-DI>
+By submitting your CV or application you are consenting to Airbus using and storing information about you for monitoring purposes relating to your application or future employment. This information will only be used by Airbus.
+  
+
+Airbus is committed to achieving workforce diversity and creating an inclusive working environment. We welcome all applications irrespective of social and cultural background, age, gender, disability, sexual orientation or religious belief.
+
+
+Airbus is, and always has been, committed to equal opportunities for all. As such, we will never ask for any type of monetary exchange in the frame of a recruitment process. Any impersonation of Airbus to do so should be reported to emsom@airbus.com .
+
+
+At Airbus, we support you to work, connect and collaborate more easily and flexibly. Wherever possible, we foster flexible working arrangements to stimulate innovative thinking.","","","","","","","","","",""
+"1009478382028","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009478382028","","Data Analyst H/F","Capgemini","Aix","","2024-10-08","","","","","",False,"","","","organic","","**TRAVAILLER CHEZ SOGETI AIX EN PROVENCE**
+------------------------------------------
+
+Que vos compétences soient métiers ou techniques rejoindre Sogeti, la marque du groupe Capgemini c'est : des équipes qui bousculent le monde du développement et du testing, intervenir dans un secteur innovant, évoluer sur des solutions variées : Web & Mobile, Java, PHP, Angular, automatisation de tests, tests de performance...
+
+
+Et surtout, tout cela n'existerait pas sans l'expertise des hommes et des femmes qui nous accompagnent.
+
+
+Découvrez Sogeti en 3 minutes !  
+
+
+
+**VOTRE RÔLE, VOTRE AVENIR**
+----------------------------
+
+En tant que Data analyst H/F, vous intégrerez une équipe projet dans un environnement agile en participant à à la mise en place d'une base de données et votre but est de faciliter les prises de décision de nos clients sur des environnements techniques.
+
+
+De formation supérieure en informatique vous disposez à minima d'une première expérience significative dans le domaine.
+
+
+Environnement technique : . SQL, Python, Qliksense, Spotfire, langage R, Bonne connaissance Base de données ( Oracle etc…)
+
+
+Votre sens du service, votre esprit d'équipe, et votre autonomie seront des atouts essentiels.  
+
+
+
+**C'EST QUOI LA SUITE ?**
+-------------------------
+
+Un processus de recrutement court, un accompagnement personnalisé, une évolution qui s'adapte à vous.  
+
+
+
+**LES PLUS DU POSTE**
+---------------------
+
+En plus de votre quotidien, vous pourrez partager vos savoirs, être formés, utiliser nos incubateurs pour innover. Si vous vous reconnaissez, postulez !
+
+
+Côté rémunération certes votre salaire mais aussi de la participation, de l'intéressement, un PERCO, une mutuelle, des TR, des congés d'ancienneté, un catalogue CE, un accord de télétravail et de parentalité et des horaires modulables.
+
+
+*Capgemini, entreprise handi accueillante, conformément à la norme ANFOR NF X50-783, est également signataire de le charte de la diversité en entreprise.*","https://www.glassdoor.fr/Overview/W-EI_IE28187.htm","","","","","","https://media.glassdoor.com/sql/28187/capgemini-engineering-squareLogo-1683293407841.png","","",""
+"1009478328473","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009478328473","","Data Scientist - Poste en cabinet d'expertise comptable H/F","Fulfillink","Marseille","","2024-10-08","direct_data","yearly",34000.0,42000.0,"EUR",False,"","","","organic","","**Qui recrute?**
+
+Un Cabinet d’Expertise Comptable dynamique basé dans le 12ème arrondissement de Marseille
+
+**Ce qu’ils proposent :**
+
+Un poste de Data Scientist en CDI au sein d’une structure composée d’une vingtaine de personnes
+
+**Ce qui la différencie et la rend attrayante :**
+
+* **Equipe dynamique et innovante,**
+* **Poste challengeant : jouer un rôle majeur dans la transformation digitale de leur métier**
+
+**Les missions confiées :** 
+
+En tant que Data Scientist, vous jouerez un rôle clé dans l’analyse et l’exploitation des données comptables et financières.
+
+* Collecte, structuration et analyse de données comptables et financières.
+* Développement de modèles prédictifs pour anticiper les tendances financières et conseiller les clients.
+* Optimisation des processus comptables via l’intelligence artificielle et l’automatisation.
+* Visualisation des données sous forme de tableaux de bord interactifs pour faciliter la prise de décision.
+* Collaboration avec les équipes comptables et financières pour comprendre les besoins et apporter des solutions data-driven.
+* Veille technologique pour identifier les nouvelles opportunités et solutions innovantes dans l'analyse de données.
+
+**Le profil recherché**
+
+* Diplôme supérieur en Data Science, statistiques, ingénierie
+* Expérience de deux ans minimum sur un poste similaire idéalement dans le secteur de la finance, de la comptabilité ou de l’audit.
+* Excellentes compétences en analyse de données, en modélisation statistique et en machine learning.
+* Maîtrise des outils de programmation (Python, R, SQL) et des solutions de visualisation de données (Tableau, PowerBI).
+
+*Envie d’en savoir plus, n’hésitez pas à me transmettre votre candidature. L’épanouissement professionnel et personnel est essentiel. Fulfillink en a conscience et place l'humain au cœur de ses priorités, offrant une approche personnalisée et de proximité aux candidats à la recherche d’un nouveau challenge.*
+
+Type d'emploi : Temps plein, CDI
+
+Rémunération : 34 000,00€ à 42 000,00€ par an
+
+Avantages :
+
+* Prise en charge du transport quotidien
+* RTT
+
+Horaires :
+
+* Du lundi au vendredi
+* Travail en journée
+
+Rémunération supplémentaire :
+
+* Primes
+
+Lieu du poste : En présentiel","","","","","","","","","",""
+"1009477152599","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009477152599","","Stage Data Science et IA H/F","Thales","Toulon","","2024-10-07","","","","","",False,"","","","organic","","**QUI SOMMES-NOUS ?**
+
+**Construisons ensemble un avenir de confiance**
+
+
+Thales est un leader mondial des hautes technologies spécialisé dans trois secteurs d’activité : Défense & Sécurité, Aéronautique & Spatial, et Cybersécurité & Identité numérique. Il développe des produits et solutions qui contribuent à un monde plus sûr, plus respectueux de l’environnement et plus inclusif. Le Groupe investit près de 4 milliards d’euros par an en Recherche & Développement, notamment dans des domaines clés de l’innovation tels que l’IA, la cybersécurité, le quantique, les technologies du cloud et la 6G. Thales compte près de 81 000 collaborateurs dans 68 pays.
+
+**Nos engagements,** **vos****avantages**
+
+* Une réussite commune portée par notre culture et excellence technologique, votre expérience et notre ambition partagée
+* Un package de rémunération attractif (épargne salariale, variable ou 13ième mois selon les postes, restaurant d’entreprise,…)
+* La possibilité de développer vos compétences en continu grâce à nos parcours de formation et nos académies internes #ENTREPRISEAPPRENANTE
+* Notre attention portée à votre équilibre personnel et professionnel (Accord télétravail, RTT, congés d’ancienneté, jours enfants malades, guide parentalité, crèches, CSE / ASC,… )
+* Des communautés internes permettant de vous engager sur les sujets qui vous tiennent à cœur : innovation, diversité, environnement
+* Un environnement inclusif et bienveillant où vous êtes accueilli et valorisé avec notre politique handi-accueillante, notre charte LGBT+, notre initiative #StOpe pour lutter contre le sexisme.
+
+
+Thales propose des systèmes d’information et de communication sécurisés et interopérables pour les forces armées, les forces de sécurité et les opérateurs d’importance vitale. Ces activités, qui regroupent radiocommunications, réseaux, systèmes de protection, systèmes d’information critiques et cybersécurité, répondent aux besoins de marchés où l’utilisation des nouvelles technologies numériques est déterminante. Thales intervient tout au long de la chaîne de valeur, des équipements aux systèmes en passant par le soutien logistique et les services associés.**QUI ETES VOUS ?**
+
+
+Ingénieur Data Science / Plateforme Data Science
+
+
+En **dernière année** de formation ingénieur dans le domaine mathématiques appliquées ou informatique avec des connaissances en méthodes statistiques.
+
+
+Vous recherchez un stage de 6 mois,
+
+
+Vous avez des compétences :
+
+* Programmation : langages de scripts (**python**), librairies de data analysis un plus (types **pandas python**), visualisation (matplotlib, frontend web type kibana), machine learning un plus (scikit-learn), compétences en dev web un plus.
+
+* Mathématiques / Statistiques : bonne connaissances en statistiques et / ou mathématiques appliquées et / ou recherche opérationnelle
+
+* Informatique / Bureautique : **OS Linux et windows**, Excel, Powerpoint, environnements de stockage (SGBDR, ElasticSearch, stockage objet etc)
+
+
+Vous avez la capacité d’établir le lien entre un domaine fonctionnel et les technologies dans le but de développer des axes de valorisation des données de nos clients.
+
+
+Vous disposez de qualités de créativité permettant de proposer de nouveaux usages dans le cadre d’offre de nouveaux services data.
+
+**CE QUE NOUS POUVONS ACCOMPLIR ENSEMBLE :**
+
+
+Au sein de la Direction SSC (Support et Service Client) qui est amenée à développer son offre de service en matière de solution de Data Analytics dans le domaine de l'exploitation et de la maintenance (HUMS, maintenance prédictive…). Vous serez en charge d' accompagner des Data Scientist et des experts métiers dans leurs missions d’exploration et de mise en œuvre d’algorithmes en environnement Big Data / Analytics (Dataiku / Postgresql, Elastic) et dans le déploiement et l’exploitation d’environnements de visualisation web (kibana, angular, etc).
+
+
+Vore rôle sera la mise en œuvre d’une plateforme data / la résolution de problèmes de traitements de données dans le domaine des opérations ou de la maintenance en support des Data Scientist.
+
+
+Tous nos stages sont conventionnés et soumis à une gratification dont le montant est déterminé selon votre niveau d’études.
+
+
+Thales reconnait tous les talents, la diversité est notre meilleur atout. Postulez et rejoignez nous !","https://www.glassdoor.fr/Overview/W-EI_IE10358.htm","","","","","","https://media.glassdoor.com/sql/10358/thales-squareLogo-1711111971327.png","","",""
+"1009477124198","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009477124198","","Data Scientist H/F","Pellenc ST","Pertuis","","2024-10-07","","","","","",False,"","","","organic","","L**’intelligence artificielle** est intégrée de façon croissante dans nos machines, pour répondre aux nouvelles exigences de tri. Afin d’accompagner ce déploiement industriel, une équipe projet dédiée développe activement l’ensemble des outils de DataOps / MLOps permettant de faciliter le développement, l’évaluation et le maintien en condition opérationnelle des réseaux exploités sur nos machines.
+
+  
+
+En tant que **Data Scientist**, vous serez rattaché(e) au Responsable Développement & Industrialisation de l’IA et aurez la charge de l’analyse et l’optimisation des modèles de prédiction basé sur l’IA :
+
+* Maintenir et garantir la qualité des données et modèles d’IA utilisés en production ;
+* Optimiser les différents modèles d’IA et leurs entrainements sur notre plateforme MLOps tout en contribuant à l’amélioration continue des outils sur base du retour d’expérience ;
+* Accompagner l’industrialisation des modèles en collaborant avec les équipes métiers (applicatives et logicielles) de l’élaboration du besoin à la validation et la qualification du modèle sur machine et sur site ;
+* Evaluer et implémenter de nouveaux modèles d’IA et méthode d’analyse de données via de la veille technologique sur les différents sujets d’intérêts pour l’entreprise.
+
+
+### **Profil**
+
+
+* Vous êtes ingénieur / DataScientist spécialisé dans les sujets de Machine Learning et/ou de l’IA.
+* Vous connaissez le principe des plans d’expériences et êtes en mesure d’analyser les résultats de ces plans ;
+* Vous êtes à l’aise avec les outils standards de traitement de données, Intelligence Artificielle ou Data Mining (Pytorch, Tensorflow, opencv, numpy, etc).
+* Vous disposez idéalement d’une expérience de deux ans sur un poste similaire ou un doctorat dans cette spécialité, une expérience passée sur des problématiques Deep Learning sur de l’image / vidéo serait un plus ;
+* Vous maîtrisez le français et l’anglais oral et écrit dans un contexte professionnel.
+* De nature rigoureuse, autonome et proactive, vous êtes prêt à relever des défis et vous vous intéressez aux enjeux et secteur du recyclage.
+
+
+**Localisation du poste**
+-------------------------
+
+### **Lieu**
+
+
+84240 Pertuis
+### **Pays**
+
+
+France
+
+**Critères candidat**
+---------------------
+
+### **Niveau d'études min. requis**
+
+
+4- Master ou MBA
+
+### **Niveau d'expérience min. requis**
+
+
+Inférieur à 2 ans","https://www.glassdoor.fr/Overview/W-EI_IE953134.htm","","","","","","https://media.glassdoor.com/sql/953134/pellenc-st-squarelogo-1534403950437.png","","",""
+"1009474855820","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009474855820","","Data analyst and tools performance - H/F","CVE Group","Marseille","","2024-10-05","","","","","",False,"","","","organic","","**QUI SOMMES-NOUS**
+
+
+Créée fin 2009, CVE est un **producteur français d'énergies renouvelables** qui développe, finance, construit et exploite des centrales **photovoltaïques**, des unités de **méthanisation** et des unités de production **d’hydrogène**.
+
+**E****ntreprise à mission** et labellisée B Corp, notre raison d’être est portée par nos équipes : ***« mettre l’humain et la planète au cœur des énergies de demain »***.
+
+  
+
+Aujourd'hui, CVE compte **plus de 450 collaborateurs** (dont 350 en France) répartis entre les missions commerciales, techniques (ingénierie, construction, exploitation), administratives et financières et tous engagés dans une aventure entrepreneuriale unique au service de la transition énergétique. En plaçant l’humain au cœur de son projet, CVE a forgé sa culture d'entreprise autour de 3 piliers : **l'épanouissement** individuel et collectif, **l'engagement** et **l'excellence**.
+
+
+CVE a pour ambition de bâtir, d'ici 2027, un parc d’une puissance de 2,4 GW et de devenir un **acteur de référence des énergies** renouvelables en circuit court au service des entreprises et territoires.
+
+
+http://www.cvegroup.com/
+
+ **LES MISSIONS QUE NOUS VOUS PROPOSONS**
+
+  
+
+Rattaché(e) à la Direction Technique Groupe, **vous collaborerez avec les différentes Business Units (France, USA, Afrique du Sud, Chili, Espagne) afin de soutenir les équipes d'exploitation de centrales solaires (et à terme, de biogaz et d’hydrogène) dans l'identification des sources de sous-performance par l'analyse de données brutes.**
+
+**Vos missions :**
+
+**Consolidation des bases de données :**
+
+* Identifier, consolider et préparer les bases de données nécessaires au fonctionnement des outils développés par le Pôle Performance & Data et à la réalisation des missions connexes (analyses de performance / data) ;
+* Mettre en place des routines visant à automatiser et fiabiliser l’acquisition des données brutes ;
+
+**Création et développement des outils** :
+
+* Définir, concevoir puis maintenir des outils d’analyse de données fonctionnels, utilisant notamment le langage informatique Python, ou équivalent. Ces outils visent à améliorer la performance des centrales et à les intégrer efficacement aux infrastructures d’exploitation (monitoring, reporting, aide à la décision) ;
+* Promouvoir et dispenser la formation aux collaborateurs sur l’utilisation de ces outils ;
+
+**Analyse de données** :
+
+* Examiner les données de production et de gisement (solaire, puis biomasse, etc.) des sites en sous-performance pour mettre en évidence des causes de ces sous-performances ;
+* Participer à des campagnes d’analyse de données sur des sujets transverses, même non directement liés à la performance des centrales, en incluant des études ad hoc ;
+* Contribuer à la promotion de l’activité data auprès des différentes entités du groupe (Finance, Juridique, etc.) ;
+
+**Mission connexes :**
+
+
+Assurer une veille technologique sur les méthodologies de création de bases de données, d'outils, et d'analyse de la performance.  
+
+* 
+
+  
+
+  
+
+**LE PROFIL QUE NOUS RECHERCHONS**
+
+  
+
+Vous avez une formation de **minimum Bac+5 et une expérience réussie dans le domaine de l’analyse de données**. Un background **technique** sur les secteurs solaire et biogaz seraient un plus.
+
+
+Vous avez la capacité à **animer des réunions de travail** et **proposez des outils d’aide à la décision**. Vous êtes **à l’aise en présentation devant des auditoires variés et multiculturels** et savez faire preuve de **pédagogie**. **Vous maîtrisez l’anglais**, l’espagnol serait un plus.
+
+
+Vous avez une appétence prononcée pour les outils informatiques et saurez participer au déploiement de nouvelles applications. Vous maitrisez notamment :
+
+* Les technologies API.
+* La programmation Python ou R, SQL, Power Query, DAX.
+* L’utilisation des outils de visualisations comme Power BI.
+* Les Technologies du Big Data : Hadoop, Spark, Kafka, Azure.
+
+
+Autonome avec un **fort sens d’analyse, rigoureux(se), organisé(e), proactif(ve) et dynamique**. Vous avez le sens du **relationnel** et savez être **force de proposition** dans vos missions. Vous êtes responsable, réactif(ve) et adaptable à des situations variées.
+
+
+Vous êtes convaincu(e) que les **énergies renouvelables** ont un rôle majeur à jouer dans l’avenir et souhaitez être acteur de ce changement. Vous avez envie de vous investir dans une jeune structure en plein développement, porteuse d’un projet d’entreprise ambitieux et passionnant**.**
+
+  
+
+
+
+
+Dans le cadre de sa politique Handicap, **CVE s'engage au quotidien** à étudier toutes les candidatures dont celles de **personnes en situation de handicap, de manière juste et égale.**
+
+ **CE QUE VOUS RETROUVEREZ CHEZ CVE**
+
+  
+
+* Possibilité d'évolution, de mobilité interne et de formation via la CVE Academy
+* Jusqu'à 13 jours de télétravail/mois, donnant droit à une indemnité de 240€/an
+* Intéressement
+* Avantages CSE
+* Tickets restaurants : 10€/jour (50% pris en charge par l'entreprise)
+* Indemnité mobilité durable
+* Primes de vacances et de cooptation
+* Des espaces de travail agréables et conviviaux
+* Mécénat de compétences : 35h/an pour s'engager auprès d'associations","https://www.glassdoor.fr/Overview/W-EI_IE1811582.htm","","","","","","https://media.glassdoor.com/sql/1811582/cap-vert-energie-squareLogo-1667897703886.png","","",""
+"1009475109608","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009475109608","","Data Analyst F/H","TPF Ingenierie","Marseille","","2024-10-05","","","","","",False,"","","","organic","","**Rejoignez-nous et faites avancer à grand pas l’ingénierie co-créative de demain !**
+
+**Plus en détail, TPF INGENIERI****E, Qui s****ommes nous ?**
+
+
+Société d’ingénierie active dans les secteurs du Bâtiment, des Infrastructures, de l’Eau/Environnement, de l’Energie/Maintenance, TPF Ingénierie est issue du regroupement de bureaux d’études régionaux et nationaux, opérant pour certains depuis plus de **60 ans** sur le territoire Français.
+
+**En quelques chiffres…**
+
+* 440 collaborateurs
+* 19 implantations
+* 9 Directions Régionales
+* 4 Départements spécialisés
+
+  
+
+**Que recherchons nous ?**
+
+
+En tant que **Data Analyst** F/H chez TPF Ingénierie, vous participerez activement à la transformation numérique de l’entreprise, en analysant différents types de données issues de nos processus internes. Avec l’appui de la cellule internationale « Innovation et Transformation Digitale » située au siège à Bruxelles, votre rôle sera d’offrir des solutions adaptées aux besoins de nos équipes en France.
+
+
+Ce poste pourra être localisé à **Marseille (siège de TPF Ingénierie),** Toulouse ou Paris.
+
+**Vos principales missions :**
+
+* Concevoir et maintenir des solutions de Business Intelligence pour le reporting dans les domaines, financier, qualité et RH...
+* Personnaliser et développer des solutions de collecte de données
+* Apporter un soutien aux équipes dans le cadre de la visualisation des données
+* Collaborer sur le plan national avec les équipes fonctionnelles pour identifier les opportunités d’amélioration de nos processus.
+
+
+**Le profil que nous recherchons ?**
+
+
+Diplômé(e) d’une formation supérieure Bac +3 à Bac +5 en STEM, vous disposez d’une expérience entre 1 et 3 ans sur un poste similaire en tant que Data Analyst.
+
+
+Vous avez des connaissances avancées sur Excel et de solides compétences en analyse et visualisation de données. Vous êtes familier (e) avec tous logiciels de BI (Power BI est un plus).
+
+
+Une expérience en Python et/ou SQL est un atout. De solides compétences rédactionnelles et analytiques sont également attendues sur le poste.
+
+**La maitrise de l’anglais est obligatoire**. Un intérêt pour l’ingénierie et/ou les sujets financiers constituent un plus.
+
+**Autonome, vous savez être force de proposition.** **Vous êtes reconnu(e ) pour votre créativité.**
+
+  
+
+
+**Comment s’organise notre processus de recrutement ?**
+
+**15 Jours, c’est le délai que nous souhaitons tenir pour conclure un process de recrutement.**
+
+**Les étapes sont définies de la manière suivante :**
+
+* Un premier échange téléphonique est organisé avec la responsable recrutement. L’occasion de pouvoir comprendre votre parcours, vos attentes et vous présenter l’opportunité.
+* Ensuite un deuxième entretien est organisé avec les opérationnels. De préférence en physique, cet entretien va vous permettre de rencontrer vos potentiels managers, détailler vos expériences, comprendre les enjeux du poste et pourquoi pas rencontrer les équipes !
+* Enfin, dernière ligne droite, un dernier entretien peut être organisé avec un membre de la Direction des Ressources Humaines, ce qui vous permettra d’avoir une vision globale de votre futur environnement de travail et de répondre à toutes vos questions.
+
+  
+
+**Notre offre**
+
+* Salaire de base + Prime de vacances
+* RTT et congés
+* Tickets restaurant
+* Mutuelle (non obligatoire) et prévoyance
+* Participation / Intéressement
+* Participation aux frais de transport en commun
+* Accord télétravail
+
+  
+
+Nos postes sont inclusifs et ouverts à compétences égales, aux candidatures de personnes ayant une reconnaissance en qualité de travailleur handicapé.","https://www.glassdoor.fr/Overview/W-EI_IE923333.htm","","","","","","https://media.glassdoor.com/sql/923333/s-n-bhobe-and-associates-squarelogo-1469190996395.png","","",""
+"1009472856853","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009472856853","","Stage - ML Engineer (DataScientist) - Aix en Provence","Gojob","Aix","","2024-10-03","","","","","",False,"","","","organic","","**Qui sommes-nous ?**
+Implantée en France et aux USA, Gojob est une plateforme de service pour l’emploi qui s’appuie sur ses propres technologies et données pour rendre le marché du travail plus fluide et accessible, et accompagner chaque individu avec dignité.  
+
+Chez Gojob, “We staff instantly, at scale and with care”.
+Membre trois années consécutives de la promotion French Tech FT120, deux fois saluée par le prestigieux classement du Financial Times, élue n°1 des Champions de la Croissance 2021 des Echos, Gojob continue son ascension sur le marché de l'emploi pour un impact social concret. **Notre ambition**
+“Proposer un accompagnement personnalisé à nos intérimaires quelque soit leur formation et leur expérience et permettre à nos clients de trouver instantanément les meilleurs profils répondant à leurs exigences. “  
+
+Pour faire la différence et offrir un modèle 100% tech intégré sur un marché de l’intérim traditionnel, nous avons créé et investi 12M€ en R&D dans notre laboratoire dédié à l'Intelligence Artificielle afin de développer notre technologie propriétaire. Fruit de 6 ans de recherche, nous avons aujourd’hui un écosystème tech et data qui révolutionne les process de recrutement et réinvente l'accompagnement de l’individu. Sourcing, matching, gestion, onboarding, suivi, formation… chez Gojob, la technologie est partout.  
+
+Avec une IA et des flux d'automatisation basés sur des données exclusives, notre stack tech nous permet de sourcer, sélectionner et valider des candidats :
+32x plus rapidement qu’une agence traditionnelle
+Plus qualitativement : 95% des profils recommandés automatiquement par l’IA sont embauchés et présents le premier jour.
+Tout en favorisant l’impact social : notre algorithme matche les candidats les plus pertinents au regard de + 100 dimensions observées, en prenant en compte les soft-skills et sans aucune discrimination.  
+
+Cet algorithme est monitoré par notre comité d’éthique qui veille à son intégrité. Il fait l’objet d’un brevet et nous avons publié plusieurs articles scientifiques sur le sujet. Reconnu pour son savoir-faire et souvent présenté dans les médias, le lab a su attirer des talents et des ingénieurs issus des meilleures formations en intelligence artificielle. **Pourquoi nous rejoindre:**
+Dans un environnement de forte croissance, et afin de répondre aux objectifs de scalabilité et de satisfaction client, mais aussi de poursuivre notre mission sociale d’accessibilité à l’emploi pour tous, nous renforçons notre équipe Data avec un stage de ML engineer/datascience basé à Aix-en-Provence.  
+
+La data est au cœur de la stratégie de Gojob. Notre équipe travaille quotidiennement sur du delivery avec un impact immédiat sur l’offre de service Gojob. Nos algorithmes en machine learning permettent de matcher offres et candidats et nos llm sont au centre du produit afin de qualifier les candidats et de capter leurs aspirations.
+Vous aurez l'opportunité unique de travailler avec un groupe de passionnés pour une innovation continue qui révolutionne le marché de l'emploi avec un impact social concret et réel. **Vos missions:**
+Vous travaillez en collaboration avec le Produit dans l’identification de sujets sur lesquels la data science peut avoir de l’impact au service du business et de la stratégie.  
+
+Vous aidez à modéliser les problèmes métiers puis construisez avec pragmatisme, déployez et maintenez les produits data science de bout en bout : scoring, matching, recommandation, sequence modelling, NLP, LLM.  
+
+Vous améliorez continuellement les produits data science existants comme notre algorithme de matching au service des recruteurs et des intérimaires ainsi que notre intelligence conversationnelle.
+Vous mesurez l’impact de vos travaux et vous assurez la pérennité de la performance des modèles mis en production. **Votre profil:**
+Vous êtes en cursus **BAC+5 ingénieur dans une TOP ECOLE**, dans un de ces domaines: informatique, stats, mathématiques et/ou data science, et vous cherchez un stage de fin d'études de 6 mois.
+Vous avez une bonne maîtrise de Python + SQL et idéalement une expérience sur des projets NLP.
+Vous souhaitez travailler avec Gitlab.
+Vous êtes de nature entreprenante, vous savez porter des initiatives et être un réel moteur de la stratégie data.
+Vous êtes capable de vulgariser des concepts complexes à des utilisateurs et de les expliquer avec humilité. **Quelle est notre stack technique DS ?**
+Language: Python (pandas, pytest, fast-api, pandera ...)
+Infra / Cloud: Google Cloud Platform
+Models: classification / regression with sklearn xgboost, transformers avec tensorflow / pytorch / sentence-transformers
+Storage: PostgreSQL, BigQuery, Cloud Storage, InfluxDB, PubSub
+ETL pipelines: DBT
+Deploy: Docker, Kubernetes, Vertex Pipelines (Kubeflow), Cloud Run
+CICD: Gitlab, ArgoCD
+Libraries: Poetry (ex: custom feature store)
+Monitoring: Grafana, APM **Ce que nous vous offrons :*** Une politique de télétravail flexible
+* Carte Swile (équivalent ticket resto) d’une valeur de 9€/jour pris en charge à 55% par Gojob
+* Prise en charge de 50% des titres de transport
+* Un forfait sport/culture à 150€/an
+* Une prime vacances
+
+ **Le processus de recrutement:**
+Un échange téléphonique avec Laurent (Talent Acquisition Manager)
+Un entretien avec Oliver (Head of data)
+Un échange technique avec l’équipe DataScience","https://www.glassdoor.fr/Overview/W-EI_IE2265183.htm","","","","","","https://media.glassdoor.com/sql/2265183/gojob-squarelogo-1561455942378.png","","",""
+"1009471675917","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009471675917","","DATA SCIENTIST H/F","Forum Emploi-Formation-Alternance: Talents Handicap","Toulon","","2024-10-03","","","","","",False,"","","","organic","","Acteur majeur du secteur de l'énergie en France, Enedis distribue l'électricité via le plus grand réseau électrique d'Europe. Présents sur 700 sites sur l'ensemble du territoire, nos 40 000 salariés bénéficient d'un terrain de jeu exceptionnel pour développer un réseau électrique de plus en plus intelligent, connecté et performant. Du raccordement au dépannage des clients en passant par la gestion des données, nos équipes s'engagent chaque jour à relever des défis techniques, technologiques et écologiques.  
+
+Indépendante, Enedis délivre la même qualité de service aux fournisseurs d'énergie. Comme le prévoit la loi, elle a établi un code de bonne conduite auquel ses collaborateurs sont formés afin d'en respecter les principes et engagements au quotidien.  
+
+Rejoindre Enedis, c'est intégrer une entreprise à mission, soucieuse de ses impacts environnementaux et sociétaux, soumise au principe de neutralité religieuse et politique et participer à une aventure humaine et collective unique.  
+
+Alors, prêt à intégrer la Team France électrique ?
+
+
+Vous souhaitez intégrer une équipe dynamique et participer activement à la transition énergétique : l'Agence de Conduite Régionale Côte d'Azur est faite pour vous ! Située à Toulon, elle couvre les départements du Var et des Alpes Maritimes. Elle assure le rôle de « tour de contrôle » du réseau électrique haute tension.  
+
+Le développement des énergies renouvelables (ENR), des flexibilités réseau et l'arrivée du véhicule électrique nécessite la mise en place d'un système de gestion des ressources énergétiques distribuées (DERMS). Vous aurez accès aux systèmes de contrôle de supervision et d'acquisition des données (SCADA) afin d'établir des outils basés sur des ressources énergétiques distribuées (DER)  
+
+Les avancées technologiques de ces dernières années en matière d'IoT's (objets connectés) ouvrent de nouvelles perspectives sur notre capacité à détecter et à réagir rapidement lors d'évènements survenant sur le réseau moyenne tension (HTA) et les postes sources (transformateurs 225 KV/ 20 KV). Il s'agit d'un enjeu clé pour Enedis et pour ces clients professionnels ou particuliers.  
+
+Vous serez particulièrement en charge de :  
+
+Recueillir les problématiques opérationnels et analyser les données nécessaires  
+
+Concevoir et rédiger des spécifications fonctionnelles, applicatives, et techniques  
+
+Collecter, nettoyer et analyser de grandes quantités de données  
+
+Implémenter et tester des solutions algorithmiques pour répondre à des problématiques métiers et optimiser leurs performances.  
+
+Développer des applications intranet d'exploration et de restitution de données  
+
+Assurer la maintenance évolutive et corrective des solutions développées  
+
+  
+
+Des missions d'appui managériale, en lien avec des sujets techniques pourront vous être confiés. 38 K€ à 46K€ pour un débutant selon le diplôme et au-delà en fonction de l'expérience acquise.  
+
+Au-delà de votre rémunération fixe, Enedis a à coeur de vous encourager sur vos résultats et dans votre bien-être au travail : prime sur les résultats individuels, forfait jours à 202 jours travaillés/an et prime de disponibilité associée, télétravail (10 jours max/mois), accès à un Compte Epargne Temps, package de protection sociale, tarifs réduits sur vos consommations d'énergie, intéressement et abondement sur Plans d'épargne, primes et congés spéciaux pour accompagner les évènements familiaux. Une aide au logement peut vous être proposée sous conditions.
+
+
+De formation type Bac+5 en statistique, informatique ou data sciences, vous êtes data scientist débutant ou confirmé et avez une appétence dans la résolution de problèmes dans un domaine fonctionnel à forte contraintes métier et haut niveau de sécurité. Des connaissances en électricité serait un plus dans ce métier.  
+
+Vous maîtrisez à titre d'exemple les langages, les outils et les plateformes suivantes :  
+
+Compétences en langages de programmation utilisés en Data Science (Python, R …).  
+
+Compétences en développement full stack serait un plus afin d'assurer un produit final utilisateur  
+
+Langage de base de données SQL, VQL et NoSQL.  
+
+  
+
+Vous serez amené(e) à travailler dans un environnement industriel stimulant, avec de nombreux projets à forte technicité. Vous serez totalement immergé dans les métiers opérationnels.  
+
+  
+
+Tout en étant soumise au principe de neutralité religieuse et politique, Enedis ouvre ses postes à toutes les compétences, toutes les énergies et toutes les personnalités sans exclusion. Conformément aux engagements pris par Enedis en faveur de l'accueil et de l'intégration des personnes en situation de handicap, cet emploi est ouvert à toutes et à tous sous réserve de l'aptitude médicale délivrée par la médecine du travail.
+
+*Assurez-vous d'avoir le diplôme correspondant à l'offre pour postuler.*
+
+
+\\n\\nAutonomie, Capacité d'analyse / Esprit de synthèse, Rigueur / Respect des consignesPackage","https://www.glassdoor.fr/Overview/W-EI_IE7516582.htm","","","","","","https://media.glassdoor.com/sql/7516582/groupe-talents-handicap-squarelogo-1661244636583.png","","",""
+"1009467024556","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009467024556","","Stage Data Analyst H/F","ONATERA","Aix","","2024-10-01","","","","","",False,"","","","organic","","### **À propos de nous**
+
+
+
+Chez Onatera, depuis plus de 12 ans, la nature nous inspire, nous guide, nous comble.
+
+
+Notre mission est simple : proposer un choix le plus large de produits et d’ingrédients naturels, efficaces et sensoriels à nos clients pour qu’ils prennent soin d’eux, de leur corps et de leur esprit.
+
+
+Cette approche holistique, nous pousse à sans cesse développer nos univers afin que nos clients puissent trouver en un seul et même endroit tout ce dont ils ont besoin pour prendre soin d'eux plus naturellement et plus durablement. Forts de notre expérience, et convaincus que nous pouvons offrir à nos clients des produits encore meilleurs et au meilleur prix, nous sommes devenus fabricant, et avons ouvert notre usine à Salon de Provence.
+
+
+Un grand pas qui permet aujourd'hui de proposer plus de 1500 produits, 300 plantes, 200 actifs naturels et 120 huiles essentielles pour que chaque client s’occupe de son corps, de son esprit et de son cœur.
+
+
+Intégrer Onatera c'est rejoindre un projet collectif, avec des équipes passionnées et unies par l’envie de rendre le bien-être au naturel accessible à tous.
+
+
+### **Mission**
+
+
+
+Vous êtes à la recherche d’un stage responsabilisant et vous avez envie de rejoindre une aventure dans laquelle chaque effort contribue au développement d’Onatera ?
+
+
+Rejoignez nos équipes pour un stage de 6 mois en tant que Data Analyst (h/f) à Aix en Provence. Au sein de la direction e-commerce, vous contribuez à l’analyse de la data pour optimiser le pilotage de l’ensemble des leviers d’acquisition online dans une logique d’acquisition à la fois performante et qualitative.
+
+
+Vos missions :
+
+* Participer au déploiement du plan d’acquisition Web (plan d’acquisition et de fidélisation des clients pertinent) avec notre agence et la direction e-commerce pour accompagner la croissance, dans le respect d’un cadre budgétaire préalablement défini.
+* Collecter, mesurer, optimiser, tester, mesurer encore la data…pour contribuer à l’augmentation du volume de conversion et pour suivre les performances des actions mises en place en acquisition.
+* Veille active sur les tendances et compilation des best practices.
+
+
+### **Profil**
+
+
+
+Pour ce projet, nous recherchons un étudiant qui a une bonne compréhension globale du fonctionnement du digital, des leviers pour acquérir du trafic, et, avec une sensibilité aux environnements BtoC. Les must have :
+
+* Vous êtes en formation en école de commerce ou universitaire spécialisation type marketing, data ou digital.
+* Vous possédez d’excellentes capacités analytiques pour évaluer et restituer les performances des actions.
+* Vous êtes curieux et faites preuve de pro-activité et de rigueur pour piloter vos projets efficacement.
+* Votre esprit d’équipe sera un atout pour collaborer avec les équipes Marketing/ CRM/ Communication ou encore Tech.
+* Vous maîtrisez Excel à un niveau avancé, la connaissance de Google analytics sera un plus.
+* Vous recherchez un stage dans le cadre de vos études dans un environnement dynamique et innovant.
+
+
+Ce poste est ouvert aux personnes en situation de handicap.
+
+
+Découvrez nos dernières actualités sur notre page LinkedIn & abonnez vous -> Onatera","https://www.glassdoor.fr/Overview/W-EI_IE1719219.htm","","","","","","https://media.glassdoor.com/sql/1719219/onatera-com-squarelogo-1633093356782.png","","",""
+"1009469139010","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009469139010","","Data scientist","Enedis","Toulon","","2024-10-01","direct_data","yearly",38200.0,46500.0,"EUR",False,"","","","organic","","**Data scientist**
+==================
+
+
+Systèmes d'information, Télécom et Numérique
+CDI
+* toulon (83)
+* BAC +4 / BAC +5
+* Expérience souhaitée :
+Débutants acceptés
+* De 38 200€ à 46 500€ brut annuel minimum
+* Début de contrat :
+04/11/2024
+* Titulaire d'un permis VL
+
+  
+Développer des solutions numériques innovantes pour accompagner la transition énergétique
+Traiter, analyser et sécuriser les données
+### **En détail**
+
+
+Vous souhaitez intégrer une équipe dynamique et participer activement à la transition énergétique : l’Agence de Conduite Régionale Côte d’Azur est faite pour vous ! Située à Toulon, elle couvre les départements du Var et des Alpes Maritimes. Elle assure le rôle de « tour de contrôle » du réseau électrique haute tension.
+
+
+Le développement des énergies renouvelables (ENR), des flexibilités réseau et l’arrivée du véhicule électrique nécessite la mise en place d’un système de gestion des ressources énergétiques distribuées (DERMS). Vous aurez accès aux systèmes de contrôle de supervision et d’acquisition des données (SCADA) afin d’établir des outils basés sur des ressources énergétiques distribuées (DER)
+
+
+Les avancées technologiques de ces dernières années en matière d’IoT’s (objets connectés) ouvrent de nouvelles perspectives sur notre capacité à détecter et à réagir rapidement lors d’évènements survenant sur le réseau moyenne tension (HTA) et les postes sources (transformateurs 225 KV/ 20 KV). Il s’agit d’un enjeu clé pour Enedis et pour ces clients professionnels ou particuliers.
+
+
+Vous serez particulièrement en charge de :
+
+* Recueillir les problématiques opérationnels et analyser les données nécessaires
+* Concevoir et rédiger des spécifications fonctionnelles, applicatives, et techniques
+* Collecter, nettoyer et analyser de grandes quantités de données
+* Implémenter et tester des solutions algorithmiques pour répondre à des problématiques métiers et optimiser leurs performances.
+* Développer des applications intranet d’exploration et de restitution de données
+* Assurer la maintenance évolutive et corrective des solutions développées
+
+
+Des missions d’appui managériale, en lien avec des sujets techniques pourront vous être confiés.
+
+
+  
+**Votre profil**
+----------------
+
+
+### **Ce que nous recherchons**
+
+
+De formation type Bac+5 en statistique, informatique ou data sciences, vous êtes data scientist confirmé et avez une appétence dans la résolution de problèmes dans un domaine fonctionnel à forte contraintes métier et haut niveau de sécurité. Des connaissances en électricité serait un plus dans ce métier.
+
+
+Vous maîtrisez à titre d’exemple les langages, les outils et les plateformes suivantes :
+
+* Compétences en langages de programmation utilisés en Data Science (Python, R …).
+* Compétences en développement full stack serait un plus afin d’assurer un produit final utilisateur  
+
+Langage de base de données SQL, VQL et NoSQL.
+
+Vous serez amené à travailler dans un environnement industriel stimulant, avec de nombreux projets à forte technicité. Vous serez totalement immergé dans les métiers opérationnels.
+
+
+Tout en étant soumise au principe de neutralité religieuse et politique, Enedis ouvre ses postes à toutes les compétences, toutes les énergies et toutes les personnalités sans exclusion. Conformément aux engagements pris par Enedis en faveur de l'accueil et de l'intégration des personnes en situation de handicap, cet emploi est ouvert à toutes et à tous sous réserve de l'aptitude médicale délivrée par la médecine du travail.
+
+### **Vos compétences**
+
+
+* Autonomie
+* Rigueur / Respect des consignes
+* Capacité d'analyse / Esprit de synthèse
+
+  
+**Votre rémunération et vos avantages**
+---------------------------------------
+
+
+38 K€ à 46K€ pour un débutant selon le diplôme et au-delà en fonction de l’expérience acquise.
+
+
+Au-delà de votre rémunération fixe, Enedis a à cœur de vous encourager sur vos résultats et dans votre bien-être au travail : prime sur les résultats individuels, forfait jours à 202 jours travaillés/an et prime de disponibilité associée, télétravail (10 jours max/mois), accès à un Compte Epargne Temps, package de protection sociale, tarifs réduits sur vos consommations d’énergie, intéressement et abondement sur Plans d’épargne, primes et congés spéciaux pour accompagner les évènements familiaux. Une aide au logement peut vous être proposée sous conditions.","https://www.glassdoor.fr/Overview/W-EI_IE697647.htm","","","","","","https://media.glassdoor.com/sql/697647/enedis-squareLogo-1678783821969.png","","",""
+"1009463829696","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009463829696","","Stage - Data Analyst","CMACGM","Marseille","","2024-09-28","","","","","",False,"","","","organic","","Dirigé par Rodolphe Saadé, le Groupe CMA CGM, un leader mondial du transport maritime et de la logistique, dessert plus de 420 ports dans le monde sur 5 continents. Avec sa filiale CEVA Logistics, et sa division de fret aérien CMA CGM AIR CARGO, le Groupe CMA CGM innove constamment pour proposer à ses clients une offre complète et toujours plus performante grâce à de nouvelles solutions maritimes, terrestres, aériennes et logistiques.
+  
+  
+
+Engagé dans la transition énergétique du transport maritime et pionnier dans l’utilisation de carburants alternatifs, le Groupe CMA CGM s’est fixé un objectif de Net Zéro Carbone d’ici 2050.
+  
+  
+
+À travers la Fondation CMA CGM, le Groupe agit également face à des crises humanitaires nécessitant une réponse d’urgence en mobilisant l’expertise maritime et logistique du Groupe pour acheminer partout dans le monde du matériel humanitaire.
+  
+  
+
+Présent dans 160 pays via son réseau de plus de 400 bureaux et 750 entrepôts, le Groupe emploie 155 000 personnes dans le monde, dont 4 000 à Marseille où est situé son siège social.
+  
+  
+
+MISSION
+  
+  
+
+Au sein de l’un des Directions Lignes Maritimes, vous êtes en charge d’analyses et de développement d’outils sur le suivi de et des performances commerciales du département en charge d’une zone géographique spécifique.
+  
+  
+
+RESPONSABILITES
+  
+  
+
+Dans ce cadre, vous êtes en charge de développer des outils et supports qui permettront à l’ensemble des équipes commerciales d’avoir une meilleure connaissance de l’évolution du marché et de la performance commerciale du secteur.
+  
+  
+
+En relation avec les différentes fonctions de la Ligne maritime (Commercial, Chargé(e) de flux maritimes, Business development et Contrôle de Gestion), vous participez à l’automatisation des outils qui vous permettra de réaliser un reporting de l’activité régulier. En support de l’équipe commerciale, vous réalisez des études et des analyses ponctuelles et les aidez au quotidien en effectuant les quotations en lien avec le réseau d’agents commerciaux à l’international.
+  
+  
+
+PROFIL ET COMPETENCES
+  
+  
+
+Actuellement étudiant(e) en Master 2 d’une Ecole de commerce ou d’Ingénieur, vous avez idéalement effectué un stage sur des fonctions similaires.
+  
+  
+
+Vous avez un très bon niveau d’anglais à l’écrit et à l’oral. Vous êtes également très rigoureux(se) et curieux(se).
+  
+  
+
+Vous avez un niveau élevé en Excel, et des connaissances en économie alliées à un esprit d’analyse vous permettront de réussir dans cette mission.
+  
+  
+
+Découvrez la démarche de développement durable du Groupe CMA CGM et son ambition de zéro émission de carbone d’ici 2050.
+  
+  
+
+Découvrez l'environnement de travail exceptionnel de CMA CGM.
+  
+  
+
+91,3% de nos stagiaires et apprentis recommandent le Groupe CMA CGM pour une expérience professionnelle !
+  
+  
+
+Visionnez leurs témoignages vidéo !","https://www.glassdoor.fr/Overview/W-EI_IE39992.htm","","","","","","https://media.glassdoor.com/sql/39992/cma-cgm-squarelogo-1499347154567.png","","",""
+"1009463829454","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009463829454","","Internship - Data Analyst","CMACGM","Marseille","","2024-09-28","","","","","",False,"","","","organic","","Led by Rodolphe Saadé, the CMA CGM Group, a global leader in shipping and logistics, serves more than 420 ports around the world on five continents. With its subsidiary CEVA Logistics, a world leader in logistics, and its air freight division CMA CGM AIR CARGO, the CMA CGM Group is continually innovating to offer its customers a complete and increasingly efficient range of new shipping, land, air and logistics solutions.
+  
+  
+
+Committed to the energy transition in shipping, and a pioneer in the use of alternative fuels, the CMA CGM Group has set a target to become Net Zero Carbon by 2050.
+  
+  
+
+Through the CMA CGM Foundation, the Group acts in humanitarian crises that require an emergency response by mobilizing the Group’s shipping and logistics expertise to bring humanitarian supplies around the world.
+  
+  
+
+Present in 160 countries through its network of more than 400 offices and 750 warehouses, the Group employs more than 155,000 people worldwide, including 4,000 in Marseilles where its head office is located.
+  
+  
+
+THE ROLE
+  
+  
+
+Within one of the Shipping Lines Departments, you will be in charge of analyzing and developing tools for monitoring the sales performance of the department in charge of a specific geographical area.
+  
+  
+
+RESPONSIBILITIES
+  
+  
+
+Within this framework, you are in charge of developing tools and supports that will enable all sales teams to have a better understanding of market trends and the sales performance of the sector. Working with the various functions within the Shipping Line (Sales, Shipping Flow Manager, Business Development and Management Control), you will participate in the automation of tools that will enable you to produce regular activity reports. In support of the sales team, you will carry out studies and analyses on an ad hoc basis, and assist them on a day-to-day basis by carrying out quotations in liaison with the network of international sales agents.
+  
+  
+
+PROFILE AND QUALIFICATIONS
+  
+  
+
+Currently a Master 2 student at a business or engineering school, you will ideally have completed an internship in a similar role. You have a very good level of written and spoken English. You are also very rigorous, analytical and curious. You have a high level of Excel skills, and knowledge of economics combined with an analytical mind will enable you to succeed in this mission.
+  
+  
+
+Find out more about CMA CGM Group's Sustainable Development approach and net zero carbon emissions by 2050 ambition.
+  
+  
+
+Find out more about CMA CGM exceptional work environment .
+  
+  
+
+91,3% of our interns and apprentices recommend CMA CGM Group for a professional experience!
+  
+  
+
+Watch their video testimonals!","https://www.glassdoor.fr/Overview/W-EI_IE39992.htm","","","","","","https://media.glassdoor.com/sql/39992/cma-cgm-squarelogo-1499347154567.png","","",""
+"1009462884919","glassdoor","https://www.glassdoor.fr/job-listing/j?jl=1009462884919","","Data Analyst Maritime H/F","Innova Solutions","Marseille","","2024-09-27","direct_data","yearly",40000.0,60000.0,"EUR",False,"","","","organic","","*En tant que société d’ingénierie scientifique et technique de premier ordre à travers l’Europe, Innova Solutions est chargée par des entreprises locales, nationales et internationales de trouver le bon candidat au bon moment. Innova déploie des solutions professionnelles pour nouer des partenariats basés sur la qualité, les résultats et la réussite mutuelle. Division d'une entreprise générant un chiffre d’affaires de 1,4 milliard de dollars, forte de 70 ans d'expérience, Innova Solutions possède les ressources, les connaissances et la passion nécessaires au succès de n’importe quelle mission.*
+
+*Nous recherchons un(e)* **Analyste de la performance des navires** dans le secteur Maritime/Naval chez l’un de nos clients.
+
+Notre client poursuit ses efforts pour décarboniser sa flotte, s'est lancée dans la numérisation, grâce au produit Smartship. L'objectif est de connecter la flotte, de collecter des données à haute fréquence, de les analyser pour obtenir des informations sur l'efficacité opérationnelle des machines et de prendre des mesures pour améliorer l'efficacité et réduire les émissions et la consommation.
+
+Au sein du département R&D et en coopération avec d'autres départements du groupe, votre mission sera de contrôler la qualité des données et la performance des navires.
+
+:
+
+· Contrôler et analyser les données relatives aux performances du navire, y compris la consommation de carburant, la vitesse, la puissance et d'autres paramètres opérationnels ;
+
+· Identifier et approfondir les problèmes de performance, les écarts ou les anomalies et formuler des recommandations en vue d'une amélioration. Effectuer une analyse des causes profondes des performances insuffisantes et des inefficacités, et proposer des mesures correctives permettant d'améliorer l'efficacité à bord ;
+
+· Collaborer avec l'équipage des navires, les surintendants et les équipes d'experts techniques afin de recueillir des données supplémentaires et de prendre des mesures pour améliorer la situation ;
+
+· Préparer des présentations pour les parties prenantes internes ou externes, la direction et les clients, en fournissant un retour d'information sur les données opérationnelles analysées ;
+
+· Participer à l'élaboration de rapports de performance, de tableaux de bord et d'alertes afin de faciliter la détection et l'analyse des problèmes de performance.
+
+· Effectuer une analyse des tendances afin d'identifier les schémas opérationnels et les domaines potentiels d'amélioration, en utilisant des outils de science des données et/ou en collaborant avec l'équipe de science des données ;
+
+· Se tenir au courant des tendances du secteur, des meilleures pratiques, des réglementations et des lignes directrices ;
+
+Compétences requises :
+
+· Expertise sur les outils de contrôle de performance et/ou les logiciels d'analyse de données, et les outils de business intelligence (par exemple Tableau, Qlik Sense, PowerBI, ...) ;
+
+· Connaissance du fonctionnement des navires, des systèmes de propulsion et de la réglementation maritime, bonne compréhension physique des sujets liés aux performances des navires ;
+
+· La maîtrise de MS Office est considérée comme indispensable ;
+
+· Solides compétences en matière d'analyse et de résolution de problèmes, avec la capacité d'interpréter et de manipuler de vastes ensembles de données ;
+
+· Il est souhaitable d'avoir :
+
+Une familiarité avec les méthodologies/techniques statistiques
+
+De bonnes connaissances des langages de programmation, tels que Python, SQL, etc ;
+
+· Excellentes aptitudes à la communication pour transmettre efficacement des informations techniques complexes à des équipes non techniques ;
+
+· Capacité à travailler en collaboration dans un environnement d'équipe et à gérer plusieurs projets simultanément ;
+
+· Souci du détail et capacité à travailler dans des délais serrés ;
+
+· La connaissance des mesures d'efficacité énergétique et des réglementations environnementales dans le secteur maritime est un atout ;
+
+Profil recherché :
+
+· Un master en génie maritime, en architecture navale ou dans un domaine connexe est requise ;
+
+· Expérience avérée dans une fonction similaire, de préférence dans le secteur maritime en navigation (minimum 2 ans) ;
+
+· Capacité à s'engager et à travailler efficacement avec un large éventail de parties prenantes.
+
+*Et si vous rejoigniez un acteur majeur incontournable du transport maritime en France qui développe sa vision au quotidien ?*
+
+*N'hésitez pas à postuler !*
+
+Type d'emploi : Temps plein, CDI
+
+Rémunération : 40 000,00€ à 60 000,00€ par an
+
+Formation:
+
+* Bac +5 (Master / MBA) (Optionnel)
+
+Expérience:
+
+* maritime: 1 an (Requis)
+
+Langue:
+
+* Anglais (Requis)
+
+Lieu du poste : En présentiel","","","","","","","","","",""
+"f3500d265ca4eeb2","indeed","https://fr.indeed.com/viewjob?jk=f3500d265ca4eeb2","https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Marseille-Area/Supply-Chain-Data-Analyst---Improver--H-F-_JR10267223","Supply Chain Data Analyst & Improver (H/F)","Airbus","Marignane, B8, FR","fulltime","2024-10-08","","","","","",False,"","","","","emsom@airbus.com","**Job Description:**
+
+Venez rejoindre notre équipe en tant que Supply Chain Data Analyst & Improver!
+
+
+**Votre environnement de travail :**
+
+  
+
+Pôle économique majeur avec l'aéroport Marseille-Provence, Marignane est une ville dynamique du sud-est de la France. Elle est située à proximité des villes d'Aix-en-Provence et de Marseille, qui abritent une riche offre culturelle et touristique.
+
+
+A proximité des plages de la Côte Bleue, elle offre de nombreuses possibilités d'activités nautiques.
+
+
+**Parce que nous prenons soin de vous :**
+
+* Avantages financiers : Salaire attractif, accords d’intéressement et de participation, plan d'épargne salariale abondé par Airbus, plan d’actionnariat salarié sur la base du volontariat, avec attribution d'actions gratuites en fonction du nombre d’actions souscrites.
+* Équilibre vie privée / professionnelle : Des jours de congés supplémentaires pour occasions spéciales et des options de transfert de congés, un comité d'entreprise proposant de nombreuses activités socio-culturelles et d’autres services.
+* Bien-être / santé : couverture complémentaire des frais de santé et de prévoyance (incapacité, invalidité, décès). Selon le site : centre de services de santé, services de conciergerie, salle de sport, application de covoiturage.
+* Développement individuel: des opportunités d’évolution et des possibilités de formations nombreuses (catalogue de plus de 10.000 e-formations disponibles en libre accès pour développer votre employabilité, certifications, programmes de développement accéléré, parcours expert, mobilité nationale et internationale).
+
+*Chez Airbus, nous vous aidons à travailler, à vous connecter et à collaborer plus facilement et de manière plus flexible. Partout où cela est possible, nous favorisons la flexibilité dans nos modes de travail afin de stimuler l'esprit d'innovation.*
+
+EDSM est responsable de la supply chain Airframe et travaille en collaboration avec le departement de gestion de la performance et de la mise en place de projets d’amélioration pour le Département Operational Procurement d’Airbus Helicopters (EDS), et nous recherchons actuellement la personne qui nous proposera des solutions de monitoring et d’analyse de performance pour alimenter notre amélioration continue.
+
+
+Avec notre équipe, vous supporterez la transformation digitale de notre département en utilisant les plateformes mises à disposition par l'informatique (Skywise, Spotfire,...)
+
+
+Vous devrez récolter les besoins managériaux et opérationnels de notre département, afin de concevoir et développer des analyses automatisées, avec leurs designs.
+
+
+Experience Utilisateur & Experience Interface.
+
+
+Cela signifie comprendre les processus et datas associées, savoir où les trouver (SAP, NCM, BW, Hdata,..), comment les traiter et les intégrer dans les plateformes informatiques.
+
+
+Vous soutiendrez enfin la montée en compétences de nos collaborateurs sur ces sujets. En développant et maintenant nos outils de pilotage de demain, vous serez au cœur de l'amélioration du département et participerez au succès de l'entreprise !
+
+
+Vos challenges:
+
+
+Vous supporterez la transformation digitale du département en utilisant les plateformes mises à disposition par l'informatique (Skywise, Spotfire,...)
+
+
+Vous participerez également au deploiement de l'ensemble des projets transverse et serait le reférent Improver chez EDSM et l'interface avec le secteur EDSPI pour le deploiement opérationel.
+
+
+Vous aurez également à charge de synthetiser la performance chez EDSM et proposez des axes d'amélioation.
+
+
+En développant et maintenant nos outils de pilotage de demain, vous serez au cœur de l'amélioration du département et participerez au succès de l'entreprise
+
+
+Votre profil:
+
+
+* Niveau BAC +5 Ingénieur ou Master généraliste, ou en Informatique, en Supply Chain ou équivalent
+* Bonnes connaissances de l'ERP SAP et de son architecture de données
+* Maîtrise de la plateforme Skywise et de Hdata
+* Compréhension de la data gouvernance
+* Codage (Python, VBA, Javascript, Spotfire)
+* Définition de use cases, user stories et force de proposition en UX / UI
+* Connaissances en supply chain (gestion de stock, adéquation ressource / besoin, planification, etc…)
+* Maîtrise Pack Office / Google Suite
+* Analyse et statistique
+* Méthodologie d’analyse de non performance et d’identification de root causes (5 whys / 8D etc)
+* Vous êtes rigoureux, curieux, et aimez trouver des solutions Vous avez de bonnes aptitudes en communication, savez animer des workshops, et avez une vraie capacité à présenter des sujets techniques complexes de manière simple et convaincante
+* Vous aimez apprendre des autres et savez être pédagogue
+* Vous avez déjà de l’expérience en pilotage de projet et en change conduct
+* Vous savez faire preuve d’autonomie et de prise d’initiative
+
+Niveau Linguistique:
+
+
+Anglais: courant (environnement interantional)
+
+
+Français: courant
+
+
+Ce poste nécessite une habilitation de sécurité ou nécessite d'être éligible à une habilitation par les autorités reconnues.
+
+
+*Vous ne matchez pas à 100%? Pas d'inquiétude! Airbus vous accompagnera dans votre plan de développement.*
+
+*Donnez une nouvelle dimension à votre carrière en candidatant maintenant!*
+
+*#LI-MN1*
+
+This job requires an awareness of any potential compliance risks and a commitment to act with integrity, as the foundation for the Company’s success, reputation and sustainable growth.
+
+
+**Company:**
+
+Airbus Helicopters SAS
+**Employment Type:**
+
+Permanent
+-
+
+
+Classe Emploi (France): Classe F12
+**Experience Level:**
+
+Professional
+**Job Family:**
+
+Digital <JF-IM-DI>
+By submitting your CV or application you are consenting to Airbus using and storing information about you for monitoring purposes relating to your application or future employment. This information will only be used by Airbus.
+  
+
+Airbus is committed to achieving workforce diversity and creating an inclusive working environment. We welcome all applications irrespective of social and cultural background, age, gender, disability, sexual orientation or religious belief.
+
+
+Airbus is, and always has been, committed to equal opportunities for all. As such, we will never ask for any type of monetary exchange in the frame of a recruitment process. Any impersonation of Airbus to do so should be reported to emsom@airbus.com .
+
+
+At Airbus, we support you to work, connect and collaborate more easily and flexibly. Wherever possible, we foster flexible working arrangements to stimulate innovative thinking.","https://fr.indeed.com/cmp/Airbus-e4b213b1","https://www.airbus.com","Toulouse","10,000+","more than $10B (USD)","We pioneer sustainable aerospace for a safe and united world.","","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/99f33b5440cc3dd93ccd5dcbb3d7b0ff","Guillaume Faury","https://d2q79iu7y748jz.cloudfront.net/s/_ceophoto/512x512/61318a90b3a5a4ab7a5ff01664439d05"
+"2ec58ca43ef27377","indeed","https://fr.indeed.com/viewjob?jk=2ec58ca43ef27377","http://fr.indeed.com/job/data-scientist-poste-en-cabinet-dexpertise-comptable-hf-2ec58ca43ef27377","Data Scientist - Poste en cabinet d'expertise comptable H/F","Fulfillink","Marseille 12e, B8, FR","fulltime","2024-10-08","","","","","",False,"","","","","","**Qui recrute?**
+
+Un Cabinet d’Expertise Comptable dynamique basé dans le 12ème arrondissement de Marseille
+
+**Ce qu’ils proposent :**
+
+Un poste de Data Scientist en CDI au sein d’une structure composée d’une vingtaine de personnes
+
+**Ce qui la différencie et la rend attrayante :**
+
+* **Equipe dynamique et innovante,**
+* **Poste challengeant : jouer un rôle majeur dans la transformation digitale de leur métier**
+
+**Les missions confiées :** 
+
+En tant que Data Scientist, vous jouerez un rôle clé dans l’analyse et l’exploitation des données comptables et financières.
+
+* Collecte, structuration et analyse de données comptables et financières.
+* Développement de modèles prédictifs pour anticiper les tendances financières et conseiller les clients.
+* Optimisation des processus comptables via l’intelligence artificielle et l’automatisation.
+* Visualisation des données sous forme de tableaux de bord interactifs pour faciliter la prise de décision.
+* Collaboration avec les équipes comptables et financières pour comprendre les besoins et apporter des solutions data-driven.
+* Veille technologique pour identifier les nouvelles opportunités et solutions innovantes dans l'analyse de données.
+
+**Le profil recherché**
+
+* Diplôme supérieur en Data Science, statistiques, ingénierie
+* Expérience de deux ans minimum sur un poste similaire idéalement dans le secteur de la finance, de la comptabilité ou de l’audit.
+* Excellentes compétences en analyse de données, en modélisation statistique et en machine learning.
+* Maîtrise des outils de programmation (Python, R, SQL) et des solutions de visualisation de données (Tableau, PowerBI).
+
+*Envie d’en savoir plus, n’hésitez pas à me transmettre votre candidature. L’épanouissement professionnel et personnel est essentiel. Fulfillink en a conscience et place l'humain au cœur de ses priorités, offrant une approche personnalisée et de proximité aux candidats à la recherche d’un nouveau challenge.*
+
+Type d'emploi : Temps plein, CDI
+
+Rémunération : 34 000,00€ à 42 000,00€ par an
+
+Avantages :
+
+* Prise en charge du transport quotidien
+* RTT
+
+Horaires :
+
+* Du lundi au vendredi
+* Travail en journée
+
+Rémunération supplémentaire :
+
+* Primes
+
+Lieu du poste : En présentiel","https://fr.indeed.com/cmp/Fulfillink","","","","","","","","",""
+"47c181ceb41df9a7","indeed","https://fr.indeed.com/viewjob?jk=47c181ceb41df9a7","https://careers.thalesgroup.com/global/en/job/TGPTGWGLOBALR0264990EXTERNALENGLOBAL/Stage-Data-Science-et-IA-H-F?utm_source=indeed&utm_medium=phenom-feeds","Stage Data Science et IA H/F","Thales","Toulon, B8, FR","fulltime","2024-10-07","","","","","",False,"","","","","","**QUI SOMMES-NOUS ?**
+
+**Construisons ensemble un avenir de confiance**
+
+
+Thales est un leader mondial des hautes technologies spécialisé dans trois secteurs d’activité : Défense & Sécurité, Aéronautique & Spatial, et Cybersécurité & Identité numérique. Il développe des produits et solutions qui contribuent à un monde plus sûr, plus respectueux de l’environnement et plus inclusif. Le Groupe investit près de 4 milliards d’euros par an en Recherche & Développement, notamment dans des domaines clés de l’innovation tels que l’IA, la cybersécurité, le quantique, les technologies du cloud et la 6G. Thales compte près de 81 000 collaborateurs dans 68 pays.
+
+**Nos engagements,** **vos****avantages**
+
+* Une réussite commune portée par notre culture et excellence technologique, votre expérience et notre ambition partagée
+* Un package de rémunération attractif (épargne salariale, variable ou 13ième mois selon les postes, restaurant d’entreprise,…)
+* La possibilité de développer vos compétences en continu grâce à nos parcours de formation et nos académies internes #ENTREPRISEAPPRENANTE
+* Notre attention portée à votre équilibre personnel et professionnel (Accord télétravail, RTT, congés d’ancienneté, jours enfants malades, guide parentalité, crèches, CSE / ASC,… )
+* Des communautés internes permettant de vous engager sur les sujets qui vous tiennent à cœur : innovation, diversité, environnement
+* Un environnement inclusif et bienveillant où vous êtes accueilli et valorisé avec notre politique handi-accueillante, notre charte LGBT+, notre initiative #StOpe pour lutter contre le sexisme.
+
+
+Thales propose des systèmes d’information et de communication sécurisés et interopérables pour les forces armées, les forces de sécurité et les opérateurs d’importance vitale. Ces activités, qui regroupent radiocommunications, réseaux, systèmes de protection, systèmes d’information critiques et cybersécurité, répondent aux besoins de marchés où l’utilisation des nouvelles technologies numériques est déterminante. Thales intervient tout au long de la chaîne de valeur, des équipements aux systèmes en passant par le soutien logistique et les services associés.**QUI ETES VOUS ?**
+
+
+Ingénieur Data Science / Plateforme Data Science
+
+
+En **dernière année** de formation ingénieur dans le domaine mathématiques appliquées ou informatique avec des connaissances en méthodes statistiques.
+
+
+Vous recherchez un stage de 6 mois,
+
+
+Vous avez des compétences :
+
+* Programmation : langages de scripts (**python**), librairies de data analysis un plus (types **pandas python**), visualisation (matplotlib, frontend web type kibana), machine learning un plus (scikit-learn), compétences en dev web un plus.
+
+* Mathématiques / Statistiques : bonne connaissances en statistiques et / ou mathématiques appliquées et / ou recherche opérationnelle
+
+* Informatique / Bureautique : **OS Linux et windows**, Excel, Powerpoint, environnements de stockage (SGBDR, ElasticSearch, stockage objet etc)
+
+
+Vous avez la capacité d’établir le lien entre un domaine fonctionnel et les technologies dans le but de développer des axes de valorisation des données de nos clients.
+
+
+Vous disposez de qualités de créativité permettant de proposer de nouveaux usages dans le cadre d’offre de nouveaux services data.
+
+**CE QUE NOUS POUVONS ACCOMPLIR ENSEMBLE :**
+
+
+Au sein de la Direction SSC (Support et Service Client) qui est amenée à développer son offre de service en matière de solution de Data Analytics dans le domaine de l'exploitation et de la maintenance (HUMS, maintenance prédictive…). Vous serez en charge d' accompagner des Data Scientist et des experts métiers dans leurs missions d’exploration et de mise en œuvre d’algorithmes en environnement Big Data / Analytics (Dataiku / Postgresql, Elastic) et dans le déploiement et l’exploitation d’environnements de visualisation web (kibana, angular, etc).
+
+
+Vore rôle sera la mise en œuvre d’une plateforme data / la résolution de problèmes de traitements de données dans le domaine des opérations ou de la maintenance en support des Data Scientist.
+
+
+Tous nos stages sont conventionnés et soumis à une gratification dont le montant est déterminé selon votre niveau d’études.
+
+
+Thales reconnait tous les talents, la diversité est notre meilleur atout. Postulez et rejoignez nous !","https://fr.indeed.com/cmp/Thales","https://www.thalesgroup.com","Paris","10,000+","more than $10B (USD)","Thales is a global technology leader with more than 77,000 employees on five continents, investing in digital and 'deep tech' innovations to build a future we can all trust.","","","Patrice Caine","https://d2q79iu7y748jz.cloudfront.net/s/_ceophoto/512x512/b20e8c489b7ec025c8d7f449851d0512"
+"1c63f403ce890c1c","indeed","https://fr.indeed.com/viewjob?jk=1c63f403ce890c1c","https://pellencst-career.talent-soft.com/offre-de-emploi/emploi-data-scientist-h-f_169.aspx","Data Scientist H/F","PELLENC ST","Pertuis, B8, FR","","2024-10-07","","","","","",False,"","","","","","L**’intelligence artificielle** est intégrée de façon croissante dans nos machines, pour répondre aux nouvelles exigences de tri. Afin d’accompagner ce déploiement industriel, une équipe projet dédiée développe activement l’ensemble des outils de DataOps / MLOps permettant de faciliter le développement, l’évaluation et le maintien en condition opérationnelle des réseaux exploités sur nos machines.
+
+  
+
+En tant que **Data Scientist**, vous serez rattaché(e) au Responsable Développement & Industrialisation de l’IA et aurez la charge de l’analyse et l’optimisation des modèles de prédiction basé sur l’IA :
+
+* Maintenir et garantir la qualité des données et modèles d’IA utilisés en production ;
+* Optimiser les différents modèles d’IA et leurs entrainements sur notre plateforme MLOps tout en contribuant à l’amélioration continue des outils sur base du retour d’expérience ;
+* Accompagner l’industrialisation des modèles en collaborant avec les équipes métiers (applicatives et logicielles) de l’élaboration du besoin à la validation et la qualification du modèle sur machine et sur site ;
+* Evaluer et implémenter de nouveaux modèles d’IA et méthode d’analyse de données via de la veille technologique sur les différents sujets d’intérêts pour l’entreprise.
+
+
+### **Profil**
+
+
+* Vous êtes ingénieur / DataScientist spécialisé dans les sujets de Machine Learning et/ou de l’IA.
+* Vous connaissez le principe des plans d’expériences et êtes en mesure d’analyser les résultats de ces plans ;
+* Vous êtes à l’aise avec les outils standards de traitement de données, Intelligence Artificielle ou Data Mining (Pytorch, Tensorflow, opencv, numpy, etc).
+* Vous disposez idéalement d’une expérience de deux ans sur un poste similaire ou un doctorat dans cette spécialité, une expérience passée sur des problématiques Deep Learning sur de l’image / vidéo serait un plus ;
+* Vous maîtrisez le français et l’anglais oral et écrit dans un contexte professionnel.
+* De nature rigoureuse, autonome et proactive, vous êtes prêt à relever des défis et vous vous intéressez aux enjeux et secteur du recyclage.
+
+
+**Localisation du poste**
+-------------------------
+
+### **Lieu**
+
+
+84240 Pertuis
+### **Pays**
+
+
+France
+
+**Critères candidat**
+---------------------
+
+### **Niveau d'études min. requis**
+
+
+4- Master ou MBA
+
+### **Niveau d'expérience min. requis**
+
+
+Inférieur à 2 ans","https://fr.indeed.com/cmp/Pellenc-St","https://www.pellencst.com","125 Rue François Gernelle, 84120 Pertuis","201 to 500","","Pellenc ST conçoit et fabrique des machines de tri intelligent pour l’industrie du recyclage. Avec plus de 2500 machines à l'international, nous contribuons à l'essor de l'économie circulaire.","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/4baaf196015e8fd26032ea5280ea4b20","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/08149abb14b0e6b7b71c87e308added1","",""
+"af2cf7228aa0e84f","indeed","https://fr.indeed.com/viewjob?jk=af2cf7228aa0e84f","https://www.free-work.com/fr/tech-it/analyste/job-mission/business-analyst-data-reprise-de-donnees-erp-2?utm_source=indeed&utm_medium=organic&utm_campaign=indeed_organic_fr_all_wo","Business Analyst DATA / Reprise de données ERP","REACTIS","Aix-en-Provence, B8, FR","","2024-10-07","","","","","",False,"","","","","","Description de la prestation  
+
+  
+
+Dans le cadre de la mise en ?uvre de l?ERP IFS, nous recherchons un profil confirmé sur les travaux en lien avec la reprise de données.  
+
+  
+
+ Activités et tâches  
+
+  
+
+Analyse des besoins liés à la reprise des données  
+
+  
+
+  
+
+Spécifications fonctionnelles détaillées et mapping des données Source ? Cible  
+
+  
+
+  
+
+Accompagnement des développeurs  
+
+  
+
+  
+
+Analyse des données source, qualité et besoin de transcodification  
+
+  
+
+  
+
+Testing  
+
+  
+
+  
+
+Il faut que le profil ait déjà réalisé de la reprise de données dans le cadre d?un projet ERP et qu?il ait un profil plutôt comptable.  
+
+  
+
+  
+
+  
+
+Profil candidat:  
+
+De formation supérieure en informatique, vous justifiez d?une expérience significative sur un poste similaire.  
+
+  
+
+ Compétences requises :  
+
+  
+
+* Formalisation de spécifications
+
+
+  
+
+* Maîtrise du SQL
+
+
+  
+
+* Expérience Data / RDD : manipulation des données, qualité et fiabilisation
+
+
+  
+
+* Expérience ERP idéalement IFS
+
+
+  
+
+* Expérience sur les flux métier P2P et O2C
+
+
+  
+
+Vous êtes reconnu(e) pour votre autonomie, votre rigueur, votre sens du résultat et votre qualité rédactionnelle.","https://fr.indeed.com/cmp/Reactis","https://www.reactis.fr/","510 rue René Descartes, Les jardins de la Duranne 13857 Aix-en-Provence //
+11 avenue Delcassé 75008 Paris","51 to 200","$25M to $100M (USD)","ESN et éditeur de logiciels","","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/9b0e8e9f309244a1e792b1a9e6ee5baa","Jean-Marc ROQUELAURE","https://d2q79iu7y748jz.cloudfront.net/s/_ceophoto/512x512/3a9d2d84e314d499666832af185507ca"
+"f0fc972372eeff25","indeed","https://fr.indeed.com/viewjob?jk=f0fc972372eeff25","https://www.tpfi-recrutement.fr/jobs/5050697-data-analyst-f-h","Data Analyst F/H","TPF INGÉNIERIE","Marseille, B8, FR","","2024-10-04","","","","","",False,"","","","","","**Rejoignez-nous et faites avancer à grand pas l’ingénierie co-créative de demain !**
+
+**Plus en détail, TPF INGENIERI****E, Qui s****ommes nous ?**
+
+
+Société d’ingénierie active dans les secteurs du Bâtiment, des Infrastructures, de l’Eau/Environnement, de l’Energie/Maintenance, TPF Ingénierie est issue du regroupement de bureaux d’études régionaux et nationaux, opérant pour certains depuis plus de **60 ans** sur le territoire Français.
+
+**En quelques chiffres…**
+
+* 440 collaborateurs
+* 19 implantations
+* 9 Directions Régionales
+* 4 Départements spécialisés
+
+  
+
+**Que recherchons nous ?**
+
+
+En tant que **Data Analyst** F/H chez TPF Ingénierie, vous participerez activement à la transformation numérique de l’entreprise, en analysant différents types de données issues de nos processus internes. Avec l’appui de la cellule internationale « Innovation et Transformation Digitale » située au siège à Bruxelles, votre rôle sera d’offrir des solutions adaptées aux besoins de nos équipes en France.
+
+
+Ce poste pourra être localisé à **Marseille (siège de TPF Ingénierie),** Toulouse ou Paris.
+
+**Vos principales missions :**
+
+* Concevoir et maintenir des solutions de Business Intelligence pour le reporting dans les domaines, financier, qualité et RH...
+* Personnaliser et développer des solutions de collecte de données
+* Apporter un soutien aux équipes dans le cadre de la visualisation des données
+* Collaborer sur le plan national avec les équipes fonctionnelles pour identifier les opportunités d’amélioration de nos processus.
+
+
+**Le profil que nous recherchons ?**
+
+
+Diplômé(e) d’une formation supérieure Bac +3 à Bac +5 en STEM, vous disposez d’une expérience entre 1 et 3 ans sur un poste similaire en tant que Data Analyst.
+
+
+Vous avez des connaissances avancées sur Excel et de solides compétences en analyse et visualisation de données. Vous êtes familier (e) avec tous logiciels de BI (Power BI est un plus).
+
+
+Une expérience en Python et/ou SQL est un atout. De solides compétences rédactionnelles et analytiques sont également attendues sur le poste.
+
+**La maitrise de l’anglais est obligatoire**. Un intérêt pour l’ingénierie et/ou les sujets financiers constituent un plus.
+
+**Autonome, vous savez être force de proposition.** **Vous êtes reconnu(e ) pour votre créativité.**
+
+  
+
+
+**Comment s’organise notre processus de recrutement ?**
+
+**15 Jours, c’est le délai que nous souhaitons tenir pour conclure un process de recrutement.**
+
+**Les étapes sont définies de la manière suivante :**
+
+* Un premier échange téléphonique est organisé avec la responsable recrutement. L’occasion de pouvoir comprendre votre parcours, vos attentes et vous présenter l’opportunité.
+* Ensuite un deuxième entretien est organisé avec les opérationnels. De préférence en physique, cet entretien va vous permettre de rencontrer vos potentiels managers, détailler vos expériences, comprendre les enjeux du poste et pourquoi pas rencontrer les équipes !
+* Enfin, dernière ligne droite, un dernier entretien peut être organisé avec un membre de la Direction des Ressources Humaines, ce qui vous permettra d’avoir une vision globale de votre futur environnement de travail et de répondre à toutes vos questions.
+
+  
+
+**Notre offre**
+
+* Salaire de base + Prime de vacances
+* RTT et congés
+* Tickets restaurant
+* Mutuelle (non obligatoire) et prévoyance
+* Participation / Intéressement
+* Participation aux frais de transport en commun
+* Accord télétravail
+
+  
+
+Nos postes sont inclusifs et ouverts à compétences égales, aux candidatures de personnes ayant une reconnaissance en qualité de travailleur handicapé.","https://fr.indeed.com/cmp/Tpf-Ing%C3%A9nierie","","","","","","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/0b74ecf88e715a4472443c10b147d4ef","","",""
+"ecf42f2ac68e4ed3","indeed","https://fr.indeed.com/viewjob?jk=ecf42f2ac68e4ed3","https://jobs.cvegroup.com/jobs/5048269-data-analyst-and-tools-performance-h-f","Data analyst and tools performance - H/F","CVE","Marseille, B8, FR","fulltime","2024-10-04","","","","","",False,"","","","","","**QUI SOMMES-NOUS**
+
+
+Créée fin 2009, CVE est un **producteur français d'énergies renouvelables** qui développe, finance, construit et exploite des centrales **photovoltaïques**, des unités de **méthanisation** et des unités de production **d’hydrogène**.
+
+**E****ntreprise à mission** et labellisée B Corp, notre raison d’être est portée par nos équipes : ***« mettre l’humain et la planète au cœur des énergies de demain »***.
+
+  
+
+Aujourd'hui, CVE compte **plus de 450 collaborateurs** (dont 350 en France) répartis entre les missions commerciales, techniques (ingénierie, construction, exploitation), administratives et financières et tous engagés dans une aventure entrepreneuriale unique au service de la transition énergétique. En plaçant l’humain au cœur de son projet, CVE a forgé sa culture d'entreprise autour de 3 piliers : **l'épanouissement** individuel et collectif, **l'engagement** et **l'excellence**.
+
+
+CVE a pour ambition de bâtir, d'ici 2027, un parc d’une puissance de 2,4 GW et de devenir un **acteur de référence des énergies** renouvelables en circuit court au service des entreprises et territoires.
+
+
+http://www.cvegroup.com/
+
+ **LES MISSIONS QUE NOUS VOUS PROPOSONS**
+
+  
+
+Rattaché(e) à la Direction Technique Groupe, **vous collaborerez avec les différentes Business Units (France, USA, Afrique du Sud, Chili, Espagne) afin de soutenir les équipes d'exploitation de centrales solaires (et à terme, de biogaz et d’hydrogène) dans l'identification des sources de sous-performance par l'analyse de données brutes.**
+
+**Vos missions :**
+
+**Consolidation des bases de données :**
+
+* Identifier, consolider et préparer les bases de données nécessaires au fonctionnement des outils développés par le Pôle Performance & Data et à la réalisation des missions connexes (analyses de performance / data) ;
+* Mettre en place des routines visant à automatiser et fiabiliser l’acquisition des données brutes ;
+
+**Création et développement des outils** :
+
+* Définir, concevoir puis maintenir des outils d’analyse de données fonctionnels, utilisant notamment le langage informatique Python, ou équivalent. Ces outils visent à améliorer la performance des centrales et à les intégrer efficacement aux infrastructures d’exploitation (monitoring, reporting, aide à la décision) ;
+* Promouvoir et dispenser la formation aux collaborateurs sur l’utilisation de ces outils ;
+
+**Analyse de données** :
+
+* Examiner les données de production et de gisement (solaire, puis biomasse, etc.) des sites en sous-performance pour mettre en évidence des causes de ces sous-performances ;
+* Participer à des campagnes d’analyse de données sur des sujets transverses, même non directement liés à la performance des centrales, en incluant des études ad hoc ;
+* Contribuer à la promotion de l’activité data auprès des différentes entités du groupe (Finance, Juridique, etc.) ;
+
+**Mission connexes :**
+
+
+Assurer une veille technologique sur les méthodologies de création de bases de données, d'outils, et d'analyse de la performance.  
+
+* 
+
+  
+
+  
+
+**LE PROFIL QUE NOUS RECHERCHONS**
+
+  
+
+Vous avez une formation de **minimum Bac+5 et une expérience réussie dans le domaine de l’analyse de données**. Un background **technique** sur les secteurs solaire et biogaz seraient un plus.
+
+
+Vous avez la capacité à **animer des réunions de travail** et **proposez des outils d’aide à la décision**. Vous êtes **à l’aise en présentation devant des auditoires variés et multiculturels** et savez faire preuve de **pédagogie**. **Vous maîtrisez l’anglais**, l’espagnol serait un plus.
+
+
+Vous avez une appétence prononcée pour les outils informatiques et saurez participer au déploiement de nouvelles applications. Vous maitrisez notamment :
+
+* Les technologies API.
+* La programmation Python ou R, SQL, Power Query, DAX.
+* L’utilisation des outils de visualisations comme Power BI.
+* Les Technologies du Big Data : Hadoop, Spark, Kafka, Azure.
+
+
+Autonome avec un **fort sens d’analyse, rigoureux(se), organisé(e), proactif(ve) et dynamique**. Vous avez le sens du **relationnel** et savez être **force de proposition** dans vos missions. Vous êtes responsable, réactif(ve) et adaptable à des situations variées.
+
+
+Vous êtes convaincu(e) que les **énergies renouvelables** ont un rôle majeur à jouer dans l’avenir et souhaitez être acteur de ce changement. Vous avez envie de vous investir dans une jeune structure en plein développement, porteuse d’un projet d’entreprise ambitieux et passionnant**.**
+
+  
+
+
+
+
+Dans le cadre de sa politique Handicap, **CVE s'engage au quotidien** à étudier toutes les candidatures dont celles de **personnes en situation de handicap, de manière juste et égale.**
+
+ **CE QUE VOUS RETROUVEREZ CHEZ CVE**
+
+  
+
+* Possibilité d'évolution, de mobilité interne et de formation via la CVE Academy
+* Jusqu'à 13 jours de télétravail/mois, donnant droit à une indemnité de 240€/an
+* Intéressement
+* Avantages CSE
+* Tickets restaurants : 10€/jour (50% pris en charge par l'entreprise)
+* Indemnité mobilité durable
+* Primes de vacances et de cooptation
+* Des espaces de travail agréables et conviviaux
+* Mécénat de compétences : 35h/an pour s'engager auprès d'associations","https://fr.indeed.com/cmp/Cve-5","https://www.cvegroup.com/","Marseille","201 to 500","$100M to $500M (USD)","CVE est un producteur indépendant d’énergies renouvelables, multi-énergies et multi-pays, et compte plus de 400 collaborateurs engagés dans une aventure au service de la transition énergétique.","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/f5f847071942b39162f7362161171d9f","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/02adf145171cf86dddd97ad9ba3db442","",""
+"19f0843e62adc2a1","indeed","https://fr.indeed.com/viewjob?jk=19f0843e62adc2a1","https://jobs.lever.co/gojob/cf0199da-62fd-4dd0-a508-2c0e1eef1f05?lever-source=Indeed","Stage - ML Engineer (DataScientist) - Aix en Provence","Gojob","Aix-en-Provence, B8, FR","internship","2024-10-03","","","","","",False,"","","","","","**Qui sommes-nous ?**
+Implantée en France et aux USA, Gojob est une plateforme de service pour l’emploi qui s’appuie sur ses propres technologies et données pour rendre le marché du travail plus fluide et accessible, et accompagner chaque individu avec dignité.  
+
+Chez Gojob, “We staff instantly, at scale and with care”.
+Membre trois années consécutives de la promotion French Tech FT120, deux fois saluée par le prestigieux classement du Financial Times, élue n°1 des Champions de la Croissance 2021 des Echos, Gojob continue son ascension sur le marché de l'emploi pour un impact social concret. **Notre ambition**
+“Proposer un accompagnement personnalisé à nos intérimaires quelque soit leur formation et leur expérience et permettre à nos clients de trouver instantanément les meilleurs profils répondant à leurs exigences. “  
+
+Pour faire la différence et offrir un modèle 100% tech intégré sur un marché de l’intérim traditionnel, nous avons créé et investi 12M€ en R&D dans notre laboratoire dédié à l'Intelligence Artificielle afin de développer notre technologie propriétaire. Fruit de 6 ans de recherche, nous avons aujourd’hui un écosystème tech et data qui révolutionne les process de recrutement et réinvente l'accompagnement de l’individu. Sourcing, matching, gestion, onboarding, suivi, formation… chez Gojob, la technologie est partout.  
+
+Avec une IA et des flux d'automatisation basés sur des données exclusives, notre stack tech nous permet de sourcer, sélectionner et valider des candidats :
+32x plus rapidement qu’une agence traditionnelle
+Plus qualitativement : 95% des profils recommandés automatiquement par l’IA sont embauchés et présents le premier jour.
+Tout en favorisant l’impact social : notre algorithme matche les candidats les plus pertinents au regard de + 100 dimensions observées, en prenant en compte les soft-skills et sans aucune discrimination.  
+
+Cet algorithme est monitoré par notre comité d’éthique qui veille à son intégrité. Il fait l’objet d’un brevet et nous avons publié plusieurs articles scientifiques sur le sujet. Reconnu pour son savoir-faire et souvent présenté dans les médias, le lab a su attirer des talents et des ingénieurs issus des meilleures formations en intelligence artificielle. **Pourquoi nous rejoindre:**
+Dans un environnement de forte croissance, et afin de répondre aux objectifs de scalabilité et de satisfaction client, mais aussi de poursuivre notre mission sociale d’accessibilité à l’emploi pour tous, nous renforçons notre équipe Data avec un stage de ML engineer/datascience basé à Aix-en-Provence.  
+
+La data est au cœur de la stratégie de Gojob. Notre équipe travaille quotidiennement sur du delivery avec un impact immédiat sur l’offre de service Gojob. Nos algorithmes en machine learning permettent de matcher offres et candidats et nos llm sont au centre du produit afin de qualifier les candidats et de capter leurs aspirations.
+Vous aurez l'opportunité unique de travailler avec un groupe de passionnés pour une innovation continue qui révolutionne le marché de l'emploi avec un impact social concret et réel. **Vos missions:**
+Vous travaillez en collaboration avec le Produit dans l’identification de sujets sur lesquels la data science peut avoir de l’impact au service du business et de la stratégie.  
+
+Vous aidez à modéliser les problèmes métiers puis construisez avec pragmatisme, déployez et maintenez les produits data science de bout en bout : scoring, matching, recommandation, sequence modelling, NLP, LLM.  
+
+Vous améliorez continuellement les produits data science existants comme notre algorithme de matching au service des recruteurs et des intérimaires ainsi que notre intelligence conversationnelle.
+Vous mesurez l’impact de vos travaux et vous assurez la pérennité de la performance des modèles mis en production. **Votre profil:**
+Vous êtes en cursus **BAC+5 ingénieur dans une TOP ECOLE**, dans un de ces domaines: informatique, stats, mathématiques et/ou data science, et vous cherchez un stage de fin d'études de 6 mois.
+Vous avez une bonne maîtrise de Python + SQL et idéalement une expérience sur des projets NLP.
+Vous souhaitez travailler avec Gitlab.
+Vous êtes de nature entreprenante, vous savez porter des initiatives et être un réel moteur de la stratégie data.
+Vous êtes capable de vulgariser des concepts complexes à des utilisateurs et de les expliquer avec humilité. **Quelle est notre stack technique DS ?**
+Language: Python (pandas, pytest, fast-api, pandera ...)
+Infra / Cloud: Google Cloud Platform
+Models: classification / regression with sklearn xgboost, transformers avec tensorflow / pytorch / sentence-transformers
+Storage: PostgreSQL, BigQuery, Cloud Storage, InfluxDB, PubSub
+ETL pipelines: DBT
+Deploy: Docker, Kubernetes, Vertex Pipelines (Kubeflow), Cloud Run
+CICD: Gitlab, ArgoCD
+Libraries: Poetry (ex: custom feature store)
+Monitoring: Grafana, APM **Ce que nous vous offrons :*** Une politique de télétravail flexible
+* Carte Swile (équivalent ticket resto) d’une valeur de 9€/jour pris en charge à 55% par Gojob
+* Prise en charge de 50% des titres de transport
+* Un forfait sport/culture à 150€/an
+* Une prime vacances
+
+ **Le processus de recrutement:**
+Un échange téléphonique avec Laurent (Talent Acquisition Manager)
+Un entretien avec Oliver (Head of data)
+Un échange technique avec l’équipe DataScience","https://fr.indeed.com/cmp/Gojob-1","https://www.gojob.com","220 rue de la Tramontane – 13090 Aix en Provence","51 to 200","","The happy temporary recruitment agency (now in UK!). Ready for happy temping? With the Gojob on-line recruitment agency, you can access thousands of job offers near you in just a few clicks.","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/d840da936f60b8963bc18d51043cf8b5","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/f8aa212b659fd99a260502096f8b4159","Pascal Lorne",""
+"59c88b45381cf566","indeed","https://fr.indeed.com/viewjob?jk=59c88b45381cf566","https://www.enedis.fr/emploi/115538/data-scientist?page=7","Data scientist","Enedis","Toulon, B8, FR","","2024-10-01","","","","","",False,"","","","","","**Data scientist**
+==================
+
+
+Systèmes d'information, Télécom et Numérique
+CDI
+* toulon (83)
+* BAC +4 / BAC +5
+* Expérience souhaitée :
+Débutants acceptés
+* De 38 200€ à 46 500€ brut annuel minimum
+* Début de contrat :
+04/11/2024
+* Titulaire d'un permis VL
+
+  
+Développer des solutions numériques innovantes pour accompagner la transition énergétique
+Traiter, analyser et sécuriser les données
+### **En détail**
+
+
+Vous souhaitez intégrer une équipe dynamique et participer activement à la transition énergétique : l’Agence de Conduite Régionale Côte d’Azur est faite pour vous ! Située à Toulon, elle couvre les départements du Var et des Alpes Maritimes. Elle assure le rôle de « tour de contrôle » du réseau électrique haute tension.
+
+
+Le développement des énergies renouvelables (ENR), des flexibilités réseau et l’arrivée du véhicule électrique nécessite la mise en place d’un système de gestion des ressources énergétiques distribuées (DERMS). Vous aurez accès aux systèmes de contrôle de supervision et d’acquisition des données (SCADA) afin d’établir des outils basés sur des ressources énergétiques distribuées (DER)
+
+
+Les avancées technologiques de ces dernières années en matière d’IoT’s (objets connectés) ouvrent de nouvelles perspectives sur notre capacité à détecter et à réagir rapidement lors d’évènements survenant sur le réseau moyenne tension (HTA) et les postes sources (transformateurs 225 KV/ 20 KV). Il s’agit d’un enjeu clé pour Enedis et pour ces clients professionnels ou particuliers.
+
+
+Vous serez particulièrement en charge de :
+
+* Recueillir les problématiques opérationnels et analyser les données nécessaires
+* Concevoir et rédiger des spécifications fonctionnelles, applicatives, et techniques
+* Collecter, nettoyer et analyser de grandes quantités de données
+* Implémenter et tester des solutions algorithmiques pour répondre à des problématiques métiers et optimiser leurs performances.
+* Développer des applications intranet d’exploration et de restitution de données
+* Assurer la maintenance évolutive et corrective des solutions développées
+
+
+Des missions d’appui managériale, en lien avec des sujets techniques pourront vous être confiés.
+
+
+  
+**Votre profil**
+----------------
+
+
+### **Ce que nous recherchons**
+
+
+De formation type Bac+5 en statistique, informatique ou data sciences, vous êtes data scientist confirmé et avez une appétence dans la résolution de problèmes dans un domaine fonctionnel à forte contraintes métier et haut niveau de sécurité. Des connaissances en électricité serait un plus dans ce métier.
+
+
+Vous maîtrisez à titre d’exemple les langages, les outils et les plateformes suivantes :
+
+* Compétences en langages de programmation utilisés en Data Science (Python, R …).
+* Compétences en développement full stack serait un plus afin d’assurer un produit final utilisateur  
+
+Langage de base de données SQL, VQL et NoSQL.
+
+Vous serez amené à travailler dans un environnement industriel stimulant, avec de nombreux projets à forte technicité. Vous serez totalement immergé dans les métiers opérationnels.
+
+
+Tout en étant soumise au principe de neutralité religieuse et politique, Enedis ouvre ses postes à toutes les compétences, toutes les énergies et toutes les personnalités sans exclusion. Conformément aux engagements pris par Enedis en faveur de l'accueil et de l'intégration des personnes en situation de handicap, cet emploi est ouvert à toutes et à tous sous réserve de l'aptitude médicale délivrée par la médecine du travail.
+
+### **Vos compétences**
+
+
+* Autonomie
+* Rigueur / Respect des consignes
+* Capacité d'analyse / Esprit de synthèse
+
+  
+**Votre rémunération et vos avantages**
+---------------------------------------
+
+
+38 K€ à 46K€ pour un débutant selon le diplôme et au-delà en fonction de l’expérience acquise.
+
+
+Au-delà de votre rémunération fixe, Enedis a à cœur de vous encourager sur vos résultats et dans votre bien-être au travail : prime sur les résultats individuels, forfait jours à 202 jours travaillés/an et prime de disponibilité associée, télétravail (10 jours max/mois), accès à un Compte Epargne Temps, package de protection sociale, tarifs réduits sur vos consommations d’énergie, intéressement et abondement sur Plans d’épargne, primes et congés spéciaux pour accompagner les évènements familiaux. Une aide au logement peut vous être proposée sous conditions.","https://fr.indeed.com/cmp/Enedis","https://www.enedis.fr/index","Paris","10,000+","$25M to $100M (USD)","Enedis est une entreprise de service public, gestionnaire du réseau de distribution d'électricité qui développe, exploite, modernise le réseau électrique et gère les données associées.","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/bab03230aae126500ddd75515811e623","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/f390e5759ce3b99874985caf73064285","Marianne Laigneau","https://d2q79iu7y748jz.cloudfront.net/s/_ceophoto/512x512/a38ae1e0cdf7b6f9eda23457ae1fd52d"
+"f011245196e1f082","indeed","https://fr.indeed.com/viewjob?jk=f011245196e1f082","https://onatera.nos-recrutements.fr/html/job/xf76u4kktl","Stage Data Analyst H/F","ONATERA","Aix-en-Provence, B8, FR","internship","2024-09-30","","","","","",False,"","","","","","### **À propos de nous**
+
+
+
+Chez Onatera, depuis plus de 12 ans, la nature nous inspire, nous guide, nous comble.
+
+
+Notre mission est simple : proposer un choix le plus large de produits et d’ingrédients naturels, efficaces et sensoriels à nos clients pour qu’ils prennent soin d’eux, de leur corps et de leur esprit.
+
+
+Cette approche holistique, nous pousse à sans cesse développer nos univers afin que nos clients puissent trouver en un seul et même endroit tout ce dont ils ont besoin pour prendre soin d'eux plus naturellement et plus durablement. Forts de notre expérience, et convaincus que nous pouvons offrir à nos clients des produits encore meilleurs et au meilleur prix, nous sommes devenus fabricant, et avons ouvert notre usine à Salon de Provence.
+
+
+Un grand pas qui permet aujourd'hui de proposer plus de 1500 produits, 300 plantes, 200 actifs naturels et 120 huiles essentielles pour que chaque client s’occupe de son corps, de son esprit et de son cœur.
+
+
+Intégrer Onatera c'est rejoindre un projet collectif, avec des équipes passionnées et unies par l’envie de rendre le bien-être au naturel accessible à tous.
+
+
+### **Mission**
+
+
+
+Vous êtes à la recherche d’un stage responsabilisant et vous avez envie de rejoindre une aventure dans laquelle chaque effort contribue au développement d’Onatera ?
+
+
+Rejoignez nos équipes pour un stage de 6 mois en tant que Data Analyst (h/f) à Aix en Provence. Au sein de la direction e-commerce, vous contribuez à l’analyse de la data pour optimiser le pilotage de l’ensemble des leviers d’acquisition online dans une logique d’acquisition à la fois performante et qualitative.
+
+
+Vos missions :
+
+* Participer au déploiement du plan d’acquisition Web (plan d’acquisition et de fidélisation des clients pertinent) avec notre agence et la direction e-commerce pour accompagner la croissance, dans le respect d’un cadre budgétaire préalablement défini.
+* Collecter, mesurer, optimiser, tester, mesurer encore la data…pour contribuer à l’augmentation du volume de conversion et pour suivre les performances des actions mises en place en acquisition.
+* Veille active sur les tendances et compilation des best practices.
+
+
+### **Profil**
+
+
+
+Pour ce projet, nous recherchons un étudiant qui a une bonne compréhension globale du fonctionnement du digital, des leviers pour acquérir du trafic, et, avec une sensibilité aux environnements BtoC. Les must have :
+
+* Vous êtes en formation en école de commerce ou universitaire spécialisation type marketing, data ou digital.
+* Vous possédez d’excellentes capacités analytiques pour évaluer et restituer les performances des actions.
+* Vous êtes curieux et faites preuve de pro-activité et de rigueur pour piloter vos projets efficacement.
+* Votre esprit d’équipe sera un atout pour collaborer avec les équipes Marketing/ CRM/ Communication ou encore Tech.
+* Vous maîtrisez Excel à un niveau avancé, la connaissance de Google analytics sera un plus.
+* Vous recherchez un stage dans le cadre de vos études dans un environnement dynamique et innovant.
+
+
+Ce poste est ouvert aux personnes en situation de handicap.
+
+
+Découvrez nos dernières actualités sur notre page LinkedIn & abonnez vous -> Onatera","https://fr.indeed.com/cmp/Onatera","http://www.onatera.com","135 Rue André Ampère - Espace Cézanne
+13290 Aix en Provence","51 to 200","$25M to $100M (USD)","Nous sommes un pure player, né en 2011, de la volonté de promouvoir les bienfaits de la santé et du bien-être naturels. Notre ambition est grande : devenir le leader européen dans notre domaine.","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/775d1fad641e7ad98f6d1c28cd33c8a4","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/20dbe0cb9e092f9c0f53af7c707158ea","",""
+"24404ec1911a83e5","indeed","https://fr.indeed.com/viewjob?jk=24404ec1911a83e5","https://www.handicap-job.com/recherche/detail/oid/6004496/data-scientist-hf.html","DATA SCIENTIST H/F","Groupe Talents Handicap","Toulon, B8, FR","","2024-09-30","","","","","",False,"","","","","","Acteur majeur du secteur de l'énergie en France, Enedis distribue l'électricité via le plus grand réseau électrique d'Europe. Présents sur 700 sites sur l'ensemble du territoire, nos 40 000 salariés bénéficient d'un terrain de jeu exceptionnel pour développer un réseau électrique de plus en plus intelligent, connecté et performant. Du raccordement au dépannage des clients en passant par la gestion des données, nos équipes s'engagent chaque jour à relever des défis techniques, technologiques et écologiques.  
+
+Indépendante, Enedis délivre la même qualité de service aux fournisseurs d'énergie. Comme le prévoit la loi, elle a établi un code de bonne conduite auquel ses collaborateurs sont formés afin d'en respecter les principes et engagements au quotidien.  
+
+Rejoindre Enedis, c'est intégrer une entreprise à mission, soucieuse de ses impacts environnementaux et sociétaux, soumise au principe de neutralité religieuse et politique et participer à une aventure humaine et collective unique.  
+
+Alors, prêt à intégrer la Team France électrique ?
+
+
+Vous souhaitez intégrer une équipe dynamique et participer activement à la transition énergétique : l'Agence de Conduite Régionale Côte d'Azur est faite pour vous ! Située à Toulon, elle couvre les départements du Var et des Alpes Maritimes. Elle assure le rôle de « tour de contrôle » du réseau électrique haute tension.  
+
+Le développement des énergies renouvelables (ENR), des flexibilités réseau et l'arrivée du véhicule électrique nécessite la mise en place d'un système de gestion des ressources énergétiques distribuées (DERMS). Vous aurez accès aux systèmes de contrôle de supervision et d'acquisition des données (SCADA) afin d'établir des outils basés sur des ressources énergétiques distribuées (DER)  
+
+Les avancées technologiques de ces dernières années en matière d'IoT's (objets connectés) ouvrent de nouvelles perspectives sur notre capacité à détecter et à réagir rapidement lors d'évènements survenant sur le réseau moyenne tension (HTA) et les postes sources (transformateurs 225 KV/ 20 KV). Il s'agit d'un enjeu clé pour Enedis et pour ces clients professionnels ou particuliers.  
+
+Vous serez particulièrement en charge de :  
+
+Recueillir les problématiques opérationnels et analyser les données nécessaires  
+
+Concevoir et rédiger des spécifications fonctionnelles, applicatives, et techniques  
+
+Collecter, nettoyer et analyser de grandes quantités de données  
+
+Implémenter et tester des solutions algorithmiques pour répondre à des problématiques métiers et optimiser leurs performances.  
+
+Développer des applications intranet d'exploration et de restitution de données  
+
+Assurer la maintenance évolutive et corrective des solutions développées  
+
+  
+
+Des missions d'appui managériale, en lien avec des sujets techniques pourront vous être confiés. 38 K€ à 46K€ pour un débutant selon le diplôme et au-delà en fonction de l'expérience acquise.  
+
+Au-delà de votre rémunération fixe, Enedis a à coeur de vous encourager sur vos résultats et dans votre bien-être au travail : prime sur les résultats individuels, forfait jours à 202 jours travaillés/an et prime de disponibilité associée, télétravail (10 jours max/mois), accès à un Compte Epargne Temps, package de protection sociale, tarifs réduits sur vos consommations d'énergie, intéressement et abondement sur Plans d'épargne, primes et congés spéciaux pour accompagner les évènements familiaux. Une aide au logement peut vous être proposée sous conditions.
+
+
+De formation type Bac+5 en statistique, informatique ou data sciences, vous êtes data scientist débutant ou confirmé et avez une appétence dans la résolution de problèmes dans un domaine fonctionnel à forte contraintes métier et haut niveau de sécurité. Des connaissances en électricité serait un plus dans ce métier.  
+
+Vous maîtrisez à titre d'exemple les langages, les outils et les plateformes suivantes :  
+
+Compétences en langages de programmation utilisés en Data Science (Python, R …).  
+
+Compétences en développement full stack serait un plus afin d'assurer un produit final utilisateur  
+
+Langage de base de données SQL, VQL et NoSQL.  
+
+  
+
+Vous serez amené(e) à travailler dans un environnement industriel stimulant, avec de nombreux projets à forte technicité. Vous serez totalement immergé dans les métiers opérationnels.  
+
+  
+
+Tout en étant soumise au principe de neutralité religieuse et politique, Enedis ouvre ses postes à toutes les compétences, toutes les énergies et toutes les personnalités sans exclusion. Conformément aux engagements pris par Enedis en faveur de l'accueil et de l'intégration des personnes en situation de handicap, cet emploi est ouvert à toutes et à tous sous réserve de l'aptitude médicale délivrée par la médecine du travail.
+
+*Assurez-vous d'avoir le diplôme correspondant à l'offre pour postuler.*
+
+
+\\n\\nAutonomie, Capacité d'analyse / Esprit de synthèse, Rigueur / Respect des consignesPackage","https://fr.indeed.com/cmp/Groupe-Talents-Handicap","https://www.groupe-talentshandicap.com/","","","","","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/b93b0c4543c34979edb597b6a84a404a","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/dd26556395168bb0008432e52ab48824","",""
+"cfcea789d9f6c47d","indeed","https://fr.indeed.com/viewjob?jk=cfcea789d9f6c47d","https://jobs.cmacgm-group.com/CMACGM/job/Marseille-Stage-Data-Analyst/1125700801/","Stage - Data Analyst","CMA CGM","Marseille, B8, FR","internship","2024-09-27","","","","","",False,"","","","","","Dirigé par Rodolphe Saadé, le Groupe CMA CGM, un leader mondial du transport maritime et de la logistique, dessert plus de 420 ports dans le monde sur 5 continents. Avec sa filiale CEVA Logistics, et sa division de fret aérien CMA CGM AIR CARGO, le Groupe CMA CGM innove constamment pour proposer à ses clients une offre complète et toujours plus performante grâce à de nouvelles solutions maritimes, terrestres, aériennes et logistiques.
+  
+  
+
+Engagé dans la transition énergétique du transport maritime et pionnier dans l’utilisation de carburants alternatifs, le Groupe CMA CGM s’est fixé un objectif de Net Zéro Carbone d’ici 2050.
+  
+  
+
+À travers la Fondation CMA CGM, le Groupe agit également face à des crises humanitaires nécessitant une réponse d’urgence en mobilisant l’expertise maritime et logistique du Groupe pour acheminer partout dans le monde du matériel humanitaire.
+  
+  
+
+Présent dans 160 pays via son réseau de plus de 400 bureaux et 750 entrepôts, le Groupe emploie 155 000 personnes dans le monde, dont 4 000 à Marseille où est situé son siège social.
+  
+  
+
+MISSION
+  
+  
+
+Au sein de l’un des Directions Lignes Maritimes, vous êtes en charge d’analyses et de développement d’outils sur le suivi de et des performances commerciales du département en charge d’une zone géographique spécifique.
+  
+  
+
+RESPONSABILITES
+  
+  
+
+Dans ce cadre, vous êtes en charge de développer des outils et supports qui permettront à l’ensemble des équipes commerciales d’avoir une meilleure connaissance de l’évolution du marché et de la performance commerciale du secteur.
+  
+  
+
+En relation avec les différentes fonctions de la Ligne maritime (Commercial, Chargé(e) de flux maritimes, Business development et Contrôle de Gestion), vous participez à l’automatisation des outils qui vous permettra de réaliser un reporting de l’activité régulier. En support de l’équipe commerciale, vous réalisez des études et des analyses ponctuelles et les aidez au quotidien en effectuant les quotations en lien avec le réseau d’agents commerciaux à l’international.
+  
+  
+
+PROFIL ET COMPETENCES
+  
+  
+
+Actuellement étudiant(e) en Master 2 d’une Ecole de commerce ou d’Ingénieur, vous avez idéalement effectué un stage sur des fonctions similaires.
+  
+  
+
+Vous avez un très bon niveau d’anglais à l’écrit et à l’oral. Vous êtes également très rigoureux(se) et curieux(se).
+  
+  
+
+Vous avez un niveau élevé en Excel, et des connaissances en économie alliées à un esprit d’analyse vous permettront de réussir dans cette mission.
+  
+  
+
+Découvrez la démarche de développement durable du Groupe CMA CGM et son ambition de zéro émission de carbone d’ici 2050.
+  
+  
+
+Découvrez l'environnement de travail exceptionnel de CMA CGM.
+  
+  
+
+91,3% de nos stagiaires et apprentis recommandent le Groupe CMA CGM pour une expérience professionnelle !
+  
+  
+
+Visionnez leurs témoignages vidéo !","https://fr.indeed.com/cmp/CMA-Cgm","https://www.cma-cgm.com","Marseille, FR","10,000+","more than $10B (USD)","","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/b383e18c353ed5ebd98c4632d593caed","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/6db0d81d23669e04fd916cb3c97d5b37","",""
+"112fc314cc31457f","indeed","https://fr.indeed.com/viewjob?jk=112fc314cc31457f","https://jobs.cmacgm-group.com/CMACGM/job/Marseille-Internship-Data-Analyst/1125700901/","Internship - Data Analyst","CMA CGM","Marseille, B8, FR","internship","2024-09-27","","","","","",False,"","","","","","Led by Rodolphe Saadé, the CMA CGM Group, a global leader in shipping and logistics, serves more than 420 ports around the world on five continents. With its subsidiary CEVA Logistics, a world leader in logistics, and its air freight division CMA CGM AIR CARGO, the CMA CGM Group is continually innovating to offer its customers a complete and increasingly efficient range of new shipping, land, air and logistics solutions.
+  
+  
+
+Committed to the energy transition in shipping, and a pioneer in the use of alternative fuels, the CMA CGM Group has set a target to become Net Zero Carbon by 2050.
+  
+  
+
+Through the CMA CGM Foundation, the Group acts in humanitarian crises that require an emergency response by mobilizing the Group’s shipping and logistics expertise to bring humanitarian supplies around the world.
+  
+  
+
+Present in 160 countries through its network of more than 400 offices and 750 warehouses, the Group employs more than 155,000 people worldwide, including 4,000 in Marseilles where its head office is located.
+  
+  
+
+THE ROLE
+  
+  
+
+Within one of the Shipping Lines Departments, you will be in charge of analyzing and developing tools for monitoring the sales performance of the department in charge of a specific geographical area.
+  
+  
+
+RESPONSIBILITIES
+  
+  
+
+Within this framework, you are in charge of developing tools and supports that will enable all sales teams to have a better understanding of market trends and the sales performance of the sector. Working with the various functions within the Shipping Line (Sales, Shipping Flow Manager, Business Development and Management Control), you will participate in the automation of tools that will enable you to produce regular activity reports. In support of the sales team, you will carry out studies and analyses on an ad hoc basis, and assist them on a day-to-day basis by carrying out quotations in liaison with the network of international sales agents.
+  
+  
+
+PROFILE AND QUALIFICATIONS
+  
+  
+
+Currently a Master 2 student at a business or engineering school, you will ideally have completed an internship in a similar role. You have a very good level of written and spoken English. You are also very rigorous, analytical and curious. You have a high level of Excel skills, and knowledge of economics combined with an analytical mind will enable you to succeed in this mission.
+  
+  
+
+Find out more about CMA CGM Group's Sustainable Development approach and net zero carbon emissions by 2050 ambition.
+  
+  
+
+Find out more about CMA CGM exceptional work environment .
+  
+  
+
+91,3% of our interns and apprentices recommend CMA CGM Group for a professional experience!
+  
+  
+
+Watch their video testimonals!","https://fr.indeed.com/cmp/CMA-Cgm","https://www.cma-cgm.com","Marseille, FR","10,000+","more than $10B (USD)","","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/b383e18c353ed5ebd98c4632d593caed","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/6db0d81d23669e04fd916cb3c97d5b37","",""
+"7756c54af71db563","indeed","https://fr.indeed.com/viewjob?jk=7756c54af71db563","http://fr.indeed.com/job/data-analyst-maritime-hf-7756c54af71db563","Data Analyst Maritime H/F","Innova Solutions","Marseille 2e, B8, FR","fulltime","2024-09-27","","","","","",False,"","","","","","*En tant que société d’ingénierie scientifique et technique de premier ordre à travers l’Europe, Innova Solutions est chargée par des entreprises locales, nationales et internationales de trouver le bon candidat au bon moment. Innova déploie des solutions professionnelles pour nouer des partenariats basés sur la qualité, les résultats et la réussite mutuelle. Division d'une entreprise générant un chiffre d’affaires de 1,4 milliard de dollars, forte de 70 ans d'expérience, Innova Solutions possède les ressources, les connaissances et la passion nécessaires au succès de n’importe quelle mission.*
+
+*Nous recherchons un(e)* **Analyste de la performance des navires** dans le secteur Maritime/Naval chez l’un de nos clients.
+
+Notre client poursuit ses efforts pour décarboniser sa flotte, s'est lancée dans la numérisation, grâce au produit Smartship. L'objectif est de connecter la flotte, de collecter des données à haute fréquence, de les analyser pour obtenir des informations sur l'efficacité opérationnelle des machines et de prendre des mesures pour améliorer l'efficacité et réduire les émissions et la consommation.
+
+Au sein du département R&D et en coopération avec d'autres départements du groupe, votre mission sera de contrôler la qualité des données et la performance des navires.
+
+:
+
+· Contrôler et analyser les données relatives aux performances du navire, y compris la consommation de carburant, la vitesse, la puissance et d'autres paramètres opérationnels ;
+
+· Identifier et approfondir les problèmes de performance, les écarts ou les anomalies et formuler des recommandations en vue d'une amélioration. Effectuer une analyse des causes profondes des performances insuffisantes et des inefficacités, et proposer des mesures correctives permettant d'améliorer l'efficacité à bord ;
+
+· Collaborer avec l'équipage des navires, les surintendants et les équipes d'experts techniques afin de recueillir des données supplémentaires et de prendre des mesures pour améliorer la situation ;
+
+· Préparer des présentations pour les parties prenantes internes ou externes, la direction et les clients, en fournissant un retour d'information sur les données opérationnelles analysées ;
+
+· Participer à l'élaboration de rapports de performance, de tableaux de bord et d'alertes afin de faciliter la détection et l'analyse des problèmes de performance.
+
+· Effectuer une analyse des tendances afin d'identifier les schémas opérationnels et les domaines potentiels d'amélioration, en utilisant des outils de science des données et/ou en collaborant avec l'équipe de science des données ;
+
+· Se tenir au courant des tendances du secteur, des meilleures pratiques, des réglementations et des lignes directrices ;
+
+Compétences requises :
+
+· Expertise sur les outils de contrôle de performance et/ou les logiciels d'analyse de données, et les outils de business intelligence (par exemple Tableau, Qlik Sense, PowerBI, ...) ;
+
+· Connaissance du fonctionnement des navires, des systèmes de propulsion et de la réglementation maritime, bonne compréhension physique des sujets liés aux performances des navires ;
+
+· La maîtrise de MS Office est considérée comme indispensable ;
+
+· Solides compétences en matière d'analyse et de résolution de problèmes, avec la capacité d'interpréter et de manipuler de vastes ensembles de données ;
+
+· Il est souhaitable d'avoir :
+
+Une familiarité avec les méthodologies/techniques statistiques
+
+De bonnes connaissances des langages de programmation, tels que Python, SQL, etc ;
+
+· Excellentes aptitudes à la communication pour transmettre efficacement des informations techniques complexes à des équipes non techniques ;
+
+· Capacité à travailler en collaboration dans un environnement d'équipe et à gérer plusieurs projets simultanément ;
+
+· Souci du détail et capacité à travailler dans des délais serrés ;
+
+· La connaissance des mesures d'efficacité énergétique et des réglementations environnementales dans le secteur maritime est un atout ;
+
+Profil recherché :
+
+· Un master en génie maritime, en architecture navale ou dans un domaine connexe est requise ;
+
+· Expérience avérée dans une fonction similaire, de préférence dans le secteur maritime en navigation (minimum 2 ans) ;
+
+· Capacité à s'engager et à travailler efficacement avec un large éventail de parties prenantes.
+
+*Et si vous rejoigniez un acteur majeur incontournable du transport maritime en France qui développe sa vision au quotidien ?*
+
+*N'hésitez pas à postuler !*
+
+Type d'emploi : Temps plein, CDI
+
+Rémunération : 40 000,00€ à 60 000,00€ par an
+
+Formation:
+
+* Bac +5 (Master / MBA) (Optionnel)
+
+Expérience:
+
+* maritime: 1 an (Requis)
+
+Langue:
+
+* Anglais (Requis)
+
+Lieu du poste : En présentiel","https://fr.indeed.com/cmp/Innova-Solutions-3939cf33","","","","","","","","",""
+"f97f35d01fa5adcc","indeed","https://fr.indeed.com/viewjob?jk=f97f35d01fa5adcc","https://www.capgemini.com/fr-fr/jobs/1372801+sap/","Data Analyst H/F","Capgemini Engineering","Aix-en-Provence, B8, FR","","2024-03-17","","","","","",False,"","","","","","**TRAVAILLER CHEZ SOGETI AIX EN PROVENCE**
+------------------------------------------
+
+Que vos compétences soient métiers ou techniques rejoindre Sogeti, la marque du groupe Capgemini c'est : des équipes qui bousculent le monde du développement et du testing, intervenir dans un secteur innovant, évoluer sur des solutions variées : Web & Mobile, Java, PHP, Angular, automatisation de tests, tests de performance...
+
+
+Et surtout, tout cela n'existerait pas sans l'expertise des hommes et des femmes qui nous accompagnent.
+
+
+Découvrez Sogeti en 3 minutes !  
+
+
+
+**VOTRE RÔLE, VOTRE AVENIR**
+----------------------------
+
+En tant que Data analyst H/F, vous intégrerez une équipe projet dans un environnement agile en participant à à la mise en place d'une base de données et votre but est de faciliter les prises de décision de nos clients sur des environnements techniques.
+
+
+De formation supérieure en informatique vous disposez à minima d'une première expérience significative dans le domaine.
+
+
+Environnement technique : . SQL, Python, Qliksense, Spotfire, langage R, Bonne connaissance Base de données ( Oracle etc…)
+
+
+Votre sens du service, votre esprit d'équipe, et votre autonomie seront des atouts essentiels.  
+
+
+
+**C'EST QUOI LA SUITE ?**
+-------------------------
+
+Un processus de recrutement court, un accompagnement personnalisé, une évolution qui s'adapte à vous.  
+
+
+
+**LES PLUS DU POSTE**
+---------------------
+
+En plus de votre quotidien, vous pourrez partager vos savoirs, être formés, utiliser nos incubateurs pour innover. Si vous vous reconnaissez, postulez !
+
+
+Côté rémunération certes votre salaire mais aussi de la participation, de l'intéressement, un PERCO, une mutuelle, des TR, des congés d'ancienneté, un catalogue CE, un accord de télétravail et de parentalité et des horaires modulables.
+
+
+*Capgemini, entreprise handi accueillante, conformément à la norme ANFOR NF X50-783, est également signataire de le charte de la diversité en entreprise.*","https://fr.indeed.com/cmp/Capgemini-Engineering","https://www.capgemini.com/es-es/sobre-nosotros/quienes-somos/nuestras-marcas/capgemini-engineering/","Paris","10,000+","more than $10B (USD)","World leader in engineering and R&D services, Capgemini Engineering combines its broad industry knowledge and cutting-edge technologies in digital and software to support the convergence of the physic","https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/6474d178b505c9835e633f0463636648","https://d2q79iu7y748jz.cloudfront.net/s/_headerimage/1960x400/9ec08a2c516513145eedf9864442f033","Aiman Ezzat","https://d2q79iu7y748jz.cloudfront.net/s/_ceophoto/512x512/99a57566e9812fe0661cc08110033eb7"
+"4044725736","linkedin","https://www.linkedin.com/jobs/view/4044725736","","Stage Data Science et IA H/F","Thales","Toulon, Provence-Alpes-Côte d'Azur, France","","2024-10-07","","","","","","","","","","","","","https://fr.linkedin.com/company/thales","","","","","","","","",""
+"4044131731","linkedin","https://www.linkedin.com/jobs/view/4044131731","","Data Scientist - (H/F) - En alternance","TieTalent","Rousset, Provence-Alpes-Côte d'Azur, France","","2024-10-06","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043460312","linkedin","https://www.linkedin.com/jobs/view/4043460312","","Data science engineer - Statistical learning for lung cancer screening","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043470580","linkedin","https://www.linkedin.com/jobs/view/4043470580","","Développeur JAVA H/F Smile · Marseille","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043811575","linkedin","https://www.linkedin.com/jobs/view/4043811575","","EXPERT PYTHON (F/H)","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043814200","linkedin","https://www.linkedin.com/jobs/view/4043814200","","Développeur PYTHON Sénior (F/H)","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043832630","linkedin","https://www.linkedin.com/jobs/view/4043832630","","Développeur Talend H/F Smile · Marseille","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4043475071","linkedin","https://www.linkedin.com/jobs/view/4043475071","","Développeur Full Stack Java JEE","TieTalent","Aix-en-Provence, Provence-Alpes-Côte d'Azur, France","","2024-10-05","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4037967477","linkedin","https://www.linkedin.com/jobs/view/4037967477","","Data Scientist - Operations Research","CMA CGM","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-10-02","","","","","","","","","","","","","https://fr.linkedin.com/company/cma-cgm","","","","","","","","",""
+"4040217297","linkedin","https://www.linkedin.com/jobs/view/4040217297","","DATA SCIENTIST","Enedis","Toulon, Provence-Alpes-Côte d'Azur, France","","2024-10-01","","","","","","","","","","","","","https://fr.linkedin.com/company/enedis","","","","","","","","",""
+"4038948491","linkedin","https://www.linkedin.com/jobs/view/4038948491","","Lead Data Scientist","TieTalent","Aix-en-Provence, Provence-Alpes-Côte d'Azur, France","","2024-09-30","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4035097736","linkedin","https://www.linkedin.com/jobs/view/4035097736","","Research Scientist II (Ingénieur de recherche / PhD Student)","Beckman Coulter Life Sciences","Marseille, Provence-Alpes-Côte d'Azur, France","","2024-09-27","","","","","","","","","","","","","https://www.linkedin.com/company/beckman-coulter-ls","","","","","","","","",""
+"4045735171","linkedin","https://www.linkedin.com/jobs/view/4045735171","","Data Scientist - (H/F) - En alternance","OpenClassrooms","Marseille, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/school/openclassrooms/","","","","","","","","",""
+"4045734262","linkedin","https://www.linkedin.com/jobs/view/4045734262","","Data Scientist - (H/F) - En alternance","OpenClassrooms","Peynier, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/school/openclassrooms/","","","","","","","","",""
+"4045736026","linkedin","https://www.linkedin.com/jobs/view/4045736026","","Data Scientist - (H/F) - En alternance","OpenClassrooms","Ollioules, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/school/openclassrooms/","","","","","","","","",""
+"4045469520","linkedin","https://www.linkedin.com/jobs/view/4045469520","","Stage Data Science et IA H/F","METEOJOB by CleverConnect","Toulon, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/company/meteojob-by-cleverconnect","","","","","","","","",""
+"4046069583","linkedin","https://www.linkedin.com/jobs/view/4046069583","","Développeur Python développement Web Back (H/F) (CDI)","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4046063834","linkedin","https://www.linkedin.com/jobs/view/4046063834","","Développeur Python développement Web Back (H/F) (CDI)","TieTalent","Marseille, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://ch.linkedin.com/company/tietalent","","","","","","","","",""
+"4045835902","linkedin","https://www.linkedin.com/jobs/view/4045835902","","DATA SCIENTIST (2024-115538)","LesJeudis","Toulon, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/company/lesjeudis.com","","","","","","","","",""
+"4042984661","linkedin","https://www.linkedin.com/jobs/view/4042984661","","Ingénieur Nlp - Python - Aix-en-Provence H/F","Groupe Havana","Aix-en-Provence, Provence-Alpes-Côte d'Azur, France","","","","","","","","","","","","","","","https://fr.linkedin.com/company/havana-it-&-apps","","","","","","","","",""

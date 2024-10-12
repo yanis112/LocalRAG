@@ -236,7 +236,7 @@ def handle_uploaded_file(uploaded_file):
         with open("temp/" + uploaded_file.name, "wb") as f:
             f.write(uploaded_file.read())
         
-        from src.unstructured_utils import UniversalImageLoader
+        from image_analysis import UniversalImageLoader
         with st.spinner(
             "Analyzing the image... it should take less than 2 minutes 😜"
         ):
@@ -419,21 +419,20 @@ def process_query_v2(query, streamlit_config):
     
     st.chat_message("user").write(query)
 
-    if config["field_filter"] != []:
-        enable_source_filter = True
-        config["enable_source_filter"] = enable_source_filter
-
-
-    if (
-        len(config["field_filter"])
-        == len(config["data_sources"])
-    ):  # in this case we want to disable the source filter because we want to search in all sources available
-        #print("Disabling source filter")
-        enable_source_filter = False
-        field_filter = []
-        config["field_filter"] = field_filter
-
-        config["enable_source_filter"] = enable_source_filter
+    if config["field_filter"] != []: #if no specific field is selected we disable the source filter
+        config["enable_source_filter"] = True
+    else:
+        config["enable_source_filter"] = False
+    
+    
+    if config["emails_answer"]: #if email answer is activated by the user we put as unique source the email source ('email') folder
+        config["data_sources"] = ["email"]
+        config["enable_source_filter"] = True
+        config["field_filter"] = ["email"]
+        
+            
+    print("### Current field filter:", config["field_filter"])
+    print("Is source filter enabled ?", config["enable_source_filter"])
 
     # we return the chunks to be able to display the sources
     config["return_chunks"] = True

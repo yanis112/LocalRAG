@@ -62,9 +62,17 @@ README_v2.md
 # Extensions de fichiers
 *.pkl
 *.wav
-*.png.env
+*.png
+*.jpg
 .env
 transcript_creator.py
 video_urls.csv
 README_v2.md
 README_v2.md
+
+# Automatically ignore .mp4, .jpg, .png, and .log files
+*.mp4
+*.jpg
+*.png
+*.log
+*.srt

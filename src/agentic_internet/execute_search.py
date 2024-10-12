@@ -1,5 +1,6 @@
 import time
 import pyautogui
+import browser_cookie3
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.by import By
@@ -45,7 +46,7 @@ def read_log_file(log_file_path):
     return actions
 
 if __name__ == "__main__":
-    acceleration_factor = 1  # Ajuster cette valeur pour accélérer ou ralentir les actions
+    acceleration_factor = 2  # Ajuster cette valeur pour accélérer ou ralentir les actions
 
     # Chemin vers le fichier de log
     log_file_path = "actions_log.txt"
@@ -62,13 +63,38 @@ if __name__ == "__main__":
     for action in actions:
         action['time_since_start'] = (action['timestamp'] - first_action_timestamp + 3.0) / acceleration_factor  # Ajouter un délai initial de 3 secondes
 
+    # Charger les cookies depuis Brave
+    cj = browser_cookie3.brave()
+
     # Configurer le WebDriver
     driver = webdriver.Firefox(service=FirefoxService())  # Assurez-vous que geckodriver est dans votre PATH
     driver.set_window_position(0, 0)
     driver.maximize_window()
 
+    # Naviguer vers une page pour définir le domaine des cookies
+    driver.get("https://www.instagram.com/aiandcivilization")
+
+    # Ajouter les cookies au WebDriver
+    print("Adding cookies to the WebDriver...")
+    for cookie in cj:
+        cookie_dict = {
+            'name': cookie.name,
+            'value': cookie.value,
+            'domain': cookie.domain,
+            'path': cookie.path,
+            'expiry': int(cookie.expires) if cookie.expires else None,
+            'secure': bool(cookie.secure),
+            'httpOnly': bool(cookie.has_nonstandard_attr('HttpOnly'))
+        }
+        try:
+            driver.add_cookie(cookie_dict)
+        except Exception as e:
+            pass
+
+    print("Cookies added successfully!")
+
     # Naviguer vers l'URL spécifiée
-    url = "https://www.bing.com/images/create"
+    url = "https://www.instagram.com/aiandcivilization"
     driver.get(url)
 
     # Attendre que la page se charge complètement

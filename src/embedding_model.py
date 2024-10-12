@@ -6,11 +6,16 @@ import numpy as np
 import torch
 
 # from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+# 
+# 
 from langchain_community.embeddings import (
-    HuggingFaceBgeEmbeddings,
-    HuggingFaceEmbeddings,
-    OllamaEmbeddings,
-)
+     HuggingFaceBgeEmbeddings)
+#     HuggingFaceEmbeddings,
+#     OllamaEmbeddings,
+    
+# )
+
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.embeddings import Embeddings
 from pydantic import BaseModel
 

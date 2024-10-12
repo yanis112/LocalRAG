@@ -2,8 +2,8 @@ import json
 import os
 
 import streamlit as st
-#from audiorecorder import audiorecorder
 
+# from audiorecorder import audiorecorder
 # load environment variables
 from dotenv import load_dotenv
 
@@ -17,13 +17,9 @@ from src.streamlit_app_utils import (
     initialize_session_state,
     load_config,
     process_query_v2,
-    query_suggestion,
     show_submission_form,
     transcribe_audio,
 )
-from streamlit_lottie import st_lottie
-from st_copy_to_clipboard import st_copy_to_clipboard
-from src.utils import save_question_answer_pairs
 
 load_dotenv()
 
@@ -39,7 +35,7 @@ st.title(
 )
 
 
-#st.sidebar.image("assets/logo_v5.png", output_format="PNG")
+# st.sidebar.image("assets/logo_v5.png", output_format="PNG")
 
 
 # load configuration
@@ -53,39 +49,47 @@ embedding_database = st.session_state["config"]["persist_directory"]
 
 # Add a button to clear the chat
 if st.sidebar.button(
-    label="Clear Chat 🧹", help="Clear the chat history on the visual interface 🧹"
+    label="Clear Chat 🧹",
+    help="Clear the chat history on the visual interface 🧹",
 ):
     clear_chat_history()
-    
-#add a copy to clipboard button to cpoy last chabot answer
-if "messages" in st.session_state and len(st.session_state['messages']) > 0:
-    #print("MESSAGES: ", st.session_state['messages'])
-    st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
+
+# add a copy to clipboard button to cpoy last chabot answer
+# if "messages" in st.session_state and len(st.session_state['messages']) > 0:
+#     #print("MESSAGES: ", st.session_state['messages'])
+#     st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
 
 # Initialize theme state if it doesn't exist
-if 'theme' not in st.session_state:
-    st.session_state['theme'] = 'light'
-if 'theme_changed' not in st.session_state:
-    st.session_state['theme_changed'] = False
+if "theme" not in st.session_state:
+    st.session_state["theme"] = "light"
+if "theme_changed" not in st.session_state:
+    st.session_state["theme_changed"] = False
+
 
 # Function to toggle the theme
 def toggle_theme():
-    st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
+    st.session_state.theme = (
+        "dark" if st.session_state.theme == "light" else "light"
+    )
     st.session_state.theme_changed = True
 
+
 # Toggle button to switch themes
-if st.sidebar.toggle("Dark Mode 🌞/🌜", value=False if st.session_state['theme'] == 'light' else True):
-    if st.session_state.theme != 'dark':
+if st.sidebar.toggle(
+    "Dark Mode 🌞/🌜",
+    value=False if st.session_state["theme"] == "light" else True,
+):
+    if st.session_state.theme != "dark":
         toggle_theme()
 else:
-    if st.session_state.theme != 'light':
+    if st.session_state.theme != "light":
         toggle_theme()
 
 # Apply the theme
-if st.session_state.theme == 'light':
-    st._config.set_option('theme.base', 'light')
+if st.session_state.theme == "light":
+    st._config.set_option("theme.base", "light")
 else:
-    st._config.set_option('theme.base', 'dark')
+    st._config.set_option("theme.base", "dark")
 
 # Check if the theme has been changed and reload the page if necessary
 if st.session_state.theme_changed:
@@ -116,7 +120,7 @@ deep_search = st.sidebar.toggle(
 # Define sidebar parameters
 st.sidebar.header("Data Sources")
 field_filter = st.sidebar.multiselect(
-    "Select the data sources you want to search in (default: all sources except chatbot history)",
+    "Select the data fields you want to search in",
     options=options.keys(),
     # by default all except chatbot_history
     default=list(options.keys()),
@@ -212,28 +216,36 @@ if uploaded_file and "uploaded_file" not in st.session_state:
 
         show_submission_form()
 
-#add a toogle for auto_job tool use
-auto_job=st.sidebar.toggle(
+# add a toogle for auto_job tool use
+auto_job = st.sidebar.toggle(
     "Enable Auto Job Tool 📝",
     value=False,
     help="Enable or disable the use of the Auto Job Tool. This tool is used to help you to write a job application letter. You will be asked to provide some informations and the tool will generate a prompt for you to write the letter.",
 )
 
+# add a toogle for email_tool use
+emails_answer = st.sidebar.toggle(
+    "Enable Email Search Tool 📝",
+    value=False,
+)
+
 # Display the chat history
 display_chat_history()
 
+# Here are defined all usefull variables for the chatbot
 streamlit_config = {
     "cot_enabled": use_cot,
     "field_filter": field_filter,
     "temperature": temperature,
     "deep_search": deep_search,
-    "chat_history": str("## Chat History: \n\n "+str(st.session_state['messages'])), #we keep track of the chat history,
-    "use_history": False, #this functionnality is in work in progress
+    "chat_history": str(
+        "## Chat History: \n\n " + str(st.session_state["messages"])
+    ),  # we keep track of the chat history,
+    "use_history": False,  # this functionnality is in work in progress
     "auto_job": auto_job,
+    "emails_answer": emails_answer,
 }
 
-#print the chat history
-#print("## Chat History: \n\n", st.session_state['messages'])
 
 st.session_state["streamlit_config"] = streamlit_config
 
@@ -273,4 +285,3 @@ else:
 
     # remove feedback from session state
     st.session_state.pop("feedback")
-
