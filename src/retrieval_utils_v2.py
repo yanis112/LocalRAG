@@ -265,7 +265,7 @@ class RetrievalAgent:
         config = self.config
 
         reranker = self.load_reranker(config["reranker_model"])
-        get_vram_logging()
+       
         logging.info("RERANKER LOADED !")
 
         intelligent_compression = config["llm_token_target"] != 0
@@ -335,10 +335,8 @@ class RetrievalAgent:
         """
         config = {**default_config, **config}
 
-        get_vram_logging()
         logging.info("Trying to load the qdrant database...")
 
-        get_vram_logging()
         logging.info("USING QDRANT SEARH KWARGS !")
         search_kwargs = self.get_filtering_kwargs_qdrant(
             source_filter=config["source_filter"],
@@ -383,7 +381,6 @@ class RetrievalAgent:
         else:
             compressed_docs = base_retriever.get_relevant_documents(query=query)
 
-        get_vram_logging()
         logging.info("FIELDS FOUND: %s", [k.metadata["field"] for k in compressed_docs])
         return compressed_docs
 

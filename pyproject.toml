@@ -160,6 +160,7 @@ crawl4ai = "^0.3.6"
 googlesearch-python = "^1.2.5"
 fastembed-gpu = "^0.3.6"
 streamlit-image-comparison = "^0.0.4"
+instaloader = "^4.13.2"
 
 
 [tool.ruff]

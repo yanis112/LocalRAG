@@ -12,6 +12,7 @@ src/vector_stores/
 .dotnet/
 .ssh/
 .vscode-server/
+.chainlit/
 data_attic/
 temp/
 docs/
@@ -25,6 +26,7 @@ projet_capsum/
 results/
 generated_images/
 barcode/
+downloads/
 
 
 # Fichiers
@@ -64,6 +66,8 @@ README_v2.md
 *.wav
 *.png
 *.jpg
+*.mp3
+
 .env
 transcript_creator.py
 video_urls.csv

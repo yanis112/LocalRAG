@@ -5,7 +5,7 @@ from streamlit_image_comparison import image_comparison
 from subprojects.image_lab.utils import refine_prompt, analyze_image, prompt2sound, prompt2video, enhance_image
 
 # Directory Setup
-INPUT_DIR = 'suprojects/image_lab/input_images'
+INPUT_DIR = 'subprojects/image_lab/input_images'
 OUTPUT_DIR = 'subprojects/image_lab/output_images'
 
 # Create input and output directories if they don't exist

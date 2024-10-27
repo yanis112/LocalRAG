@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-import asyncio
 import logging
 import operator
 import os
-import pickle
-import re
 import warnings
 from collections import defaultdict
 from collections.abc import Hashable
@@ -27,7 +22,6 @@ from typing import (
 import numpy as np
 import torch
 from dotenv import load_dotenv
-from langchain.chains.llm import LLMChain
 from langchain.retrievers.document_compressors.base import (
     BaseDocumentCompressor,
 )
@@ -35,23 +29,20 @@ from langchain.retrievers.document_compressors.cross_encoder_rerank import (
     BaseCrossEncoder,
 )
 from langchain_community.retrievers import (
-    BM25Retriever,
     QdrantSparseVectorRetriever,
 )
 from langchain_core.callbacks import (
-    AsyncCallbackManagerForRetrieverRun,
     CallbackManagerForRetrieverRun,
     Callbacks,
 )
 from langchain_core.callbacks.manager import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
-from langchain_core.language_models import BaseLanguageModel
 from langchain_core.load.dump import dumpd
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
 from pydantic import Field
 from langchain_core.retrievers import BaseRetriever, RetrieverLike
-from langchain_core.runnables import Runnable, RunnableConfig
+from langchain_core.runnables import RunnableConfig
 from langchain_core.runnables.config import ensure_config, patch_config
 from langchain_core.runnables.utils import (
     ConfigurableFieldSpec,
@@ -67,27 +58,13 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from src.embedding_model import get_embedding_model
 
 # custom imports
-from src.utils import (
-    NER_keyword_extractor,
-    log_execution_time,
-    token_calculation_prompt,
-)
+from src.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
 
 
-logger = logging.getLogger(__name__)
-
-# Logging level for multiqueryretriever
-logging.basicConfig()
-logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
-
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # solve too many warnings
-
-warnings.filterwarnings("ignore")
-warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
-
 
 # defining the Sparse Encoder
 @lru_cache(maxsize=None)
@@ -103,187 +80,6 @@ def default_preprocessing_func(text: str) -> List[str]:
     # Default implementation of the preprocessing function
     return text.lower().split()
 
-
-def keyword_transformer(query):
-    """
-    Transform the query into a sequence of keywords.
-
-    Args:
-        query (str): The query to transform.
-
-    Returns:
-        str: The transformed query.
-    """
-
-    # extract capitalized words as additional keywords (except the first word) and also the words in uppercase
-    additional_keywords = [
-        word for word in query.split()[1:] if word.istitle() or word.isupper()
-    ]
-    additional_keywords = [word.lower() for word in additional_keywords]
-
-    # preprocessing (lower the query, apostrophe are replaced by spaces)
-    query = query.lower().replace("'", " ").replace('"', "")
-
-    # extract the keywords from the query using NER
-    keywords = NER_keyword_extractor(query)
-
-    # lower the keywords found
-    keywords = [word.lower() for word in keywords]
-
-    if keywords != []:  # if we have extracted keywords successfully
-        # add additional keywords to the list and remove duplicates
-        keywords = list(set(keywords + additional_keywords))
-        keyword_query = " ".join(keywords)
-    else:  # if the query has no keywords so its semantic
-        if additional_keywords != []:
-            keyword_query = " ".join(additional_keywords)
-        else:
-            keyword_query = query
-
-    # delete all characters that are in the list : [?,!,',",:,;,,] using regex
-    keyword_query = re.sub(r'[?!,":;]', "", keyword_query)
-
-    # delete all words thare are double or more
-    keyword_query = " ".join(set(keyword_query.split()))
-
-    try:
-        # st.toast("Keywords used: " + keyword_query, icon="🔍")
-        print("KEYWORDS USED:", keyword_query)
-    except:
-        pass
-
-    return keyword_query
-
-
-class CustomBM25Retriever(BaseRetriever):
-    """`BM25` retriever without Elasticsearch."""
-
-    vectorizer: Any
-    """ BM25 vectorizer."""
-    docs: List[Document] = Field(repr=False)
-    """ List of documents."""
-    k: int = 4
-    """ Number of documents to return."""
-    preprocess_func: Callable[[str], List[str]] = default_preprocessing_func
-    """ Preprocessing function to use on the text before BM25 vectorization."""
-
-    query_preprocess_func: Optional[Callable[[str], List[str]]] = (
-        keyword_transformer
-    )
-
-    class Config:
-        """Configuration for this pydantic object."""
-
-        arbitrary_types_allowed = True
-
-    @classmethod
-    def from_texts(
-        cls,
-        texts: Iterable[str],
-        metadatas: Optional[Iterable[dict]] = None,
-        bm25_params: Optional[Dict[str, Any]] = None,
-        preprocess_func: Callable[
-            [str], List[str]
-        ] = default_preprocessing_func,
-        vectorizer_file: Optional[
-            str
-        ] = "sparse_vectorizer.pkl",  # add this parameter
-        **kwargs: Any,
-    ) -> BM25Retriever:
-        """
-        Create a BM25Retriever from a list of texts.
-        Args:
-            texts: A list of texts to vectorize.
-            metadatas: A list of metadata dicts to associate with each text.
-            bm25_params: Parameters to pass to the BM25 vectorizer.
-            preprocess_func: A function to preprocess each text before vectorization.
-            vectorizer_file: The file to load/save the vectorizer.
-            **kwargs: Any other arguments to pass to the retriever.
-
-        Returns:
-            A BM25Retriever instance.
-        """
-        try:
-            from rank_bm25 import BM25Okapi
-        except ImportError:
-            raise ImportError(
-                "Could not import rank_bm25, please install with `pip install "
-                "rank_bm25`."
-            )
-
-        # if vectorizer_file and os.path.exists(vectorizer_file):
-        #     print("Loading the Sparse Vectorizer for BM25 from the file !")
-        #     # Load the vectorizer from the file
-        #     with open(vectorizer_file, "rb") as f:
-        #         vectorizer = pickle.load(f)
-        # else:
-
-        # Compute the vectorizer and save it to the file
-        texts_processed = [preprocess_func(t) for t in texts]
-        bm25_params = bm25_params or {}
-        vectorizer = BM25Okapi(texts_processed, **bm25_params)
-        if vectorizer_file:
-            with open(vectorizer_file, "wb") as f:
-                pickle.dump(vectorizer, f)
-
-        metadatas = metadatas or ({} for _ in texts)
-        docs = [
-            Document(page_content=t, metadata=m)
-            for t, m in zip(texts, metadatas)
-        ]
-        return cls(
-            vectorizer=vectorizer,
-            docs=docs,
-            preprocess_func=preprocess_func,
-            **kwargs,
-        )
-
-    @classmethod
-    def from_documents(
-        cls,
-        documents: Iterable[Document],
-        *,
-        bm25_params: Optional[Dict[str, Any]] = None,
-        preprocess_func: Callable[
-            [str], List[str]
-        ] = default_preprocessing_func,
-        query_preprocess_func: Optional[
-            Callable[[str], List[str]]
-        ] = keyword_transformer,
-        **kwargs: Any,
-    ) -> "BM25Retriever":
-        """
-        Create a BM25Retriever from a list of Documents.
-        Args:
-            documents: A list of Documents to vectorize.
-            bm25_params: Parameters to pass to the BM25 vectorizer.
-            preprocess_func: A function to preprocess each text before vectorization.
-            **kwargs: Any other arguments to pass to the retriever.
-
-        Returns:
-            A BM25Retriever instance.
-        """
-        texts, metadatas = zip(
-            *((d.page_content, d.metadata) for d in documents)
-        )
-        return cls.from_texts(
-            texts=texts,
-            bm25_params=bm25_params,
-            metadatas=metadatas,
-            preprocess_func=preprocess_func,
-            **kwargs,
-        )
-
-    def _get_relevant_documents(
-        self, query: str, *, run_manager: CallbackManagerForRetrieverRun
-    ) -> List[Document]:
-        processed_query = query
-        processed_query = str(self.query_preprocess_func(query))
-        processed_query = self.preprocess_func(processed_query)
-        return_docs = self.vectorizer.get_top_n(
-            processed_query, self.docs, n=self.k
-        )
-        return return_docs
 
 
 class LineListOutputParser(BaseOutputParser[List[str]]):
@@ -311,187 +107,13 @@ def _unique_documents(documents: Sequence[Document]) -> List[Document]:
     return [doc for i, doc in enumerate(documents) if doc not in documents[:i]]
 
 
-class CustomMultiQueryRetriever(BaseRetriever):
-    """Given a query, use an LLM to write a set of queries.
-
-    Retrieve docs for each query. Return the unique union of all retrieved docs.
+def token_calculation_prompt(query: str) -> str:
     """
-
-    retriever: BaseRetriever
-    llm_chain: Runnable
-    verbose: bool = True
-    parser_key: str = "lines"
-    include_original: bool = False
-    top_k: int = 10
-
-    @classmethod
-    def from_llm(
-        cls,
-        retriever: BaseRetriever,
-        llm: BaseLanguageModel,
-        prompt: PromptTemplate = DEFAULT_QUERY_PROMPT,
-        parser_key: Optional[str] = None,
-        include_original: bool = False,
-        top_k: int = 10,
-    ) -> "CustomMultiQueryRetriever":
-        """Initialize from llm using default template.
-
-        Args:
-            retriever: retriever to query documents from
-            llm: llm for query generation using DEFAULT_QUERY_PROMPT
-            include_original: Whether to include the original query in the list of
-                generated queries.
-
-        Returns:
-            MultiQueryRetriever
-        """
-        output_parser = LineListOutputParser()
-        llm_chain = prompt | llm | output_parser
-        return cls(
-            retriever=retriever,
-            llm_chain=llm_chain,
-            include_original=include_original,
-        )
-
-    async def _aget_relevant_documents(
-        self,
-        query: str,
-        *,
-        run_manager: AsyncCallbackManagerForRetrieverRun,
-    ) -> List[Document]:
-        """Get relevant documents given a user query.
-
-        Args:
-            question: user query
-
-        Returns:
-            Unique union of relevant documents from all generated queries
-        """
-        queries = await self.agenerate_queries(query, run_manager)
-        if self.include_original:
-            queries.append(query)
-        documents = await self.aretrieve_documents(queries, run_manager)
-        return self.unique_union(documents)
-
-    async def agenerate_queries(
-        self, question: str, run_manager: AsyncCallbackManagerForRetrieverRun
-    ) -> List[str]:
-        """Generate queries based upon user input.
-
-        Args:
-            question: user query
-
-        Returns:
-            List of LLM generated queries that are similar to the user input
-        """
-        response = await self.llm_chain.ainvoke(
-            {"question": question},
-            config={"callbacks": run_manager.get_child()},
-        )
-        if isinstance(self.llm_chain, LLMChain):
-            lines = response["text"]
-        else:
-            lines = response
-        if self.verbose:
-            logger.info(f"Generated queries: {lines}")
-        return lines
-
-    async def aretrieve_documents(
-        self,
-        queries: List[str],
-        run_manager: AsyncCallbackManagerForRetrieverRun,
-    ) -> List[Document]:
-        """Run all LLM generated queries.
-
-        Args:
-            queries: query list
-
-        Returns:
-            List of retrieved Documents
-        """
-        document_lists = await asyncio.gather(
-            *(
-                self.retriever.ainvoke(
-                    query, config={"callbacks": run_manager.get_child()}
-                )
-                for query in queries
-            )
-        )
-        return [doc for docs in document_lists for doc in docs]
-
-    def _get_relevant_documents(
-        self,
-        query: str,
-        *,
-        run_manager: CallbackManagerForRetrieverRun,
-    ) -> List[Document]:
-        """Get relevant documents given a user query.
-
-        Args:
-            question: user query
-
-        Returns:
-            Unique union of relevant documents from all generated queries
-        """
-        queries = self.generate_queries(query, run_manager)
-        if self.include_original:
-            queries.append(query)
-        documents = self.retrieve_documents(queries, run_manager)
-        return self.unique_union(documents)[: self.top_k]
-
-    def generate_queries(
-        self, question: str, run_manager: CallbackManagerForRetrieverRun
-    ) -> List[str]:
-        """Generate queries based upon user input.
-
-        Args:
-            question: user query
-
-        Returns:
-            List of LLM generated queries that are similar to the user input
-        """
-        response = self.llm_chain.invoke(
-            {"question": question},
-            config={"callbacks": run_manager.get_child()},
-        )
-        if isinstance(self.llm_chain, LLMChain):
-            lines = response["text"]
-        else:
-            lines = response
-        if self.verbose:
-            logger.info(f"Generated queries: {lines}")
-        return lines
-
-    def retrieve_documents(
-        self, queries: List[str], run_manager: CallbackManagerForRetrieverRun
-    ) -> List[Document]:
-        """Run all LLM generated queries.
-
-        Args:
-            queries: query list
-
-        Returns:
-            List of retrieved Documents
-        """
-        documents = []
-        for query in queries:
-            docs = self.retriever.invoke(
-                query, config={"callbacks": run_manager.get_child()}
-            )
-            documents.extend(docs)
-        return documents
-
-    def unique_union(self, documents: List[Document]) -> List[Document]:
-        """Get unique Documents.
-
-        Args:
-            documents: List of retrieved Documents
-
-        Returns:
-            List of unique retrieved Documents
-        """
-        return _unique_documents(documents)
-
+    Return the appropriate token calculation prompt for the query or document.
+    """
+    coefficient = 1 / 0.45
+    num_tokens = len(query.split()) * coefficient
+    return num_tokens
 
 class TopKCompressor(BaseDocumentCompressor):
     """Document compressor that returns the top k documents.

@@ -3578,6 +3578,22 @@ files = [
 ]
 
 [[package]]
+name = "instaloader"
+version = "4.13.2"
+description = "Download pictures (or videos) along with their captions and other metadata from Instagram."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "instaloader-4.13.2.tar.gz", hash = "sha256:a205d79ef11a4485110fd4d060a4708d73eb89993dc2933757c2eafbc5edad2d"},
+]
+
+[package.dependencies]
+requests = ">=2.4"
+
+[package.extras]
+browser-cookie3 = ["browser_cookie3 (>=0.19.1)"]
+
+[[package]]
 name = "ipykernel"
 version = "6.29.5"
 description = "IPython Kernel for Jupyter"
@@ -14238,4 +14254,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.5"
-content-hash = "b8c4d20de7e5a41c5833843690cddb46d4b689327b34b178eb236dadd4f71f38"
+content-hash = "a15f1581be9b8b1a1483df19cf63c05fe99ff3646bac475a2e3f31e4056c298f"

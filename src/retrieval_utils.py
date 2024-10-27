@@ -1,15 +1,10 @@
 import json
 import logging
 import os
-import shutil
 import time
 import warnings
-from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from functools import lru_cache
-from multiprocessing import Manager, Pool
-from typing import Union
 
 
 import streamlit as st
@@ -22,22 +17,12 @@ from langchain.retrievers.document_compressors import (
     DocumentCompressorPipeline,
 )
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-from langchain_community.document_loaders import (
-    Docx2txtLoader,
-    JSONLoader,
-    PyPDFLoader,
-    TextLoader,
-    UnstructuredHTMLLoader,
-    UnstructuredMarkdownLoader,
-    UnstructuredPowerPointLoader,
-)
 from langchain_community.retrievers import (
     QdrantSparseVectorRetriever,
 )
 from langchain_core.documents import Document
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_qdrant import (
-    FastEmbedSparse,
     Qdrant,
     QdrantVectorStore,
     RetrievalMode,
@@ -49,13 +34,11 @@ from tqdm import tqdm
 from transformers import logging as transformers_logging
 
 # custom imports
-from src.custom_langchain_componants import *  # noqa:
+from src.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor,compute_sparse_vector
 from src.embedding_model import get_embedding_model, get_sparse_embedding_model
 from src.LLM import CustomChatModel
 #from src.query_routing_utils import QueryRouter
 from src.utils import (
-    StructuredExcelLoader,
-    get_vram_logging,
     log_execution_time,
     text_preprocessing,
 )
@@ -800,6 +783,15 @@ def find_loader(name, full_path):
     output:
         loader: the appropriate document loader. type: DocumentLoader
     """
+    from langchain_community.document_loaders import (
+    Docx2txtLoader,
+    JSONLoader,
+    PyPDFLoader,
+    TextLoader,
+    UnstructuredHTMLLoader,
+    UnstructuredMarkdownLoader,
+    UnstructuredPowerPointLoader,
+)
     if name.endswith("pdf"):
         loader = PyPDFLoader(full_path)
     elif name.endswith("docx"):
@@ -1231,7 +1223,7 @@ def apply_advanced_hybrid_search_v2(
         # print("ROUTING DISABLED !")
         alpha = config["alpha"]
 
-    get_vram_logging()
+    
     logging.info("PREDICTED ALPHA: %s", alpha)
     logging.info("PREDICTED LABEL: %s", label)
 
@@ -1240,7 +1232,7 @@ def apply_advanced_hybrid_search_v2(
     start_time = time.time()
     client = load_client(custom_persist)
     end_time = time.time()
-    get_vram_logging()
+    
     logging.info("TIME TO LOAD QDRANT CLIENT: %s", end_time - start_time)
 
     import functools
@@ -1264,7 +1256,7 @@ def apply_advanced_hybrid_search_v2(
     )
 
     end_time = time.time()
-    get_vram_logging()
+    
     logging.info("TIME TO LOAD SPARSE RETRIEVER: %s", end_time - start_time)
 
     # Initialize the ensemble retriever
@@ -1327,7 +1319,7 @@ def apply_advanced_hybrid_search_v3(
         ),
     )
 
-    get_vram_logging()
+    
     logging.info("PREDICTED ALPHA: %s", alpha)
     logging.info("PREDICTED LABEL: %s", label)
 
@@ -1348,7 +1340,7 @@ def apply_advanced_hybrid_search_v3(
     )
 
     end_time = time.time()
-    get_vram_logging()
+    
     logging.info("TIME TO LOAD SPARSE RETRIEVER: %s", end_time - start_time)
     return base_retriever
 
@@ -1419,7 +1411,7 @@ def apply_reranker(
 
     # Load the reranker model
     reranker = load_reranker(reranker_model)
-    get_vram_logging()
+    
     logging.info("RERANKER LOADED !")
 
     # Instantiate CustomCrossEncoderReranker
@@ -1490,72 +1482,6 @@ def apply_reranker(
     return compressed_docs
 
 
-@log_execution_time
-def apply_auto_merging(
-    auto_merging,
-    auto_merging_threshold,
-    compressed_docs,
-    raw_database,
-    search_type,
-    query,
-    text_preprocessing,
-):
-    """
-    Apply auto merging to retrieve a full document if a certain threshold of subchunks are from the same source.
-
-    Args:
-        auto_merging (bool): Flag indicating whether auto merging should be applied.
-        auto_merging_threshold (int): The threshold for the number of chunks from the same source required for auto merging.
-        compressed_docs (list): List of compressed documents.
-        raw_database: The raw database object used for retrieval.
-        search_type: The type of search to be performed.
-        query: The query used for retrieval.
-        text_preprocessing: The text preprocessing function to be applied to each chunk.
-
-    Returns:
-        list: The updated list of compressed documents after applying auto merging.
-    """
-    if auto_merging:
-        source_doc_counts = defaultdict(int)
-        for doc in compressed_docs:
-            source_doc_counts[doc.metadata["source"]] += 1
-
-        for source_doc, count in source_doc_counts.items():
-            if count >= auto_merging_threshold:
-                print("AUTO MERGING TRIGGERED !")
-                search_kwargs = {"k": 100, "filter": {"source": source_doc}}
-                source_doc_finder = raw_database.as_retriever(
-                    search_kwargs=search_kwargs, search_type=search_type
-                )
-                same_source_chunks = source_doc_finder.get_relevant_documents(
-                    query=query
-                )
-                for doc in same_source_chunks:
-                    doc.page_content = text_preprocessing(doc.page_content)
-                content_merged = " ".join(
-                    [doc.page_content for doc in same_source_chunks]
-                )
-                chunk_lengths = [
-                    int(doc.metadata["chunk_length"])
-                    for doc in same_source_chunks
-                ]
-                merged_length = sum(chunk_lengths)
-                merged_doc = Document(
-                    page_content=content_merged,
-                    metadata={
-                        "source": source_doc,
-                        "chunk_length": merged_length,
-                    },
-                )
-                compressed_docs = [
-                    doc
-                    for doc in compressed_docs
-                    if doc.metadata["source"] != source_doc
-                ]
-                compressed_docs.append(merged_doc)
-
-    return compressed_docs
-
 
 @lru_cache(maxsize=None)
 def get_existing_qdrant(persist_directory, embedding_model_name):
@@ -1604,7 +1530,7 @@ def query_database_v2(query, default_config, config={}):
     config = {**default_config, **config}
 
     # We define the raw database
-    get_vram_logging()
+    
     logging.info("Trying to load the qdrant database...")
     raw_database = get_existing_qdrant(
         persist_directory=config["persist_directory"],
@@ -1612,7 +1538,6 @@ def query_database_v2(query, default_config, config={}):
     )
 
    
-    get_vram_logging()
     logging.info("USING QDRANT SEARH KWARGS !")
     search_kwargs = get_filtering_kwargs_qdrant(
         source_filter=config["source_filter"],
@@ -1689,381 +1614,11 @@ def query_database_v2(query, default_config, config={}):
             query,
             config["text_preprocessing"],
         )
-    get_vram_logging()
+    
     logging.info(
         "FIELDS FOUND: %s", [k.metadata["field"] for k in compressed_docs]
     )
     return compressed_docs
-
-
-@log_execution_time
-def query_knowledge_graph_v2(
-    query,
-    default_config,
-    config={},
-):
-    """
-    Query the knowledge graph to retrieve relevant information based on the given query.
-
-    Args:
-        query (str): The query string.
-        default_config (dict): The default configuration dictionary.
-        config (dict, optional): The configuration dictionary to override default_config. Defaults to {}.
-        kg_target_context (int, optional): The target number of tokens for the retrieved information. Defaults to 1000.
-        min_relations_pct (float, optional): The minimum percentage of tokens for relations. Defaults to 0.1.
-        min_descriptions_pct (float, optional): The minimum percentage of tokens for descriptions. Defaults to 0.2.
-        min_communities_pct (float, optional): The minimum percentage of tokens for communities. Defaults to 0.2.
-
-    Returns:
-        dict: A dictionary containing the selected relations, descriptions, and communities.
-    """
-
-    from src.knowledge_graph import load_entity_extractor
-    from src.utils import token_calculation_prompt
-
-    # Merge default_config and config. Values in config will override those in default_config.
-    config = {**default_config, **config}
-
-    # Get the parameters from the config file
-    kg_target_context = config["kg_target_context"]
-    min_relations_pct = config["min_relations_pct"]
-    min_descriptions_pct = config["min_descriptions_pct"]
-    min_communities_pct = config["min_communities_pct"]
-
-    num_nodes = config["nb_nodes"]
-
-    # Load the embedding model
-    embedding_model = get_embedding_model(model_name=config["embedding_model"])
-
-    # Initialize the entity extractor to extract entities from the query and perform a similarity search on each entity
-    entity_extractor = load_entity_extractor(config["config_path"])
-
-    # Extract entities from the query
-    query_entities = entity_extractor.extract_entities(query)
-
-    # list of entities
-    list_cleaned_entities = [entity["text"] for entity in query_entities]
-
-    # print a st.toast message for each entity indicating that the entity is searched in the knowledge graph
-    if list_cleaned_entities == []:
-        st.toast("No entities found in the query...", icon="🔍")
-    for entity in list_cleaned_entities:
-        try:
-            st.toast(
-                "Searching for " + entity + " in the knowledge graph...",
-                icon="🔍",
-            )
-        except:
-            pass
-
-    # Define the raw database
-
-
-    logging.info("Trying to load the qdrant database...")
-    # raw_database = get_existing_qdrant(config["persist_directory"] + "_kg")
-    raw_database = get_existing_qdrant(
-        persist_directory=config["persist_directory"] + "_kg",
-        embedding_model_name=config["embedding_model"],
-    )
-
-    def process_entity(entity):
-        search_kwargs = {
-            "filter": qdrant_models.Filter(
-                must=[
-                    qdrant_models.FieldCondition(
-                        key="metadata.type",
-                        match=qdrant_models.MatchValue(value="entity"),
-                    )
-                ]
-            )
-        }
-
-        node = raw_database.similarity_search(
-            query=entity, k=1, **search_kwargs
-        )[0]  # we take the first result of the list
-
-        # Extract the list of relations, the description, and the community of the entity
-        found_relations = [
-            f"{node.page_content} {relation['relation'].replace('workswith', 'works with').replace('workson', 'works on').replace('contributesto', 'contributes to').replace('makesuseof', 'makes use of').replace('locatedin', 'located in').replace('includedin', 'included in').replace('workfor', 'works for')} {relation['linked_entity']}."
-            for relation in node.metadata["relation_list"]
-        ]
-
-        found_description = node.metadata["description"]
-        found_community_summary = node.metadata["community"]["summary"]
-
-        return found_relations, found_description, found_community_summary
-
-    if list_cleaned_entities != []:
-        with ThreadPoolExecutor() as executor:
-            results = list(executor.map(process_entity, list_cleaned_entities))
-
-        list_relations, list_description, list_communities = zip(*results)
-        list_relations = [
-            item for sublist in list_relations for item in sublist
-        ]
-        list_description = list(list_description)
-        list_communities = list(list_communities)
-
-        # Total list of info
-        total_info = list_communities + list_relations + list_description
-
-        # Use the reranker to select the most relevant infos to send to the LLM
-        reranker = load_reranker(config["reranker_model"])
-
-        # Make a tuple list of pairs query info
-        list_description_tuples = [(query, info) for info in total_info]
-
-        # Get the scores for all the infos
-        scores = reranker.score(list_description_tuples)
-
-        # Sort the information based on scores
-        sorted_info = [
-            info for _, info in sorted(zip(scores, total_info), reverse=True)
-        ]
-
-        # Initialize the final lists and token count
-        selected_relations = []
-        selected_descriptions = []
-        selected_communities = []
-        total_tokens = 0
-
-        # Calculate minimum tokens required for each category
-        min_relations_tokens = kg_target_context * min_relations_pct
-        min_descriptions_tokens = kg_target_context * min_descriptions_pct
-        min_communities_tokens = kg_target_context * min_communities_pct
-
-        # Add documents to the final lists until the target number of tokens is reached
-        for info in sorted_info:
-            tokens = token_calculation_prompt(info)
-            if total_tokens + tokens > kg_target_context:
-                break
-            if info in list_relations:
-                selected_relations.append(info)
-            elif info in list_description:
-                selected_descriptions.append(info)
-            elif info in list_communities:
-                selected_communities.append(info)
-            total_tokens += tokens
-
-        # Ensure minimum token requirements are met
-        def ensure_min_tokens(selected_list, source_list, min_tokens):
-            current_tokens = sum(
-                token_calculation_prompt(info) for info in selected_list
-            )
-            for info in source_list:
-                if current_tokens >= min_tokens:
-                    break
-                if info not in selected_list:
-                    selected_list.append(info)
-                    current_tokens += token_calculation_prompt(info)
-
-        ensure_min_tokens(
-            selected_relations, list_relations, min_relations_tokens
-        )
-        ensure_min_tokens(
-            selected_descriptions, list_description, min_descriptions_tokens
-        )
-        ensure_min_tokens(
-            selected_communities, list_communities, min_communities_tokens
-        )
-
-        # print the total number of tokens from extracted infos
-        print(
-            "TOTAL TOKENS KG:",
-            sum(
-                token_calculation_prompt(info)
-                for info in selected_relations
-                + selected_descriptions
-                + selected_communities
-            ),
-        )
-
-        return {
-            "selected_relations": selected_relations,
-            "selected_descriptions": selected_descriptions,
-            "selected_communities": selected_communities,
-        }
-    else:
-        return {
-            "selected_relations": ["No relations found..."],
-            "selected_descriptions": ["No descriptions found..."],
-            "selected_communities": ["No communities found..."],
-        }
-
-
-
-
-@log_execution_time
-def query_knowledge_graph_v3(query, default_config, config={}):
-    """
-    Query the knowledge graph to retrieve relevant information based on the given query.
-
-    This function extracts entities from the query, searches for their relations, descriptions,
-    and community summaries, and performs a similarity search using the entire query. The results
-    are then reranked using a CustomCrossEncoderReranker with autocut to filter the most relevant
-    information.
-
-    Args:
-        query (str): The query string.
-        default_config (dict): The default configuration dictionary.
-        config (dict, optional): The configuration dictionary to override default_config. Defaults to {}.
-
-    Returns:
-        dict: A dictionary containing the selected relations, descriptions, and communities.
-    """
-    config = {**default_config, **config}
-
-    from src.knowledge_graph import load_entity_extractor
-    from src.utils import token_calculation_prompt
-
-    # Configure logging for the process
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
-    logging.basicConfig(
-        filename="knowledgraphe_retrieval.log",
-        filemode="a",
-        level=logging.INFO,
-        format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
-    )
-
-    # Load models
-    embedding_model = get_embedding_model(model_name=config["embedding_model"])
-    entity_extractor = load_entity_extractor(config["config_path"])
-
-    # Extract entities from the query
-    query_entities = entity_extractor.extract_entities(query)
-    list_cleaned_entities = [entity["text"] for entity in query_entities]
-
-    if list_cleaned_entities == []:
-        st.toast("No entities found in the query...", icon="🔍")
-    for entity in list_cleaned_entities:
-        try:
-            st.toast(
-                "Searching for " + entity + " in the knowledge graph...",
-                icon="🔍",
-            )
-        except:
-            pass
-
-    # Define the raw database
-    raw_database = get_existing_qdrant(
-        persist_directory=config["persist_directory"] + "_kg",
-        embedding_model_name=config["embedding_model"],
-    )
-
-    def process_entity(entity):
-        """
-        Process an entity and retrieve related information.
-
-        Args:
-            entity (str): The entity to be processed.
-
-        Returns:
-            tuple: A tuple containing the following information:
-                - found_relations (list): A list of strings representing the found relations.
-                - found_description (str): The description of the entity.
-                - found_community_summary (str): The summary of the community related to the entity.
-        """
-        search_kwargs = {
-            "filter": qdrant_models.Filter(
-                must=[
-                    qdrant_models.FieldCondition(
-                        key="metadata.type",
-                        match=qdrant_models.MatchValue(value="entity"),
-                    )
-                ]
-            )
-        }
-        node = raw_database.similarity_search(
-            query=entity, k=1, **search_kwargs
-        )[0]
-        logging.info(f"ENTITY NOTE RETRIEVED: {node}")
-        found_relations = [
-            f"{node.page_content} {relation['relation'].replace('workswith', 'works with').replace('workson', 'works on').replace('contributesto', 'contributes to').replace('makesuseof', 'makes use of').replace('locatedin', 'located in').replace('includedin', 'included in').replace('workfor', 'works for')} {relation['linked_entity']}."
-            for relation in node.metadata["relation_list"]
-        ]
-        found_description = node.metadata["description"]
-        found_community_summary = node.metadata["community"]["summary"]
-        return found_relations, found_description, found_community_summary
-
-    selected_relations = []
-    selected_descriptions = []
-    selected_communities = []
-
-    # We process the entities in parallel
-    if list_cleaned_entities != []:
-        with ThreadPoolExecutor() as executor:
-            results = list(executor.map(process_entity, list_cleaned_entities))
-
-        list_relations, list_description, list_communities = zip(*results)
-        list_relations = [
-            item for sublist in list_relations for item in sublist
-        ]
-        list_description = list(list_description)
-        list_communities = list(list_communities)
-
-        # Transform the list of relations into a list of langchain Document objects
-        list_relations = [
-            Document(page_content=relation, metadata={"type": "relation"})
-            for relation in list_relations
-        ]
-
-        reranker = CustomCrossEncoderReranker(
-            model=load_reranker(config["reranker_model"]), use_autocut=True
-        )
-        selected_relations = reranker.compress_documents(list_relations, query)
-
-    search_kwargs = {
-        "filter": qdrant_models.Filter(
-            should=[
-                qdrant_models.FieldCondition(
-                    key="metadata.type",
-                    match=qdrant_models.MatchValue(value="community_summary"),
-                ),
-                qdrant_models.FieldCondition(
-                    key="metadata.type",
-                    match=qdrant_models.MatchValue(value="entity_description"),
-                ),
-            ]
-        )
-    }
-
-    # We now search for the community summaries and entity descriptions based on semantic search using the entire query
-    similarity_results = raw_database.similarity_search(
-        query=query, k=30, **search_kwargs
-    )
-    similarity_docs = [result for result in similarity_results]
-    reranker = CustomCrossEncoderReranker(
-        model=load_reranker(config["reranker_model"]), use_autocut=True
-    )
-    filtered_docs = reranker.compress_documents(similarity_docs, query)
-
-    selected_descriptions = [
-        doc.page_content
-        for doc in filtered_docs
-        if doc.metadata["type"] == "entity_description"
-    ]
-    selected_communities = [
-        doc.page_content
-        for doc in filtered_docs
-        if doc.metadata["type"] == "community_summary"
-    ]
-    # Transform the selected relations into a list of strings
-    selected_relations = [doc.page_content for doc in selected_relations]
-
-    # Logging the required information
-    logging.info(f"Number of entities reranked: {len(list_cleaned_entities)}")
-    logging.info(f"Number of summaries reranked: {len(selected_communities)}")
-    logging.info(
-        f"Number of descriptions reranked: {len(selected_descriptions)}"
-    )
-
-    return {
-        "selected_relations": selected_relations,
-        "selected_descriptions": selected_descriptions,
-        "selected_communities": selected_communities,
-    }
-
 
 if __name__ == "__main__":
     # open the config file

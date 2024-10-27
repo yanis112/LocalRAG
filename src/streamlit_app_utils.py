@@ -100,8 +100,6 @@ def initialize_session_state():
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    # if "knowledge_graph" not in st.session_state:
-    #     st.session_state["knowledge_graph"] = KnowledgeGraph()
 
 
 def transcribe_audio(audio):
@@ -258,10 +256,6 @@ def query_suggestion(query):
 
     """
     from src.agentic_rag_utils import QueryBreaker
-    # We first try to contextualize the query
-    # kg = st.session_state["knowledge_graph"]
-    # with st.spinner("Contextualizing the query..."):
-    #     contextualized_query = kg.contextualize_query(query)
 
     context = "The query's answer is in the database of a company named Euranova which is specialized in AI and data science and R&D. \
         This company is located in France and Belgium, has several client and works on projects such as medical imaging, autonomous driving, and natural language processing."
@@ -320,12 +314,6 @@ def create_transcription_txt(transcription):
     return txt_file_path
 
 
-# def display_chat_history():
-#     for message in st.session_state.messages:
-#         if isinstance(message["content"], str):
-#             st.chat_message(message["role"]).write(message["content"])
-#         elif isinstance(message["content"], dict):
-#             st.chat_message(message["role"]).json(message["content"])
 
 def display_chat_history():
     for message in st.session_state.messages:
@@ -391,13 +379,6 @@ def process_query(query, streamlit_config):
         config["enable_source_filter"] = True
     else:
         config["enable_source_filter"] = False
-    
-    
-    # if config["emails_answer"]: #if email answer is activated by the user we put as unique source the email source ('email') folder
-    #     config["data_sources"] = ["email"]
-    #     config["enable_source_filter"] = True
-    #     config["field_filter"] = ["email"]
-        
             
     # we return the chunks to be able to display the sources
     config["return_chunks"] = True
@@ -459,19 +440,6 @@ def process_query(query, streamlit_config):
                     default_config=default_config,
                     config=config,
                 )
-            
-            
-        # elif config["auto_job"]:
-        #     from src.auto_job import auto_job_writter
-        #     answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
-        #     sources=[]
-        
-        # else:
-        #     answer, docs, sources = RAG_answer(
-        #         query,
-        #         default_config=default_config,
-        #         config=config,
-        #     )
 
 
         with st.chat_message("assistant"):
@@ -534,27 +502,6 @@ def display_sources(sources, hallucination_scores):
     # Display the DataFrame
     st.dataframe(df_sources)
 
-
-# def display_sources_v2(sources, hallucination_scores):
-#     # Create a dictionary to count the occurrences of each source
-#     source_counts = {source: sources.count(source) for source in sources}
-
-#     # Combine the counts into a single DataFrame
-#     data = []
-#     for source in sources:
-#         if source not in [
-#             d["Source (decreasing order of relevance)"] for d in data
-#         ]:  # Avoid adding duplicates
-#             data.append(
-#                 {
-#                     "Source (decreasing order of relevance)": source,
-#                     "Number of times cited": source_counts[source],
-#                 }
-#             )
-#     df_sources = pd.DataFrame(data)
-
-#     # Display the DataFrame
-#     st.dataframe(df_sources)
 
 
 def display_sources_v2(sources, hallucination_scores):

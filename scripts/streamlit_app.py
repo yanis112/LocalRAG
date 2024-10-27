@@ -1,34 +1,12 @@
-import time
-
-# Measure time for json import
-start_time = time.time()
-import json
-print(f"json imported in {time.time() - start_time:.6f} seconds")
-
-# Measure time for os import
-start_time = time.time()
 import os
-print(f"os imported in {time.time() - start_time:.6f} seconds")
-
-# Measure time for streamlit import
-start_time = time.time()
 import streamlit as st
-print(f"streamlit imported in {time.time() - start_time:.6f} seconds")
-
-# Measure time for dotenv import
-start_time = time.time()
 from dotenv import load_dotenv
-print(f"dotenv imported in {time.time() - start_time:.6f} seconds")
-
-# Measure time for custom imports
-start_time = time.time()
 from src.streamlit_app_utils import (
     display_chat_history,
     initialize_session_state,
     load_config,
     process_query,
 )
-print(f"custom imports imported in {time.time() - start_time:.6f} seconds")
 
 
 load_dotenv()
@@ -43,6 +21,9 @@ st.title(
     and does not have a memory of the previous interactions or messages, each query is independently processed from the previous ones. You can't ask anything apart from \
     a query/question, no greetings, no small talk, its a waste of time and resources !",
 )
+
+#black theme
+st._config.set_option("theme.base", "dark")
 
 
 # st.sidebar.image("assets/logo_v5.png", output_format="PNG")
@@ -65,47 +46,6 @@ if st.sidebar.button(
     from src.streamlit_app_utils import clear_chat_history
     clear_chat_history()
 
-# add a copy to clipboard button to cpoy last chabot answer
-# if "messages" in st.session_state and len(st.session_state['messages']) > 0:
-#     #print("MESSAGES: ", st.session_state['messages'])
-#     st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
-
-# Initialize theme state if it doesn't exist
-# if "theme" not in st.session_state:
-#     st.session_state["theme"] = "light"
-# if "theme_changed" not in st.session_state:
-#     st.session_state["theme_changed"] = False
-
-
-# # Function to toggle the theme
-# def toggle_theme():
-#     st.session_state.theme = (
-#         "dark" if st.session_state.theme == "light" else "light"
-#     )
-#     st.session_state.theme_changed = True
-
-
-# Toggle button to switch themes
-# if st.sidebar.toggle(
-#     "Dark Mode 🌞/🌜",
-#     value=False if st.session_state["theme"] == "light" else True,
-# ):
-#     if st.session_state.theme != "dark":
-#         toggle_theme()
-# else:
-#     if st.session_state.theme != "light":
-#         toggle_theme()
-
-# # Apply the theme
-# if st.session_state.theme == "light":
-#     st._config.set_option("theme.base", "light")
-# else:
-#     st._config.set_option("theme.base", "dark")
-
-# # Check if the theme has been changed and reload the page if necessary
-# if st.session_state.theme_changed:
-#     st.session_state.theme_changed = False
-#     st.rerun()
 
 # Define sidebar parameters
 st.sidebar.header("Search Settings")
@@ -121,12 +61,6 @@ deep_search = st.sidebar.toggle(
     value=False,
     help="Enable or disable the deep search. This will make a search divided in several steps, fit to solve complex queries, more powerfull but longer...",
 )
-
-# use_history = st.sidebar.toggle(
-#     "Enable Chat History Use 📜",
-#     value=False,
-#     help="Enable or disable the chat history use by the chatbot. If enabled, the chatbot will use the chat history to provide more accurate answers. Else, the chatbot will ignore the chat history. Pay attention, if the chat history is too long, it can saturate the chatbot... dont forget to clean the chat history ! The history is only used if advanced search is enabled !",
-# )
 
 # Define sidebar parameters
 st.sidebar.header("Data Sources")
@@ -162,8 +96,8 @@ if st.sidebar.toggle(
     value=False,
     help="You can allow audio recording (will make a recording button appear) and then it will be immediately transcribed.",
 ):
-    audio = audiorecorder(
-        start_prompt="Start recording", stop_prompt="Stop recording"
+    audio = st.experimental_audio_input(
+        "Start recording"
     )
 
     if len(audio) > 0:
@@ -231,19 +165,6 @@ if uploaded_file and "uploaded_file" not in st.session_state:
         from src.streamlit_app_utils import show_submission_form
         show_submission_form()
 
-# # add a toogle for auto_job tool use
-# auto_job = st.sidebar.toggle(
-#     "Enable Auto Job Tool 📝",
-#     value=False,
-#     help="Enable or disable the use of the Auto Job Tool. This tool is used to help you to write a job application letter. You will be asked to provide some informations and the tool will generate a prompt for you to write the letter.",
-# )
-
-# add a toogle for email_tool use
-# emails_answer = st.sidebar.toggle(
-#     "Enable Email Search Tool 📝",
-#     value=False,
-# )
-
 # Display the chat history
 display_chat_history()
 
@@ -273,30 +194,4 @@ if query:
     st.session_state["current_query"] = query
     process_query(query, streamlit_config)
 
-if "feedback" not in st.session_state:
-    if st.sidebar.button("Send Feedback"):
-        feedback_dialog()
-else:
-    st.toast("Feedback sent successfully!", icon="✅")
-    try:
-        with open("feedback.json", "r") as f:
-            try:
-                data = json.load(f)
-            except:
-                data = []
-    except FileNotFoundError:
-        data = []
 
-    data.append(
-        {
-            "question": st.session_state["current_query"],
-            "answer": st.session_state.messages[-1]["content"],
-            "feedback": st.session_state.feedback["feedback"],
-            "comment": st.session_state.feedback["comment"],
-        }
-    )
-    with open("feedback.json", "w") as f:
-        json.dump(data, f)
-
-    # remove feedback from session state
-    st.session_state.pop("feedback")

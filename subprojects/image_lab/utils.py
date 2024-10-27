@@ -14,7 +14,7 @@ hf_token_list = [
 ]
 
 # Define input and output directories
-INPUT_DIR = 'suprojects/image_lab/input_images'
+INPUT_DIR = 'subprojects/image_lab/input_images'
 OUTPUT_DIR = 'subprojects/image_lab/output_images'
 
 # Create input and output directories if they don't exist

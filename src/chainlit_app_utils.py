@@ -28,7 +28,7 @@ async def load_config():
             config = yaml.safe_load(f)
     return config
 
-async def process_query(query, config):
+def process_query(query, config):
     from src.text_classification_utils import IntentClassifier
     start_time = time.time()
     default_config = load_config()
@@ -58,7 +58,7 @@ async def process_query(query, config):
         intent = classifier.classify(query)
         if intent == "rediger un texte pour une offre":
             from src.auto_job import auto_job_writter
-            answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+            answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=False, model_name=config["model_name"], llm_provider=config["llm_provider"])
             sources = []
         elif intent == "question sur des emails":
             config["data_sources"] = ["emails"]
@@ -80,7 +80,7 @@ async def process_query(query, config):
             )
         elif intent == "write instagram description":
             from src.auto_instagram_publi import instagram_descr_prompt
-            answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+            answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=False, model_name=config["model_name"], llm_provider=config["llm_provider"])
             sources = []
         else:
             answer, docs, sources = RAG_answer(

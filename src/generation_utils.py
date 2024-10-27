@@ -9,22 +9,19 @@ import yaml
 
 # load environment variables
 from dotenv import load_dotenv
-from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
-from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
-from langsmith import traceable
+from langchain_core.output_parsers import JsonOutputParser
+from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
 # custom imports
 from src.LLM import CustomChatModel
 from src.retrieval_utils import (
     query_database_v2,
-    query_knowledge_graph_v3,
 )
 from src.utils import (
     detect_language,
     log_execution_time,
-    token_calculation_prompt,
 )
 
 load_dotenv()
@@ -50,7 +47,13 @@ logging.basicConfig(
     format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
 )
 
-
+def token_calculation_prompt(query: str) -> str:
+    """
+    Return the appropriate token calculation prompt for the query or document.
+    """
+    coefficient = 1 / 0.45
+    num_tokens = len(query.split()) * coefficient
+    return num_tokens
 
 @lru_cache(maxsize=None)
 def load_chat_model(model_name, temperature, llm_provider):
@@ -96,234 +99,6 @@ def pull_model(model_name):
     return 'model pulled !'
 
 
-@log_execution_time
-def LLM_answer(
-    prompt,
-    json_formatting=False,
-    pydantic_object=None,
-    model_name=None,
-    temperature=1,
-    stream=False,
-    llm_provider=None,
-):  #DEPRECATED
-    """
-    Generate an answer using the Language Model (LLM) based on the given prompt.
-
-    Args:
-        prompt (str): The input prompt for generating the answer.
-        json_formatting (bool, optional): Flag indicating whether the output should be in JSON format. Defaults to False.
-        pydantic_object (Any, optional): The Pydantic object used for JSON formatting. Defaults to None.
-        model_name (str, optional): The name of the language model to use. Defaults to None.
-        temperature (float, optional): The temperature parameter for controlling the randomness of the generated output. Defaults to 1.
-        stream (bool, optional): Flag indicating whether to stream the output. Defaults to False.
-        llm_provider (Any, optional): The provider for the language model. Defaults to None.
-
-    Returns:
-        Any: The generated answer.
-
-    Raises:
-        Exception: If an error occurs during JSON parsing.
-
-    """
-    # Initialize the result
-    result = None
-
-    logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
-    
-    #we try to pull the model if it is not already pulled
-    
-    #pull_model(model_name)
-
-    # we create the chat model object with contains a LLM and a prompt template and a chat model (LLM+prompt template)
-    chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
-
-    # we get the chat model / LLM from the chat model object
-    chat = chat_model_1.chat_model
-
-    prompt_template = chat_model_1.chat_prompt_template
-
-    if json_formatting:
-        # Set up a parser + inject instructions into the prompt template.
-        parser = JsonOutputParser(pydantic_object=pydantic_object)
-        prompt_template = PromptTemplate(
-            template="Answer the user query.\n{format_instructions}\n{prompt}\n",  # template="Answer the user query.\n{format_instructions}\n{query}\n",
-            input_variables=["query"],
-            partial_variables={
-                "format_instructions": parser.get_format_instructions()
-            },
-        )
-        
-        #print the format instructions 
-        #print("FORMAT INSTRUCTIONS:", parser.get_format_instructions())
-        
-        
-        chain = prompt_template | chat | parser
-        try:
-            result = chain.invoke({"query": prompt})
-            #print("RAW RESULT:", result)
-            return result
-        except Exception as e:
-            print("ERROR OCCURED DURING JSON PARSING !")
-            logging.error("ERROR OCCURED DURING JSON PARSING !: %s", e)
-
-    else:
-        chain = prompt_template | chat | StrOutputParser()
-        if stream:
-            stream_generator = chain.stream(
-                {"text": prompt}
-            )  
-            return stream_generator
-        else:
-            result = chain.invoke(
-                {"text": prompt}
-            ) 
-            return result
-        
-  
-format_instruction="""
-The output should be formatted as a JSON instance that conforms to the JSON schema below.
-
-As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
-the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
-
-Here is the output schema:
-```
-{"properties": {"query1": {"title": "Query1", "type": "string"}, "query2": {"title": "Query2", "type": "string"}, "query3": {"title": "Query3", "type": "string"}, "query4": {"title": "Query4", "type": "string"}, "query5": {"title": "Query5", "type": "string"}}, "required": ["query1", "query2", "query3", "query4", "query5"]}
-```
-"""
-
-@traceable
-@log_execution_time
-def LLM_answer_v2( #DEPRECATED
-    prompt,
-    json_formatting=False,
-    pydantic_object=None,
-    model_name=None,
-    temperature=1,
-    stream=False,
-    llm_provider=None,
-):
-    logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
-
-    chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
-    chat = chat_model_1.chat_model
-    prompt_template = chat_model_1.chat_prompt_template
-
-    if json_formatting and issubclass(pydantic_object, BaseModel):
-        parser = JsonOutputParser(pydantic_object=pydantic_object)
-        format_instructions = parser.get_format_instructions()
-        #get the shema: _get_schema
-        #print("SCHEMA:", parser._get_schema(pydantic_object))
-        #print("FORMAT INSTRUCTIONS:", format_instructions)
-        total_prompt="Answer the user query.\n"+str(format_instructions) + str(prompt) + "\n"   #we create the total prompt by adding the format instructions to the prompt
-        #print('TOTAL PROMPT:', total_prompt)
-        chain = prompt_template | chat | parser #we create the chain with parser
-        try:
-            result = chain.invoke({"text": total_prompt})
-            #print("RAW RESULT:", result)
-            return result
-        except ValidationError as e:
-            print("ERROR OCCURRED DURING JSON PARSING!")
-            logging.error("JSON PARSING ERROR: %s", e)
-            return None
-    else:
-        chain = prompt_template | chat | StrOutputParser()
-        if stream:
-            #print("Stream detected")
-            return chain.stream({"text": prompt})
-        else:
-            #print("No stream detected")
-            return chain.invoke({"text": prompt})
-
-# @traceable
-# @log_execution_time
-# def LLM_answer_v3(
-#     prompt,
-#     json_formatting=False,
-#     pydantic_object=None,
-#     format_type=None,
-#     model_name=None,
-#     temperature=1,
-#     stream=False,
-#     llm_provider=None,
-# ):
-    
-#     """
-#     Generates an answer using a specified language model (LLM) based on the provided prompt and configuration parameters.
-#     Args:
-#         prompt (str): The input prompt to generate an answer for.
-#         json_formatting (bool, optional): If True, the output will be formatted as JSON. Defaults to False.
-#         pydantic_object (BaseModel, optional): A Pydantic model class used for JSON formatting. Required if json_formatting is True.
-#         format_type (str, optional): Specifies the format type (e.g., 'list' or 'dict') for structured output. Defaults to None.
-#         model_name (str, optional): The name of the model to use. Defaults to None.
-#         temperature (float, optional): The temperature setting for the model, affecting the randomness of the output. Defaults to 1.
-#         stream (bool, optional): If True, the output will be streamed. Defaults to False.
-#         llm_provider (str, optional): The provider of the language model (e.g., 'ollama'). Defaults to None.
-#     Returns:
-#         str or None: The generated answer from the language model. If json_formatting is True and an error occurs during JSON parsing, returns None.
-#     Raises:
-#         ValidationError: If an error occurs during JSON parsing when json_formatting is True.
-#     """
-    
-#     logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
-    
-#     #we try to pull the model if it is not already pulled
-#     if llm_provider=='ollama':
-#         pull_model(model_name)
-
-#     #we load appropriate templates and models
-#     chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
-#     chat = chat_model_1.chat_model
-#     prompt_template = chat_model_1.chat_prompt_template
-    
-    
-
-#     if json_formatting and issubclass(pydantic_object, BaseModel):
-#         parser = JsonOutputParser(pydantic_object=pydantic_object)
-#         format_instructions = parser.get_format_instructions()
-#         if format_type:
-#             from src.utils import get_strutured_format
-
-#             format_instructions=get_strutured_format(format_type) #list or dict
-#             schema=parser._get_schema(pydantic_object)
-            
-#             # we add the schema betwee, ``` and ``` to the format_instructions
-#             format_instructions=format_instructions + "```"+str(schema)+"```"
-            
-            
-#         #get the shema: _get_schema
-#         #print("SCHEMA:", parser._get_schema(pydantic_object))
-#         #print("FORMAT INSTRUCTIONS:", format_instructions)
-        
-#         total_prompt="Answer the user query. \n"+str(prompt) + "\n"  + str(format_instructions)    #we create the total prompt by adding the format instructions to the prompt
-#         print("##############################################################")
-#         #print('TOTAL PROMPT:', total_prompt)
-#         chain = prompt_template | chat | parser #we create the chain with parser
-#         try:
-#             result = chain.invoke({"text": total_prompt})
-#             #print("RAW RESULT:", result)
-#             return result
-#         except ValidationError as e:
-#             print("ERROR OCCURRED DURING JSON PARSING!")
-#             logging.error("JSON PARSING ERROR: %s", e)
-#             return None
-#     else:
-#         chain = prompt_template | chat | StrOutputParser()
-#         if stream:
-#             #print("Stream detected")
-#             return chain.stream({"text": prompt})
-#         else:
-#             #print("No stream detected")
-#             return chain.invoke({"text": prompt})
-
-import logging
-import os
-
-from openai import OpenAI
-from pydantic import BaseModel
-
-
-@traceable
 @log_execution_time
 def LLM_answer_v3(
     prompt,
@@ -439,57 +214,7 @@ def context_splitter(context, max_tokens=1000):
 
     return list_chunks
 
-
-
-def node_dict_to_paragraph(input_dict):
-    """
-    Converts a dictionary of representing a retrieved node from the knowledge graph to a paragraph string.
-
-    Args:
-        input_dict (dict): A dictionary containing nodes.
-
-    Returns:
-        str: A paragraph string generated from the input dictionary.
-    """
-    paragraph = ""
-    for document in input_dict:
-        page_content = (
-            document.page_content
-        )  # Adjusted to access 'page_content' correctly
-        if (
-            "relation_list" in document.metadata
-        ):  # Adjusted to access 'metadata' correctly
-            paragraph += "Relations concerning the entity: \n"
-            for relation in document.metadata["relation_list"]:
-                # {"r1":"works_for","r2":"contributes_to","r3":"works_with","r4":"makes_use_of","r5":"located_in","r6":"included_in"}
-                relation_phrase = (
-                    relation["relation"]
-                    .replace("workswith", "works with")
-                    .replace("workson", "works on")
-                    .replace("contributesto", "contributes to")
-                    .replace("makesuseof", "makes use of")
-                    .replace("locatedin", "located in")
-                    .replace("includedin", "included in")
-                    .replace("workfor", "works for")
-                )
-                paragraph += f"{page_content} {relation_phrase} {relation['linked_entity']}. "
-
-        if "description" in document.metadata:
-            paragraph += (
-                f"Entity description: {document.metadata['description']}. "
-            )
-        if "community" in document.metadata:
-            print("Community:", document.metadata["community"])
-            paragraph += f"Entity belongs to the community: {document.metadata['community']['summary']}."
-
-    return paragraph.strip()
-
-
-# Configure logging
-
-
 @log_execution_time
-@traceable
 def RAG_answer(query, default_config, config={"stream": False}):
     """
     Answer a given query using the RAG (Retrieval-Augmented Generation) model.
@@ -543,12 +268,6 @@ def RAG_answer(query, default_config, config={"stream": False}):
     # we search the useful docs in the database
     useful_docs = query_database_v2(query, default_config, config)
 
-    if merged_config[
-        "allow_kg_retrieval"
-    ]:  # allow the retrieval of the knowledge graph information
-        usefull_info = query_knowledge_graph_v3(
-            query, default_config, config
-        )  # this is a dictionary of str lists
 
     logging.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
 
@@ -694,7 +413,6 @@ def RAG_answer(query, default_config, config={"stream": False}):
 
 
 @log_execution_time
-@traceable
 def advanced_RAG_answer(query, default_config, config={"stream": False}):
     """
     Answer a given query using the RAG (Retrieval-Augmented Generation) model by decomposing the query into intermediate steps and using the intermediate steps to generate the final answer.
@@ -872,84 +590,6 @@ def advanced_RAG_answer(query, default_config, config={"stream": False}):
         
         
 
-
-def entity_description(entity, default_config, config={"stream": False}):
-    """
-    function that takes an entity from the knowledge graph as input and returns a description of the entity using gathered information from the
-    vector search.
-    input:
-        entity: the entity from the knowledge graph. type: string
-        default_config: the default configuration for the vector search. type: dict
-        config: the configuration for the vector search. type: dict
-    output:
-        answer: The answer in str format
-    """
-    # Merge default_config and config. If a key exists in both, value from config is used.
-    merged_config = {**default_config, **config}
-
-    # Configure logging
-    logging.basicConfig(
-        filename="rag_answer.log",
-        filemode="a",
-        level=logging.INFO,
-        format="%(asctime)s:%(levelname)s:%(message)s",
-    )
-
-    # Log merged config field filters
-    logging.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
-
-    # we search the useful docs in the database
-
-    prompt = "Qu'est ce que l'entité suivante: " + entity + " ?"
-
-    useful_docs = query_database_v2(prompt, default_config, config)
-
-    logging.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
-
-    start_time = time.time()
-    # We make a str using the document content and the metadata
-    list_content = [doc.page_content for doc in useful_docs]
-
-    # we list the metadata of the documents
-    list_metadata = [doc.metadata for doc in useful_docs]
-
-    # We create a context using all the documents and \n\n as a separator
-    list_context = [
-        f"Document {i}: {content} \n\n "
-        for i, (metadata, content) in enumerate(
-            zip(list_metadata, list_content)
-        )
-    ]
-
-    str_context = " ".join(list_context)
-
-    
-    # we define the prompt
-    prompt = f"Extract a short description in one or two sentences of the following entity based on the provided documents. Here is the entity: <entity> {entity} </entity> and the documents : \n\n {str_context}. \n No need to cite the documents name or page number. Return the description without preamble."
-
-    logging.info("TIME TO FORMAT CONTEXT: %f", time.time() - start_time)
-
-    nb_tokens = token_calculation_prompt(prompt)
-    logging.info(
-        "APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: %d", nb_tokens
-    )
-
-    logging.info("PROMPT: %s", prompt)
-
-    # We get the answer using the LLM model
-    stream_generator = LLM_answer_v3(
-        prompt,
-        model_name=merged_config["description_model_name"],
-        llm_provider=merged_config["description_llm_provider"],
-        stream=False,
-        temperature=merged_config["temperature"],
-    )
-    
-    print("ENTITY DESCRIPTION :", stream_generator)
-
-    return stream_generator
-
-
 def create_full_prompt(list_raw_docs, cot_enabled):
     """Takes the list of raw documents and the cot_enabled boolean and returns a full well formated prompt for the LLM model.
 
@@ -1013,10 +653,3 @@ if __name__ == "__main__":
     )
     
     print("ANSWER:", answer)
-
-    # we get the answer
-    # answer = RAG_answer(
-    #     query,
-    #     default_config=config,
-    #     config={"stream": False, "return_chunks": False},
-    # )

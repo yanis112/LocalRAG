@@ -11,37 +11,6 @@ from langchain_core.prompts import ChatPromptTemplate
 load_dotenv()
 
 
-def HuggingFaceAnwer(prompt, model_name, temperature=1.0): #PROBABLY DEPRECATED
-    import torch
-    pipeline = transformers.pipeline(
-        "text-generation",
-        model=model_name,
-        model_kwargs={"torch_dtype": torch.bfloat16},
-        device_map="auto",
-    )
-
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt},
-    ]
-
-    terminators = [
-        pipeline.tokenizer.eos_token_id,
-        pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
-    ]
-
-    outputs = pipeline(
-        messages,
-        max_new_tokens=512,  # 256 avant
-        eos_token_id=terminators,
-        do_sample=True,
-        temperature=1,
-        top_p=0.9,
-    )
-    answer = outputs[0]["generated_text"][-1]
-    return answer
-
-
 class CustomChatModel:
     """
     Represents a custom chat model.
