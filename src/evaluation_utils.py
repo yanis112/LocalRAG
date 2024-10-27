@@ -7,7 +7,6 @@ import yaml
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic.main import create_model
-from rouge import Rouge
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm

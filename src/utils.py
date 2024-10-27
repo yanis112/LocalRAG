@@ -16,21 +16,13 @@ import torch
 import yaml
 from deep_translator import GoogleTranslator
 from dotenv import load_dotenv
-from faster_whisper import WhisperModel
-from keybert import KeyBERT
-from langchain_community.embeddings import (
-    HuggingFaceBgeEmbeddings,
-    HuggingFaceEmbeddings,
-)
-from langchain_community.vectorstores import Chroma
+#from keybert import KeyBERT
+
 from langchain_core.document_loaders import BaseLoader
 from langchain_core.documents import Document
-from langchain_qdrant import Qdrant
-from loguru import logger
-from lingua import Language, LanguageDetectorBuilder
-from moviepy.editor import VideoFileClip
+
+
 from PIL import Image
-from pydub import AudioSegment
 from functools import lru_cache
 
 load_dotenv()
@@ -57,6 +49,7 @@ def log_execution_time(func):
 
         my_function()  # This will log the execution time of my_function
     """
+    from loguru import logger
     logger.remove()
     logger.add(
         "execution_time.log",
@@ -85,7 +78,11 @@ def detect_language(text: str) -> str:
 
     Returns:
         str: 'en' if the text is in English, 'fr' if the text is in French.
+        
     """
+    #lazy loading of the module
+    from lingua import Language, LanguageDetectorBuilder
+    
     languages = [Language.ENGLISH, Language.FRENCH]
     detector = LanguageDetectorBuilder.from_languages(*languages).build()
     language = detector.detect_language_of(text)
@@ -171,6 +168,10 @@ def get_k_random_chunks(
 
     """
     # we load the embedding model
+    from langchain_community.embeddings import (
+    HuggingFaceBgeEmbeddings,
+    HuggingFaceEmbeddings,
+)
 
     if clone_persist is None:
         model_name = config["embedding_model"]
@@ -247,6 +248,10 @@ def get_k_random_chunks_qdrant(
 
     """
     # we load the embedding model
+    from langchain_community.embeddings import (
+    HuggingFaceBgeEmbeddings,
+    HuggingFaceEmbeddings,
+)
 
     if clone_persist is None:
         model_name = config["embedding_model"]
@@ -659,77 +664,6 @@ class StructuredExcelLoader(BaseLoader):
         )
 
 
-class StructuredAudioLoader:
-    def __init__(self, file_path: str, chunk_length_ms: int = 30000) -> None:
-        self.file_path = file_path
-        self.chunk_length_ms = chunk_length_ms
-
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        compute_type = "float16" if torch.cuda.is_available() else "float32"
-
-        model_size = "large-v3"
-        self.model = WhisperModel(
-            model_size, device=device, compute_type=compute_type
-        )
-
-    def extract_audio_from_video(self, file_path: str) -> str:
-        video = VideoFileClip(file_path)
-        audio_file_path = file_path.rsplit(".", 1)[0] + ".wav"
-        video.audio.write_audiofile(audio_file_path)
-        return audio_file_path
-
-    def transcribe_audio(self, file_path: str) -> List[str]:
-        audio = AudioSegment.from_file(file_path)
-
-        chunks = [
-            audio[i : i + self.chunk_length_ms]
-            for i in range(0, len(audio), self.chunk_length_ms)
-        ]
-        print("Audio was split into", len(chunks), "chunks")
-
-        texts = []
-        for chunk in chunks:
-            # Ensure 'temp' directory exists
-            if not os.path.exists("temp"):
-                os.makedirs("temp")
-            # Overwrite 'temp.wav' each time
-            chunk.export("temp/temp.wav", format="wav")
-            segments, info = self.model.transcribe("temp/temp.wav", beam_size=5)
-            # print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-            for segment in segments:
-                print(
-                    "[%.2fs -> %.2fs] %s"
-                    % (segment.start, segment.end, segment.text)
-                )
-                texts.append(segment.text)
-
-        return texts
-
-    @log_execution_time
-    def load(self) -> Document:
-        file_path = self.file_path
-        if self.file_path.endswith((".mp4", ".mpeg")):
-            file_path = self.extract_audio_from_video(self.file_path)
-        elif self.file_path.endswith((".m4a", ".mp3", ".wav")):
-            file_path = (
-                self.file_path
-            )  # no need to extract audio, it's already an audio file
-
-        texts = self.transcribe_audio(file_path)
-
-        # delete the temporary audio file whose name is temp.wav
-        os.remove("temp/temp.wav")
-
-        # remove the model from the GPU by deleting it
-        del self.model
-
-        full_text = " ".join(texts)
-        doc = Document(
-            page_content=full_text, metadata={"source": self.file_path}
-        )
-
-        return doc
-
 
 class StructuredAudioLoaderV2:
     def __init__(
@@ -1015,6 +949,7 @@ class StructuredImageLoader(BaseLoader):
 
 if __name__ == "__main__":
     # load the config file
+    from langchain_qdrant import Qdrant
     with open("config/config.yaml") as f:
         config = yaml.safe_load(f)
 

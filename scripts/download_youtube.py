@@ -67,7 +67,7 @@ def main():
     urls = read_urls(urls_file)
     transcribed_urls = read_transcribed_log(log_file)
 
-    transcriber = YouTubeTranscriber(chunk_size=120, batch_size=1, language='fr')
+    transcriber = YouTubeTranscriber(chunk_size=1500, batch_size=1, language='fr')
 
     for url in tqdm(urls, desc="Transcribing videos"):
         logging.info(f"Début de la transcription pour l'URL: {url}")

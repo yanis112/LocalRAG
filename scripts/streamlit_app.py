@@ -1,25 +1,35 @@
+import time
+
+# Measure time for json import
+start_time = time.time()
 import json
+print(f"json imported in {time.time() - start_time:.6f} seconds")
+
+# Measure time for os import
+start_time = time.time()
 import os
+print(f"os imported in {time.time() - start_time:.6f} seconds")
 
+# Measure time for streamlit import
+start_time = time.time()
 import streamlit as st
+print(f"streamlit imported in {time.time() - start_time:.6f} seconds")
 
-# from audiorecorder import audiorecorder
-# load environment variables
+# Measure time for dotenv import
+start_time = time.time()
 from dotenv import load_dotenv
+print(f"dotenv imported in {time.time() - start_time:.6f} seconds")
 
-# custom imports
+# Measure time for custom imports
+start_time = time.time()
 from src.streamlit_app_utils import (
-    clear_chat_history,
-    create_transcription_txt,
     display_chat_history,
-    feedback_dialog,
-    handle_uploaded_file,
     initialize_session_state,
     load_config,
-    process_query_v2,
-    show_submission_form,
-    transcribe_audio,
+    process_query,
 )
+print(f"custom imports imported in {time.time() - start_time:.6f} seconds")
+
 
 load_dotenv()
 
@@ -52,6 +62,7 @@ if st.sidebar.button(
     label="Clear Chat 🧹",
     help="Clear the chat history on the visual interface 🧹",
 ):
+    from src.streamlit_app_utils import clear_chat_history
     clear_chat_history()
 
 # add a copy to clipboard button to cpoy last chabot answer
@@ -60,41 +71,41 @@ if st.sidebar.button(
 #     st_copy_to_clipboard(str(st.session_state['messages'][-1]['content']))
 
 # Initialize theme state if it doesn't exist
-if "theme" not in st.session_state:
-    st.session_state["theme"] = "light"
-if "theme_changed" not in st.session_state:
-    st.session_state["theme_changed"] = False
+# if "theme" not in st.session_state:
+#     st.session_state["theme"] = "light"
+# if "theme_changed" not in st.session_state:
+#     st.session_state["theme_changed"] = False
 
 
-# Function to toggle the theme
-def toggle_theme():
-    st.session_state.theme = (
-        "dark" if st.session_state.theme == "light" else "light"
-    )
-    st.session_state.theme_changed = True
+# # Function to toggle the theme
+# def toggle_theme():
+#     st.session_state.theme = (
+#         "dark" if st.session_state.theme == "light" else "light"
+#     )
+#     st.session_state.theme_changed = True
 
 
 # Toggle button to switch themes
-if st.sidebar.toggle(
-    "Dark Mode 🌞/🌜",
-    value=False if st.session_state["theme"] == "light" else True,
-):
-    if st.session_state.theme != "dark":
-        toggle_theme()
-else:
-    if st.session_state.theme != "light":
-        toggle_theme()
+# if st.sidebar.toggle(
+#     "Dark Mode 🌞/🌜",
+#     value=False if st.session_state["theme"] == "light" else True,
+# ):
+#     if st.session_state.theme != "dark":
+#         toggle_theme()
+# else:
+#     if st.session_state.theme != "light":
+#         toggle_theme()
 
-# Apply the theme
-if st.session_state.theme == "light":
-    st._config.set_option("theme.base", "light")
-else:
-    st._config.set_option("theme.base", "dark")
+# # Apply the theme
+# if st.session_state.theme == "light":
+#     st._config.set_option("theme.base", "light")
+# else:
+#     st._config.set_option("theme.base", "dark")
 
-# Check if the theme has been changed and reload the page if necessary
-if st.session_state.theme_changed:
-    st.session_state.theme_changed = False
-    st.rerun()
+# # Check if the theme has been changed and reload the page if necessary
+# if st.session_state.theme_changed:
+#     st.session_state.theme_changed = False
+#     st.rerun()
 
 # Define sidebar parameters
 st.sidebar.header("Search Settings")
@@ -158,11 +169,13 @@ if st.sidebar.toggle(
     if len(audio) > 0:
         print("AUDIO: ", audio)
         print("AUDIO RECORDED !")
+        from src.streamlit_app_utils import transcribe_audio
         transcribe_audio(audio)
         # get the transcrition from the session state
         transcription = st.session_state.messages[-1]["content"]
         # save the transcription in a json file
         # pdf = create_transcription_pdf(transcription)
+        from src.streamlit_app_utils import create_transcription_txt
         txt = create_transcription_txt(transcription)
         print("TXT FILE CREATED !")
         st.session_state["uploaded_file"] = True
@@ -183,6 +196,7 @@ if st.sidebar.toggle(
 
         audio = []
 
+        from src.streamlit_app_utils import show_submission_form
         show_submission_form()
 
 
@@ -201,6 +215,7 @@ if uploaded_file and "uploaded_file" not in st.session_state:
     st.toast("File uploaded successfully!", icon="✅")
     print("FILE UPLOADED !")
     st.session_state["uploaded_file"] = True
+    from src.streamlit_app_utils import handle_uploaded_file
     output_file = handle_uploaded_file(uploaded_file)
 
     # si le type de output file c'est des bytes on met le download button
@@ -213,21 +228,21 @@ if uploaded_file and "uploaded_file" not in st.session_state:
         )
 
         st.session_state["transcription"] = str(output_file.decode("utf-8"))
-
+        from src.streamlit_app_utils import show_submission_form
         show_submission_form()
 
-# add a toogle for auto_job tool use
-auto_job = st.sidebar.toggle(
-    "Enable Auto Job Tool 📝",
-    value=False,
-    help="Enable or disable the use of the Auto Job Tool. This tool is used to help you to write a job application letter. You will be asked to provide some informations and the tool will generate a prompt for you to write the letter.",
-)
+# # add a toogle for auto_job tool use
+# auto_job = st.sidebar.toggle(
+#     "Enable Auto Job Tool 📝",
+#     value=False,
+#     help="Enable or disable the use of the Auto Job Tool. This tool is used to help you to write a job application letter. You will be asked to provide some informations and the tool will generate a prompt for you to write the letter.",
+# )
 
 # add a toogle for email_tool use
-emails_answer = st.sidebar.toggle(
-    "Enable Email Search Tool 📝",
-    value=False,
-)
+# emails_answer = st.sidebar.toggle(
+#     "Enable Email Search Tool 📝",
+#     value=False,
+# )
 
 # Display the chat history
 display_chat_history()
@@ -242,8 +257,8 @@ streamlit_config = {
         "## Chat History: \n\n " + str(st.session_state["messages"])
     ),  # we keep track of the chat history,
     "use_history": False,  # this functionnality is in work in progress
-    "auto_job": auto_job,
-    "emails_answer": emails_answer,
+    # "auto_job": auto_job,
+    # "emails_answer": emails_answer,
 }
 
 
@@ -256,7 +271,7 @@ query = st.chat_input("Please enter your question")
 # Process the query if submitted
 if query:
     st.session_state["current_query"] = query
-    process_query_v2(query, streamlit_config)
+    process_query(query, streamlit_config)
 
 if "feedback" not in st.session_state:
     if st.sidebar.button("Send Feedback"):

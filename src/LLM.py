@@ -1,21 +1,18 @@
 import os
 from functools import lru_cache
-
 import ollama
-import torch
+
 import transformers
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.chat_models.sambanova import ChatSambaNovaCloud
-from langchain_groq import ChatGroq
-#from langchain_cerebras import ChatCerebras
+
 
 # load environment variables
 load_dotenv()
 
 
 def HuggingFaceAnwer(prompt, model_name, temperature=1.0): #PROBABLY DEPRECATED
+    import torch
     pipeline = transformers.pipeline(
         "text-generation",
         model=model_name,
@@ -67,6 +64,7 @@ class CustomChatModel:
     
 
         if self.llm_provider == "groq":
+            from langchain_groq import ChatGroq
             self.context_window_size = 131072
             self.chat_model = ChatGroq(
                 temperature=self.llm_temperature,
@@ -81,6 +79,7 @@ class CustomChatModel:
             )
 
         elif self.llm_provider == "ollama":
+            from langchain_ollama import ChatOllama
             template = ollama.show(self.llm_name)["template"]
             self.context_window_size = 8192
             self.llm = ChatOllama(
@@ -100,6 +99,7 @@ class CustomChatModel:
 
         elif self.llm_provider == "huggingface":
             # Find all available cuda devices
+            import torch
             pipeline = transformers.pipeline(
                 "text-generation",
                 model=self.llm_name,
@@ -135,25 +135,9 @@ class CustomChatModel:
                 ]
             )
 
-        elif self.llm_provider == "langchain":
-            # Get the template for the model
-            template = ollama.show(self.llm_name)["template"]
-            self.llm = ChatOllama(
-                model=self.llm_name,
-                keep_alive=0,
-                num_ctx=8192,  # Example context window size
-                temperature=self.llm_temperature,
-                template=template,
-            )
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant."),
-                    ("human", "{text}"),
-                ]
-            )
-            self.chat_model = self.llm
-        
+       
         elif self.llm_provider == "cerebras":
+            from langchain_cerebras import ChatCerebras
           
             #use load_dotenv() to load the environment variables
             os.environ["CEREBRAS_API_KEY"] = os.getenv("CEREBRAS_API_KEY")
@@ -170,6 +154,7 @@ class CustomChatModel:
             self.chat_model = self.llm
             
         elif self.llm_provider == "sambanova":
+            from langchain_community.chat_models.sambanova import ChatSambaNovaCloud
             os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
             self.context_window_size = 8000  # Example context window size
             self.chat_model = ChatSambaNovaCloud(

@@ -1,5 +1,4 @@
 import os
-import json
 from notion_client import Client
 import re
 

@@ -11,8 +11,11 @@ from dotenv import load_dotenv
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
+import requests
 
 load_dotenv()
+
+""" Variious tools and classes to transcribe audios from YouTube videos """
 
 # Configuration du logging
 logging.basicConfig(
@@ -53,6 +56,8 @@ class YouTubeTranscriber:
             logging.error(f"Erreur lors du téléchargement de l'audio: {e}")
             return None
 
+    from concurrent.futures import ThreadPoolExecutor
+    
     def chunk_audio(self, file_path: str) -> List[str]:
         logging.info(f"Découpage de l'audio: {file_path}")
         try:
@@ -60,13 +65,21 @@ class YouTubeTranscriber:
             if self.chunk_size == 0 or len(audio) <= self.chunk_size:
                 logging.info("Aucun découpage nécessaire pour l'audio.")
                 return [file_path]
+            
             chunks = [audio[i:i + self.chunk_size] for i in range(0, len(audio), self.chunk_size)]
             chunk_paths = []
-            for idx, chunk in enumerate(chunks):
+    
+            def export_chunk(idx, chunk):
                 chunk_path = os.path.join(self.temp_dir, f'chunk_{idx}.mp3')
                 chunk.export(chunk_path, format='mp3')
                 logging.info(f"Chunk créé: {chunk_path}")
-                chunk_paths.append(chunk_path)
+                return chunk_path
+    
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                futures = [executor.submit(export_chunk, idx, chunk) for idx, chunk in enumerate(chunks)]
+                for future in futures:
+                    chunk_paths.append(future.result())
+    
             logging.info(f"{len(chunk_paths)} chunks créés.")
             return chunk_paths
         except Exception as e:
@@ -81,6 +94,7 @@ class YouTubeTranscriber:
                 if not audio_path:
                     logging.warning(f"Téléchargement échoué pour l'URL: {input_path}")
                     return []
+                
             elif input_path.lower().endswith(('.wav', '.mp3', '.m4a')):
                 audio_path = input_path
                 logging.info(f"Fichier audio local utilisé: {audio_path}")
@@ -96,6 +110,8 @@ class YouTubeTranscriber:
                 texts = self.transcribe_groq(chunks)
             elif method == 'whisper-turbo':
                 texts = self.transcribe_turbo(chunks)
+            elif method == 'insanely-fast-whisper':
+                texts = self.transcribe_insanely_fast_whisper(chunks)
             else:
                 raise ValueError("Méthode de transcription non supportée.")
             return texts
@@ -126,6 +142,8 @@ class YouTubeTranscriber:
             logging.error(f"Erreur lors de la transcription avec Whisper: {e}")
             return []
 
+   
+
     def transcribe_groq(self, chunks: List[str]) -> List[str]:
         logging.info("Initialisation du client Groq pour la transcription...")
         texts = []
@@ -141,11 +159,21 @@ class YouTubeTranscriber:
 
     def _transcribe_chunk_groq(self, client, chunk: str) -> str:
         try:
-            with open(chunk, "rb") as file:
+            # Downsample audio to 16000 Hz mono
+            audio = AudioSegment.from_file(chunk)
+            audio = audio.set_frame_rate(16000).set_channels(1)
+            downsampled_chunk_path = os.path.join(self.temp_dir, f'downsampled_{os.path.basename(chunk)}')
+            audio.export(downsampled_chunk_path, format='mp3')
+
+            # Print the size of the fragment in megabytes
+            fragment_size_mb = os.path.getsize(downsampled_chunk_path) / (1024 * 1024)
+            print(f"Fragment size: {fragment_size_mb:.2f} MB")
+
+            with open(downsampled_chunk_path, "rb") as file:
                 data = file.read()
             translation = client.audio.transcriptions.create(
-                file=(os.path.basename(chunk), data),
-                model="whisper-large-v3",
+                file=(os.path.basename(downsampled_chunk_path), data),
+                model='whisper-large-v3-turbo',
                 response_format="json",
                 language=self.language,
                 temperature=0.0
@@ -156,10 +184,34 @@ class YouTubeTranscriber:
             else:
                 logging.warning(f"Aucune transcription obtenue pour le chunk: {chunk}")
                 return None
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                logging.error(f"Rate limit error encountered: {e}")
+                # Switch to a different model
+                try:
+                    translation = client.audio.transcriptions.create(
+                        file=(os.path.basename(downsampled_chunk_path), data),
+                        model='whisper-large-v3',
+                        response_format="json",
+                        language=self.language,
+                        temperature=0.0
+                    )
+                    if translation and hasattr(translation, 'text'):
+                        logging.info(f"Chunk transcrit avec succès avec le modèle de secours: {chunk}")
+                        return translation.text
+                    else:
+                        logging.warning(f"Aucune transcription obtenue pour le chunk avec le modèle de secours: {chunk}")
+                        return None
+                except Exception as e:
+                    logging.error(f"Erreur lors de la transcription du chunk {chunk} avec le modèle de secours: {e}")
+                    return None
+            else:
+                logging.error(f"Erreur lors de la transcription du chunk {chunk} avec Groq: {e}")
+                return None
         except Exception as e:
             logging.error(f"Erreur lors de la transcription du chunk {chunk} avec Groq: {e}")
             return None
-
+        
     @lru_cache(maxsize=None)
     def load_turbo_model(self):
         logging.info("Chargement du modèle Whisper Turbo...")
@@ -175,6 +227,33 @@ class YouTubeTranscriber:
         except Exception as e:
             logging.error(f"Erreur lors du chargement du modèle Whisper Turbo: {e}")
             raise
+        
+    def transcribe_insanely_fast_whisper(self, chunks: List[str]) -> List[str]:
+        import subprocess
+        import json
+        logging.info("Transcription avec Insanely Fast Whisper...")
+        try:
+            texts = []
+            for idx, chunk in enumerate(chunks, start=1):
+                logging.info(f"Transcription du chunk {idx}/{len(chunks)}: {chunk}")
+                command = [
+                    "insanely-fast-whisper",
+                    "--model-name", "openai/whisper-large-v3-turbo",
+                    "--file-name", chunk,
+                    "--flash", "FLASH",
+                    "--hf-token", os.getenv("HUGGINGFACE_TOKEN"),
+                    "--transcript-path", os.path.join(self.temp_dir, f"transcript_{idx}.json"),
+                    "--batch-size", 1,
+                ]
+                subprocess.run(command, check=True)
+                with open(os.path.join(self.temp_dir, f"transcript_{idx}.json"), "r", encoding="utf-8") as file:
+                    transcript = json.load(file)
+                    texts.append(transcript["text"])
+            logging.info("Transcription avec Insanely Fast Whisper terminée.")
+            return texts
+        except Exception as e:
+            logging.error(f"Erreur lors de la transcription avec Insanely Fast Whisper: {e}")
+            return []
 
     def transcribe_turbo(self, chunks: List[str]) -> List[str]:
         logging.info("Initialisation de la transcription avec Whisper Turbo...")
@@ -220,9 +299,9 @@ class YouTubeTranscriber:
             logging.error(f"Erreur lors du nettoyage du répertoire temporaire: {e}")
 
 if __name__ == "__main__":
-    transcriber = YouTubeTranscriber(chunk_size=120, batch_size=5, language='en')
+    transcriber = YouTubeTranscriber(chunk_size=30, batch_size=1, language='en')
     input_path = "https://youtu.be/lIfbv3winLo?si=VuZEKbB94VvlA7PQ"
-    method = "groq"
+    method = "insanely-fast-whisper"
     transcriptions = transcriber.transcribe(input_path, method)
     for text in transcriptions:
         print(text)

@@ -10,7 +10,7 @@ def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.content
 
-def generate_image(prompt, height=2048, width=2048, guidance_scale=15.0, num_inference_steps=30, **parameters):
+def generate_image(prompt, height=1024, width=1024, guidance_scale=10.0, num_inference_steps=20, **parameters):
     payload = {
         "inputs": prompt,
         "height": height,

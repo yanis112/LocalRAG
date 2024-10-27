@@ -19,11 +19,12 @@ class JobScrapper:
     scrape_and_convert():
         Scrapes job listings and converts them to markdown files.
     """
-    def __init__(self, search_term, location, hours_old, results_wanted):
+    def __init__(self, search_term, location, hours_old, results_wanted, is_remote=False):
         self.search_term = search_term
         self.location = location
         self.hours_old = hours_old
         self.results_wanted = results_wanted
+        self.is_remote = is_remote
 
     def scrape_and_convert(self):
         jobs = scrape_jobs(
@@ -32,7 +33,8 @@ class JobScrapper:
             location=self.location,
             results_wanted=self.results_wanted,
             hours_old=self.hours_old,
-            country_indeed='france'
+            country_indeed='france',
+            is_remote=self.is_remote
         )
         print(f"Found {len(jobs)} jobs")
         print(jobs.columns)
@@ -57,5 +59,5 @@ class JobScrapper:
 
 if __name__ == "__main__":
     # Example usage
-    scraper = JobScrapper(search_term="Data Scientist", location="Marseille, France", hours_old=600, results_wanted=20)
+    scraper = JobScrapper(search_term="Data Scientist", location="France", hours_old=600, results_wanted=20,is_remote=True)
     scraper.scrape_and_convert()

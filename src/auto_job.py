@@ -79,10 +79,6 @@ def create_prompt(message_type, user_message, include_cv=False, cv_path=None):
     
     template = EXAMPLE_MESSAGES[message_type]
     
-    print("Type of template:", type(template))
-    print("Type of user_message:", type(user_message))
-    
-    
     prompt="### Instructions:\n"+user_message+"\n\n### Tu t'inspirera du template et du style de message suivant pour rédiger le contenu demandé:\n\n"+template
     
     # Remplacer les placeholders dans le template si nécessaire

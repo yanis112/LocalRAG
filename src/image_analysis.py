@@ -1,37 +1,35 @@
-import torch
-from PIL import Image
-from transformers import AutoProcessor, AutoModelForCausalLM
-from tqdm import tqdm
-import time
-import os
-import base64
-from openai import OpenAI
-from dotenv import load_dotenv
-import tempfile
-from concurrent.futures import ThreadPoolExecutor
 
-# Load environment variables
-load_dotenv()
+
 
 class ImageAnalyzer:
     prompt = "<MORE_DETAILED_CAPTION>"
 
-    def __init__(self):
+    def __init__(self, model_name="gpt-4o-mini"):
+        from dotenv import load_dotenv
+        import os
+        import torch
+
+        load_dotenv()
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         self.token = os.environ["GITHUB_TOKEN"]
         self.endpoint = "https://models.inference.ai.azure.com"
-        self.model_name = "gpt-4o-mini"
+        self.model_name = model_name
         self.model = None
         self.processor = None
 
     def load_florence_model(self):
         """Load the Florence-2 model and processor."""
+        from transformers import AutoProcessor, AutoModelForCausalLM
+        import torch
+
         self.model = AutoModelForCausalLM.from_pretrained("microsoft/Florence-2-large", torch_dtype=self.torch_dtype, trust_remote_code=True).to(self.device)
         self.processor = AutoProcessor.from_pretrained("microsoft/Florence-2-large", trust_remote_code=True)
 
     def get_image_data_url(self, image_file: str, image_format: str) -> str:
         """Convert an image file to a data URL string."""
+        import base64
+
         try:
             with open(image_file, "rb") as f:
                 image_data = base64.b64encode(f.read()).decode("utf-8")
@@ -73,6 +71,11 @@ class ImageAnalyzer:
 
     def describe_advanced(self, image_path: str, prompt: str, grid_size: int) -> str:
         """Describe an image using OpenAI's model with optional grid processing."""
+        from openai import OpenAI
+        from PIL import Image
+        from concurrent.futures import ThreadPoolExecutor
+        import tempfile
+
         client = OpenAI(
             base_url=self.endpoint,
             api_key=self.token,
@@ -107,7 +110,7 @@ class ImageAnalyzer:
             ],
             model=self.model_name,
         )
-        global_caption_text = "whole image description: " + global_response.choices[0].message.content
+        global_caption_text = global_response.choices[0].message.content
 
         if grid_size > 1:
             image = Image.open(image_path)
@@ -136,6 +139,10 @@ class ImageAnalyzer:
 
     def describe(self, image_path: str, grid_size: int = 1, method: str = 'florence2') -> str:
         """Describe an image using the specified method and grid size."""
+        import time
+        from PIL import Image
+        from tqdm import tqdm
+
         if method == 'florence2':
             self.load_florence_model()
             image = Image.open(image_path)
@@ -195,11 +202,14 @@ class ImageAnalyzer:
 
 # Example usage
 if __name__ == "__main__":
+    import time
     analyzer = ImageAnalyzer()
-    image_path = "test3.png"
-    prompt = "Describe this image in all the precise details: global style, objects, actions, textures, lights..."
+    image_path = "test_ocr.png"
+    prompt = """ Extract the technical information from the image. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
+    + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """
+
     start_time = time.time()
-    description = analyzer.describe(image_path, grid_size=2, method='gpt4o-mini')
-    end_time= time.time()
+    description = analyzer.describe_advanced(image_path, prompt=prompt, grid_size=1)
+    end_time = time.time()
     print(description)
     print("The process took:", end_time - start_time, "seconds.")

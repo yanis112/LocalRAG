@@ -1,5 +1,3 @@
-import io
-import json
 import os
 import textwrap
 import time
@@ -7,26 +5,10 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-import streamlit_pills as stp
 import yaml
 
-# load environment variables
-from dotenv import load_dotenv
-from fpdf import FPDF
-from pydub import AudioSegment
-
-# custom imports
-from src.agentic_rag_utils import (
-    QueryBreaker,
-)
-
 from src.generation_utils import RAG_answer,advanced_RAG_answer,LLM_answer_v3
-from src.knowledge_graph import KnowledgeGraph
-from src.utils import (
-    StructuredAudioLoaderV2,
-    StructuredPDFOcerizer,
-    token_calculation_prompt,
-)
+
 
 # Fonction pour sauvegarder le fichier audio en .wav
 def save_audio_as_wav(uploaded_file, output_dir):
@@ -40,35 +22,13 @@ def save_audio_as_wav(uploaded_file, output_dir):
     Returns:
         str: The path to the saved WAV file.
     """
+    from pydub import AudioSegment
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     file_path = os.path.join(output_dir, "input_file.wav")
     audio = AudioSegment.from_file(uploaded_file)
     audio.export(file_path, format="wav")
     return file_path
-
-
-# def generate_qr_code(url):
-#     """
-#     Generates a QR code image for the given URL.
-
-#     Parameters:
-#     url (str): The URL to encode into the QR code.
-
-#     Returns:
-#     PIL.Image.Image: The generated QR code image.
-#     """
-#     qr = qrcode.QRCode(
-#         version=1,
-#         error_correction=qrcode.constants.ERROR_CORRECT_H,
-#         box_size=10,
-#         border=4,
-#     )
-#     qr.add_data(url)
-#     qr.make(fit=True)
-#     img = qr.make_image(fill="black", back_color="white")
-#     return img
-
 
 def load_config():
     """
@@ -137,18 +97,11 @@ def initialize_session_state():
     Returns:
         None
     """
-    # if "qr_code" not in st.session_state:
-    #     STREAMLIT_URL = os.getenv("STREAMLIT_URL")
-    #     qr_code = generate_qr_code(STREAMLIT_URL)
-    #     byte_arr = io.BytesIO()
-    #     qr_code.save(byte_arr, format="PNG")
-    #     byte_arr = byte_arr.getvalue()
-    #     st.session_state["qr_code"] = byte_arr
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    if "knowledge_graph" not in st.session_state:
-        st.session_state["knowledge_graph"] = KnowledgeGraph()
+    # if "knowledge_graph" not in st.session_state:
+    #     st.session_state["knowledge_graph"] = KnowledgeGraph()
 
 
 def transcribe_audio(audio):
@@ -161,6 +114,7 @@ def transcribe_audio(audio):
     Returns:
         None
     """
+    from src.utils import StructuredAudioLoaderV2
     audio.export("temp/input_audio.wav", format="wav")
     st.write(
         f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds"
@@ -200,6 +154,7 @@ def handle_uploaded_file(uploaded_file):
     temp_dir = "temp"
     extension = str(Path(uploaded_file.name).suffix)
     if extension in [".mp3", ".wav", ".m4a", ".mp4"]:
+        from src.utils import StructuredAudioLoaderV2
         file_path = save_audio_as_wav(uploaded_file, temp_dir)
         st.success(f"File saved as {file_path}")
         with st.spinner(
@@ -253,7 +208,9 @@ def handle_uploaded_file(uploaded_file):
 
 
     elif extension in [".pdf"]:
+        from src.utils import StructuredPDFOcerizer
         save_uploaded_pdf(uploaded_file)
+        
         pdf_loader = StructuredPDFOcerizer()
         with st.spinner("Performing OCR on the PDF..."):
             doc_pdf = pdf_loader.extract_text(
@@ -277,12 +234,13 @@ def handle_uploaded_file(uploaded_file):
 
 @st.fragment
 def print_suggestions(list_suggestions):
+    from streamlit_pills import stp
     selected = stp.pills(
         label="Suggestions", options=list_suggestions, index=None
     )
     if selected:
         st.write("You selected:", selected)
-        process_query_v2(selected, st.session_state["streamlit_config"])
+        process_query(selected, st.session_state["streamlit_config"])
 
     return selected
 
@@ -299,6 +257,7 @@ def query_suggestion(query):
         selected: The selected suggestion.
 
     """
+    from src.agentic_rag_utils import QueryBreaker
     # We first try to contextualize the query
     # kg = st.session_state["knowledge_graph"]
     # with st.spinner("Contextualizing the query..."):
@@ -331,6 +290,7 @@ def create_transcription_pdf(transcription):
         str: The file path of the created PDF.
 
     """
+    from fpdf import FPDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -393,7 +353,7 @@ def clear_chat_history():
     st.toast("Chat history cleared!", icon="🧹")
 
 
-def process_query_v2(query, streamlit_config):
+def process_query(query, streamlit_config):
     """
     Process the user's query and generate an answer using a configuration dictionary and call the RAG_answer function.
 
@@ -404,6 +364,10 @@ def process_query_v2(query, streamlit_config):
     Returns:
         None
     """
+    from src.text_classification_utils import IntentClassifier
+    
+ 
+    
     start_time = time.time()
     st.session_state.messages.append({"role": "user", "content": query})
     default_config = st.session_state["config"]
@@ -411,12 +375,16 @@ def process_query_v2(query, streamlit_config):
     #make a fusion between the default config and the streamlit config (the streamlit config has the priority)
     config = {**default_config, **streamlit_config}
     
+    #we load the intent classifier
+    classifier = IntentClassifier(config["actions"])
+    
     #we update the chat history to provide the LLM with the latest chat history
     config["chat_history"] = str("## Chat History: \n\n "+str(st.session_state['messages'])) #we keep track of the chat history
     
-    if config["deep_search"]:
+    if config["deep_search"]: #if deep search is enabled we notify the user
         st.toast("Deep search enabled ! it may take a while...", icon="⏳")
     
+    #we write the query in the chat
     st.chat_message("user").write(query)
 
     if config["field_filter"] != []: #if no specific field is selected we disable the source filter
@@ -425,39 +393,85 @@ def process_query_v2(query, streamlit_config):
         config["enable_source_filter"] = False
     
     
-    if config["emails_answer"]: #if email answer is activated by the user we put as unique source the email source ('email') folder
-        config["data_sources"] = ["email"]
-        config["enable_source_filter"] = True
-        config["field_filter"] = ["email"]
+    # if config["emails_answer"]: #if email answer is activated by the user we put as unique source the email source ('email') folder
+    #     config["data_sources"] = ["email"]
+    #     config["enable_source_filter"] = True
+    #     config["field_filter"] = ["email"]
         
             
-    print("### Current field filter:", config["field_filter"])
-    print("Is source filter enabled ?", config["enable_source_filter"])
-
     # we return the chunks to be able to display the sources
     config["return_chunks"] = True
     config["stream"] = True
-    
-    with st.spinner("Searching relevant documents and formulating answer..."):
-        if config["deep_search"]:
-            
+
+
+    if config["deep_search"]: #if deep search is enabled we use the advanced_RAG_answer function and no intent classifier !
+        with st.spinner("Searching relevant documents and formulating answer..."):
             answer,sources = advanced_RAG_answer(
                 query,
                 default_config=default_config,
                 config=config,
             )
             docs = []
-            
-        elif config["auto_job"]:
+        
+    else:
+        with st.spinner("Determining query intent 🧠 ..."):
+            #we detect the intent of the query
+            intent = classifier.classify(query)
+            print("Intent detected: ", intent)
+            st.toast("Intent detected: "+intent, icon="🧠")
+        if intent=="rediger un texte pour une offre":
             from src.auto_job import auto_job_writter
-            answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
-            sources=[]
-        else:
-            answer, docs, sources = RAG_answer(
-                query,
-                default_config=default_config,
-                config=config,
-            )
+            with st.spinner("Generating a text for a job offer..."):
+                answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
+                sources=[]
+        elif intent=="question sur des emails":
+            config["data_sources"] = ["emails"]
+            config["enable_source_filter"] = True
+            config["field_filter"] = ["emails"]
+            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+                answer, docs, sources = RAG_answer(
+                    query,
+                    default_config=default_config,
+                    config=config,
+                )
+                
+        elif intent=="rechercher des offres d'emploi":
+            config["data_sources"] = ["jobs"]
+            config["enable_source_filter"] = True
+            config["field_filter"] = ["jobs"]
+            with st.spinner("Searching relevant jobs and formulating answer 📄 ..."):
+                answer, docs, sources = RAG_answer(
+                    query,
+                    default_config=default_config,
+                    config=config,
+                )
+                
+        elif intent=="write instagram description":
+            from src.auto_instagram_publi import instagram_descr_prompt
+            with st.spinner("Generating a text for an instagram post..."):
+                answer = LLM_answer_v3(prompt=instagram_descr_prompt(query),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
+                sources=[]
+        
+        else: #normal search
+            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+                answer, docs, sources = RAG_answer(
+                    query,
+                    default_config=default_config,
+                    config=config,
+                )
+            
+            
+        # elif config["auto_job"]:
+        #     from src.auto_job import auto_job_writter
+        #     answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
+        #     sources=[]
+        
+        # else:
+        #     answer, docs, sources = RAG_answer(
+        #         query,
+        #         default_config=default_config,
+        #         config=config,
+        #     )
 
 
         with st.chat_message("assistant"):
@@ -521,6 +535,28 @@ def display_sources(sources, hallucination_scores):
     st.dataframe(df_sources)
 
 
+# def display_sources_v2(sources, hallucination_scores):
+#     # Create a dictionary to count the occurrences of each source
+#     source_counts = {source: sources.count(source) for source in sources}
+
+#     # Combine the counts into a single DataFrame
+#     data = []
+#     for source in sources:
+#         if source not in [
+#             d["Source (decreasing order of relevance)"] for d in data
+#         ]:  # Avoid adding duplicates
+#             data.append(
+#                 {
+#                     "Source (decreasing order of relevance)": source,
+#                     "Number of times cited": source_counts[source],
+#                 }
+#             )
+#     df_sources = pd.DataFrame(data)
+
+#     # Display the DataFrame
+#     st.dataframe(df_sources)
+
+
 def display_sources_v2(sources, hallucination_scores):
     # Create a dictionary to count the occurrences of each source
     source_counts = {source: sources.count(source) for source in sources}
@@ -528,35 +564,15 @@ def display_sources_v2(sources, hallucination_scores):
     # Combine the counts into a single DataFrame
     data = []
     for source in sources:
-        if source not in [
-            d["Source (decreasing order of relevance)"] for d in data
-        ]:  # Avoid adding duplicates
+        absolute_path = os.path.abspath(source)
+        if absolute_path not in [d["Absolute Path"] for d in data]:  # Avoid adding duplicates
             data.append(
                 {
-                    "Source (decreasing order of relevance)": source,
-                    "Number of times cited": source_counts[source],
+                    "Absolute Path": absolute_path,
+                    "Number of times cited": source_counts[source]
                 }
             )
     df_sources = pd.DataFrame(data)
 
-    # Display the DataFrame
-    st.dataframe(df_sources)
-
-
-@st.dialog("Feedback")
-def feedback_dialog():
-    feedback = st.selectbox(
-        "How would you rate the answer?",
-        [
-            "Précise et Factuelle",
-            "Information non trouvée/non existante",
-            "Réponse totalement incorrecte",
-            "Réponse partiellement incorrecte",
-            "Réponse partielle à la question",
-        ],
-    )
-    comment = st.text_input("Do you have any comment to make?")
-    if st.button("Submit"):
-        st.session_state.feedback = {"feedback": feedback, "comment": comment}
-        st.toast("Feedback submitted! Thanks !", icon="😊")
-        st.rerun()
+    # Display the DataFrame without clickable paths
+    st.markdown(df_sources.to_html(), unsafe_allow_html=True)

@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import re
 import platform
-import sys
 
 def read_log_file(log_file_path):
     actions = []

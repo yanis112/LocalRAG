@@ -12,33 +12,22 @@ from src.streamlit_tind_utils import (
     display_chat_history,
     initialize_session_state,
     load_config,
-    process_query_v2,
+    process_query,
 )
+
 
 load_dotenv()
-
+    
 os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "2000"
 
-# load configuration
 load_config()
 
-
-
-
-# a slider to set the temperature of the LLM
-temperature = st.sidebar.slider(
-    "Set the temperature of the LLM 🔥",
-    0.0,
-    3.0,
-    1.0,
-    step=0.1,
-    help="Set the temperature of the LLM. A higher temperature will make the LLM more creative and less deterministic and factual, but also more prone to hallucination. A lower temperature will make the LLM more deterministic and less creative.",
-)
+temperature=1
 
 # a dropdown menu to select the origin of the generated women
 origin=st.sidebar.selectbox("Select the origin of the generated women",["European","Asian","African","Indian","Middle Eastern","Latin American","Native American"])
 # Load configuration from config.yaml file and initialize session state
-load_config()
+
 initialize_session_state()
 
 # Display the chat history
@@ -63,6 +52,6 @@ query = st.chat_input("Please enter your question")
 # Process the query if submitted
 if query:
     st.session_state["current_query"] = query
-    process_query_v2(query, streamlit_config)
+    process_query(query, streamlit_config)
 
 

@@ -11,7 +11,7 @@ from functools import lru_cache
 from multiprocessing import Manager, Pool
 from typing import Union
 
-import nltk
+
 import streamlit as st
 import torch
 import yaml
@@ -22,7 +22,6 @@ from langchain.retrievers.document_compressors import (
     DocumentCompressorPipeline,
 )
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-from langchain_community.document_compressors import LLMLinguaCompressor
 from langchain_community.document_loaders import (
     Docx2txtLoader,
     JSONLoader,
@@ -35,7 +34,6 @@ from langchain_community.document_loaders import (
 from langchain_community.retrievers import (
     QdrantSparseVectorRetriever,
 )
-from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_qdrant import (
@@ -54,19 +52,15 @@ from transformers import logging as transformers_logging
 from src.custom_langchain_componants import *  # noqa:
 from src.embedding_model import get_embedding_model, get_sparse_embedding_model
 from src.LLM import CustomChatModel
-from src.query_routing_utils import QueryRouter
+#from src.query_routing_utils import QueryRouter
 from src.utils import (
     StructuredExcelLoader,
-    get_k_random_chunks,
     get_vram_logging,
-    keywords_extraction,
     log_execution_time,
     text_preprocessing,
 )
 
-
 import logging
-
 from src.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
@@ -187,10 +181,10 @@ def directory_to_vectorstore(default_config, config={}):
         )
 
         start_time = time.time()
+        
         # split documents into chunks and remove duplicates
         total_chunks = filter_and_split_chunks(
             list_documents=list_documents,
-            embedding_model=embedding_model,
             semantic_threshold=semantic_threshold,
         )
         end_time = time.time()
@@ -500,7 +494,7 @@ def process_documents(path, log_file_path, processed_docs):
 
 @log_execution_time
 def filter_and_split_chunks(
-    list_documents, embedding_model, semantic_threshold
+    list_documents, semantic_threshold
 ):
     """
     Filters and prepares chunks based on the specified splitting method, apply pre-processing to the raw documents before chunking, and remove duplicates.
@@ -646,8 +640,8 @@ def remove_duplicate_chunks(chunks):
         # obtain the modification date of the chunk based on the source
         modif_date = get_modif_date(chunk.metadata["source"])
         
-        print("FIELD:", source_field)
-        print("Source:", source)
+        # print("FIELD:", source_field)
+        # print("Source:", source)
 
         total_chunks.append(
             Document(
@@ -662,40 +656,6 @@ def remove_duplicate_chunks(chunks):
         )
     return total_chunks
 
-@log_execution_time
-def clone_database_chunks(
-    clone_persist, clone_embedding_model, persist_directory
-):
-    print("CLONING DATABASE!")
-    chunks, metadata = get_k_random_chunks(
-        k=1,
-        config=None,
-        get_all=True,
-        clone_persist=clone_persist,
-        clone_embedding_model=clone_embedding_model,
-    )
-    total_chunks = [
-        Document(
-            page_content=chunk,
-            metadata={
-                "source": metadata[i]["source"],
-                "chunk_length": metadata[i]["chunk_length"],
-            },
-        )
-        for i, chunk in enumerate(chunks)
-    ]
-    print("CLONING DONE!")
-    json_files = [f for f in os.listdir(clone_persist) if f.endswith(".json")]
-    if json_files:
-        json_file_path = os.path.join(clone_persist, json_files[0])
-        base_name = os.path.basename(persist_directory.rstrip("/"))
-        new_file_name = str(base_name) + "_evaluation_dataset.json"
-        new_file_path = os.path.join(persist_directory, new_file_name)
-        shutil.copy(json_file_path, new_file_path)
-        print(
-            f"Evaluation dataset json file copied to the persist directory as {new_file_name}!"
-        )
-    return total_chunks
 
 
 @log_execution_time
@@ -741,19 +701,13 @@ def add_documents_to_db(
         embedding_model = get_embedding_model(model_name=embedding_model)
         if vectordb is None:
             logging.info("Vectordb is None, creating a new one...")
-            if vectordb_provider == "Chroma":
-                vectordb = Chroma.from_documents(
-                    documents=total_chunks,
-                    embedding=embedding_model,
-                    persist_directory=persist_directory,
-                )
-            elif vectordb_provider == "Qdrant":
-                vectordb = Qdrant.from_documents(
-                    documents=total_chunks,
-                    embedding=embedding_model,
-                    path=persist_directory,
-                    collection_name="qdrant_vectorstore",
-                )
+         
+            vectordb = Qdrant.from_documents(
+                documents=total_chunks,
+                embedding=embedding_model,
+                path=persist_directory,
+                collection_name="qdrant_vectorstore",
+            )
 
         else:
             logging.info(
@@ -1077,87 +1031,6 @@ def apply_source_filter(search_kwargs, source_filter, source_filter_type):
     return search_kwargs
 
 
-def get_filtering_kwargs_chromadb(
-    source_filter: Union[list, str],
-    source_filter_type: str,
-    field_filter: Union[list, str],
-    field_filter_type: str,
-    length_threshold=None,
-):
-    """
-    Get the kwargs that will be used to filter the search based on both the source and the field and chunk length.
-
-    Args:
-        source_filter (list or str): The source filter(s) to apply.
-        source_filter_type (str): The type of filter to apply ('$ne' for not equal, '$eq' for equal, '$in' for inclusion, etc.).
-        field_filter (list or str): The field filter(s) to apply.
-        field_filter_type (str): The type of filter to apply ('$ne' for not equal, '$eq' for equal, '$in' for inclusion, etc.).
-        length_threshold (float, optional): The minimum length of the chunks to return.
-
-    Returns:
-        dict: The updated search_kwargs dictionary with the source and field filters applied.
-    """
-    search_kwargs = {"where": {}}
-
-    # Helper to create filter conditions
-    def create_filter_condition(field, value, filter_type):
-        return {field: {filter_type: value}}
-
-    # Build filters based on input type for source
-    if isinstance(source_filter, list):
-        if source_filter_type == "$in":
-            search_kwargs["where"]["metadata.source"] = {
-                source_filter_type: source_filter
-            }
-        else:
-            for source in source_filter:
-                condition = create_filter_condition(
-                    "metadata.source", source, source_filter_type
-                )
-                search_kwargs["where"].update(condition)
-    else:
-        condition = create_filter_condition(
-            "metadata.source", source_filter, source_filter_type
-        )
-        search_kwargs["where"].update(condition)
-
-    # Build filters based on input type for field
-    if isinstance(field_filter, list):
-        if field_filter_type == "$in":
-            search_kwargs["where"]["metadata.field"] = {
-                field_filter_type: field_filter
-            }
-        else:
-            for field in field_filter:
-                condition = create_filter_condition(
-                    "metadata.field", field, field_filter_type
-                )
-                search_kwargs["where"].update(condition)
-    else:
-        condition = create_filter_condition(
-            "metadata.field", field_filter, field_filter_type
-        )
-        search_kwargs["where"].update(condition)
-
-    # Add length filter if length_threshold is specified
-    if length_threshold is not None:
-        search_kwargs["where"]["metadata.chunk_length"] = {
-            "$gte": float(length_threshold)
-        }
-
-    print(
-        "Searching for the following sources:",
-        source_filter,
-        "with filter type:",
-        source_filter_type,
-    )
-    print(
-        "Searching for the following fields:",
-        field_filter,
-        "with filter type:",
-        field_filter_type,
-    )
-    return search_kwargs
 
 
 def get_filtering_kwargs_qdrant(
@@ -1287,35 +1160,6 @@ def apply_multi_query_retriever(base_retriever, nb_chunks):
     )
     return vector_db_multi
 
-
-@log_execution_time
-def apply_auto_hybrid_search(query):
-    """
-    Applies auto hybrid search to the given query.
-
-    Args:
-        query (str): The query to be processed.
-
-    Returns:
-        tuple: A tuple containing the hybrid search flag and the word filter.
-            - hybrid_search (bool): True if hybrid search is enabled, False otherwise.
-            - word_filter (str): The word filter extracted for lexical queries, None for semantic queries.
-    """
-    print("AUTO HYBRID SEARCH TRIGGERED !")
-    query_router = QueryRouter()
-    query_router.load()
-    label = query_router.predict_label(query)
-    hybrid_search = False
-    word_filter = None
-    if label == "semantic":
-        print("QUERY CLASSIFIED AS SEMANTIC !")
-    else:
-        print("QUERY CLASSIFIED AS LEXICAL, ENABLING HYBRID SEARCH !")
-        hybrid_search = True
-        word_filter = keywords_extraction(query)
-        word_filter = word_filter[0][0]
-        print("AUTOMATIC EXTRACTED WORD FILTER:", str(word_filter))
-    return hybrid_search, word_filter
 
 
 @lru_cache(maxsize=None)
@@ -1614,9 +1458,8 @@ def apply_reranker(
     )  # if llm_token_target is None, we output the nb_chunks documents without compression
 
     if token_compression:  # if we use the token_compressor with chain the compressors (token_compressor before reranker !)
-        # instantiate reranker compressor
-
         # Instantiate LLMLinguaCompressor for token compression
+        from langchain_community.document_compressors import LLMLinguaCompressor
         token_compressor = LLMLinguaCompressor(
             model_name="microsoft/phi-2", device_map="cpu", target_token=2000
         )  # ATTENTION: we use CPU !
@@ -1639,17 +1482,6 @@ def apply_reranker(
         base_compressor=pipeline_compressor,
         base_retriever=base_retriever,
     )
-
-    # if token_compression:  # if we use the token_compressor with chain the compressors (token_compressor before reranker !)
-    #     compression_retriever = ContextualCompressionRetriever(
-    #         base_compressor=pipeline_compressor,
-    #         base_retriever=token_compression_retriever,
-    #     )
-    # else:  # if we don't use the token_compressor
-    #     compression_retriever = ContextualCompressionRetriever(
-    #         base_compressor=pipeline_compressor,
-    #         base_retriever=base_retriever,
-    #     )
 
     # print("APPLYING WHOLE PIPELINE ...")
     # We get the top_n most relevant documents
@@ -1793,16 +1625,11 @@ def query_database_v2(query, default_config, config={}):
     # add a 'k' key to the search_kwargs dictionary
     search_kwargs["k"] = config["nb_chunks"]
     
-    print("SEARCH KWARGS:", search_kwargs)
+    #print("SEARCH KWARGS:", search_kwargs)
 
     logging.info("QUERY: %s", query)
     logging.info("USED SEARCH KWARGS: %s", search_kwargs)
 
-    # if auto_hybrid_search is True, we extract the first word of the query and use it as a filter
-    if config["auto_hybrid_search"]:
-        config["hybrid_search"], config["word_filter"] = (
-            apply_auto_hybrid_search(query)
-        )
 
     # if hybrid_search is True, we use the hybrid search
     if config["hybrid_search"]:  # we use the hybrid search
@@ -1930,18 +1757,14 @@ def query_knowledge_graph_v2(
             pass
 
     # Define the raw database
-    if "chroma" in config["persist_directory"]:
-        raw_database = Chroma(
-            persist_directory=config["persist_directory"],
-            embedding_function=embedding_model,
-        )  # database not in retriever form
-    elif "qdrant" in config["persist_directory"]:
-        logging.info("Trying to load the qdrant database...")
-        # raw_database = get_existing_qdrant(config["persist_directory"] + "_kg")
-        raw_database = get_existing_qdrant(
-            persist_directory=config["persist_directory"] + "_kg",
-            embedding_model_name=config["embedding_model"],
-        )
+
+
+    logging.info("Trying to load the qdrant database...")
+    # raw_database = get_existing_qdrant(config["persist_directory"] + "_kg")
+    raw_database = get_existing_qdrant(
+        persist_directory=config["persist_directory"] + "_kg",
+        embedding_model_name=config["embedding_model"],
+    )
 
     def process_entity(entity):
         search_kwargs = {

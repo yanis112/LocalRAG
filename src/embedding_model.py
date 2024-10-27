@@ -42,7 +42,7 @@ def get_embedding_model(model_name, show_progress=False):
         logging.getLogger("transformers").setLevel(logging.ERROR)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_kwargs = {"device": device}
+    model_kwargs = {"device": device,"trust_remote_code": True}
 
     if "bge" in model_name and not "ollama" in model_name:
         encode_kwargs = {
@@ -66,7 +66,7 @@ def get_embedding_model(model_name, show_progress=False):
         embed = CustomFastEmbedEmbeddings(model_name=model_name)
 
     else:
-        encode_kwargs = {"batch_size": 16} #, "show_progress_bar": show_progress}
+        encode_kwargs = {"batch_size": 4} #, "show_progress_bar": show_progress}
         embed = HuggingFaceEmbeddings(
             model_name=model_name,
             model_kwargs=model_kwargs,
@@ -84,20 +84,16 @@ def get_sparse_embedding_model(model_name, show_progress=False):
         show_progress (bool, optional): Whether to show progress or not. Defaults to False.
     Returns:
         embed (object): The sparse embedding model object.
-    Raises:
-        None
-    Examples:
-        >>> model = get_sparse_embedding_model("fastembed_sparse")
-        >>> print(model)
-        <FastEmbedSparse object at 0x7f9a2e3e4a90>
+
     """
 
+    from langchain_qdrant import FastEmbedSparse
+
+    #embed = FastEmbedSparse(model_name=model_name)
+    sparse_embeddings = FastEmbedSparse(model_name="Qdrant/bm25")
     
-    from langchain_community.embeddings import FastEmbedSparse
-
-    embed = FastEmbedSparse(model_name=model_name)
-
-    return embed
+    
+    return sparse_embeddings
 
 
 class CustomFastEmbedEmbeddings(BaseModel, Embeddings):

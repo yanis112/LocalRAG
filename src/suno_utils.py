@@ -1,15 +1,45 @@
 from suno import Suno, ModelVersions
+from dotenv import load_dotenv
+import os
 
-#github links: https://github.com/Malith-Rukshan/Suno-API
+# Load environment variables from .env file
+load_dotenv()
 
-client = Suno(
-  cookie='__client=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaWVudF8ybXZROFV2Ymo5Z1pSNWV2YUZHWWJkOTAyUXMiLCJyb3RhdGluZ190b2tlbiI6Imk0aWIydGMxNDh3NWxxdGdlaXUwZ25oMnp2amZ0anUyZ2w5NjhmcWkifQ.oQHGpyjwv5uF9ELWGNmhYEmsnl_m5oNWASup5DXt6SMinl3bqYXcdyLwT3mO7GMXNR73XS5Q7xTmdZRaGhlPlnDVMLIDf2iepGx5uFEzi5A8Opgxmfy2EiWIuCWC6C7vQneAdzrPjfswL6QqDqW9JwyD5b48R9faBq39kjtoJ5tfoHtwjv88BZqN6P-TOxdI_p_R1vPBiI4OGuJxKJ1GBZp4ILpK4LUO-pgvyX1CDppc4LDL4ckLA3URrT9DrOZWrEGV3trgWdZB3NzcJiIKTGYCQwxMk05ZOt9d5IFNDDOonDPAso017GZKAvspUGBVZBFgI6HX5YYx9424J9vaTQ',
-  model_version=ModelVersions.CHIRP_V3_5)
+class SunoGenerator:
+    def __init__(self, model_version=ModelVersions.CHIRP_V3_5):
+        self.client = Suno(
+            cookie=os.getenv('SUNO_COOKIE'),
+            model_version=model_version
+        )
 
-# Generate a song
-songs = client.generate(prompt="A serene landscape", is_custom=False, wait_audio=True)
+    def generate_song(self, prompt, is_custom, tags=None, title=None, make_instrumental=None, wait_audio=True):
+        return self.client.generate(
+            prompt=prompt,
+            is_custom=is_custom,
+            tags=tags,
+            title=title,
+            make_instrumental=make_instrumental,
+            wait_audio=wait_audio
+        )
 
-# Download generated songs
-for song in songs:
-    file_path = client.download(song=song)
-    print(f"Song downloaded to: {file_path}")
+    def download_songs(self, songs):
+        for song in songs:
+            file_path = self.client.download(song=song)
+            print(f"Song downloaded to: {file_path}")
+
+# Example usage
+if __name__ == "__main__":
+    generator = SunoGenerator()
+
+    # Generate a song with all parameters
+    songs = generator.generate_song(
+        prompt="a dark techno track: 126 BPM, thunderous sub-bass, minimal percussion, eerie synths. Club-ready, bass-centric mix.",
+        #tags="English men voice",
+        title="Hard Techno",
+        make_instrumental=True,
+        is_custom=False,
+        wait_audio=True
+    )
+
+    # Download generated songs
+    generator.download_songs(songs)

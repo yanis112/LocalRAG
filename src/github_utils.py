@@ -8,12 +8,15 @@ load_dotenv()
 g = Github(os.getenv("GITHUB_TOKEN"))
 
 # Access the repository
-repo = g.get_repo("yanis112/High-Quality-Promps-for-Imagen3")
+repo = g.get_repo("yanis112/SOTA_machine_learning")
 
 # Get the content of the README.md file
 file = repo.get_contents("README.md")
 current_content = file.decoded_content.decode()
 
+print("Current content of the README.md file:", current_content)
+
+exit()
 # Modify the content
 new_content = current_content + "\n\nThis is a new line added by the Python script."
 

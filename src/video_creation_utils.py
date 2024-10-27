@@ -3,7 +3,6 @@
 import moviepy.editor as mp
 import srt
 import re
-from datetime import timedelta
 import os
 from moviepy import config as mpc
 from moviepy.video.VideoClip import ColorClip

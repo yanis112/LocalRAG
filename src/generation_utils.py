@@ -1,37 +1,31 @@
 import logging
 import os
+import subprocess
 import time
 from functools import lru_cache
 
+import streamlit as st
 import yaml
 
 # load environment variables
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
+from langchain.schema import StrOutputParser
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
-from pydantic import BaseModel
 from langsmith import traceable
-import streamlit as st
+from pydantic import BaseModel, ValidationError
 
 # custom imports
 from src.LLM import CustomChatModel
-from src.retrieval_utils import query_database_v2, query_knowledge_graph_v2, query_knowledge_graph_v3
+from src.retrieval_utils import (
+    query_database_v2,
+    query_knowledge_graph_v3,
+)
 from src.utils import (
+    detect_language,
     log_execution_time,
     token_calculation_prompt,
-    translate_to_french,
-    translate_to_english,
-    detect_language
 )
-
-
-from langchain.output_parsers import PydanticOutputParser
-from langchain.prompts import PromptTemplate
-from langchain.schema import StrOutputParser
-from pydantic import BaseModel, ValidationError
-import subprocess
-
-
 
 load_dotenv()
 
@@ -241,6 +235,94 @@ def LLM_answer_v2( #DEPRECATED
             #print("No stream detected")
             return chain.invoke({"text": prompt})
 
+# @traceable
+# @log_execution_time
+# def LLM_answer_v3(
+#     prompt,
+#     json_formatting=False,
+#     pydantic_object=None,
+#     format_type=None,
+#     model_name=None,
+#     temperature=1,
+#     stream=False,
+#     llm_provider=None,
+# ):
+    
+#     """
+#     Generates an answer using a specified language model (LLM) based on the provided prompt and configuration parameters.
+#     Args:
+#         prompt (str): The input prompt to generate an answer for.
+#         json_formatting (bool, optional): If True, the output will be formatted as JSON. Defaults to False.
+#         pydantic_object (BaseModel, optional): A Pydantic model class used for JSON formatting. Required if json_formatting is True.
+#         format_type (str, optional): Specifies the format type (e.g., 'list' or 'dict') for structured output. Defaults to None.
+#         model_name (str, optional): The name of the model to use. Defaults to None.
+#         temperature (float, optional): The temperature setting for the model, affecting the randomness of the output. Defaults to 1.
+#         stream (bool, optional): If True, the output will be streamed. Defaults to False.
+#         llm_provider (str, optional): The provider of the language model (e.g., 'ollama'). Defaults to None.
+#     Returns:
+#         str or None: The generated answer from the language model. If json_formatting is True and an error occurs during JSON parsing, returns None.
+#     Raises:
+#         ValidationError: If an error occurs during JSON parsing when json_formatting is True.
+#     """
+    
+#     logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
+    
+#     #we try to pull the model if it is not already pulled
+#     if llm_provider=='ollama':
+#         pull_model(model_name)
+
+#     #we load appropriate templates and models
+#     chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
+#     chat = chat_model_1.chat_model
+#     prompt_template = chat_model_1.chat_prompt_template
+    
+    
+
+#     if json_formatting and issubclass(pydantic_object, BaseModel):
+#         parser = JsonOutputParser(pydantic_object=pydantic_object)
+#         format_instructions = parser.get_format_instructions()
+#         if format_type:
+#             from src.utils import get_strutured_format
+
+#             format_instructions=get_strutured_format(format_type) #list or dict
+#             schema=parser._get_schema(pydantic_object)
+            
+#             # we add the schema betwee, ``` and ``` to the format_instructions
+#             format_instructions=format_instructions + "```"+str(schema)+"```"
+            
+            
+#         #get the shema: _get_schema
+#         #print("SCHEMA:", parser._get_schema(pydantic_object))
+#         #print("FORMAT INSTRUCTIONS:", format_instructions)
+        
+#         total_prompt="Answer the user query. \n"+str(prompt) + "\n"  + str(format_instructions)    #we create the total prompt by adding the format instructions to the prompt
+#         print("##############################################################")
+#         #print('TOTAL PROMPT:', total_prompt)
+#         chain = prompt_template | chat | parser #we create the chain with parser
+#         try:
+#             result = chain.invoke({"text": total_prompt})
+#             #print("RAW RESULT:", result)
+#             return result
+#         except ValidationError as e:
+#             print("ERROR OCCURRED DURING JSON PARSING!")
+#             logging.error("JSON PARSING ERROR: %s", e)
+#             return None
+#     else:
+#         chain = prompt_template | chat | StrOutputParser()
+#         if stream:
+#             #print("Stream detected")
+#             return chain.stream({"text": prompt})
+#         else:
+#             #print("No stream detected")
+#             return chain.invoke({"text": prompt})
+
+import logging
+import os
+
+from openai import OpenAI
+from pydantic import BaseModel
+
+
 @traceable
 @log_execution_time
 def LLM_answer_v3(
@@ -253,7 +335,6 @@ def LLM_answer_v3(
     stream=False,
     llm_provider=None,
 ):
-    
     """
     Generates an answer using a specified language model (LLM) based on the provided prompt and configuration parameters.
     Args:
@@ -273,53 +354,67 @@ def LLM_answer_v3(
     
     logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
     
-    #we try to pull the model if it is not already pulled
-    if llm_provider=='ollama':
+    if llm_provider == 'github':
+        token = os.environ["GITHUB_TOKEN"]
+        endpoint = "https://models.inference.ai.azure.com"
+        client = OpenAI(base_url=endpoint, api_key=token)
+        
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        if stream:
+            response = client.chat.completions.create(
+                messages=messages,
+                model=model_name,
+                temperature=temperature,
+                stream=True
+            )
+            def stream_generator():
+                for update in response:
+                    if update.choices[0].delta.content:
+                        yield update.choices[0].delta.content
+            return stream_generator()
+        
+        else:
+            response = client.chat.completions.create(
+                messages=messages,
+                model=model_name,
+                temperature=temperature
+            )
+            return response.choices[0].message.content
+    
+    # Existing logic for other providers
+    if llm_provider == 'ollama':
         pull_model(model_name)
 
-    #we load appropriate templates and models
     chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
     chat = chat_model_1.chat_model
     prompt_template = chat_model_1.chat_prompt_template
-    
-    
 
     if json_formatting and issubclass(pydantic_object, BaseModel):
         parser = JsonOutputParser(pydantic_object=pydantic_object)
         format_instructions = parser.get_format_instructions()
         if format_type:
             from src.utils import get_strutured_format
-
-            format_instructions=get_strutured_format(format_type) #list or dict
-            schema=parser._get_schema(pydantic_object)
-            
-            # we add the schema betwee, ``` and ``` to the format_instructions
-            format_instructions=format_instructions + "```"+str(schema)+"```"
-            
-            
-        #get the shema: _get_schema
-        #print("SCHEMA:", parser._get_schema(pydantic_object))
-        #print("FORMAT INSTRUCTIONS:", format_instructions)
+            format_instructions = get_strutured_format(format_type)
+            schema = parser._get_schema(pydantic_object)
+            format_instructions = format_instructions + "```" + str(schema) + "```"
         
-        total_prompt="Answer the user query. \n"+str(prompt) + "\n"  + str(format_instructions)    #we create the total prompt by adding the format instructions to the prompt
-        print("##############################################################")
-        #print('TOTAL PROMPT:', total_prompt)
-        chain = prompt_template | chat | parser #we create the chain with parser
+        total_prompt = "Answer the user query. \n" + str(prompt) + "\n" + str(format_instructions)
+        chain = prompt_template | chat | parser
         try:
             result = chain.invoke({"text": total_prompt})
-            #print("RAW RESULT:", result)
             return result
         except ValidationError as e:
-            print("ERROR OCCURRED DURING JSON PARSING!")
             logging.error("JSON PARSING ERROR: %s", e)
             return None
     else:
         chain = prompt_template | chat | StrOutputParser()
         if stream:
-            #print("Stream detected")
             return chain.stream({"text": prompt})
         else:
-            #print("No stream detected")
             return chain.invoke({"text": prompt})
 
 def context_splitter(context, max_tokens=1000):
@@ -907,10 +1002,21 @@ if __name__ == "__main__":
 
     # we define the query
     query = "Qui est Guillaume ?"
+    
+    #we get the LLm answer
+    answer = LLM_answer_v3(
+        query,
+        stream=False,
+        llm_provider="github",
+        model_name="gpt-4o"
+        
+    )
+    
+    print("ANSWER:", answer)
 
     # we get the answer
-    answer = RAG_answer(
-        query,
-        default_config=config,
-        config={"stream": False, "return_chunks": False},
-    )
+    # answer = RAG_answer(
+    #     query,
+    #     default_config=config,
+    #     config={"stream": False, "return_chunks": False},
+    # )
