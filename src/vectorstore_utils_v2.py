@@ -314,7 +314,7 @@ class VectorAgent:
         total_docs_metadata = [
             chunk[0].metadata for chunk in self.total_documents
         ]
-        update_html_sources(total_docs_metadata)
+        
         chunks = semantic_splitter.create_documents(
             texts=total_docs_content, metadatas=total_docs_metadata
         )
@@ -436,37 +436,6 @@ def get_modif_date(path):
     return str(date_modification)
 
 
-@log_execution_time
-def update_html_sources(total_docs_metadata):
-    """
-    Update the HTML sources in the total_docs_metadata list based on the information
-    stored in the html_url_dict.
-
-    Args:
-        total_docs_metadata (list): A list of document metadata.
-
-    Returns:
-        None
-    """
-    with open("src/scrapping/url_correspondance.json") as f:
-        html_url_dict = json.load(f)
-    for i, source in enumerate(total_docs_metadata):
-        if ".html" in source and "widgets" not in source:
-            raw_file_name = source.split("/")[-1].split(".html")[0]
-            try:
-                total_docs_metadata[i] = html_url_dict[raw_file_name]
-            except:
-                pass
-        elif ".html" in source and "widgets" in source:
-            raw_file_name = (
-                source.split("/")[-1].split(".html")[0].split("_widgets")[0]
-            )
-            try:
-                total_docs_metadata[i] = html_url_dict[raw_file_name]
-            except:
-                pass
-
-
 def truncate_path_to_data(path):
     """
     Truncates the given path to start from '/data' if '/data' is present in the path.
@@ -544,7 +513,7 @@ def remove_duplicate_chunks(chunks):
 
 if __name__ == "__main__":
     # Load the configuration file
-    with open("config/config.yaml", "r") as file:
+    with open("config/test_config.yaml", "r") as file:
         config = yaml.safe_load(file)
 
     # Create a VectorAgent object

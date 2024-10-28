@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 import yaml
 
-from src.generation_utils import RAG_answer,advanced_RAG_answer,LLM_answer_v3
+from src.generation_utils_v2 import LLM_answer_v3
 
 
 # Fonction pour sauvegarder le fichier audio en .wav
@@ -30,6 +30,7 @@ def save_audio_as_wav(uploaded_file, output_dir):
     audio.export(file_path, format="wav")
     return file_path
 
+@st.cache_resource
 def load_config():
     """
     Loads the configuration from the config.yaml file and stores it in the session state.
@@ -41,7 +42,7 @@ def load_config():
     """
     try:
         # safe load the config file
-        with open("config/config.yaml") as file:
+        with open("config/test_config.yaml") as file:
             config = yaml.safe_load(file)
         st.session_state["config"] = config
 
@@ -238,7 +239,7 @@ def print_suggestions(list_suggestions):
     )
     if selected:
         st.write("You selected:", selected)
-        process_query(selected, st.session_state["streamlit_config"])
+        process_query(selected, st.session_state["streamlit_config"], st.session_state["rag_agent"])
 
     return selected
 
@@ -339,22 +340,21 @@ def display_chat_history():
 def clear_chat_history():
     st.session_state.messages = []
     st.toast("Chat history cleared!", icon="🧹")
+    
 
-
-def process_query(query, streamlit_config):
+def process_query(query, streamlit_config, rag_agent):
     """
     Process the user's query and generate an answer using a configuration dictionary and call the RAG_answer function.
 
     Args:
         query (str): The user's query.
         config (dict): Configuration parameters.
+        rag_agent (RAGAgent): An instance of the RAGAgent class.
 
     Returns:
         None
     """
     from src.text_classification_utils import IntentClassifier
-    
- 
     
     start_time = time.time()
     st.session_state.messages.append({"role": "user", "content": query})
@@ -384,14 +384,9 @@ def process_query(query, streamlit_config):
     config["return_chunks"] = True
     config["stream"] = True
 
-
     if config["deep_search"]: #if deep search is enabled we use the advanced_RAG_answer function and no intent classifier !
         with st.spinner("Searching relevant documents and formulating answer..."):
-            answer,sources = advanced_RAG_answer(
-                query,
-                default_config=default_config,
-                config=config,
-            )
+            answer, sources = rag_agent.advanced_RAG_answer(query)
             docs = []
         
     else:
@@ -400,47 +395,34 @@ def process_query(query, streamlit_config):
             intent = classifier.classify(query)
             print("Intent detected: ", intent)
             st.toast("Intent detected: "+intent, icon="🧠")
-        if intent=="rediger un texte pour une offre":
+        if intent == "rediger un texte pour une offre":
             from src.auto_job import auto_job_writter
             with st.spinner("Generating a text for a job offer..."):
-                answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
-                sources=[]
-        elif intent=="question sur des emails":
+                answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+                sources = []
+        elif intent == "question sur des emails":
             config["data_sources"] = ["emails"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["emails"]
             with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
-                answer, docs, sources = RAG_answer(
-                    query,
-                    default_config=default_config,
-                    config=config,
-                )
+                answer, docs, sources = rag_agent.RAG_answer(query)
                 
-        elif intent=="rechercher des offres d'emploi":
+        elif intent == "rechercher des offres d'emploi":
             config["data_sources"] = ["jobs"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["jobs"]
             with st.spinner("Searching relevant jobs and formulating answer 📄 ..."):
-                answer, docs, sources = RAG_answer(
-                    query,
-                    default_config=default_config,
-                    config=config,
-                )
+                answer, docs, sources = rag_agent.RAG_answer(query)
                 
-        elif intent=="write instagram description":
+        elif intent == "write instagram description":
             from src.auto_instagram_publi import instagram_descr_prompt
             with st.spinner("Generating a text for an instagram post..."):
-                answer = LLM_answer_v3(prompt=instagram_descr_prompt(query),stream=True,model_name=config["model_name"],llm_provider=config["llm_provider"])
-                sources=[]
+                answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+                sources = []
         
         else: #normal search
             with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
-                answer, docs, sources = RAG_answer(
-                    query,
-                    default_config=default_config,
-                    config=config,
-                )
-
+                answer, docs, sources = rag_agent.RAG_answer(query)
 
         with st.chat_message("assistant"):
             answer = st.write_stream(answer)
@@ -503,7 +485,6 @@ def display_sources(sources, hallucination_scores):
     st.dataframe(df_sources)
 
 
-
 def display_sources_v2(sources, hallucination_scores):
     # Create a dictionary to count the occurrences of each source
     source_counts = {source: sources.count(source) for source in sources}
@@ -523,3 +504,8 @@ def display_sources_v2(sources, hallucination_scores):
 
     # Display the DataFrame without clickable paths
     st.markdown(df_sources.to_html(), unsafe_allow_html=True)
+
+
+
+if __name__ == "__main__":
+    pass

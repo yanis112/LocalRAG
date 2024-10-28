@@ -87,6 +87,18 @@ class YouTubeTranscriber:
             raise
 
     def transcribe(self, input_path: str, method: str) -> List[str]:
+        """
+        Transcribes audio from a given input path using the specified method.
+        Args:
+            input_path (str): The path to the audio file or URL. Supported formats are .wav, .mp3, .m4a, or URLs starting with http:// or https://.
+            method (str): The transcription method to use. Supported methods are 'insanely-fast-whisper', 'groq', 'whisper-turbo'.
+        Returns:
+            List[str]: A list of transcribed text chunks. Returns an empty list if an error occurs or if the download fails.
+        Raises:
+            ValueError: If the input file format or transcription method is not supported.
+        Logs:
+            Logs various stages of the transcription process, including start, download status, chunking, and errors.
+        """
         logging.info(f"Début de la transcription pour: {input_path} avec la méthode: {method}")
         try:
             if input_path.startswith("http://") or input_path.startswith("https://"):
@@ -114,6 +126,10 @@ class YouTubeTranscriber:
                 texts = self.transcribe_insanely_fast_whisper(chunks)
             else:
                 raise ValueError("Méthode de transcription non supportée.")
+            
+            #we concatenate the chunks into one string
+            texts = " ".join(texts)
+            
             return texts
         except Exception as e:
             logging.error(f"Erreur lors de la transcription: {e}")

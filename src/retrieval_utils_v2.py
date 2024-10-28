@@ -1,5 +1,4 @@
 import logging
-import time
 from functools import lru_cache
 
 import streamlit as st
@@ -10,27 +9,24 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import DocumentCompressorPipeline
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_qdrant import Qdrant
-from langsmith import traceable
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 from transformers import logging as transformers_logging
 
 # custom imports
-from src.custom_langchain_componants import *  # noqa:
+from src.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor
 from src.embedding_model import get_embedding_model
-from src.LLM import CustomChatModel
-# from src.query_routing_utils import QueryRouter
-from src.utils import get_vram_logging, log_execution_time
+from src.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
 
+
 class RetrievalAgent:
-    def __init__(self, config):
-        self.config = config
-        #self.client = self.load_client(config["persist_directory"])
-        self.embedding_model = get_embedding_model(model_name=config["embedding_model"])
-        self.raw_database = self.get_existing_qdrant(config["persist_directory"], config["embedding_model"])
+    def __init__(self, default_config, config={}):
+        self.config = {**default_config, **config}
+        self.embedding_model = get_embedding_model(model_name=self.config["embedding_model"])
+        self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
 
    
     def apply_field_filter_qdrant(self,search_kwargs, field_filter, field_filter_type):
@@ -133,54 +129,6 @@ class RetrievalAgent:
 
         return search_kwargs
 
-    @log_execution_time
-    def apply_multi_query_retriever(self, base_retriever, nb_chunks):
-        """
-        Applies a multi-query retriever to the given base retriever.
-
-        Args:
-            base_retriever: The base retriever object.
-            nb_chunks: The number of chunks to generate queries from the main query.
-
-        Returns:
-            vector_db_multi: The multi-query retriever object.
-        """
-        chat_model_object = CustomChatModel(llm_name="llama3", llm_provider="ollama")
-        llm = chat_model_object.chat_model
-        vector_db_multi = CustomMultiQueryRetriever.from_llm(
-            retriever=base_retriever,
-            llm=llm,
-            include_original=True,
-            top_k=nb_chunks,
-        )
-        return vector_db_multi
-
-  
-    #@lru_cache(maxsize=None)
-    def load_client(self,custom_persist):
-        """
-        Load the Qdrant client.
-
-        Args:
-            custom_persist (str): The custom persist directory.
-
-        Returns:
-            QdrantClient: The Qdrant client object.
-        """
-        return QdrantClient(path=custom_persist)
-
-  
-    @lru_cache(maxsize=None)
-    def load_router(self):
-        """
-        Load the query router object.
-
-        Returns:
-            QueryRouter: The query router object.
-        """
-        query_router = QueryRouter()
-        query_router.load()
-        return query_router
 
     @log_execution_time
     def apply_advanced_hybrid_search_v3(self, base_retriever, nb_chunks, query, search_kwargs):
@@ -196,24 +144,9 @@ class RetrievalAgent:
         Returns:
             Retriever: The hybrid retriever with the filtered and retrieved documents.
         """
-        config = self.config
-
-        if config["enable_routing"]:
-            query_router = self.load_router()
-            label = query_router.predict_label(query)
-            alpha = query_router.predict_alpha(query)
-            try:
-                st.toast("Query type: " + str(label), icon="🔍")
-            except:
-                pass
-        else:
-            label = "NO LABEL, USING DEFAULT ALPHA"
-            alpha = config["alpha"]
-
        
-
         base_retriever = self.raw_database.as_retriever(
-            search_kwargs=search_kwargs, search_type=config["search_type"]
+            search_kwargs=search_kwargs, search_type=self.config["search_type"]
         )
 
     
@@ -262,29 +195,28 @@ class RetrievalAgent:
         Returns:
             compressed_docs: The compressed documents.
         """
-        config = self.config
 
-        reranker = self.load_reranker(config["reranker_model"])
+        reranker = self.load_reranker(self.config["reranker_model"])
        
         logging.info("RERANKER LOADED !")
 
-        intelligent_compression = config["llm_token_target"] != 0
+        intelligent_compression = self.config["llm_token_target"] != 0
 
         reranker_compressor = CustomCrossEncoderReranker(
             model=reranker,
-            top_n=config["nb_rerank"],
-            use_autocut=config["use_autocut"],
-            autocut_beta=config["autocut_beta"],
+            top_n=self.config["nb_rerank"],
+            use_autocut=self.config["use_autocut"],
+            autocut_beta=self.config["autocut_beta"],
             intelligent_compression=intelligent_compression,
-            token_target=config["llm_token_target"],
+            token_target=self.config["llm_token_target"],
         )
 
-        intelligent_compression = config["reranker_token_target"] not in [0, None]
+        intelligent_compression = self.config["reranker_token_target"] not in [0, None]
 
         top_k_compressor = TopKCompressor(
-            k=config["nb_chunks"],
+            k=self.config["nb_chunks"],
             intelligent_compression=intelligent_compression,
-            token_target=config["reranker_token_target"],
+            token_target=self.config["reranker_token_target"],
         )
         
         pipeline_compressor = DocumentCompressorPipeline(
@@ -300,7 +232,7 @@ class RetrievalAgent:
         return compressed_docs
 
    
-    #@lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)
     def get_existing_qdrant(self,persist_directory, embedding_model_name):
         """
         Get an existing Qdrant database from the specified directory.
@@ -319,9 +251,9 @@ class RetrievalAgent:
             collection_name="qdrant_vectorstore",
         )
 
-    @traceable
+
     @log_execution_time
-    def query_database(self, query, default_config, config={}):
+    def query_database(self, query):
         """
         Query the database using the specified configuration.
 
@@ -333,50 +265,50 @@ class RetrievalAgent:
         Returns:
             list: The list of compressed documents. format: [Document, Document, ...]
         """
-        config = {**default_config, **config}
+  
 
         logging.info("Trying to load the qdrant database...")
 
         logging.info("USING QDRANT SEARH KWARGS !")
         search_kwargs = self.get_filtering_kwargs_qdrant(
-            source_filter=config["source_filter"],
-            source_filter_type=config["source_filter_type"],
-            field_filter=config["field_filter"],
-            field_filter_type=config["field_filter_type"],
-            length_threshold=config["length_threshold"],
+            source_filter=self.config["source_filter"],
+            source_filter_type=self.config["source_filter_type"],
+            field_filter=self.config["field_filter"],
+            field_filter_type=self.config["field_filter_type"],
+            length_threshold=self.config["length_threshold"],
         )
 
-        search_kwargs["k"] = config["nb_chunks"]
+        search_kwargs["k"] = self.config["nb_chunks"]
 
         logging.info("QUERY: %s", query)
         logging.info("USED SEARCH KWARGS: %s", search_kwargs)
 
-        if config["hybrid_search"]:
+        if self.config["hybrid_search"]:
             search_kwargs["where_document"] = qdrant_models.Filter(
                 must=[
                     qdrant_models.FieldCondition(
                         key="word_filter",
-                        match=qdrant_models.MatchValue(value=config["word_filter"]),
+                        match=qdrant_models.MatchValue(value=self.config["word_filter"]),
                     )
                 ]
             )
 
         base_retriever = self.raw_database.as_retriever(
-            search_kwargs=search_kwargs, search_type=config["search_type"]
+            search_kwargs=search_kwargs, search_type=self.config["search_type"]
         )
 
-        if config["use_multi_query"]:
-            base_retriever = self.apply_multi_query_retriever(base_retriever, config["nb_chunks"])
+        if self.config["use_multi_query"]:
+            base_retriever = self.apply_multi_query_retriever(base_retriever, self.config["nb_chunks"])
 
-        if config["advanced_hybrid_search"]:
+        if self.config["advanced_hybrid_search"]:
             base_retriever = self.apply_advanced_hybrid_search_v3(
                 base_retriever=base_retriever,
-                nb_chunks=config["nb_chunks"],
+                nb_chunks=self.config["nb_chunks"],
                 query=query,
                 search_kwargs=search_kwargs,
             )
 
-        if config["use_reranker"]:
+        if self.config["use_reranker"]:
             compressed_docs = self.apply_reranker(query=query, base_retriever=base_retriever)
         else:
             compressed_docs = base_retriever.get_relevant_documents(query=query)
@@ -385,7 +317,7 @@ class RetrievalAgent:
         return compressed_docs
 
 if __name__ == "__main__":
-    with open("config/config.yaml") as f:
+    with open("config/test_config.yaml") as f:
         config = yaml.safe_load(f)
         
     agent = RetrievalAgent(config)

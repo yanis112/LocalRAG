@@ -1,9 +1,5 @@
 import asyncio
 
-
-
-
-
 class InternetAgent:
     
     def __init__(self):

@@ -14,20 +14,15 @@ load_dotenv()
 os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "2000"
 
 # Initialize the chat interface
-st.title(
-    "LlamaNova 🦙",
-    help="How to use Euranova's chatbot ? Just ask a query correctly formatted (ponctuation, capital letter for proper nouns,exact word spelling, ect..) \
-    and the chatbot will find the most relevant documents to answer your question (5 documents) and cite the sources used after the answer. What you cannot expect from the chatbot ? This chatbot is not conversational \
-    and does not have a memory of the previous interactions or messages, each query is independently processed from the previous ones. You can't ask anything apart from \
-    a query/question, no greetings, no small talk, its a waste of time and resources !",
-)
-
-#black theme
-st._config.set_option("theme.base", "dark")
-
+# st.title(
+#     "All",
+#     help="How to use Euranova's chatbot ? Just ask a query correctly formatted (ponctuation, capital letter for proper nouns,exact word spelling, ect..) \
+#     and the chatbot will find the most relevant documents to answer your question (5 documents) and cite the sources used after the answer. What you cannot expect from the chatbot ? This chatbot is not conversational \
+#     and does not have a memory of the previous interactions or messages, each query is independently processed from the previous ones. You can't ask anything apart from \
+#     a query/question, no greetings, no small talk, its a waste of time and resources !",
+# )
 
 # st.sidebar.image("assets/logo_v5.png", output_format="PNG")
-
 
 # load configuration
 load_config()
@@ -91,6 +86,10 @@ initialize_session_state()
 
 st.sidebar.header("Audio Recording/Uploading")
 
+# Display the chat history
+display_chat_history()
+
+
 if st.sidebar.toggle(
     "Enable audio recording 🎤",
     value=False,
@@ -99,39 +98,60 @@ if st.sidebar.toggle(
     audio = st.experimental_audio_input(
         "Start recording"
     )
+    
+    print("AUDIO: ", audio)
+    print("TYPE: ", type(audio))
 
-    if len(audio) > 0:
+    if audio:
         print("AUDIO: ", audio)
         print("AUDIO RECORDED !")
-        from src.streamlit_app_utils import transcribe_audio
-        transcribe_audio(audio)
-        # get the transcrition from the session state
-        transcription = st.session_state.messages[-1]["content"]
+        # Save the recorded audio to a WAV file
+        #if the temp directory doesn't exist, create it
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+            
+        with open("temp/recorded_audio.wav", "wb") as f:
+            f.write(audio.getbuffer())
+            
+        print("Audio saved as recorded_audio.wav")
+        
+        from src.transcription_utils import YouTubeTranscriber
+        
+        with st.spinner("Transcribing audio...🎤"):
+            yt=YouTubeTranscriber()
+            transcription=yt.transcribe("temp/recorded_audio.wav",method="groq")
+            
+        print("TRANSCRIPTION: ", transcription)
+        
+        #write the transcription in the chat messages
+        
+        #st.session_state["messages"].append("🎤 Audio recorded and transcribed: \n\n"+transcription)
+        st.chat_message("assistant").write("🎤 Audio recorded and transcribed: \n\n"+transcription)
         # save the transcription in a json file
         # pdf = create_transcription_pdf(transcription)
-        from src.streamlit_app_utils import create_transcription_txt
-        txt = create_transcription_txt(transcription)
-        print("TXT FILE CREATED !")
-        st.session_state["uploaded_file"] = True
+        # from src.streamlit_app_utils import create_transcription_txt
+        # txt = create_transcription_txt(transcription)
+        # print("TXT FILE CREATED !")
+        # st.session_state["uploaded_file"] = True
 
-        with open(txt, "rb") as f:
-            data = f.read()
+        # with open(txt, "rb") as f:
+        #     data = f.read()
 
         st.toast("Transcription successfull !", icon="🎉")
 
-        st.download_button(
-            label="Download transcription as txt",
-            data=txt,
-            file_name="transcription.txt",
-            mime="text/plain",
-        )
+        # st.download_button(
+        #     label="Download transcription as txt",
+        #     data=txt,
+        #     file_name="transcription.txt",
+        #     mime="text/plain",
+        # )
 
-        st.session_state["transcription"] = str(txt)
+        # st.session_state["transcription"] = str(txt)
 
-        audio = []
+        # audio = []
 
-        from src.streamlit_app_utils import show_submission_form
-        show_submission_form()
+        # from src.streamlit_app_utils import show_submission_form
+        # show_submission_form()
 
 
 uploaded_file = st.sidebar.file_uploader(
@@ -165,8 +185,8 @@ if uploaded_file and "uploaded_file" not in st.session_state:
         from src.streamlit_app_utils import show_submission_form
         show_submission_form()
 
-# Display the chat history
-display_chat_history()
+
+
 
 # Here are defined all usefull variables for the chatbot
 streamlit_config = {
@@ -179,7 +199,8 @@ streamlit_config = {
     ),  # we keep track of the chat history,
     "use_history": False,  # this functionnality is in work in progress
     # "auto_job": auto_job,
-    # "emails_answer": emails_answer,
+    "return_chunks": True,
+    "stream": True,
 }
 
 
@@ -188,10 +209,18 @@ st.session_state["streamlit_config"] = streamlit_config
 # Get the query from the user
 query = st.chat_input("Please enter your question")
 
+#load the RAG agent only once (not at each query)
+@st.cache_resource
+def load_rag_agent():
+    print("RAG AGent not in session state, loading it...")
+    from src.generation_utils_v2 import RAGAgent
+    agent = RAGAgent(default_config=st.session_state["config"],config=st.session_state["streamlit_config"])
+    return agent
+
 
 # Process the query if submitted
 if query:
     st.session_state["current_query"] = query
-    process_query(query, streamlit_config)
+    process_query(query, streamlit_config,rag_agent=load_rag_agent())
 
 

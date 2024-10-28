@@ -7,10 +7,7 @@ from functools import wraps
 from typing import List
 
 #import easyocr
-from deep_translator import GoogleTranslator
 from dotenv import load_dotenv
-
-
 from functools import lru_cache
 
 load_dotenv()
@@ -151,6 +148,7 @@ Here is the output schema:"""
 
 @lru_cache(maxsize=None)
 def load_translation_model(source, target):
+    from deep_translator import GoogleTranslator
     return GoogleTranslator(source=source, target=target)
 
 @log_execution_time
