@@ -196,7 +196,7 @@ def directory_to_vectorstore(default_config, config={}):
         f"Time taken to add the documents to the vectorstore and compute embeddings: {end_time-start_time} seconds"
     )
 
-    del vectordb
+    #del vectordb
 
     # add the documents to the sparse vectorstore
     logging.info("Adding documents to the sparse vectorstore ...")

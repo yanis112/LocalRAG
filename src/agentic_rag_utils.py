@@ -9,37 +9,9 @@ from src.generation_utils import LLM_answer_v3
 
 load_dotenv()
 
-class WorldModel: #DEPRECATED
-    """
-    The goal of the world model is to define a desciptive text presenting to the LLM
-    the structure of the database from a higher, abstract point of view.
-    """
-
-    def __init__(self):
-        self.content = (
-            "You have a database containing data from the company Euranova, specialized it Data and artificial intelligence. \
-        The database is structured in different collections containing various information about the company, its employees, its projects, its clients, its products and its services. \
-        The collection 'mattermost' contains the messages exchanged between the employees of the company to solve technical issues, questions about development, and to share information. \
-        The collection 'gitlab' contains the code repositories of the company and descriptions of the projects, code, tools used and python modules. \
-        The collection 'happeo' contains general information about the company, its employees, enboarding process, and the company's values. \
-        The collection 'drive"
-        )
-
-    def get_embedding(self):
-        # prompt for getting the embedding of the word
-        prompt = f"Get the embedding of the word '{self.word}' using the model '{self.model_name}'."
-
-        # Use LLM_answer to get the embedding of the word
-        embedding = LLM_answer_v3(
-            prompt, model_name=self.model_name, llm_provider=self.llm_provider
-        )
-
-        return embedding
-
 
 class ReformulatedQuery(BaseModel):
     query: str
-
 
 class TaskTranslator:
     """
@@ -174,35 +146,6 @@ class ChabotMemory:
         return new_query
 
 
-class SummaryMemory:
-    def __init__(self, model_name, llm_provider="ollama"):
-        self.current_summary = "empty summary"
-        self.model_name = model_name
-        self.new_user_message = None
-        self.new_bot_message = None
-        self.llm_provider = llm_provider
-
-    def update_summary(self, new_user_message, new_bot_message):
-        self.new_user_message = new_user_message
-        self.new_bot_message = new_bot_message
-
-        self.prompt = f"Using the current dialogue summary and the new user_message and bot_message, update the current summary (even if empty) with the fresh information , keep all previous information that is necessary for answering the user's questions. \n \
-        Current summary: \n{self.current_summary} \n\n New user message: \n{self.new_user_message} \n\n New bot message: \n{self.new_bot_message} \n\n Now update the summary with the new information: \n New summary: \n "
-
-        # Get the answer from the LLM
-        new_summary = LLM_answer_v3(
-            prompt=self.prompt,
-            model_name=self.model_name,
-            stream=False,
-            llm_provider=self.llm_provider,
-        )
-
-        self.current_summary = new_summary
-
-    def get_summary(self):
-        return self.current_summary
-
-
 class SubSteps(BaseModel):
     list_steps: List[str] = Field(description="List of strings representing the steps. Example: ['Step 1: Identify the people working on Project A.', 'Step 2: Determine who among them is responsible for maintaining the machines.']")
 
@@ -307,60 +250,6 @@ Exemple d'étapes :
 
 
 
-
-def answer_relevancy_classifier(query, answer): #DEPRECATED
-    """
-    function that takes the query and the answer as input and returns the relevancy of the answer
-    input:
-        query: the query to search in the database. type: string
-        answer: the answer to the query. type: string
-    output:
-        relevancy: True il the answer is relevant, False otherwise
-    """
-
-    prompt = f"Here is a question: {query} and here is an answer obtained from a RAG pipeline and formullated by a LLM: {answer}. Does the answer answer fully the question or is lacking key elements (no explicit mention, could not answer, ect ...) ? Classify the answer in those three categories: 'fully answered' if all the key and precise details are provided, 'partially answered' in a general answer is given but not detailled enough, 'not answered' if the answer contains i coulndt answer or i dont know."
-
-    # define pydantic object
-    class Relevancy(BaseModel):
-        relevancy: str
-
-    answer = LLM_answer_v3(
-        prompt,
-        json_formatting=True,
-        pydantic_object=Relevancy,
-        model_name="llama3",
-        llm_provider="ollama",
-    )
-
-    # parse the answer
-    relevancy = answer["relevancy"]
-
-    return relevancy
-
-
-def answer_from_knowledge_graph(query, kg): #DEPRECATED
-    """
-    function that takes the knowledge graph as input and returns the answer
-    input:
-        kg: the knowledge graph. type: KnowledgeGraph
-    output:
-        answer: The answer in str format
-    """
-    # we get the answer from the knowledge graph
-    dict_graph = kg.graph_to_dict()
-
-    print("DICT GRAPH:", dict_graph)
-
-    # prompt for answerinf the question based on the knowledge graph
-    prompt = f"Réponds à la question suivante : {query} en utilisant les informations contenues dans le knowledge graph suivant, utilise tout les infos pertinantes disponibles pour répondre à la question: <knowledge_graph> {str(dict_graph)} </knowledge_graph>."
-
-    # get the answer from the LLM model
-
-    answer = LLM_answer_v3(prompt)
-
-    return answer
-
-
 class AggregatorReranker:
     def __init__(
         self, reranker_name="jinaai/jina-reranker-v2-base-multilingual"
@@ -406,81 +295,6 @@ class AggregatorReranker:
         return top_k
 
 
-def create_full_prompt(list_raw_docs, cot_enabled):
-    """Takes the list of raw documents and the cot_enabled boolean and returns a full well formated prompt for the LLM model.
-
-    Args:
-        list_raw_docs (_type_): _description_
-        cot_enabled (_type_): _description_
-
-    Returns:
-        dictionnary: {prompt: str, list_content: list, list_sources: list}
-    """
-
-    # We make a str using the document content and the metadata
-    list_content = [
-        doc.page_content
-        for doc in list_raw_docs  # text_preprocessing is not needed here because its already done in the vectorstore creation !!
-    ]
-
-    # we list the metadata of the documents
-    list_metadata = [doc.metadata for doc in list_raw_docs]
-    # We list the sources of the documents
-    list_sources = [metadata["source"] for metadata in list_metadata]
-
-    list_context = [
-        f"Document_{i}: {content} \n\n "  # Source: {metadata['source']}, Content:  NOT SURE IF WE NEED THIS !!!!
-        for i, (metadata, content) in enumerate(
-            zip(list_metadata, list_content)
-        )
-    ]
-
-    str_context = " ".join(list_context)
-
-    if cot_enabled:
-        # We define a COT prompt for the LLM model
-        prompt = f"Réponds à la question suivante : {query} . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants, tu prendras soin de préciser quel(s) document(s) tu as utilisé pour trouver la réponse (nom du doc et page) et de répondre en français. Explicite le raisonnement par étapes ayant mené à ta réponse avant de la formuler. Ton raisonnement peut te mener à ne pas trouver de réponse. Si tu relèves une incohérence à une étape de ton raisonnement, tu peux t'arrêter et conclure. Voici les documents que tu dois utiliser: \n\n {str_context}"
-    else:
-        # We define a prompt for the LLM model
-        prompt = f"Réponds à la question suivante : {query} . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: \n\n {str_context}."
-
-    return {
-        "prompt": prompt,
-        "list_content": list_content,
-        "list_sources": list_sources,
-    }
-
-
 
 if __name__ == "__main__":
-    model_name = "llama3-70b-8192"
-    sm = SummaryMemory(model_name=model_name)
-    user_message = "Comment se connecter à Vidar en ssh ?"
-    bot_message = "Bonjour ! \
-    Pour vous connecter à Vidar en ssh, voici les étapes à suivre : \
-    1. Oubliez Tahiti-Bob, votre username c'est Aziz Jedidi ! \
-    2. Essayez la commande `ssh aziz.jedidi@vidar.enx` (ou simplement `ssh vidar` si vous ne précisez pas de user). \
-    3. Si cela ne fonctionne pas, assurez-vous d'avoir ajouté votre SSH key dans le console Jumpcloud. \
-    Notez que si vous arrivez à vous connecter sur la machine physique avec votre user et mot de passe, il est possible que vous n'ayez pas de timeout sur Vidar. \
-    Si vous avez des problèmes pour se connecter, essayez de scanner le réseau pour trouver la nouvelle adresse IP de Vidar (cf. Document 2). \
-    Et si cela ne marche toujours pas, vous pouvez essayer d'ajouter les lignes `Host * ForwardX11 yes ForwardX11Trusted yes` dans votre fichier `~/.ssh/config` (cf. Document 3). Cela devrait vous aider à résoudre les problèmes de connexion.\
-    J'espère que cela vous aidera à vous connecter à Vidar en ssh !"
-
-    sm.update_summary(user_message, bot_message)
-
-    print("New Summary:", sm.get_summary())
-
-    user_message = (
-        "Comment se connecter n'importe qu'elle machine distante en ssh ?"
-    )
-    bot_message = (
-        "Pour vous connecter à n'importe quelle machine distante en ssh, il est nécéssaire de d'abord créer \
-        une clé ssh et de l'ajouter à la machine distante. Ensuite, vous pouvez vous connecter en utilisant la commande `ssh user@machine`, \
-        il faudra également installer les extensions vscode pour faciliter la connexion. Pour plus d'informations, vous pouvez consulter le \
-        document 4."
-    )
-
-    sm.update_summary(user_message, bot_message)
-
-    print("###############################################")
-    print("New Summary:", sm.get_summary())
+    pass

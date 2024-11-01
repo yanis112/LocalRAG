@@ -7,6 +7,8 @@ persist_directory: "data/vector_stores/qdrant_semantic_bge_test"  #Directory to 
 splitting_method: "semantic"  # Method to split the documents into chunks (semantic or "recursive")
 path: "data/emails" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
+use_server: "False"
+server_url: "http://localhost:6333"
 
 #Knowledge graph index parameters
 build_knowledge_graph: false  # Enable or disable the building of the knowledge graph when initializing the database

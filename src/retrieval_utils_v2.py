@@ -232,7 +232,7 @@ class RetrievalAgent:
         return compressed_docs
 
    
-    @lru_cache(maxsize=None)
+    #@lru_cache(maxsize=None)
     def get_existing_qdrant(self,persist_directory, embedding_model_name):
         """
         Get an existing Qdrant database from the specified directory.

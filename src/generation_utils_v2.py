@@ -196,8 +196,9 @@ class RAGAgent:
         self.retrieval_agent = RetrievalAgent(default_config=default_config, config=config)
 
     @log_execution_time
-    def RAG_answer(self, query):
-        merged_config = {**self.default_config, **self.config}
+    def RAG_answer(self, query,merged_config=None):
+        if merged_config is None:
+            merged_config = {**self.default_config, **self.config}
         logging.basicConfig(
             filename="rag_answer.log",
             filemode="a",
@@ -425,21 +426,152 @@ class RAGAgent:
             )
 
         return stream_generator, list_sources
+    
+    
+    
+    def internet_rag(self,query):
+        """Return an answer to the user's query using the RAG model with the internet as the source of information.
+
+        Args:
+            query (str): The user's query.
+        Returns:
+            str: The answer to the user's query.
+            
+        """
+        #load internet_config
+        with open("config/internet_config.yaml") as f:
+            internet_config = yaml.safe_load(f)
+            
+        #create a merged config using self.merge_config and internet_config
+        merged_config = {**self.default_config,**self.config}
+            
+        #make a new merged config using self.merge_config and internet_config
+        internet_merged_config = {**merged_config,**internet_config}
+        
+        from src.internet_utils import InternetAgent
+        internet_agent = InternetAgent()
+        
+        #we empty the internet folder of its contents
+        import shutil
+        shutil.rmtree("data/internet")
+        
+        #create an internet folder in the data folder if it does not exist already
+        if not os.path.exists("data/internet"):
+            os.makedirs("data/internet")
+        
+        #get urls
+        urls = internet_agent.get_urls(query, num_results=internet_merged_config["num_urls"])
+        print("Number of urls:",len(urls))
+        
+        #scrape contents
+        list_pages = internet_agent.scrape_contents(urls)
+        print("Number of pages scraped:",len(list_pages))
+        #save the content of the pages in the internet folder
+        internet_agent.save_pages()
+
+        print("Contents downloaded in html format")
+        
+        #create temporary vectorstore to store the pages
+        from src.vectorstore_utils_v2 import VectorAgent
+        # Create a VectorAgent object
+        agent = VectorAgent(default_config=internet_merged_config)
+        # Fill the vectorstore with the pages
+        #agent.fill()
+        list_pages=agent.get_chunks()
+        
+        print("Number of chunks created:",len(list_pages))
+            
+        # Embed the documents using SentenceTransformer
+        model = self.load_embedding_model()
+        # Python
+        
+        list_pages_text = [page.page_content for page in list_pages]
+        doc_embeddings = model.encode(list_pages_text, convert_to_tensor=True,device='cuda')
+        #doc_embeddings = model.encode(list_pages, convert_to_tensor=True)
+        query_embedding = model.encode([query], convert_to_tensor=True,device='cuda')
+        
+        # Compute the similarity between the query and the documents
+        similarities = model.similarity(query_embedding, doc_embeddings)
+        topk_values, topk_indices = similarities.topk(5)
+        
+        # Retrieve the top-k documents based on similarity
+        topk_docs = [list_pages[idx] for idx in topk_indices[0]]
+        
+        # Create the prompt using the context documents
+        context = "\n\n".join([doc.page_content for doc in topk_docs])
+        prompt = f"""
+        You are an AI assistant. Use the following documents as context to answer the user's question.
+        
+        Context:
+        {context}
+        
+        Question:
+        {query}
+        
+        Answer:
+        """
+        
+        #query the vectorstore with RAG_answer method
+        if self.config["return_chunks"]:
+            #add return_chunks to the config
+      
+             # Call the LLM_answer_v3 function with the prompt
+            answer = LLM_answer_v3(prompt,model_name=internet_merged_config["model_name"],stream=internet_merged_config["stream"],llm_provider=internet_merged_config["llm_provider"])
+        
+            #stream_generator, list_content, list_sources = self.RAG_answer(query,merged_config=internet_config)
+            #delete the vectorstore (its persist directory)
+            #agent.delete()
+            #delete the internet folder
+            # import shutil
+            # shutil.rmtree("data/internet")
+            return answer,topk_docs
+            
+        else:
+            #add return_chunks to the config
+
+            # Call the LLM_answer_v3 function with the prompt
+            answer = LLM_answer_v3(prompt,model_name=internet_merged_config["model_name"],stream=internet_merged_config["stream"],llm_provider=internet_merged_config["llm_provider"])
+            #stream_generator = self.RAG_answer(query,merged_config=internet_config)
+            #agent.delete()
+            #delete the internet folder
+            # import shutil
+            # shutil.rmtree("data/internet")
+            return answer
+        
+    @lru_cache(maxsize=None)
+    def load_embedding_model(self):
+        """_summary_
+        """
+        from sentence_transformers import SentenceTransformer
+        # Load the SentenceTransformer model
+        model = SentenceTransformer("jxm/cde-small-v1", trust_remote_code=True,device='cuda')
+        return model
+        
 
 if __name__ == "__main__":
-    with open("config/test_config.yaml") as f:
+    import time
+    with open("config/internet_config.yaml") as f:
         config = yaml.safe_load(f)
 
-    query = "Qui est Simon Boiko ?"
+    # query = "Qui est Simon Boiko ?"
+    # agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
+    # answer = agent.RAG_answer(query)
+    # print("Answer:", answer)
+    
+    #test internet rag
     agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
-    answer = agent.RAG_answer(query)
-    print("Answer:", answer)
+    query = "Est il vrai que Elon Musk a proposé de l'argent à des américains pour qu'ils votent pour Trump explicitement ?"
+    start_time = time.time()
+    stream_generator = agent.internet_rag(query)
+    end_time = time.time()
+    
+    #reconstruct the answer from stream_generator
+    print("Answer:")
+ 
+    print('stream_generator:', stream_generator)
+    # for chunk in stream_generator:
+    #     print(chunk)
+    
+    
+    print("Time taken:", end_time - start_time)
 
-if __name__ == "__main__":
-    with open("config/test_config.yaml") as f:
-        config = yaml.safe_load(f)
-
-    query = "Qui est Simon Boiko ?"
-    agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
-    answer = agent.RAG_answer(query)
-    print("Answer:", answer)

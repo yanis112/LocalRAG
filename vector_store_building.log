@@ -44,3 +44,504 @@
 2024-10-28 13:12:22,146:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
 2024-10-28 13:12:22,146:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
 2024-10-28 13:12:30,205:INFO:add_documents_to_db_V2:Chroma database fully updated with new documents!
+2024-10-28 19:42:28,568:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:74
+2024-10-28 19:42:28,569:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:42:28,569:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-10-28 19:42:36,680:INFO:add_documents_to_db_V2:Chroma database fully updated with new documents!
+2024-10-28 19:42:36,680:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:42:36,904:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:42:36,965:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:42:36,965:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:42:36,965:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:42:36,965:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:42:37,547:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,547:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,547:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,547:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,547:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:37,558:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:42:39,096:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:42:40,447:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:42:40,447:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:42:40,447:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:42:40,447:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:42:40,447:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:42:40,447:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:42:41,809:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:44:11,826:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:44:11,826:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:44:11,826:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:46:03,789:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:34
+2024-10-28 19:46:03,790:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:46:03,790:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-10-28 19:46:05,424:INFO:add_documents_to_db_V2:Chroma database fully updated with new documents!
+2024-10-28 19:46:05,424:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:46:05,643:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:46:05,703:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:46:05,703:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:46:05,703:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:46:05,703:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:46:06,249:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,255:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,255:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,257:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,257:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,259:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,259:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,261:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,261:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,263:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,263:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,265:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:06,265:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:46:07,564:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:46:08,903:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:46:08,903:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:46:08,903:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:46:08,903:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:46:08,903:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:46:08,903:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:46:09,912:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:47:42,402:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:47:42,402:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:47:42,402:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:47:42,402:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:47:42,619:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:47:42,673:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:47:42,673:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:47:42,673:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:47:42,673:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:47:43,212:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,212:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,214:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,214:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,216:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,216:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,218:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,218:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,220:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,220:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,222:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,222:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:43,224:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:47:44,471:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:47:46,635:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:47:46,635:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:47:46,635:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:47:46,635:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:47:46,635:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:47:46,635:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:47:47,522:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:50:07,757:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:50:07,757:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:50:07,757:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:50:07,757:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:50:07,972:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:50:08,025:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:50:08,025:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:50:08,025:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:50:08,025:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:50:08,725:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,725:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:08,741:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:50:09,948:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:50:11,730:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:50:11,730:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:50:11,731:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:50:11,731:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:50:11,731:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:50:11,732:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:50:12,854:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:51:44,367:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:51:44,367:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:51:44,367:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:51:44,367:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:51:44,585:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:51:44,641:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:51:44,641:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:51:44,641:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:51:44,641:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:51:45,171:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,186:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,186:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,188:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,188:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,190:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,190:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,192:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,192:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,194:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,194:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,196:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:45,196:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:51:46,396:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:51:48,475:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:51:48,475:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:51:48,475:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:51:48,475:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:51:48,475:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:51:48,475:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:51:49,484:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:53:00,219:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:53:00,219:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:53:00,219:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:53:00,219:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:53:00,438:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:53:00,487:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:53:00,487:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:53:00,487:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:53:00,487:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:53:01,019:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,019:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,019:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,019:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:01,035:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:53:02,199:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:53:04,031:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:53:04,031:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:53:04,031:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:53:04,031:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:53:04,031:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:53:04,031:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:53:05,023:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:55:02,332:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 19:55:02,332:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 19:55:02,332:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:55:02,332:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:55:02,543:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:55:02,593:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:55:02,593:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:55:02,593:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:55:02,593:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:55:03,134:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,134:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,134:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,136:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,136:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,138:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,138:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,140:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,140:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,142:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,142:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,144:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:03,144:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:55:04,324:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:55:06,457:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:55:06,459:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:55:06,459:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:55:06,459:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:55:06,459:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:55:06,460:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:55:07,361:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 19:56:42,036:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:101
+2024-10-28 19:56:42,038:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 19:56:42,039:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-10-28 19:56:49,676:INFO:add_documents_to_db_V2:Chroma database fully updated with new documents!
+2024-10-28 19:56:49,676:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-10-28 19:56:49,892:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-10-28 19:56:49,948:INFO:query_database:Trying to load the qdrant database...
+2024-10-28 19:56:49,948:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-10-28 19:56:49,948:INFO:query_database:QUERY: Qui est Pierre Yves Rougeyron ?
+2024-10-28 19:56:49,949:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 10}
+2024-10-28 19:56:50,480:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,480:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,480:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,480:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,490:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:50,500:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-10-28 19:56:52,109:INFO:apply_reranker:RERANKER LOADED !
+2024-10-28 19:56:53,334:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-10-28 19:56:53,334:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 9
+2024-10-28 19:56:53,334:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-10-28 19:56:53,334:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1386
+2024-10-28 19:56:53,334:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Qui est Pierre Yves Rougeyron ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ce message a été envoyé à yanis.labeyrie@centrale-med.fr . Politique de confidentialité | Mentions légales | Gérer les paramètres Glassdoor 300 Mission Street, 16th Floor, San Francisco, CA 94105, USA Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Un phénomène aussi présent en politique qu’en entreprise. Lire la suite DÉCOUVRIR NOTRE OUTIL Lettre de motivation Créer ma lettre Téléchargez notre application Espace candidat Aide et contact CGU Politique de confidentialité Si vous ne souhaitez plus recevoir ce type d’e-mail de la part de HelloWork, vous pouvez modifier vos préférences ou vous désabonner . Conformément au règlement général sur la protection des données à caractère personnel du 25 mai 2018, vous pouvez exercer vos droits d’accès, de suppression et de rectification aux informations qui vous concernent. HelloWork.com est un service édité par HelloWork HelloWork SASU • 2 rue de la Mabilais • 35000 RENNES 
+
+  Document 2: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 3: You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e6c071si40505285e9.197 - gsmtp (in reply to RCPT TO command) 
+
+  Document 4: Cordialement, Le Service Client MathWorks mathworks.com/contact  © 2024 The MathWorks, Inc. MATLAB and Simulink are registered trademarks of The MathWorks, Inc. See a list of additional trademarks  Other product or brand names may be trademarks or registered trademarks of their respective holders. Vous êtes abonné(e) comme yanis.labeyrie@centrale-marseille.fr Gérer  vos préférences concernant les emails envoyés par MathWorks, ou bien désabonnez-vous des emails promotionnels. 
+
+  Document 5: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 6: Nous sommes avec vous ! Colas 3.7  Stage fin d'études - Formulation des enrobés à froid (H/F) Vitrolles Candidature facile Chantier Ingénierie Master Permis B Groupe Talents Handicap 4.0  DATA SCIENTIST H/F Toulon Candidature facile Compte épargne-temps CDI Statistique Informatique Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+  Document 7: Undelivered Mail Returned to Sender Date: 2024-09-30 20:41:59+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. 
+
+  Document 8: [GitHub] A personal access token (classic) has been added to your account Date: 2024-10-04 10:41:12-07:00 From: GitHub noreply@github.com Content Hey yanis112! A personal access token (classic) "LocalRAG" with admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key, admin:repo_hook, admin:ssh_signing_key, audit_log, codespace, copilot, delete:packages, gist, notifications, project, repo, user, workflow, write:discussion, and write:packages scopes was recently added to your account. Visit  for more information. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-10-28 19:56:53,334:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-10-28 19:56:54,263:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-10-28 22:48:52,120:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 22:48:52,120:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 22:48:52,120:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 22:49:53,945:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
+2024-10-28 22:49:53,945:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
+2024-10-28 22:49:53,945:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 22:52:03,858:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:255
+2024-10-28 22:52:03,858:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 22:52:03,858:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-10-28 22:54:51,778:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:255
+2024-10-28 22:54:51,779:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 22:54:51,779:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-10-28 23:03:45,164:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:74
+2024-10-28 23:03:45,165:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 23:03:45,165:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-10-28 23:05:55,892:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:52
+2024-10-28 23:05:55,893:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-10-28 23:07:10,868:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:52
+2024-10-28 23:07:10,868:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 22:03:47,307:INFO:directory_to_vectorstore:Time taken to process (loading + chunking) the documents: 11.26976990699768 seconds
+2024-11-01 22:03:47,332:INFO:__init__:Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2024-11-01 22:07:04,686:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:255
+2024-11-01 22:07:04,687:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 22:07:04,687:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-01 22:07:17,132:INFO:add_documents_to_db_V2:Qdrant database fully updated with new documents!
+2024-11-01 22:08:59,418:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1085
+2024-11-01 22:08:59,418:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 22:08:59,418:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-01 22:11:34,760:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1085
+2024-11-01 22:11:34,760:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 22:11:34,762:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-01 22:14:29,963:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1303
+2024-11-01 22:14:29,974:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 22:14:29,974:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-01 23:05:30,524:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1739
+2024-11-01 23:05:30,525:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 23:05:30,525:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-01 23:08:55,815:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1739
+2024-11-01 23:08:55,816:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-01 23:08:55,816:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:02:49,942:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:02:49,944:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:02:49,945:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:04:02,919:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:04:02,919:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:04:02,919:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:05:07,834:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:05:07,835:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:05:07,835:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:07:37,796:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:07:37,798:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:07:37,798:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:09:32,639:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:09:32,639:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:09:32,639:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:11:06,579:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:11:06,579:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:11:06,579:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:12:26,360:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:12:26,360:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:12:26,360:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:13:19,770:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:434
+2024-11-02 00:13:19,770:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:13:19,770:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:14:30,113:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:14:30,113:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:14:30,113:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:15:19,985:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:435
+2024-11-02 00:15:19,986:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:15:19,986:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:16:58,819:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:391
+2024-11-02 00:16:58,819:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:16:58,819:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:17:18,504:INFO:add_documents_to_db_V2:Qdrant database fully updated with new documents!
+2024-11-02 00:29:47,214:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:112
+2024-11-02 00:29:47,215:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:29:47,215:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:29:58,674:INFO:add_documents_to_db_V2:Qdrant database fully updated with new documents!
+2024-11-02 00:30:54,919:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:3291
+2024-11-02 00:30:54,919:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:30:54,919:INFO:add_documents_to_db_V2:Vectordb is None, creating a new one...
+2024-11-02 00:31:54,477:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1009
+2024-11-02 00:31:54,477:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:31:54,477:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-02 00:32:37,956:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:1771
+2024-11-02 00:32:37,956:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-02 00:32:37,956:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...

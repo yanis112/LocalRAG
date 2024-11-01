@@ -19,3 +19,9 @@
 
 1. **Shallow Depth of Field**: Specify "shallow depth of field" or a specific aperture like "f/2.8" for a blurred background.
 2. **Dynamic Camera Angles**: Use terms like "low-angle shot" or "Dutch angle" for more dramatic perspectives.
+
+### Type of photographic film
+
+1. **Cinestill 50D**: Mention "Cinestill 50D" for a cinematic look with fine grain and a daylight color balance.
+2. **Kodak Portra 400**: Include "Kodak Portra 400" for a versatile film with natural skin tones and soft colors.
+3. **Arry Alexa film**: Specify "Arry Alexa film" for high-quality digital cinematography with a wide dynamic range.

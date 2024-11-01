@@ -39,3 +39,5 @@
 18. **Full Shot**: A shot that frames a character from head to toe, showing the entire figure and sometimes their immediate surroundings. It’s used to provide full context of the subject in relation to the setting.
 
 19. **Reverse Angle**: A shot taken from the opposite side of a previous shot, often used in dialogue or action sequences to show the opposite perspective of a character or object.
+
+### WARNING ⚠️: We want to create static images so don't use any camera movements like zooming, panning, or tilting, or switches between different camaera angles. The focus should be on the composition and framing of the shot.

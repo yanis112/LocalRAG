@@ -18,24 +18,23 @@ In the world of cinematic visuals, there are various terms used in post-producti
 ### Cinematic Enhancements
 
 1. **Lens Flares**: An effect that simulates light scattering inside a camera lens, often used to add a more cinematic feel to an image.
-
-2. **Light Leaks**: Effects that simulate light entering the camera unintentionally, creating artistic halos or bursts of light across the image.
+2. **Light Leaks**:  Simulated effect of unintended light entering the camera, creating artistic halos or streaks across the image.
+3. **Frostpunk**: Type of post-processing effect that adds a frosty, icy look to the image, often used to create a cold, desolate atmosphere.
+4. **Earthy neutrals**: Color palette using nature-inspired neutral tones like browns, beiges, olive greens, and warm grays.
+5. **Cinematic contour lighting**: Dramatic lighting technique emphasizing subject contours, creating strong contrast between light and dark areas.
+6. **Bokeh**: Aesthetic blur quality in out-of-focus areas, often appearing as soft, circular light spots.
 
 ### Atmospheric Effects
 
 1. **Particle Systems**: Digital effects used to simulate tiny particles like dust, smoke, or sparks to add atmosphere and depth to a scene.
-
 2. **Volumetric Lighting**: A technique that makes light rays visible, often used to create "god rays" in misty or dusty environments.
-
-### Compositing
-
-1. **Compositing**: The process of combining multiple visual elements into a single cohesive image, blending effects like light leaks, lens flares, and particle systems into the scene.
 
 ### Cinematic Look
 
 The term "**cinematic look**" refers to the overall aesthetic created through these post-production effects, helping transform an ordinary shot into something visually stunning and dynamic.
 
 ## 🎬 Camera Angles & Cinematography
+
 Camera angles and movements play a critical role in visual storytelling. Incorporating these elements into your prompts can give your images depth, atmosphere, and cinematic flair.
 
 ### Establishing Shot

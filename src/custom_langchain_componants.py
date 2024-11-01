@@ -643,7 +643,7 @@ def initialize_sparse_vectorstore(
     documents = get_all_docs_qdrant(raw_database=raw_database)
 
     doc_copy = documents.copy()
-    del raw_database  # USEFULL OR NOT ??
+    #del raw_database  # USEFULL OR NOT ??
     
     #We create the custom persist for the sparse vector based on the one from the dense
     sparse_persist = config['persist_directory'] + "_sparse_vector"

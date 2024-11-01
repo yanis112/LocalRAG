@@ -14,7 +14,6 @@ from langchain_qdrant import (
     RetrievalMode,
 )
 from tqdm import tqdm
-
 # custom imports 
 from src.embedding_model import get_embedding_model, get_sparse_embedding_model
 # from src.query_routing_utils import QueryRouter
@@ -44,6 +43,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
 class VectorAgent:
     def __init__(self, default_config, config={}):
         self.config = {**default_config, **config}
+        self.client = None
         self.persist_directory = self.config["persist_directory"]
         self.process_log_file = self.config["process_log_file"]
         self.clone_database = self.config["clone_database"]
@@ -52,6 +52,7 @@ class VectorAgent:
         self.clone_persist = self.config["clone_persist"]
         self.clone_embedding_model = self.config["clone_embedding_model"]
         self.path = self.config["path"]
+        print("Path:", self.path)
         self.vectordb_provider = self.config["vectordb_provider"]
         self.build_knowledge_graph = self.config["build_knowledge_graph"]
         self.log_file_path = ""
@@ -147,12 +148,16 @@ class VectorAgent:
             list: The list of already processed documents.
 
         """
-        with open(self.log_file_path, "r") as file:
-            self.already_processed_docs = file.read().splitlines()
-            print(
-                "Number of already processed documents:",
-                len(self.already_processed_docs),
-            )
+        if self.config["use_server"]:
+            #no documents are processed yet
+            self.already_processed_docs = []
+        else:
+            with open(self.log_file_path, "r") as file:
+                self.already_processed_docs = file.read().splitlines()
+                print(
+                    "Number of already processed documents:",
+                    len(self.already_processed_docs),
+                )
 
     def process_documents(self):
         """
@@ -212,8 +217,11 @@ class VectorAgent:
             loader = self.find_loader(name, full_path)
             try:
                 doc = loader.load()
-                with open(self.log_file_path, "a") as file:
-                    file.write(name + "\n")
+                try:
+                    with open(self.log_file_path, "a") as file:
+                        file.write(name + "\n")
+                except Exception as e:
+                    pass
                 return doc
             except Exception as e:
                 print(f"Error processing {name}: {e}")
@@ -286,46 +294,79 @@ class VectorAgent:
     def filter_and_split_chunks(self):
         """
         Filters and prepares chunks based on the specified splitting method, apply pre-processing to the raw documents before chunking, and remove duplicates.
-
+    
         Args:
             total_chunks (list): A list of Document objects representing the total chunks.
             splitting_method (str): The method used for splitting the chunks. Can be "recursive" or any other value.
             embedding_model (str): The name of the embedding model to be used.
             semantic_threshold (float): The threshold value for semantic chunking.
-
+    
         Returns:
             list: A list of Document objects representing the filtered and prepared chunks.
         """
         print("STARTING TO SPLIT THE DOCUMENTS INTO CHUNKS ...")
-
-        # initialize the semantic splitter
-        semantic_splitter = SemanticChunker(
-            embeddings=self.chunking_embedding_model,
-            breakpoint_threshold_type="percentile",
-            breakpoint_threshold_amount=self.config["semantic_threshold"],
-        )
-
-        # get the total content of the documents
-        total_docs_content = [
-            text_preprocessing(chunk[0].page_content)
-            for chunk in self.total_documents
-        ]
-        # get the total metadata of the documents
-        total_docs_metadata = [
-            chunk[0].metadata for chunk in self.total_documents
-        ]
-        
-        chunks = semantic_splitter.create_documents(
-            texts=total_docs_content, metadatas=total_docs_metadata
-        )
-
+    
+        if self.config["splitting_method"] == "semantic":
+            semantic_splitter = SemanticChunker(
+                embeddings=self.chunking_embedding_model,
+                breakpoint_threshold_type="percentile",
+                breakpoint_threshold_amount=self.config["semantic_threshold"],
+            )
+    
+            # get the total content of the documents
+            total_docs_content = [
+                text_preprocessing(chunk[0].page_content)
+                for chunk in self.total_documents
+            ]
+            # get the total metadata of the documents
+            total_docs_metadata = [
+                chunk[0].metadata for chunk in self.total_documents
+            ]
+            
+            chunks = semantic_splitter.create_documents(
+                texts=total_docs_content, metadatas=total_docs_metadata
+            )
+        else:
+            from langchain.text_splitter import RecursiveCharacterTextSplitter
+    
+            chunk_size = self.config["chunk_size"] # default chunk size
+            chunk_overlap = self.config["chunk_overlap"]  # default chunk overlap
+    
+            character_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap
+            )
+    
+            # get the total content of the documents
+            total_docs_content = [
+                text_preprocessing(chunk[0].page_content)
+                for chunk in self.total_documents
+            ]
+            # get the total metadata of the documents
+            total_docs_metadata = [
+                chunk[0].metadata for chunk in self.total_documents
+            ]
+    
+            chunks = [
+                Document(
+                    page_content=content,
+                    metadata=metadata
+                ) for content, metadata in zip(total_docs_content, total_docs_metadata)
+            ]
+    
+            # Split the documents into chunks
+            chunks = character_splitter.create_documents(
+                texts=[doc.page_content for doc in chunks],
+                metadatas=[doc.metadata for doc in chunks]
+            )
+    
         print(
-            "SEMANTIC SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ..."
+            "SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ..."
         )
-
+    
         # remove duplicate chunks
         cleaned_chunks = remove_duplicate_chunks(chunks)
-
+    
         # add the result to class variable
         self.total_chunks = cleaned_chunks
 
@@ -341,6 +382,19 @@ class VectorAgent:
             vectordb: The loaded vectordb if it exists, otherwise None.
         """
 
+        # if self.config["use_server"]:
+        #     # print("Using the server to load the Qdrant database...")
+        #     # from qdrant_client import QdrantClient
+
+        #     # self.client = QdrantClient("localhost", port=6333)
+        #     # qdrant = Qdrant.from_existing_collection(
+        #     #     url=self.config["server_url"],
+        #     #     embedding=self.dense_embedding_model,
+        #     #     collection_name="qdrant_vectorstore",
+        #     # )
+        #     # self.vectordb = qdrant
+        #     pass
+        
         if os.path.exists(os.path.join(self.persist_directory, "collection")):
             print("Collection exists, loading the Qdrant database...")
             qdrant = Qdrant.from_existing_collection(
@@ -353,6 +407,40 @@ class VectorAgent:
         else:
             print("Collection does not exist, returning None...")
             self.vectordb = None
+            
+            
+    def delete(self):
+        """
+        Deletes the vectorstore from the persist directory.
+        """
+        import shutil
+        if os.path.exists(self.persist_directory):
+            try:
+                shutil.rmtree(self.persist_directory)
+                print("Vectorstore deleted successfully!")
+            except PermissionError as e:
+                print(f"PermissionError: {e}. Attempting to force delete.")
+                self.force_delete(self.persist_directory)
+        else:
+            print("Vectorstore does not exist!")
+
+    def force_delete(self, directory):
+        """
+        Forcefully deletes a directory by terminating processes that lock it.
+        """
+        import psutil
+        import shutil
+
+        for proc in psutil.process_iter():
+            try:
+                for file in proc.open_files():
+                    if file.path.startswith(directory):
+                        proc.terminate()
+            except (psutil.AccessDenied, psutil.NoSuchProcess):
+                continue
+        shutil.rmtree(directory)
+        print("Vectorstore forcefully deleted!")
+        
 
     def add_documents_to_db_V2(self):
         """
@@ -391,7 +479,18 @@ class VectorAgent:
         if self.total_chunks:
             if self.vectordb is None:
                 logging.info("Vectordb is None, creating a new one...")
-
+                print("IS using server:", self.config["use_server"])
+                # if self.config["use_server"]:
+                #     print("USING THE SERVER TO CREATE THE QDRANT DATABASE...")
+                #     self.vectordb = QdrantVectorStore.from_documents(
+                #     documents=self.total_chunks,
+                #     embedding=self.dense_embedding_model,
+                #     sparse_embedding=self.sparse_embedding_model,
+                #     # url=self.config["server_url"],
+                #     collection_name="qdrant_vectorstore",
+                #     retrieval_mode=RetrievalMode.HYBRID,
+                # )
+                # else:
                 self.vectordb = QdrantVectorStore.from_documents(
                     documents=self.total_chunks,
                     embedding=self.dense_embedding_model,
@@ -408,7 +507,14 @@ class VectorAgent:
 
                 self.vectordb.add_documents(documents=self.total_chunks)
 
-            logging.info("Chroma database fully updated with new documents!")
+            logging.info("Qdrant database fully updated with new documents!")
+        
+        # #delete the instance or any other method to close the connection
+        # self.vectordb.close()
+        # #delete the instance
+        # del self.vectordb
+        
+        
 
     def fill(self):
         #self.save_config_file()
@@ -423,6 +529,12 @@ class VectorAgent:
         print("Number of total documents:", len(self.total_documents))
         print("Number of total chunks:", len(self.total_chunks))
         self.add_documents_to_db_V2()
+        
+    def get_chunks(self):
+        """Return the chunks without pushing them to the vectorstore."""
+        self.process_documents() # process the documents
+        self.filter_and_split_chunks() # filter and split the chunks
+        return self.total_chunks
 
 
 def get_modif_date(path):
@@ -513,10 +625,13 @@ def remove_duplicate_chunks(chunks):
 
 if __name__ == "__main__":
     # Load the configuration file
-    with open("config/test_config.yaml", "r") as file:
+    with open("config/config.yaml", "r") as file:
         config = yaml.safe_load(file)
 
     # Create a VectorAgent object
     agent = VectorAgent(default_config=config)
 
     agent.fill()
+
+    # chunks = agent.get_chunks()
+    # print("Number of chunks:", len(chunks))

@@ -1,8 +1,6 @@
-from src.image_analysis import ImageAnalyzer
-from src.generation_utils import LLM_answer_v3
+from src.generation_utils_v2 import LLM_answer_v3
 import os
 import shutil
-from gradio_client import Client, handle_file
 from huggingface_hub import login, whoami
 import streamlit as st
 
@@ -16,6 +14,10 @@ hf_token_list = [
 # Define input and output directories
 INPUT_DIR = 'subprojects/image_lab/input_images'
 OUTPUT_DIR = 'subprojects/image_lab/output_images'
+
+#Model setup
+MODEL_NAME= 'gpt-4o-mini' #'llama-3.2-90b-text-preview'
+LLM_PROVIDER= 'github'
 
 # Create input and output directories if they don't exist
 os.makedirs(INPUT_DIR, exist_ok=True)
@@ -31,6 +33,7 @@ def enhance_image(input_path: str) -> str:
     Returns:
         str: Path to the enhanced image.
     """
+    from gradio_client import Client, handle_file
     for token in hf_token_list:
         try:
             # Login with the current token
@@ -79,8 +82,9 @@ def enhance_image(input_path: str) -> str:
     return None
 
 def analyze_image(image):
+    from src.image_analysis import ImageAnalyzer
     image_path = os.path.join(INPUT_DIR, "temp_image.jpg")
-    with open(image_path, "wb") as f:
+    with open(image_path, "wb",encoding='utf-8') as f:
         f.write(image.getbuffer())
     
     enhanced_image_path = enhance_image(image_path)
@@ -106,71 +110,88 @@ def analyze_image(image):
 class RefinementExpert:
     def load_expert_prompt(self):
         #load the expert prompt from subprojects/image_lab/RefinementExpert.md
-        with open("subprojects/image_lab/RefinementExpert.md", "r") as f:
+        with open("subprojects/image_lab/RefinementExpert.md", "r",encoding='utf-8') as f:
             expert_prompt = f.read()
         return expert_prompt
     
     def transform(self, prompt):
         #load the expert prompt
         expert_prompt = self.load_expert_prompt()
-        final_prompt = f"""Here is a single paragraph image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still:  <prompt_start> {prompt} <prompt_end>. Refine the prompt to make it more suitable for the model. For this
-        you will make it clearer, better written, with correct grammar. The prompt should be 5-10 sentences long and highly detailed, only visual elements and camera angles, light effects should be described, no atmosphere or emotions or intangible elements. You will use for this task the following expert knowledge: {expert_prompt} Answer the one-paragraph image description without preamble."""
-        return LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
+        final_prompt = f"""Here is a single paragraph image description given by a user as input \
+        for a text-to-image generation model, in the intent to generate \
+        a movie/film still:  <prompt_start> {prompt} <prompt_end>. Refine the image description to \
+        make it clearer, better written, with correct grammar. The prompt should be 5-10 sentences long and \
+        highly detailed. You will use for this task the following expert knowledge: {expert_prompt} Answer \
+        the one-paragraph image description without preamble, and ensure all the original visual elements of the description are preserved."""
+        return LLM_answer_v3(final_prompt, model_name=MODEL_NAME, llm_provider=LLM_PROVIDER, temperature=1)
 
 class LightingExpert:
     def load_expert_prompt(self):
         # Load the expert prompt from subprojects/image_lab/LightingExpert.md
-        with open("subprojects/image_lab/LightingExpert.md", "r") as f:
+        with open("subprojects/image_lab/LightingExpert.md", "r",encoding='utf-8') as f:
             expert_prompt = f.read()
         return expert_prompt
     
     def transform(self, prompt):
         # Load the expert prompt
         expert_prompt = self.load_expert_prompt()
-        final_prompt = f"""Here is a single paragraph image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still: 
-        <prompt_start> {prompt} <prompt_end>. Enhance the prompt by adding detailed descriptions of lighting and light effects. Make sure to specify the type of lighting, its source, and its impact on the scene. You will use for this task the following expert knowledge: {expert_prompt} Answer the one-paragraph image description without preamble."""
-        return LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
+        final_prompt = f"""Here is a single paragraph image description given by a user as input for a text-to-image generation model,\
+        in the intent to generate a movie/film still: \
+        <prompt_start> {prompt} <prompt_end>. Refine the image description by adding detailed descriptions of lighting and light effects.\
+        Make sure to specify the type of lighting, its source, and its impact on the scene. You will use for this task the following expert knowledge: {expert_prompt}\
+        Answer the one-paragraph image description without preamble, and ensure all the original visual elements of the description are preserved."""
+        return LLM_answer_v3(final_prompt, model_name=MODEL_NAME, llm_provider=LLM_PROVIDER, temperature=1)
 
 
 class CameraAngleExpert:
     def load_expert_prompt(self):
         # Load the expert prompt from subprojects/image_lab/CameraAngleExpert.md
-        with open("subprojects/image_lab/CameraAngleExpert.md", "r") as f:
+        with open("subprojects/image_lab/CameraAngleExpert.md", "r",encoding='utf-8') as f:
             expert_prompt = f.read()
         return expert_prompt
     
     def transform(self, prompt):
         # Load the expert prompt
         expert_prompt = self.load_expert_prompt()
-        final_prompt = f"""Here is a single paragraph image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still: <prompt_start> {prompt} <prompt_end>. Improve the prompt by specifying unique and professional camera angles. Describe the camera positions and movements in detail. You will use for this task the following expert knowledge: {expert_prompt}. Answer the enhanced one-paragraph image description without preamble."""
-        return LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
+        final_prompt = f"""Here is a single paragraph image description given by a user as input for a text-to-image generation model,\
+        in the intent to generate a movie/film still: <prompt_start> {prompt} <prompt_end>. Improve the image description by specifying an unique professional camera angle for the scene.\
+        You will use for this task the following expert knowledge: {expert_prompt}.\
+        Answer the enhanced one-paragraph image description without preamble, and ensure all the original visual elements of the description are preserved."""
+        return LLM_answer_v3(final_prompt, model_name=MODEL_NAME, llm_provider=LLM_PROVIDER, temperature=1)
 
 
 class PostProductionExpert:
     def load_expert_prompt(self):
         # Load the expert prompt from subprojects/image_lab/PostProductionExpert.md
-        with open("subprojects/image_lab/PostProductionExpert.md", "r") as f:
+        with open("subprojects/image_lab/PostProductionExpert.md", "r",encoding='utf-8') as f:
             expert_prompt = f.read()
         return expert_prompt
     
     def transform(self, prompt):
         # Load the expert prompt
         expert_prompt = self.load_expert_prompt()
-        final_prompt = f"""Here is a single paragraph image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still: <prompt_start> {prompt} <prompt_end>. Enhance the prompt by adding post-production effects and cinematic enhancements. Specify any filters, color grading, and visual effects that should be applied. You will use for this task the following expert knowledge: {expert_prompt} Answer the enhanced one-paragraph image description without preamble."""
-        return LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
+        final_prompt = f"""Here is a single paragraph image description given by a user as input for a text-to-image generation model, \
+        in the intent to generate a movie/film still: <prompt_start> {prompt} <prompt_end>. Enhance the image description by adding post-production effects and cinematic enhancements. \
+        Specify any filters, color grading, and visual effects that should be applied to make the description better (consistent with the visual elements). \
+        You will use for this task the following expert knowledge: {expert_prompt} \
+        Answer the enhanced one-paragraph image description without preamble, and ensure all the original visual elements of the description are preserved."""
+        return LLM_answer_v3(final_prompt, model_name=MODEL_NAME, llm_provider=LLM_PROVIDER, temperature=1)
 
 class FinalPromptRefiner:
     def load_expert_prompt(self):
         # Load the expert prompt from subprojects/image_lab/FinalPromptRefiner.md
-        with open("subprojects/image_lab/FinalPromptRefiner.md", "r") as f:
+        with open("subprojects/image_lab/FinalPromptRefiner.md", "r",encoding='utf-8') as f:
             expert_prompt = f.read()
         return expert_prompt
     
     def transform(self, prompt):
         # Load the expert prompt
         expert_prompt = self.load_expert_prompt()
-        final_prompt = f"""Here is a refined image description for a text-to-image generation model given by a user: <prompt_start> {prompt} <prompt_end>. Shorten the prompt by 20% while ensuring it remains clear, concise, and coherent in its choices of lighting, camera angles, etc. You will use for this task the following expert knowledge: {expert_prompt} Answer the refined one-paragraph image description without preamble."""
-        return LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
+        final_prompt = f"""Here is an image description given by a user as input for a text-to-image generation model: <prompt_start> {prompt} <prompt_end>. \
+        Shorten the image description by approximately 20% while ensuring it remains clear, concise, and coherent in its choices of lighting, camera angles, etc...\
+        You will use for this task the following expert knowledge: {expert_prompt} Answer the refined image description without preamble, 
+        and ensure all the original visual elements of the description are preserved."""
+        return LLM_answer_v3(final_prompt, model_name=MODEL_NAME, llm_provider=LLM_PROVIDER, temperature=1)
 
 
 def refine_prompt(prompt):

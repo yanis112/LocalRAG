@@ -5,8 +5,10 @@ config_path: "config/config.yaml"
 vectordb_provider: "Qdrant" #'Chroma'
 persist_directory: "data/vector_stores/qdrant_semantic_internet"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"
 splitting_method: "semantic"  # Method to split the documents into chunks (semantic or "recursive")
-path: "data" # Path of the root folder of the documents you want to put in the index 
+path: "data/internet" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
+use_server: "False"
+server_url: "http://localhost:6333"
 
 #Knowledge graph index parameters
 build_knowledge_graph: false  # Enable or disable the building of the knowledge graph when initializing the database
@@ -43,9 +45,7 @@ suggestions_enabled: false # Enable or disable the query suggestions
 use_history: false # Enable or disable the history of the chat to be used for answering the queries
 chat_history: 'no_chat' # Chat history to use for the queries
 data_sources: {
-    "politique": "Political Content",
-    "emails": "Emails",
-    "jobs": "Jobs",
+    "internet": "Internet Content",
 }
    
 # Search filters
@@ -112,3 +112,6 @@ description_llm_provider: "ollama" # Provider of the LLM model for the entity de
 
 # Possible actions
 actions: ["rediger un texte pour une offre","question sur des emails","rechercher des offres d'emploi","question normale sur des documents","write instagram description"]
+
+#Internet config
+num_urls: 10

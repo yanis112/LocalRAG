@@ -1,3 +1,4 @@
+## 🎬 **Post Production Expert Knowledge**
 
 ### Post-Production Visual Effects
 
@@ -10,6 +11,10 @@
 
 1. **Lens Flares**: An effect that simulates light scattering inside a camera lens, often used to add a more cinematic feel to an image.
 2. **Light Leaks**: Effects that simulate light entering the camera unintentionally, creating artistic halos or bursts of light across the image.
+3. **Frostpunk**: Type of post-processing effect that adds a frosty, icy look to the image, often used to create a cold, desolate atmosphere.
+4. **Earthy neutrals**: Color palette using nature-inspired neutral tones like browns, beiges, olive greens, and warm grays.
+5. **Cinematic contour lighting**: Dramatic lighting technique emphasizing subject contours, creating strong contrast between light and dark areas.
+6. **Bokeh**: Aesthetic blur quality in out-of-focus areas, often appearing as soft, circular light spots.
 
 ### Atmospheric Effects
 
