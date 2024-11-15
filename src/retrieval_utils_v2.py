@@ -213,6 +213,7 @@ class RetrievalAgent:
 
         intelligent_compression = self.config["reranker_token_target"] not in [0, None]
 
+        # Apply the top-k compressor
         top_k_compressor = TopKCompressor(
             k=self.config["nb_chunks"],
             intelligent_compression=intelligent_compression,

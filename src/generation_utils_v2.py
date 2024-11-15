@@ -222,6 +222,7 @@ class RAGAgent:
         st.toast(f"Language detected: {flag_emoji}", icon="🔍")
 
         useful_docs = self.retrieval_agent.query_database(query)
+        print("Number of useful docs:", len(useful_docs))
         logging.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
 
         start_time = time.time()
@@ -550,14 +551,14 @@ class RAGAgent:
 
 if __name__ == "__main__":
     import time
-    with open("config/internet_config.yaml") as f:
+    with open("config/config.yaml") as f:
         config = yaml.safe_load(f)
 
-    # query = "Qui est Simon Boiko ?"
-    # agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
-    # answer = agent.RAG_answer(query)
-    # print("Answer:", answer)
-    
+    query = "Qui est Simon Boiko ?"
+    agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
+    answer = agent.RAG_answer(query)
+    print("Answer:", answer)
+    exit()
     #test internet rag
     agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
     query = "Est il vrai que Elon Musk a proposé de l'argent à des américains pour qu'ils votent pour Trump explicitement ?"

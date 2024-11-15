@@ -42,7 +42,7 @@ def load_config():
     """
     try:
         # safe load the config file
-        with open("config/test_config.yaml") as file:
+        with open("config/config.yaml") as file:
             config = yaml.safe_load(file)
         st.session_state["config"] = config
 

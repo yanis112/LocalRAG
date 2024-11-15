@@ -1,5 +1,6 @@
 
-
+from PIL import Image
+from groq import Groq
 
 class ImageAnalyzer:
     prompt = "<MORE_DETAILED_CAPTION>"
@@ -16,7 +17,9 @@ class ImageAnalyzer:
         self.endpoint = "https://models.inference.ai.azure.com"
         self.model_name = model_name
         self.model = None
+        self.groq_token = os.environ.get("GROQ_API_KEY")
         self.processor = None
+        self.groq_client = Groq(api_key=self.groq_token) if self.groq_token else None
 
     def load_florence_model(self):
         """Load the Florence-2 model and processor."""
@@ -69,21 +72,43 @@ class ImageAnalyzer:
         print("Piece caption:", piece_caption_text)
         return piece_caption_text
 
-    def describe_advanced(self, image_path: str, prompt: str, grid_size: int) -> str:
+    def resize_image(self, image: Image, max_size: int = 512) -> Image:
+        """Resize image if it exceeds maximum dimension while maintaining aspect ratio."""
+        width, height = image.size
+        if width > max_size or height > max_size:
+            if width > height:
+                new_width = max_size
+                new_height = int(height * (max_size / width))
+            else:
+                new_height = max_size
+                new_width = int(width * (max_size / height))
+            return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        return image
+    
+    def describe_advanced(self, image_path: str, prompt: str, grid_size: int, max_size: int = 768) -> str:
         """Describe an image using OpenAI's model with optional grid processing."""
         from openai import OpenAI
         from PIL import Image
         from concurrent.futures import ThreadPoolExecutor
         import tempfile
-
+    
         client = OpenAI(
             base_url=self.endpoint,
             api_key=self.token,
         )
-
+    
+        # Open and resize the image
+        image = Image.open(image_path)
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        image = self.resize_image(image, max_size)
+        
+        # Save resized image to temporary file
         image_format = image_path.split('.')[-1]
-        image_data_url = self.get_image_data_url(image_path, image_format)
-
+        with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
+            image.save(temp_file.name)
+            image_data_url = self.get_image_data_url(temp_file.name, image_format)
+    
         # Get global description
         global_response = client.chat.completions.create(
             messages=[
@@ -111,13 +136,12 @@ class ImageAnalyzer:
             model=self.model_name,
         )
         global_caption_text = global_response.choices[0].message.content
-
+    
         if grid_size > 1:
-            image = Image.open(image_path)
             width, height = image.size
             piece_width, piece_height = width // grid_size, height // grid_size
             tasks = []
-
+    
             with ThreadPoolExecutor() as executor:
                 for i in range(grid_size):
                     for j in range(grid_size):
@@ -126,16 +150,73 @@ class ImageAnalyzer:
                         right = left + piece_width
                         lower = upper + piece_height
                         piece = image.crop((left, upper, right, lower))
-
+    
                         with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
                             piece.save(temp_file.name)
                             piece_data_url = self.get_image_data_url(temp_file.name, image_format)
                             tasks.append(executor.submit(self.describe_piece, client, piece_data_url, prompt, i, j))
-
+    
                 captions = [task.result() for task in tasks]
             return global_caption_text + "\n" + "\n".join(captions)
         else:
             return global_caption_text
+        
+    def describe_with_groq(self, image_path: str, prompt: str, grid_size: int, max_size: int = 768) -> str:
+        """Describe an image using Groq's vision model."""
+        from PIL import Image
+        import tempfile
+        
+        # Open and resize image
+        image = Image.open(image_path)
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        image = self.resize_image(image, max_size)
+        
+        # Save and get data URL
+        image_format = image_path.split('.')[-1]
+        with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
+            image.save(temp_file.name)
+            image_data_url = self.get_image_data_url(temp_file.name, image_format)
+    
+        # Get global description
+        completion = self.groq_client.chat.completions.create(
+            model="llama-3.2-90b-vision-preview",
+            messages=[
+                {
+                    "role": "user", 
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": prompt
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": image_data_url
+                            }
+                        }
+                    ]
+                }
+            ],
+            temperature=1,
+            max_tokens=1024
+        )
+        
+        return completion.choices[0].message.content
+    
+    def describe(self, image_path: str, grid_size: int = 1, method: str = 'florence2') -> str:
+        """Describe an image using the specified method and grid size."""
+        if method == 'groq':
+            if not self.groq_client:
+                raise ValueError("Groq API key not found in environment variables")
+            return self.describe_with_groq(image_path, self.prompt, grid_size)
+        elif method == 'florence2':
+            # Existing florence2 implementation
+            ...
+        elif method in ['gpt4o', 'gpt4o-mini']:
+            return self.describe_advanced(image_path, self.prompt, grid_size)
+        else:
+            raise ValueError("Unsupported method. Choose from 'florence2', 'gpt4o', 'gpt4o-mini', or 'groq'.")
 
     def describe(self, image_path: str, grid_size: int = 1, method: str = 'florence2') -> str:
         """Describe an image using the specified method and grid size."""
@@ -195,6 +276,12 @@ class ImageAnalyzer:
             end_time = time.time()
             print("Time taken to generate captions: ", end_time - start_time)
             return "\n".join(captions)
+        
+        elif method == 'groq':
+            if not self.groq_client:
+                raise ValueError("Groq API key not found in environment variables")
+            return self.describe_with_groq(image_path, self.prompt, grid_size)
+        
         elif method in ['gpt4o', 'gpt4o-mini']:
             return self.describe_advanced(image_path, self.prompt, grid_size)
         else:
@@ -204,12 +291,14 @@ class ImageAnalyzer:
 if __name__ == "__main__":
     import time
     analyzer = ImageAnalyzer()
-    image_path = "test_ocr.png"
-    prompt = """ Extract the technical information from the image. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
-    + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """
+    image_path = "generated_image.png"
+    # prompt = """ Extract the technical information from the image. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
+    # + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """
 
+    prompt="Describe precisely the content of the image."
     start_time = time.time()
-    description = analyzer.describe_advanced(image_path, prompt=prompt, grid_size=1)
+    description = analyzer.describe_with_groq(image_path, grid_size=1, prompt=prompt)
+    #_advanced(image_path, prompt=prompt, grid_size=1)
     end_time = time.time()
     print(description)
     print("The process took:", end_time - start_time, "seconds.")

@@ -43,14 +43,14 @@ def save_subtitles(output_dir: str, url: str, subtitles: str):
         file.write(subtitles)
     logging.info(f"Subtitles saved to: {output_path}")
 
-def main():
+def main(k: int):
     urls_file = 'video_urls.csv'
     log_file = 'transcribed_log.txt'
     output_dir = 'data/politique'
     os.makedirs(output_dir, exist_ok=True)
     logging.info(f"Output directory checked/created: {output_dir}")
 
-    urls = read_urls(urls_file)
+    urls = read_urls(urls_file)[:k]  # Only take the first k URLs
     processed_urls = read_transcribed_log(log_file)
 
     for url in tqdm(urls, desc="Processing videos"):
@@ -71,4 +71,5 @@ def main():
             logging.error(f"Error processing URL {url}: {e}")
 
 if __name__ == "__main__":
-    main()
+    k = 100  # Change this to the desired number of URLs to process
+    main(k)

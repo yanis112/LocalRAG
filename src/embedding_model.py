@@ -78,8 +78,8 @@ def get_sparse_embedding_model(model_name):
         <HuggingFaceBgeEmbeddings object at 0x7f9a2e3e4a90>
     """
     from langchain_qdrant import FastEmbedSparse
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_kwargs = {"device": device}
+    #device = "cuda" if torch.cuda.is_available() else "cpu"
+    #model_kwargs = {"device": device}
 
     sparse_embeddings = FastEmbedSparse(model_name="Qdrant/bm25")
     return sparse_embeddings

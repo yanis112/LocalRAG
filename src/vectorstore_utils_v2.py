@@ -369,6 +369,13 @@ class VectorAgent:
     
         # add the result to class variable
         self.total_chunks = cleaned_chunks
+        
+    def get_metrics(self):
+        """Get some metrics about the chunks and print them in terminal."""
+        
+        #compute average chunk lenght in number of words by computing lenght of chunk.content and then summing them
+        avg_chunk_length = sum([len(chunk.page_content.split()) for chunk in self.total_chunks]) / len(self.total_chunks)
+        print("Average chunk length in number of words:", avg_chunk_length)
 
     @log_execution_time
     def load_vectordb(self):
@@ -479,7 +486,7 @@ class VectorAgent:
         if self.total_chunks:
             if self.vectordb is None:
                 logging.info("Vectordb is None, creating a new one...")
-                print("IS using server:", self.config["use_server"])
+                #print("IS using server:", self.config["use_server"])
                 # if self.config["use_server"]:
                 #     print("USING THE SERVER TO CREATE THE QDRANT DATABASE...")
                 #     self.vectordb = QdrantVectorStore.from_documents(
@@ -528,6 +535,7 @@ class VectorAgent:
         self.filter_and_split_chunks() # filter and split the chunks
         print("Number of total documents:", len(self.total_documents))
         print("Number of total chunks:", len(self.total_chunks))
+        self.get_metrics() # get some metrics about the chunks
         self.add_documents_to_db_V2()
         
     def get_chunks(self):
