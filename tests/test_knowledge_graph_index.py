@@ -5,7 +5,7 @@ import os
 import yaml
 from tqdm import tqdm
 from langchain_core.documents import Document
-from src.generation_utils import LLM_answer
+from main_utils.generation_utils import LLM_answer
 
 if __name__=="__main__":
      # load the document that is in test_docs/test.docx

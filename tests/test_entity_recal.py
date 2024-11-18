@@ -1,4 +1,4 @@
-from src.evaluation_utils import entity_recall
+from aux_utils.evaluation_utils import entity_recall
 
 import nltk
 nltk.download('punkt')

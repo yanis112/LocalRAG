@@ -14,9 +14,9 @@ from qdrant_client.http import models as qdrant_models
 from transformers import logging as transformers_logging
 
 # custom imports
-from src.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor
-from src.embedding_model import get_embedding_model
-from src.utils import log_execution_time
+from src.main_utils.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor
+from src.main_utils.embedding_model import get_embedding_model
+from src.main_utils.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()

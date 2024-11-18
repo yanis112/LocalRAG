@@ -7,12 +7,12 @@ import yaml
 from langchain_qdrant import Qdrant
 from pydantic import BaseModel
 
-from src.embedding_model import get_embedding_model
+from src.main_utils.embedding_model import get_embedding_model
 
 # custom imports
-from src.generation_utils import LLM_answer_v3
-from src.retrieval_utils import query_database_v2
-from src.utils import get_k_random_chunks_qdrant
+from src.main_utils.generation_utils import LLM_answer_v3
+from src.main_utils.retrieval_utils import query_database_v2
+from src.main_utils.utils import get_k_random_chunks_qdrant
 
 
 def generate_query_class():

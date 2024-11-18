@@ -34,17 +34,17 @@ from tqdm import tqdm
 from transformers import logging as transformers_logging
 
 # custom imports
-from src.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor,compute_sparse_vector
-from src.embedding_model import get_embedding_model, get_sparse_embedding_model
-from src.LLM import CustomChatModel
+from src.main_utils.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor,compute_sparse_vector
+from src.main_utils.embedding_model import get_embedding_model, get_sparse_embedding_model
+from src.main_utils.LLM import CustomChatModel
 #from src.query_routing_utils import QueryRouter
-from src.utils import (
+from src.main_utils.utils import (
     log_execution_time,
     text_preprocessing,
 )
 
 import logging
-from src.utils import log_execution_time
+from src.main_utils.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
@@ -209,7 +209,7 @@ def directory_to_vectorstore(default_config, config={}):
 
     if build_knowledge_graph:
         from src.knowledge_graph import KnowledgeGraphIndex
-        from src.utils import get_all_docs_qdrant
+        from src.main_utils.utils import get_all_docs_qdrant
 
         logging.info("Building the knowledge graph index ...")
         # initialise the knowledge graph vectorstore object
@@ -803,7 +803,7 @@ def find_loader(name, full_path):
     elif name.endswith("pptx"):
         loader = UnstructuredPowerPointLoader(full_path)
     elif name.endswith("txt"):
-        loader = TextLoader(full_path)
+        loader = TextLoader(full_path,encoding="utf-8", autodetect_encoding=True)
     elif name.endswith("md"):
         loader = UnstructuredMarkdownLoader(full_path)
     elif name.endswith("json"):

@@ -1,4 +1,4 @@
-from src.generation_utils import advanced_RAG_answer
+from src.main_utils.generation_utils import advanced_RAG_answer
 import yaml
 
 

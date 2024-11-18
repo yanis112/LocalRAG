@@ -1,7 +1,7 @@
 import subprocess
 import threading
 import time
-from src.embedding_model import get_embedding_model
+from main_utils.embedding_model import get_embedding_model
 
 def get_vram_usage():
     """

@@ -12925,6 +12925,33 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "uv"
+version = "0.5.2"
+description = "An extremely fast Python package and project manager, written in Rust."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "uv-0.5.2-py3-none-linux_armv6l.whl", hash = "sha256:7bde66f13571e437fd45f32f5742ab53d5e011b4edb1c74cb74cb8b1cbb828b5"},
+    {file = "uv-0.5.2-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:d0834c6b37750c045bbea80600d3ae3e95becc4db148f5c0d0bc3ec6a7924e8f"},
+    {file = "uv-0.5.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:a8a9897dd7657258c53f41aecdbe787da99f4fc0775f19826ab65cc0a7136cbf"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl", hash = "sha256:15c7ffa08ae21abd221dbdf9ba25c8969235f587cec6df8035552434e5ca1cc5"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d1fe4e025dbb9ec5c9250bfc1231847b8487706538f94d10c769f0a54db3e0af"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:cfba5b0070652da4174083b78852f3ab3d262ba1c8b63a4d5ae497263b02b834"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:dfcd8275ff8cb59d5f26f826a44270b2fe8f38aa7188d7355c48d3e9b759d0c0"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:71467545d51883d1af7094c8f6da69b55e7d49b742c2dc707d644676dcb66515"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:5052758d374dd769efd0c70b4789ffb08439567eb114ad8fe728536bb5cc5299"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:374e9498e155fcaa8728a6770b84f03781106d705332f4ec059e1cc93c8f4d8a"},
+    {file = "uv-0.5.2-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:675ca34829ceca3e9de395cf05e8f881334a24488f97dd923c463830270d52a7"},
+    {file = "uv-0.5.2-py3-none-musllinux_1_1_armv7l.whl", hash = "sha256:c9795b990fb0b2a18d3a8cef8822e13c6a6f438bc16d34ccf01d931c76cfd5da"},
+    {file = "uv-0.5.2-py3-none-musllinux_1_1_i686.whl", hash = "sha256:27d666da8fbb0f87d9df67abf9feea0da4ee1336730f2c4be29a11f3feaa0a29"},
+    {file = "uv-0.5.2-py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:67776d34cba359c63919c5ad50331171261d2ec7a83fd07f032eb8cc22e22b8e"},
+    {file = "uv-0.5.2-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:772b32d157ec8f27c0099ecac94cf5cd298bce72f1a1f512205591de4e9f0c5c"},
+    {file = "uv-0.5.2-py3-none-win32.whl", hash = "sha256:2597e91be45b3f4458d0d16a5a1cda7e93af7d6dbfddf251aae5377f9187fa88"},
+    {file = "uv-0.5.2-py3-none-win_amd64.whl", hash = "sha256:a4d4fdad03e6dc3e8216192b8a12bcf2c71c8b12046e755575c7f262cbb61924"},
+    {file = "uv-0.5.2.tar.gz", hash = "sha256:89e60ad9601f35f187326de84f35e7517c6eb1438359da42ec85cfd9c1895957"},
+]
+
+[[package]]
 name = "uvicorn"
 version = "0.25.0"
 description = "The lightning-fast ASGI server."
@@ -13847,4 +13874,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.5"
-content-hash = "8a52b08589da7d30a9ff036ca0072048d1291742b5618abd904ab7e27b76b027"
+content-hash = "ee390c275af7464e623ee60393d80e658b1bf61c49de0e435d011e6a57a1a23c"

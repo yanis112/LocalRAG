@@ -1,6 +1,6 @@
 import chainlit as cl
 import yaml
-from src.chainlit_app_utils import load_config,process_query
+from aux_utils.chainlit_app_utils import load_config,process_query
 
 
 @cl.step(type="tool")

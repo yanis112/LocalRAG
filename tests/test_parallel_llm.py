@@ -1,6 +1,6 @@
 import threading
 import time
-from src.generation_utils import LLM_answer
+from main_utils.generation_utils import LLM_answer
 
 # Fonction pour traiter une requête
 def process_request(prompt):

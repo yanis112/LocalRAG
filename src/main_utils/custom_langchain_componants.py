@@ -1,22 +1,16 @@
-import logging
+
 import operator
 import os
-import warnings
-from collections import defaultdict
 from collections.abc import Hashable
 from functools import lru_cache
-from itertools import chain
 from typing import (
-    Any,
     Callable,
-    Dict,
     Iterable,
     Iterator,
     List,
     Optional,
     Sequence,
     TypeVar,
-    cast,
 )
 
 import numpy as np
@@ -32,33 +26,23 @@ from langchain_community.retrievers import (
     QdrantSparseVectorRetriever,
 )
 from langchain_core.callbacks import (
-    CallbackManagerForRetrieverRun,
     Callbacks,
 )
 from langchain_core.callbacks.manager import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
-from langchain_core.load.dump import dumpd
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
 from pydantic import Field
-from langchain_core.retrievers import BaseRetriever, RetrieverLike
-from langchain_core.runnables import RunnableConfig
-from langchain_core.runnables.config import ensure_config, patch_config
-from langchain_core.runnables.utils import (
-    ConfigurableFieldSpec,
-    get_unique_config_specs,
-)
 from langchain_qdrant import Qdrant
 from pydantic import Field
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import models
-from sklearn.preprocessing import MinMaxScaler
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from src.embedding_model import get_embedding_model
+from src.main_utils.embedding_model import get_embedding_model
 
 # custom imports
-from src.utils import log_execution_time
+from src.main_utils.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
@@ -324,218 +308,6 @@ def unique_by_key(iterable: Iterable[T], key: Callable[[T], H]) -> Iterator[T]:
             yield e
 
 
-class CustomEnsembleRetriever(BaseRetriever):
-    """Retriever that ensembles the multiple retrievers.
-
-    It uses a rank fusion.
-
-    Args:
-        retrievers: A list of retrievers to ensemble.
-        weights: A list of weights corresponding to the retrievers. Defaults to equal
-            weighting for all retrievers.
-        c: A constant added to the rank, controlling the balance between the importance
-            of high-ranked items and the consideration given to lower-ranked items.
-            Default is 60.
-    """
-
-    retrievers: List[RetrieverLike]
-    weights: List[float]
-    c: int = 60
-
-    @property
-    def config_specs(self) -> List[ConfigurableFieldSpec]:
-        """List configurable fields for this runnable."""
-        return get_unique_config_specs(
-            spec
-            for retriever in self.retrievers
-            for spec in retriever.config_specs
-        )
-
-    def set_weights(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        if not values.get("weights"):
-            n_retrievers = len(values["retrievers"])
-            values["weights"] = [1 / n_retrievers] * n_retrievers
-        return values
-
-    def invoke(
-        self, input: str, config: Optional[RunnableConfig] = None, **kwargs: Any
-    ) -> List[Document]:
-        from langchain_core.callbacks import CallbackManager
-
-        config = ensure_config(config)
-        callback_manager = CallbackManager.configure(
-            config.get("callbacks"),
-            None,
-            verbose=kwargs.get("verbose", False),
-            inheritable_tags=config.get("tags", []),
-            local_tags=self.tags,
-            inheritable_metadata=config.get("metadata", {}),
-            local_metadata=self.metadata,
-        )
-        run_manager = callback_manager.on_retriever_start(
-            dumpd(self),
-            input,
-            name=config.get("run_name"),
-            **kwargs,
-        )
-        try:
-            result = self.rank_fusion(
-                input, run_manager=run_manager, config=config
-            )
-        except Exception as e:
-            run_manager.on_retriever_error(e)
-            raise e
-        else:
-            run_manager.on_retriever_end(
-                result,
-                **kwargs,
-            )
-            return result
-
-    def relative_rank_fusion(
-        self, doc_lists: List[List[Document]]
-    ) -> List[Document]:
-        """
-        Perform Relative Rank Fusion on multiple rank lists.
-        This method normalizes the scores from vector and keyword searches,
-        scaling them between 0 (lowest) to 1 (highest) before combining.
-
-        Args:
-            doc_lists: A list of rank lists, where each rank list contains unique items.
-
-        Returns:
-            list: The final aggregated list of items sorted by their normalized scores
-                    in descending order.
-        """
-        if len(doc_lists) != len(self.weights):
-            raise ValueError(
-                "Number of rank lists must be equal to the number of weights."
-            )
-
-        # Associate each doc's content with its score for later sorting by it
-        # Duplicated contents across retrievers are collapsed & scored cumulatively
-        score: Dict[str, float] = defaultdict(float)
-        for doc_list, weight in zip(doc_lists, self.weights):
-            for rank, doc in enumerate(doc_list, start=1):
-                score[doc.page_content] += weight * doc.score
-
-        # Normalize the scores between 0 and 1
-        scaler = MinMaxScaler()
-        scores = np.array(list(score.values())).reshape(-1, 1)
-        normalized_scores = scaler.fit_transform(scores)
-
-        for doc_content, norm_score in zip(score, normalized_scores):
-            score[doc_content] = norm_score[0]
-
-        # Docs are deduplicated by their contents then sorted by their scores
-        all_docs = chain.from_iterable(doc_lists)
-        sorted_docs = sorted(
-            unique_by_key(all_docs, lambda doc: doc.page_content),
-            reverse=True,
-            key=lambda doc: score[doc.page_content],
-        )
-        return sorted_docs
-
-    def _get_relevant_documents(
-        self,
-        query: str,
-        *,
-        run_manager: CallbackManagerForRetrieverRun,
-    ) -> List[Document]:
-        """
-        Get the relevant documents for a given query.
-
-        Args:
-            query: The query to search for.
-
-        Returns:
-            A list of reranked documents.
-        """
-
-        # Get fused result of the retrievers.
-        fused_documents = self.relative_rank_fusion(query, run_manager)
-
-        return fused_documents
-
-    def rank_fusion(
-        self,
-        query: str,
-        run_manager: CallbackManagerForRetrieverRun,
-        *,
-        config: Optional[RunnableConfig] = None,
-    ) -> List[Document]:
-        """
-        Retrieve the results of the retrievers and use rank_fusion_func to get
-        the final result.
-
-        Args:
-            query: The query to search for.
-
-        Returns:
-            A list of reranked documents.
-        """
-
-        # Get the results of all retrievers.
-        retriever_docs = [
-            retriever.invoke(
-                query,
-                patch_config(
-                    config,
-                    callbacks=run_manager.get_child(tag=f"retriever_{i+1}"),
-                ),
-            )
-            for i, retriever in enumerate(self.retrievers)
-        ]
-
-        # Enforce that retrieved docs are Documents for each list in retriever_docs
-        for i in range(len(retriever_docs)):
-            retriever_docs[i] = [
-                Document(page_content=cast(str, doc))
-                if isinstance(doc, str)
-                else doc
-                for doc in retriever_docs[i]
-            ]
-
-        # apply rank fusion
-        fused_documents = self.weighted_reciprocal_rank(retriever_docs)
-
-        return fused_documents
-
-    def weighted_reciprocal_rank(
-        self, doc_lists: List[List[Document]]
-    ) -> List[Document]:
-        """
-        Perform weighted Reciprocal Rank Fusion on multiple rank lists.
-        You can find more details about RRF here:
-        https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf
-
-        Args:
-            doc_lists: A list of rank lists, where each rank list contains unique items.
-
-        Returns:
-            list: The final aggregated list of items sorted by their weighted RRF
-                    scores in descending order.
-        """
-        if len(doc_lists) != len(self.weights):
-            raise ValueError(
-                "Number of rank lists must be equal to the number of weights."
-            )
-
-        # Associate each doc's content with its RRF score for later sorting by it
-        # Duplicated contents across retrievers are collapsed & scored cumulatively
-        rrf_score: Dict[str, float] = defaultdict(float)
-        for doc_list, weight in zip(doc_lists, self.weights):
-            for rank, doc in enumerate(doc_list, start=1):
-                rrf_score[doc.page_content] += weight / (rank + self.c)
-
-        # Docs are deduplicated by their contents then sorted by their scores
-        all_docs = chain.from_iterable(doc_lists)
-        sorted_docs = sorted(
-            unique_by_key(all_docs, lambda doc: doc.page_content),
-            reverse=True,
-            key=lambda doc: rrf_score[doc.page_content],
-        )
-        return sorted_docs
 
 
 def extract_and_map_sparse_vector(vector, tokenizer):
@@ -628,7 +400,7 @@ def initialize_sparse_vectorstore(
     Returns:
         None
     """
-    from src.utils import get_all_docs_qdrant
+    from src.main_utils.utils import get_all_docs_qdrant
     
     embedding_model = get_embedding_model(model_name=config["embedding_model"])
 

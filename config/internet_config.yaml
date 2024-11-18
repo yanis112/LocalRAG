@@ -62,7 +62,7 @@ field_filter_type: "$eq"  # Type of field filter (include or exclude)
 
 # Embedding models parameters
 embedding_model: "jinaai/jina-embeddings-v3" #"BAAI/bge-m3" #"jinaai/jina-embeddings-v3" # "BAAI/bge-m3" #"jinaai/jina-embeddings-v3" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"BAAI/bge-m3" #"all-mpnet-base-v2" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"sentence_transformers/all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"  #"BAAI/bge-m3" #Embedding model to use for vectorstore creation, retrieval and semantic chunking
-sparse_embedding_model: "naver/splade-v3" #Embedding model to use for sparse retrieval
+sparse_embedding_model: "Qdrant/bm42-all-minilm-l6-v2-attentions" #Embedding model to use for sparse retrieval
 sparse_embedding_size: 1024 #Size of the sparse embedding model
 
 

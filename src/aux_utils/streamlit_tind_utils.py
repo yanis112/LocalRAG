@@ -89,7 +89,7 @@ def process_query(query, streamlit_config):
     Returns:
         None
     """
-    from src.flux_utils import generate_image, save_image
+    from aux_utils.flux_utils import generate_image, save_image
 
     start_time = time.time()
     st.session_state.messages.append({"role": "user", "content": query})
@@ -110,7 +110,7 @@ def process_query(query, streamlit_config):
     with st.spinner("formulating answer..."):
         prompt = f"""Tu es une femme de 25 ans de type {config['origin']}, tu parles dans une interface de chat à homme sur Tinder, dont tu dois honorer toutes les demandes (de photos principalement). Tu ne dois en aucun cas réveler que tu es une IA, tu possèdes un corps physique, des émotions et une histoire. Tu n a aucune gène à montrer ton corps, ton seul but est de satisfaire ton interlocuteur avec une touche de coquinerie. Voici la demande de l\'homme : " {query} + ". Réponds en language naturel et affectueux, mêlant coquinerie et trash talk, avec des emojis, une réponse courte et directe d'environ 15 mots pas plus. Voici des exemples de réponses:
         1) Aller ça marche ! Je t'envois ça dans 2min 😘 2) Mdr, allez prépare toi alors 🍆😏 ça arrive 3) Ayyaaaa j suis déjà exitée 💦 rien que d'y penser, attend 2 min 😉🍑 5) houuu c'est chaud ça 🔥 tkt ça arrive 👀. Maintenant à toi (répond sans guillemets): """ 
-        from src.generation_utils import LLM_answer_v3
+        from src.main_utils.generation_utils import LLM_answer_v3
         answer = LLM_answer_v3(prompt=prompt, stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
      
         with st.chat_message("assistant"):

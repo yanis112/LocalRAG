@@ -1,4 +1,4 @@
-from src.generation_utils_v2 import LLM_answer_v3
+from src.main_utils.generation_utils_v2 import LLM_answer_v3
 import os
 import shutil
 from huggingface_hub import login, whoami

@@ -13,9 +13,9 @@ from pydantic import BaseModel, ValidationError
 
 
 # custom imports
-from src.LLM import CustomChatModel
-from src.retrieval_utils_v2 import RetrievalAgent
-from src.utils import (
+from src.main_utils.LLM import CustomChatModel
+from src.main_utils.retrieval_utils_v2 import RetrievalAgent
+from src.main_utils.utils import (
     detect_language,
     log_execution_time,
 )
@@ -167,7 +167,7 @@ def LLM_answer_v3(
         parser = JsonOutputParser(pydantic_object=pydantic_object)
         format_instructions = parser.get_format_instructions()
         if format_type:
-            from src.utils import get_strutured_format
+            from src.main_utils.utils import get_strutured_format
             format_instructions = get_strutured_format(format_type)
             schema = parser._get_schema(pydantic_object)
             format_instructions = format_instructions + "```" + str(schema) + "```"
@@ -187,7 +187,6 @@ def LLM_answer_v3(
             return chain.stream({"text": prompt})
         else:
             return chain.invoke({"text": prompt})
-
 
 class RAGAgent:
     def __init__(self, default_config, config={"stream": False}):
@@ -329,7 +328,7 @@ class RAGAgent:
         if 'chat_history' in merged_config and merged_config['use_history']:
             chat_history = merged_config['chat_history']
             
-        from src.agentic_rag_utils import ChabotMemory, QueryBreaker, TaskTranslator
+        from src.main_utils.agentic_rag_utils import ChabotMemory, QueryBreaker, TaskTranslator
 
         memory = ChabotMemory(config=merged_config)
         task_translator = TaskTranslator(config=merged_config)
@@ -473,7 +472,7 @@ class RAGAgent:
         print("Contents downloaded in html format")
         
         #create temporary vectorstore to store the pages
-        from src.vectorstore_utils_v2 import VectorAgent
+        from src.main_utils.vectorstore_utils_v2 import VectorAgent
         # Create a VectorAgent object
         agent = VectorAgent(default_config=internet_merged_config)
         # Fill the vectorstore with the pages

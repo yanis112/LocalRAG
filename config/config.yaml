@@ -6,8 +6,6 @@ vectordb_provider: "Qdrant" #'Chroma'
 persist_directory: "data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
 path: "data" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
-use_server: "False"
-server_url: "http://localhost:6333"
 
 #Knowledge graph index parameters
 build_knowledge_graph: false  # Enable or disable the building of the knowledge graph when initializing the database
@@ -64,7 +62,7 @@ field_filter_type: "$eq"  # Type of field filter (include or exclude)
 
 # Embedding models parameters
 embedding_model: "jinaai/jina-embeddings-v3" #"BAAI/bge-m3" #"jinaai/jina-embeddings-v3" # "BAAI/bge-m3" #"jinaai/jina-embeddings-v3" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"BAAI/bge-m3" #"all-mpnet-base-v2" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"sentence_transformers/all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"  #"BAAI/bge-m3" #Embedding model to use for vectorstore creation, retrieval and semantic chunking
-sparse_embedding_model: "naver/splade-v3" #Embedding model to use for sparse retrieval
+sparse_embedding_model: "Qdrant/bm42-all-minilm-l6-v2-attentions" #Embedding model to use for sparse retrieval
 sparse_embedding_size: 1024 #Size of the sparse embedding model
 
 

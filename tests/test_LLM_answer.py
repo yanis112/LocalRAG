@@ -1,4 +1,4 @@
-from src.generation_utils import LLM_answer,LLM_answer_v2   
+from main_utils.generation_utils import LLM_answer,LLM_answer_v2   
 import yaml
 
 

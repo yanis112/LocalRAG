@@ -15,11 +15,11 @@ from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
 # custom imports
-from src.LLM import CustomChatModel
-from src.retrieval_utils import (
+from src.main_utils.LLM import CustomChatModel
+from src.main_utils.retrieval_utils import (
     query_database_v2,
 )
-from src.utils import (
+from src.main_utils.utils import (
     detect_language,
     log_execution_time,
 )
@@ -172,7 +172,7 @@ def LLM_answer_v3(
         parser = JsonOutputParser(pydantic_object=pydantic_object)
         format_instructions = parser.get_format_instructions()
         if format_type:
-            from src.utils import get_strutured_format
+            from src.main_utils.utils import get_strutured_format
             format_instructions = get_strutured_format(format_type)
             schema = parser._get_schema(pydantic_object)
             format_instructions = format_instructions + "```" + str(schema) + "```"
@@ -445,7 +445,7 @@ def advanced_RAG_answer(query, default_config, config={"stream": False}):
         pull_model(merged_config["model_name"])
     
     # Load the memory object
-    from src.agentic_rag_utils import ChabotMemory
+    from src.main_utils.agentic_rag_utils import ChabotMemory
     
     # Detect the language of the query
     detected_language = detect_language(query)
@@ -461,11 +461,11 @@ def advanced_RAG_answer(query, default_config, config={"stream": False}):
     memory = ChabotMemory(config=merged_config)
     
     # Load the TaskTranslator object
-    from src.agentic_rag_utils import TaskTranslator
+    from src.main_utils.agentic_rag_utils import TaskTranslator
     task_translator = TaskTranslator(config=merged_config)
     
     # Load the QueryBreaker object
-    from src.agentic_rag_utils import QueryBreaker
+    from src.main_utils.agentic_rag_utils import QueryBreaker
     query_breaker = QueryBreaker(config=merged_config)
   
     # Mapping of languages to their respective flag emojis

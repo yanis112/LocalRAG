@@ -15,9 +15,9 @@ from langchain_qdrant import (
 )
 from tqdm import tqdm
 # custom imports 
-from src.embedding_model import get_embedding_model, get_sparse_embedding_model
+from src.main_utils.embedding_model import get_embedding_model, get_sparse_embedding_model
 # from src.query_routing_utils import QueryRouter
-from src.utils import (
+from src.main_utils.utils import (
     log_execution_time,
     text_preprocessing,
 )
@@ -148,16 +148,13 @@ class VectorAgent:
             list: The list of already processed documents.
 
         """
-        if self.config["use_server"]:
-            #no documents are processed yet
-            self.already_processed_docs = []
-        else:
-            with open(self.log_file_path, "r") as file:
-                self.already_processed_docs = file.read().splitlines()
-                print(
-                    "Number of already processed documents:",
-                    len(self.already_processed_docs),
-                )
+       
+        with open(self.log_file_path, "r") as file:
+            self.already_processed_docs = file.read().splitlines()
+            print(
+                "Number of already processed documents:",
+                len(self.already_processed_docs),
+            )
 
     def process_documents(self):
         """
@@ -196,19 +193,14 @@ class VectorAgent:
     def process_single_file(self, name, full_path):
         """
         Process a single file based on the given arguments.
-
+    
         Args:
-            args (tuple): A tuple containing the following elements:
-                - name (str): The name of the file.
-                - full_path (str): The full path of the file.
-                - allowed_formats (list): A list of allowed file formats.
-                - processed_docs (list): A list of already processed documents.
-                - log_file_path (str): The path to the log file.
-
+            name (str): The name of the file.
+            full_path (str): The full path of the file.
+    
         Returns:
             object: The processed document if successful, None otherwise.
         """
-
         if (
             name.split(".")[-1] in self.allowed_formats
             and name not in self.already_processed_docs
@@ -221,10 +213,14 @@ class VectorAgent:
                     with open(self.log_file_path, "a") as file:
                         file.write(name + "\n")
                 except Exception as e:
-                    pass
+                    import traceback
+                    print(f"Error writing to log for {name}:")
+                    print(traceback.format_exc())
                 return doc
             except Exception as e:
-                print(f"Error processing {name}: {e}")
+                import traceback
+                print(f"Error processing {name}:")
+                print(traceback.format_exc())
                 return None
 
     def find_loader(self, name, full_path):
@@ -370,12 +366,31 @@ class VectorAgent:
         # add the result to class variable
         self.total_chunks = cleaned_chunks
         
-    def get_metrics(self):
+    def get_metrics(self) -> None:
         """Get some metrics about the chunks and print them in terminal."""
         
-        #compute average chunk lenght in number of words by computing lenght of chunk.content and then summing them
-        avg_chunk_length = sum([len(chunk.page_content.split()) for chunk in self.total_chunks]) / len(self.total_chunks)
-        print("Average chunk length in number of words:", avg_chunk_length)
+        if not self.total_chunks:
+            print("No chunks to analyze")
+            return
+            
+        try:
+            # Filter out chunks with empty content and compute lengths
+            valid_lengths = [
+                len(chunk.page_content.split()) 
+                for chunk in self.total_chunks 
+                if chunk and chunk.page_content and chunk.page_content.strip()
+            ]
+            
+            if not valid_lengths:
+                print("No valid chunks with content found")
+                return
+                
+            avg_chunk_length = sum(valid_lengths) / len(valid_lengths)
+            print(f"Average chunk length in number of words: {avg_chunk_length:.2f}")
+            print(f"Total valid chunks analyzed: {len(valid_lengths)}")
+            
+        except Exception as e:
+            print(f"Error computing metrics: {str(e)}")
 
     @log_execution_time
     def load_vectordb(self):
@@ -530,11 +545,9 @@ class VectorAgent:
         self.load_vectordb() # load the vector database if it exists, otherwise create a new one
         self.find_already_processed() # find the already processed documents
         self.process_documents() # process the documents
-        print("Number of total documents:", len(self.total_documents))
-        print("Number of total chunks:", len(self.total_chunks))
         self.filter_and_split_chunks() # filter and split the chunks
-        print("Number of total documents:", len(self.total_documents))
-        print("Number of total chunks:", len(self.total_chunks))
+        print("Number of total documents currently processed:", len(self.total_documents))
+        print("Number of total chunks currently processed:", len(self.total_chunks))
         self.get_metrics() # get some metrics about the chunks
         self.add_documents_to_db_V2()
         

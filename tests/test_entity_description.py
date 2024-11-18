@@ -1,4 +1,4 @@
-from src.generation_utils import entity_description   
+from main_utils.generation_utils import entity_description   
 import yaml 
 if __name__ == '__main__':
     

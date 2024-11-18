@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import ollama
 from tqdm import tqdm
-from src.generation_utils import LLM_answer,LLM_answer_v3
+from main_utils.generation_utils import LLM_answer,LLM_answer_v3
 
 # Function to generate output and count tokens
 def generate_and_count_tokens(prompt, temperature):

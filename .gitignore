@@ -27,7 +27,8 @@ results/
 generated_images/
 barcode/
 downloads/
-
+uv_env/
+aux_data/
 
 # Fichiers
 cookies.pkl

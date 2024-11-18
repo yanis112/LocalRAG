@@ -1,0 +1,37 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
+}
+pipeline: {
+  User: {
+    shape: person
+    width: 130
+  }
+
+  "Recipe Database": {
+    shape: stored_data
+    style.multiple: true
+  }
+
+  "Recipe Retrieval": {
+    shape: parallelogram
+  }
+
+  "Recipe Generation": {
+    shape: parallelogram
+    style.fill: lightgreen
+  }
+
+  "Recipe Display": {
+    shape: rectangle
+  }
+
+  User -> "Recipe Database": "submit query"
+  User -> "Recipe Retrieval": "submit query"
+  User -> "Recipe Generation": "submit query"
+  "Recipe Database" -> "Recipe Retrieval": "fetch recipes"
+  "Recipe Retrieval" -> "Recipe Generation": "retrieve context"
+  "Recipe Generation" -> "Recipe Display": "generate response"
+}

@@ -1,5 +1,5 @@
 from src.image_analysis import ImageAnalyzer
-from src.generation_utils import LLM_answer_v3
+from src.main_utils.generation_utils import LLM_answer_v3
 
 
 

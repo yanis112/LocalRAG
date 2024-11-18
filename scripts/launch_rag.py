@@ -3,7 +3,7 @@ import argparse
 import yaml
 from dotenv import load_dotenv
 
-from src.generation_utils import RAG_answer
+from src.main_utils.generation_utils import RAG_answer
 
 
 def run_rag_pipeline(question, config_file_path):

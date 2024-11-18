@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from src.generation_utils import RAG_answer, advanced_RAG_answer, LLM_answer_v3
+from src.main_utils.generation_utils import RAG_answer, advanced_RAG_answer, LLM_answer_v3
 
 async def load_config():
     """
@@ -57,7 +57,7 @@ def process_query(query, config):
     else:
         intent = classifier.classify(query)
         if intent == "rediger un texte pour une offre":
-            from src.auto_job import auto_job_writter
+            from aux_utils.auto_job import auto_job_writter
             answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=False, model_name=config["model_name"], llm_provider=config["llm_provider"])
             sources = []
         elif intent == "question sur des emails":
@@ -79,7 +79,7 @@ def process_query(query, config):
                 config=config,
             )
         elif intent == "write instagram description":
-            from src.auto_instagram_publi import instagram_descr_prompt
+            from aux_utils.auto_instagram_publi import instagram_descr_prompt
             answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=False, model_name=config["model_name"], llm_provider=config["llm_provider"])
             sources = []
         else:

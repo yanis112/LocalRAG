@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from src.streamlit_app_utils import (
+from src.main_utils.streamlit_app_utils import (
     display_chat_history,
     initialize_session_state,
     load_config,
@@ -32,7 +32,7 @@ def main():
         label="Clear Chat 🧹",
         help="Clear the chat history on the visual interface 🧹",
     ):
-        from src.streamlit_app_utils import clear_chat_history
+        from src.main_utils.streamlit_app_utils import clear_chat_history
         clear_chat_history()
 
 
@@ -73,15 +73,22 @@ def main():
         help="Set the temperature of the LLM. A higher temperature will make the LLM more creative and less deterministic and factual, but also more prone to hallucination. A lower temperature will make the LLM more deterministic and less creative.",
     )
 
-
     # Load configuration from config.yaml file and initialize session state
     load_config()
     initialize_session_state()
-
+    
     st.sidebar.header("Audio Recording/Uploading")
 
     # Display the chat history
     display_chat_history()
+    
+     #load the RAG agent only once (not at each query)
+    @st.cache_resource
+    def load_rag_agent():
+        print("RAG AGent not in session state, loading it...")
+        from src.main_utils.generation_utils_v2 import RAGAgent
+        agent = RAGAgent(default_config=st.session_state["config"],config=st.session_state["streamlit_config"])
+        return agent
 
 
     if st.sidebar.toggle(
@@ -89,7 +96,7 @@ def main():
         value=False,
         help="You can allow audio recording (will make a recording button appear) and then it will be immediately transcribed.",
     ):
-        audio = st.experimental_audio_input(
+        audio = st.audio_input(
             "Start recording"
         )
         
@@ -109,7 +116,7 @@ def main():
                 
             print("Audio saved as recorded_audio.wav")
             
-            from src.transcription_utils import YouTubeTranscriber
+            from src.aux_utils.transcription_utils import YouTubeTranscriber
             
             with st.spinner("Transcribing audio...🎤"):
                 yt=YouTubeTranscriber()
@@ -163,7 +170,7 @@ def main():
         st.toast("File uploaded successfully!", icon="✅")
         print("FILE UPLOADED !")
         st.session_state["uploaded_file"] = True
-        from src.streamlit_app_utils import handle_uploaded_file
+        from src.main_utils.streamlit_app_utils import handle_uploaded_file
         output_file = handle_uploaded_file(uploaded_file)
 
         # si le type de output file c'est des bytes on met le download button
@@ -176,7 +183,7 @@ def main():
             )
 
             st.session_state["transcription"] = str(output_file.decode("utf-8"))
-            from src.streamlit_app_utils import show_submission_form
+            from src.main_utils.streamlit_app_utils import show_submission_form
             show_submission_form()
 
 
@@ -203,13 +210,7 @@ def main():
     # Get the query from the user
     query = st.chat_input("Please enter your question")
 
-    #load the RAG agent only once (not at each query)
-    @st.cache_resource
-    def load_rag_agent():
-        print("RAG AGent not in session state, loading it...")
-        from src.generation_utils_v2 import RAGAgent
-        agent = RAGAgent(default_config=st.session_state["config"],config=st.session_state["streamlit_config"])
-        return agent
+   
 
 
     # Process the query if submitted

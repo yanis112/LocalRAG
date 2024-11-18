@@ -2,7 +2,7 @@
 
 
 from src.retrieval_utils import query_database_v2
-from src.generation_utils import RAG_answer, pull_model
+from main_utils.generation_utils import RAG_answer, pull_model
 
 
 if __name__=='__main__':

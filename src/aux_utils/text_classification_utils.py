@@ -8,7 +8,7 @@ class IntentClassifier:
 
     @functools.lru_cache(maxsize=None)
     def _get_pipeline(self):
-        return pipeline("zero-shot-classification", model="knowledgator/comprehend_it-base", device=0)
+        return pipeline("zero-shot-classification", model="knowledgator/comprehend_it-base", device='cuda')
 
     def classify(self, text):
         results = self.pipeline(text, self.labels)

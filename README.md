@@ -16,6 +16,9 @@ This project is a **Retrieval Augmented Generation (RAG)** based question-answer
 
 ## 🛠️ Installation
 
+# Activate venv
+ .\.venv\Scripts\Activate.ps1
+
 1. **Clone the Repository**
 
    ```bash

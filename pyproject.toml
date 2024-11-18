@@ -1,3 +1,8 @@
+[project]
+name = "nom_de_votre_projet"
+version = "0.1.0"
+description = "Une brève description de votre projet"
+
 [tool.kedro]
 package_name = "llms-rag-enx"
 project_name = "llms-rag-enx"
@@ -18,10 +23,8 @@ exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 [tool.poetry]
 name = "llms-rag-enx"
 version = "0.0.1"
-description = ""
-authors = ["Duc Thang Hoang <ducthang.hoang@euranova.eu>", "Yanis Labeyrie <yanis.labeyrie@euranova.eu>"]
+description = "none"
 readme = "README.md"
-repository = "https://code.euranova.eu/demolabo/llms-and-rag"
 
 [tool.poetry.dependencies]
 torch = { url = "https://download.pytorch.org/whl/cu121/torch-2.2.1%2Bcu121-cp311-cp311-win_amd64.whl" }
@@ -141,6 +144,7 @@ langchain-groq = "^0.2.1"
 langchain-experimental = "^0.3.3"
 langchain-community = "^0.3.5"
 langchain-qdrant = "^0.1.4"
+uv = "^0.5.2"
 
 
 

@@ -82,6 +82,8 @@ def get_sparse_embedding_model(model_name):
     #model_kwargs = {"device": device}
 
     sparse_embeddings = FastEmbedSparse(model_name="Qdrant/bm25")
+    
+    
     return sparse_embeddings
 
 if __name__ == "__main__":

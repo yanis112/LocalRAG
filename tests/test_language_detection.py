@@ -1,5 +1,5 @@
 import unittest
-from src.utils import detect_language  # Replace 'your_module' with the actual module name where detect_language is defined
+from main_utils.utils import detect_language  # Replace 'your_module' with the actual module name where detect_language is defined
 
 class TestLanguageDetection(unittest.TestCase):
 

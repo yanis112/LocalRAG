@@ -5,7 +5,7 @@ from typing import List
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
-from src.generation_utils import LLM_answer_v3
+from src.main_utils.generation_utils import LLM_answer_v3
 
 load_dotenv()
 

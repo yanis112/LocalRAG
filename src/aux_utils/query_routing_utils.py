@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from functools import lru_cache
 
-from src.utils import log_execution_time, translate_to_english
+from src.main_utils.utils import log_execution_time, translate_to_english
 
 
 load_dotenv()

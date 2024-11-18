@@ -1,13 +1,27 @@
-@echo off
-setlocal
+$venvPath = "C:\Users\Yanis\Documents\RAG\venv\Scripts\Activate.ps1"
+. $venvPath
 
-set PYTHONPATH=C:\Users\Yanis\Documents\RAG
-cd /d "C:\Users\Yanis\Documents\RAG"
+Set-Location "C:\Users\Yanis\Documents\RAG"
+$env:PYTHONPATH = "$env:PYTHONPATH;$(Get-Location)"
 
-:: Start the Streamlit app and wait for it to complete
-poetry run streamlit run scripts/streamlit_app.py
+Start-Process -NoNewWindow streamlit -ArgumentList "run", "scripts\streamlit_app.py"
 
-:: Ensure all related processes are terminated
-for /f "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq python.exe" /FO CSV /NH') do taskkill /PID %%i /F
+$maxAttempts = 30
+$attempt = 0
 
-endlocal
+while ($attempt -lt $maxAttempts) {
+    $attempt++
+    try {
+        $response = Invoke-WebRequest -Uri "http://localhost:8501" -Method Head -ErrorAction SilentlyContinue
+        if ($response.StatusCode -eq 200) {
+            break
+        }
+    }
+    catch {
+        Start-Sleep -Seconds 2
+        if ($attempt -eq $maxAttempts) {
+            Write-Host "Impossible de se connecter au serveur après $maxAttempts tentatives"
+            exit
+        }
+    }
+}

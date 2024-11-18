@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 import yaml
 
-from src.generation_utils_v2 import LLM_answer_v3
+from src.main_utils.generation_utils_v2 import LLM_answer_v3
 
 
 # Fonction pour sauvegarder le fichier audio en .wav
@@ -113,7 +113,7 @@ def transcribe_audio(audio):
     Returns:
         None
     """
-    from src.utils import StructuredAudioLoaderV2
+    from src.main_utils.utils import StructuredAudioLoaderV2
     audio.export("temp/input_audio.wav", format="wav")
     st.write(
         f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds"
@@ -153,7 +153,7 @@ def handle_uploaded_file(uploaded_file):
     temp_dir = "temp"
     extension = str(Path(uploaded_file.name).suffix)
     if extension in [".mp3", ".wav", ".m4a", ".mp4"]:
-        from src.utils import StructuredAudioLoaderV2
+        from src.main_utils.utils import StructuredAudioLoaderV2
         file_path = save_audio_as_wav(uploaded_file, temp_dir)
         st.success(f"File saved as {file_path}")
         with st.spinner(
@@ -207,7 +207,7 @@ def handle_uploaded_file(uploaded_file):
 
 
     elif extension in [".pdf"]:
-        from src.utils import StructuredPDFOcerizer
+        from src.main_utils.utils import StructuredPDFOcerizer
         save_uploaded_pdf(uploaded_file)
         
         pdf_loader = StructuredPDFOcerizer()
@@ -256,7 +256,7 @@ def query_suggestion(query):
         selected: The selected suggestion.
 
     """
-    from src.agentic_rag_utils import QueryBreaker
+    from src.main_utils.agentic_rag_utils import QueryBreaker
 
     context = "The query's answer is in the database of a company named Euranova which is specialized in AI and data science and R&D. \
         This company is located in France and Belgium, has several client and works on projects such as medical imaging, autonomous driving, and natural language processing."
@@ -354,7 +354,7 @@ def process_query(query, streamlit_config, rag_agent):
     Returns:
         None
     """
-    from src.text_classification_utils import IntentClassifier
+    from src.aux_utils.text_classification_utils import IntentClassifier
     
     start_time = time.time()
     st.session_state.messages.append({"role": "user", "content": query})
@@ -396,7 +396,7 @@ def process_query(query, streamlit_config, rag_agent):
             print("Intent detected: ", intent)
             st.toast("Intent detected: "+intent, icon="🧠")
         if intent == "rediger un texte pour une offre":
-            from src.auto_job import auto_job_writter
+            from src.aux_utils.auto_job import auto_job_writter
             with st.spinner("Generating a text for a job offer..."):
                 answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
                 sources = []
@@ -415,7 +415,7 @@ def process_query(query, streamlit_config, rag_agent):
                 answer, docs, sources = rag_agent.RAG_answer(query)
                 
         elif intent == "write instagram description":
-            from src.auto_instagram_publi import instagram_descr_prompt
+            from src.aux_utils.auto_instagram_publi import instagram_descr_prompt
             with st.spinner("Generating a text for an instagram post..."):
                 answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
                 sources = []

@@ -4,7 +4,7 @@ from PIL import Image
 from streamlit_image_comparison import image_comparison
 from subprojects.image_lab.utils import refine_prompt, analyze_image, prompt2sound, prompt2video, enhance_image
 from subprojects.image_lab.segmind_utils import FluxModel
-from src.auto_instagram_publi import InstagramDescriptor  # Added import
+from aux_utils.auto_instagram_publi import InstagramDescriptor  # Added import
 
 # Directory Setup
 INPUT_DIR = 'subprojects/image_lab/input_images'
