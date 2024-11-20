@@ -64,7 +64,7 @@ def main():
     # Display the chat history
     display_chat_history()
     
-     #load the RAG agent only once (not at each query)
+    #load the RAG agent only once (not at each query)
     @st.cache_resource
     def load_rag_agent():
         print("RAG AGent not in session state, loading it...")
@@ -89,10 +89,7 @@ def main():
 
     st.session_state["streamlit_config"] = streamlit_config
     
-    #we define the rag agent 
-    rag_agent=load_rag_agent()
-    
-    
+   
     if st.sidebar.toggle(
         "Enable audio recording 🎤",
         value=False,
@@ -195,6 +192,9 @@ def main():
     ):
         from src.main_utils.streamlit_app_utils import clear_chat_history
         clear_chat_history()
+        
+    #we define the rag agent 
+    rag_agent=load_rag_agent()
 
     # Get the query from the user
     query = st.chat_input("Please enter your question")

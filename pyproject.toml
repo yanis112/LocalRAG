@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Une brève description de votre projet"
 dependencies = [
     "gradio-client>=1.4.3",
+    "python-jobspy>=1.1.75",
     "streamlit-image-comparison>=0.0.4",
 ]
 

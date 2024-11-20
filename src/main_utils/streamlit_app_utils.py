@@ -363,8 +363,11 @@ def process_query(query, streamlit_config, rag_agent):
     #make a fusion between the default config and the streamlit config (the streamlit config has the priority)
     config = {**default_config, **streamlit_config}
     
-    #we load the intent classifier
-    classifier = IntentClassifier(config["actions"])
+    #we load the intent classifier into a session state variable so that we check if the intent is already loaded
+    #classifier = IntentClassifier(config["actions"])
+    
+    if "intent_classifier" not in st.session_state:
+        st.session_state["intent_classifier"] = IntentClassifier(config["actions"])
     
     #we update the chat history to provide the LLM with the latest chat history
     config["chat_history"] = str("## Chat History: \n\n "+str(st.session_state['messages'])) #we keep track of the chat history
@@ -392,9 +395,12 @@ def process_query(query, streamlit_config, rag_agent):
     else:
         with st.spinner("Determining query intent 🧠 ..."):
             #we detect the intent of the query
-            intent = classifier.classify(query)
+            #intent = classifier.classify(query)
+            #we use the intent classifier stored in the session state
+            intent = st.session_state["intent_classifier"].classify(query)
             print("Intent detected: ", intent)
             st.toast("Intent detected: "+intent, icon="🧠")
+            
         if intent == "rediger un texte pour une offre":
             from src.aux_utils.auto_job import auto_job_writter
             with st.spinner("Generating a text for a job offer..."):
@@ -409,7 +415,6 @@ def process_query(query, streamlit_config, rag_agent):
                 email_utils.fetch_new_emails(last_k=100)
                 email_utils.disconnect()
                 
-           
             #fill the vectorstore withg the new emails
             from src.main_utils.vectorstore_utils_v2 import VectorAgent
             with st.spinner("Filling the vectorstore with new emails..."):
@@ -427,6 +432,20 @@ def process_query(query, streamlit_config, rag_agent):
             config["data_sources"] = ["jobs"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["jobs"]
+            
+            #scrapping jobs
+            from src.aux_utils.job_scrapper import JobAgent
+            with st.spinner("Scraping job offers..."):
+                job_scrapper = JobAgent(search_term='Data Scientist', location="Aix en Provence", hours_old=200, results_wanted=20,google_search_term='data scientist aix en provence',is_remote=False)
+                job_scrapper.scrape_and_convert()
+                
+            #fill the vectorstore with the new job offers
+            from src.main_utils.vectorstore_utils_v2 import VectorAgent
+            with st.spinner("Filling the vectorstore with new job offers..."):
+                agent = VectorAgent(default_config=config,qdrant_client=rag_agent.client)
+                agent.fill()
+                print("Vectorstore filled with new job offers !")
+            
             with st.spinner("Searching relevant jobs and formulating answer 📄 ..."):
                 answer, docs, sources = rag_agent.RAG_answer(query)
                 
@@ -511,63 +530,82 @@ def display_sources(sources, hallucination_scores):
     st.dataframe(df_sources)
 
 
-# def display_sources_v2(sources, hallucination_scores):
-#     # Create a dictionary to count the occurrences of each source
-#     source_counts = {source: sources.count(source) for source in sources}
-
-#     # Combine the counts into a single DataFrame
-#     data = []
-#     for source in sources:
-#         absolute_path = os.path.abspath(source)
-#         if absolute_path not in [d["Absolute Path"] for d in data]:  # Avoid adding duplicates
-#             data.append(
-#                 {
-#                     "Absolute Path": absolute_path,
-#                     "Number of times cited": source_counts[source]
-#                 }
-#             )
-#     df_sources = pd.DataFrame(data)
-
-#     # Display the DataFrame without clickable paths
-#     st.markdown(df_sources.to_html(), unsafe_allow_html=True)
-
 @st.fragment
 def display_sources_v2(sources, hallucination_scores):
     import os
     import webbrowser
-    import streamlit as st
-
-    # Create a dictionary to count the occurrences of each source
+    from streamlit_extras.stylable_container import stylable_container
     source_counts = {source: sources.count(source) for source in sources}
 
-    # Combine the counts into a single DataFrame
+    # Emoji dictionary (you can customize this)
+    subdomain_emojis = {
+        'jobs': '💼',
+        'politique': '🏛️',
+        'internet': '🌐',
+        'emails': '📧'
+    }
+
     data = []
     for source in sources:
         absolute_path = os.path.abspath(source)
-        if absolute_path not in [d["Absolute Path"] for d in data]:  # Avoid adding duplicates
-            data.append(
-                {
-                    "Absolute Path": absolute_path,
-                    "Number of times cited": source_counts[source]
-                }
-            )
+        filename = os.path.basename(absolute_path)
 
-    # Use st.expander with an appropriate emoji
-    with st.expander("Sources"):
-        # Create the rows with text and toggle
-        for i, item in enumerate(data):
-            col1, col2 = st.columns([5,1])  # Adjust proportions as needed
+         # Extract the subdomain from the path
+        subdomain = None
+        for domain in subdomain_emojis.keys():
+            if domain in absolute_path.lower():
+                subdomain = domain
+                break
+        emoji = subdomain_emojis.get(subdomain, '📄')  # Default emoji if subdomain not found
 
-            with col1:
-                st.write(f"{item['Absolute Path']} ({item['Number of times cited']})")
 
-            with col2:
-                toggle = st.toggle(label="🔍",key=f"toggle_{i}")
+        if absolute_path not in [d["Absolute Path"] for d in data]:
+            data.append({
+                "Absolute Path": absolute_path,
+                "Filename": filename,
+                "Count": source_counts[source],
+                "Emoji": emoji,
+            })
 
-            if toggle:
-                # Open the file in the local browser
-                webbrowser.open(f"file://{item['Absolute Path']}")
+    with st.expander("Sources 📑"):
+        with stylable_container(key="sources_container", css_styles="""
+            #sources_container .stButton { /* Targets buttons ONLY within the container */
+                background-color: transparent;
+                border: none;
+                padding: 0;
+            }
+            #sources_container .stButton:hover {
+                background-color: transparent;
+            }
+            #sources_container .stButton > svg {
+                fill: #99A3BA;
+            }
+            #sources_container .stButton:hover > svg {
+                fill: #31333F; 
+            }
+            #sources_container .element-container { /* Targets source containers */
+                background-color: #f5f5f5;
+                border-radius: 5px;
+                padding: 10px;
+                margin-bottom: 5px;
+            }
+            """): 
 
+            for i, item in enumerate(data):
+                col1, col2, col3, col4 = st.columns([0.1, 0.5, 0.5, 0.1])  # Added emoji column back
+
+                with col1:
+                    st.write(item['Emoji'])  # Display the emoji
+
+                with col2:
+                    st.write(item['Filename'])
+
+                with col3:
+                    st.write(f"({item['Count']})")
+
+                with col4:
+                    if st.button("🔍", key=f"button_{i}"):
+                         webbrowser.open(f"file://{item['Absolute Path']}", new=1)
 
 if __name__ == "__main__":
     pass
