@@ -1,7 +1,5 @@
 import logging
 from functools import lru_cache
-
-import streamlit as st
 import torch
 import yaml
 from dotenv import load_dotenv
@@ -9,13 +7,19 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import DocumentCompressorPipeline
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_qdrant import Qdrant
-from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 from transformers import logging as transformers_logging
+from langchain_qdrant import (
+    Qdrant,
+    QdrantVectorStore,
+    RetrievalMode)
 
+
+from qdrant_client import QdrantClient,models
+    
 # custom imports
 from src.main_utils.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor
-from src.main_utils.embedding_model import get_embedding_model
+from src.main_utils.embedding_model import get_embedding_model,get_sparse_embedding_model
 from src.main_utils.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
@@ -26,9 +30,11 @@ class RetrievalAgent:
     def __init__(self, default_config, config={}):
         self.config = {**default_config, **config}
         self.embedding_model = get_embedding_model(model_name=self.config["embedding_model"])
-        self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
-
-   
+        self.sparse_embedding_model = get_sparse_embedding_model(model_name=self.config["sparse_embedding_model"])
+        #self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
+        self.client=QdrantClient(path=self.config["persist_directory"])
+        self.raw_database = self.get_existing_qdrant_v3()
+        
     def apply_field_filter_qdrant(self,search_kwargs, field_filter, field_filter_type):
         """
         Apply a field filter to the search_kwargs dictionary based on the given field_filter and field_filter_type.
@@ -251,6 +257,53 @@ class RetrievalAgent:
             embedding=embedding_model,
             collection_name="qdrant_vectorstore",
         )
+        
+    def get_existing_qdrant_v3(self):
+        """
+        Get an existing Qdrant database using QdrantClient.
+    
+        Args:
+            persist_directory (str): The directory where the Qdrant database is stored.
+            embedding_model_name (str): The name of the embedding model used in the database.
+    
+        Returns:
+            QdrantVectorStore: The existing Qdrant database if collection exists, otherwise None.
+        """
+        # Configure logging
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+        logging.basicConfig(
+            filename="qdrant_loading.log",
+            filemode="a",
+            level=logging.INFO,
+            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
+        )
+    
+        try:
+            
+            # Check if collection exists
+            collections = self.client.get_collections().collections
+            if "qdrant_vectorstore" in [c.name for c in collections]:
+                logging.info("Collection exists, loading the Qdrant database...")
+                
+                vectordb = QdrantVectorStore(
+                    client=self.client,
+                    collection_name="qdrant_vectorstore",
+                    sparse_vector_name="sparse",
+                    embedding=self.embedding_model,
+                    sparse_embedding=self.sparse_embedding_model,
+                    retrieval_mode=RetrievalMode.HYBRID
+                )
+                logging.info("Qdrant database loaded successfully")
+                return vectordb
+                
+            else:
+                logging.info("Collection does not exist, returning None...")
+                return None
+                
+        except Exception as e:
+            logging.error(f"Error loading Qdrant database: {str(e)}")
+            raise
 
 
     @log_execution_time

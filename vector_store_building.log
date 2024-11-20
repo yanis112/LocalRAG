@@ -18,3 +18,250 @@
 2024-11-17 21:04:28,741:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:0
 2024-11-17 21:04:28,742:INFO:add_documents_to_db_V2:No chunks to add to the vectorstore they are already there!
 2024-11-17 21:04:28,742:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-19 18:03:02,496:INFO:add_documents_to_db_V2:TOTAL NUMBER OF CHUNKS GENERATED:103
+2024-11-19 18:03:02,498:INFO:add_documents_to_db_V2:Starting to add documents to the dense vectorstore ...
+2024-11-19 18:03:02,498:INFO:add_documents_to_db_V2:Vectordb is not None, adding documents to the existing database...
+2024-11-19 18:03:11,295:INFO:add_documents_to_db_V2:Qdrant database fully updated with new documents!
+2024-11-19 18:03:11,302:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-19 18:03:11,537:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-19 18:03:11,538:INFO:query_database:Trying to load the qdrant database...
+2024-11-19 18:03:11,539:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-19 18:03:11,539:INFO:query_database:QUERY: que disent mes derniers mails ?
+2024-11-19 18:03:11,539:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-19 18:03:12,254:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,254:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,256:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,257:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,258:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,259:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,260:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,261:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,262:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,263:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,265:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,266:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:12,267:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-19 18:03:13,996:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 00:32:44,326:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 477
+2024-11-20 00:32:44,327:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:32:44,337:INFO:add_documents_to_db_V3:Vectordb is None, creating a new one...
+2024-11-20 00:34:11,379:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 3
+2024-11-20 00:34:11,379:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:34:11,379:INFO:add_documents_to_db_V3:Vectordb is None, creating a new one...
+2024-11-20 00:36:12,535:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 3
+2024-11-20 00:36:12,535:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:36:12,535:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:36:12,535:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:47:21,362:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 3
+2024-11-20 00:47:21,363:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:47:21,364:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:47:21,364:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:48:24,312:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 3
+2024-11-20 00:48:24,312:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:48:24,312:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:48:24,312:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:49:11,454:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 00:49:11,454:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:49:11,456:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:49:11,456:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:51:12,383:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 00:51:12,383:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:51:12,383:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:51:12,383:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:52:29,661:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 00:52:29,661:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:52:29,662:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:52:29,662:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 00:54:00,492:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 00:54:00,494:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 00:54:00,494:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 00:54:00,494:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:02:57,541:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:02:57,542:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:04:08,619:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:04:08,619:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:04:08,622:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:04:08,622:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:04:52,016:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:04:52,016:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:04:52,018:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:04:52,018:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:09:01,817:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:09:01,817:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:09:01,820:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:09:01,820:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:09:20,200:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:19:39,429:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:19:39,429:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:19:39,429:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:20:31,226:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:20:31,226:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:20:31,226:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:22:02,068:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 215
+2024-11-20 01:22:02,068:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:22:02,068:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:22:02,068:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:22:20,848:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:39:09,662:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 2
+2024-11-20 01:39:09,662:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:39:09,662:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-20 01:39:10,379:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:39:10,379:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:39:10,765:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:39:10,765:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:39:10,765:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:39:10,765:INFO:query_database:QUERY: Que dis mon dernier mail ?
+2024-11-20 01:39:10,765:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:39:11,458:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,463:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,463:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,465:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,465:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,467:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,469:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,469:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,471:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,473:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,473:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,475:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:11,475:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:39:13,377:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:41:12,030:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 01:41:12,030:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:41:12,030:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-20 01:41:12,237:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:41:12,249:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:41:12,270:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:41:12,273:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:41:12,273:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:41:12,273:INFO:query_database:QUERY: Que dis mon dernier mail ?
+2024-11-20 01:41:12,273:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:41:12,275:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:46:29,743:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 01:46:29,743:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:46:29,743:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-20 01:46:29,957:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:46:29,961:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:46:30,196:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:46:30,197:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:46:30,197:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:46:30,197:INFO:query_database:QUERY: Que dis mon derneir mail ?
+2024-11-20 01:46:30,197:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:46:30,753:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,754:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,756:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,758:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,763:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,765:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,766:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,769:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,771:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,772:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,776:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,779:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:30,783:WARNING:get_use_flash_attn:flash_attn is not installed. Using PyTorch native attention implementation.
+2024-11-20 01:46:33,057:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:46:36,158:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails']
+2024-11-20 01:46:36,159:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 3
+2024-11-20 01:46:36,159:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-11-20 01:46:36,160:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 902
+2024-11-20 01:46:36,160:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Que dis mon derneir mail ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: 1 recruteur vient de consulter votre cv Date: 2024-11-05 09:15:54+00:00 From: Hellowork emploi@emails.hellowork.com Content 1 recruteur vient de consulter votre profil Bonjour Yanis 1 entreprise a consulté votre CV dans la CVthèque Hellowork depuis hier. Découvrez les entreprises qui ont consulté votre CV Où que vous soyez, ne ratez aucune offre ! Téléchargez notre application Hellowork.com est un service édité par Hellowork Hellowork SASU • 2 rue de la Mabilais • 35000 RENNES Pour accéder à vos données personnelles, connectez-vous à votre espace candidat . Si vous ne vous êtes jamais connecté, créez un mot de passe . Conformément à la loi « règlement général sur la protection des données à caractère personnel » du 25 mai 2018, vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent, que vous pouvez exercer en vous adressant à support-candidat@hellowork.com Vous recevez ces emails car vous vous êtes abonné(e) aux notifications email de Hellowork. Si ce service ne correspond pas à vos attentes, vous pouvez vous désabonner à tout moment. 
+
+  Document 1: Undelivered Mail Returned to Sender Date: 2024-09-30 20:39:00+02:00 From: Mail Delivery System MAILER-DAEMON@mailout2.mail.ec-m.fr Content This is the mail system at host mailout2.mail.ec-m.fr. I'm sorry to have to inform you that your message could not be delivered to one or more recipients. It's attached below. For further assistance, please send mail to postmaster. If you do so, please include this problem report. You can delete your own text from the attached returned message. The mail system etienne.rousseau@cleeven.com: host aspmx.l.google.com[2a00:1450:400c:c1d::1b] said: 550-5.1.1 The email account that you tried to reach does not exist. Please try 550-5.1.1 double-checking the recipient's email address for typos or 550-5.1.1 unnecessary spaces. For more information, go to 550 5.1.1  5b1f17b1804b1-42f57e0d59asi40320985e9.48 - gsmtp (in reply to RCPT TO command) 
+
+  Document 2: Merci d'avoir postulé ! Date: 2024-11-12 02:16:23-08:00 From: onepoint@myworkday.com Content Cher candidat, Merci d'avoir postulé chez onepoint ! Votre candidature sera prise en compte avec attention et vous receverez une réponse de notre part après examen de votre dossier. Merci This email box is not monitored. Please do not reply to this message. Cet e-mail est destiné à yanis.labeyrie@centrale-med.fr Onepoint · 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-11-20 01:46:36,160:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-20 01:46:38,270:INFO:_send_single_request:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-20 01:47:36,406:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 01:47:36,406:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:47:36,406:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-20 01:47:36,463:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:47:36,466:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:47:36,468:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:47:36,468:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:47:36,468:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:47:36,469:INFO:query_database:QUERY: Quel a été la denriere réponse de one point a ma candidature d'apres mes mails ?
+2024-11-20 01:47:36,469:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:47:36,469:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:47:36,798:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails']
+2024-11-20 01:47:36,799:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 3
+2024-11-20 01:47:36,799:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-11-20 01:47:36,799:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 993
+2024-11-20 01:47:36,799:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Quel a été la denriere réponse de one point a ma candidature d'apres mes mails ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: [onepoint] - Suite à votre candidature Date: 2024-11-18 07:25:02-08:00 From: onepoint@myworkday.com Content Bonjour Yanis , Suite à vos interactions avec l'équipe Onepoint lors de l'événement de recrutement dédié à votre Ecole, nous vous remercions sincèrement pour votre intérêt ! Après avoir attentivement étudié votre profil, nous allons privilégier, à ce stade, d'autres candidatures qui semblent plus adaptées à nos recherches actuelles. Ceci n'est pas un "non" définitif ! Nous pourrions prochainement ouvrir des postes qui correspondent davantage à votre formation et vos aspirations. Nous partageons régulièrement nos offres sur nos pages Linkedin, Jobteaser (stage, alternance et premier emploi) et notre actualité sur notre compte Instagram. Selon votre préférence, n'hésitez pas à vous y abonner pour recevoir les notifications d'offres et d'actualités. Nous vous souhaitons toute la réussite possible dans vos recherches. Stéphane Meunier, Partner, Head of Talent Acquisition onepoint This email box is not monitored. Please do not reply to this message. Cet e-mail est destiné à yanis.labeyrie@centrale-med.fr Onepoint · 
+
+  Document 1: Merci d'avoir postulé ! Date: 2024-11-12 02:16:23-08:00 From: onepoint@myworkday.com Content Cher candidat, Merci d'avoir postulé chez onepoint ! Votre candidature sera prise en compte avec attention et vous receverez une réponse de notre part après examen de votre dossier. Merci This email box is not monitored. Please do not reply to this message. Cet e-mail est destiné à yanis.labeyrie@centrale-med.fr Onepoint · 
+
+  Document 2: AssessFirst: mise à jour du statut de ta candidature ! Date: 2024-10-29 12:16:02+00:00 From: "Agathe Roudet, Assessfirst" agathe.roudet@assessfirst.teamtailor-mail.com Content Bonjour Yanis, Merci beaucoup pour ta candidature au poste de Machine Learning Engineer/ MLOps ! J'espère que tu as apprécié nos questionnaires et les résultats. Malheureusement, nous ne donnerons pas suite à ta candidature car ton profil ne correspond pas totalement aux critères attendus pour ce poste. Bien entendu, cela ne remet pas en question tes compétences ou ton expérience. Lorsque nous rejetons une candidature, c'est uniquement parce qu'AssessFirst ne semble pas être le bon environnement pour un candidat, c'est à dire que notre manière de fonctionner et ce que nous pouvons proposer ne match pas forcément avec ce que tu recherches et ta propre manière de fonctionner. Nous espérons sincèrement que la synthèse de tes résultats t'aidera d'une manière ou d'une autre. Je te souhaite en tout les cas une très bonne journée et continuation, -- Agathe Roudet Talent Acquisition Specialist @Assessfirst 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-11-20 01:47:36,799:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-20 01:47:37,218:INFO:_send_single_request:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-20 01:50:01,906:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1024
+2024-11-20 01:50:01,907:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:50:01,907:INFO:add_documents_to_db_V3:Vectordb is None, checking for existing collection...
+2024-11-20 01:50:01,907:INFO:add_documents_to_db_V3:Collection does not exist, creating a new one...
+2024-11-20 01:55:32,511:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:59:00,513:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-20 01:59:00,513:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-20 01:59:00,513:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-20 01:59:00,751:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-20 01:59:00,751:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:59:00,751:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:59:00,759:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:59:00,759:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:59:00,759:INFO:query_database:QUERY: Ai je reçu une réponse a ma candidature a Zénidoc dans mes mails ?
+2024-11-20 01:59:00,759:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:59:00,759:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:59:01,402:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails']
+2024-11-20 01:59:01,412:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 3
+2024-11-20 01:59:01,412:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-11-20 01:59:01,412:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 577
+2024-11-20 01:59:01,412:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Ai je reçu une réponse a ma candidature a Zénidoc dans mes mails ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Zenidoc – Suivi Candidature Date: 2024-11-19 09:35:46+01:00 From: Nathalie Brenneur nbrenneur.zenidoc@orange.fr Content Bonjour Mr Labeyrie, Nous sommes désolés de vous annoncer que nous ne donnerons pas suite à votre candidature malgré vos compétences. Cependant, nous vous souhaitons de trouver rapidement un poste en meilleure adéquation avec votre profil. Bien cordialement Nathalie Brenneur Sté ZENIDOC - Service administratif et commercial nbrenneur.zenidoc@orange.fr tel : 04 91 66 01 13 zenidoc.fr 
+
+  Document 1: Zenidoc – Confirmation entretien teams ce jour à 17h Date: 2024-11-18 14:46:40+01:00 From: Nathalie Brenneur nbrenneur.zenidoc@orange.fr Content Bonjour Mr Labeyrie, Comme convenu, je vous confirme votre entretien teams ce jour à 17h avec Mr Tibermont, pdg de la société Zenidoc, qui vous enverra le lien. Vous remerciant pour votre disponibilité. Cordialement Nathalie Brenneur Sté ZENIDOC - Service administratif et commercial nbrenneur.zenidoc@orange.fr tel : 04 91 66 01 13 zenidoc.fr 
+
+  Document 2: Merci d'avoir postulé ! Date: 2024-11-12 02:16:23-08:00 From: onepoint@myworkday.com Content Cher candidat, Merci d'avoir postulé chez onepoint ! Votre candidature sera prise en compte avec attention et vous receverez une réponse de notre part après examen de votre dossier. Merci This email box is not monitored. Please do not reply to this message. Cet e-mail est destiné à yanis.labeyrie@centrale-med.fr Onepoint · 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-11-20 01:59:01,412:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-20 01:59:01,815:INFO:_send_single_request:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-20 01:59:44,324:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-20 01:59:44,325:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-20 01:59:44,325:INFO:query_database:Trying to load the qdrant database...
+2024-11-20 01:59:44,326:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-20 01:59:44,326:INFO:query_database:QUERY: Trouve des emplois sur marseille Aix ?
+2024-11-20 01:59:44,326:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-20 01:59:44,326:INFO:apply_reranker:RERANKER LOADED !
+2024-11-20 01:59:45,029:INFO:query_database:FIELDS FOUND: ['emails', 'emails', 'emails', 'emails', 'emails', 'emails']
+2024-11-20 01:59:45,033:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 6
+2024-11-20 01:59:45,034:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000998
+2024-11-20 01:59:45,034:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 6682
+2024-11-20 01:59:45,034:INFO:RAG_answer:PROMPT: Réponds à la question suivante : Trouve des emplois sur marseille Aix ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: Ingénieur en Machine Learning/Apprentissage Automatique F/H chez Aix-Marseille Université : vous seriez un excellent candidat ! Date: 2024-09-23 20:14:50+00:00 From: Emplois Glassdoor noreply@glassdoor.com Content Bonjour ! Découvrez les dernières publications pour le secteur : conseils de carrière, négociations de salaire, astuces pour les entretiens d’embauche Emplois pour vous Bonjour ! Notre mission est de vous aider à trouver l’emploi de vos rêves, vous le trouverez peut-être dans cette liste préparée spécialement pour vous. Pour affiner ces recommandations, recherchez d’autres emplois sur Glassdoor ou mettez votre profil à jour. Nous sommes avec vous ! Aix-Marseille Université 3.5  Ingénieur en Machine Learning/Apprentissage Automatique F/H Marseille 24 k € - 29 k € ( Estimation de l'employeur ) Candidature facile Informatique MATLAB Informatique Mathématiques appliquées Centre pour l'édition électronique ouverte curateur·trice de données pour le projet TRIPLE Marseille 2 k € ( Estimation de l'employeur ) Candidature facile Français Publication Temps plein Anglais Twenty One Talents Lead Machine Learning Engineer (DataScientist) (5 ans d'exp mini)-H/F Aix 70 k € - 80 k € ( Estimation de l'employeur ) Candidature facile TensorFlow CI/CD CDI Azure Instapro Group 4.2  Lead Data Scientist Aix Candidature facile TensorFlow PyTorch Temps plein Git Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. « Glassdoor » et son logo sont des marques déposées de Glassdoor LLC. 
+
+  Document 1: Innova Solutions recherche un/e Data Analyst Maritime H/F + 7 nouvelles offres de "data science" à aix en provence (13) Date: 2024-10-04 16:11:16+00:00 From: "Indeed" alert@indeed.com Content Alerte Emploi Indeed 7 nouveaux emplois data science - aix en provence (13) Emplois 1-7 sur 7 nouveaux emplois Voir les résultats correspondants sur Indeed :  Data Analyst Maritime H/F Innova Solutions - Marseille 2e (13) De 40 000 € à 60 000 € par an Candidature simplifiée Notre client poursuit ses efforts pour décarboniser sa flotte, s'est lancée dans la numérisation, grâce au produit Smartship. Bac +5 (Master / MBA) (Optionnel). il y a 7 jours  Stage Data Analyst H/F ONATERA - Aix-en-Provence (13) Candidature simplifiée Rejoignez nos équipes pour un stage en tant que Data Analyst (h/f) à Aix en Provence. Participer au déploiement du plan d’acquisition Web (plan d’acquisition et… il y a 3 jours  Alternance Chargé/Chargée de missions HSE H/F - Aix-en-Provence Capgemini Engineering - Aix-en-Provence (13) Capgemini Engineering, leader mondial des services d'ingénierie, rassemble des équipes d'ingénieurs, de scientifiques et d'architectes pour aider les… Publié à l'instant  Stage - Ingénieur(e) développement SAP - Aéroline -Aix-en-provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Ces projets data ont pour but d’innover et revisiter l’expérience utilisateur en opérant la transformation digitale chez ce constructeur. il y a 7 jours  STAGE CONSULTANT / CONSULTANTE DATA - AIX EN PROVENCE Capgemini - Aix-en-Provence (13) Vous disposez d’un premier stage dans la data. Mise en forme et développement de rapports/dashboards. Vous proposerez des nouvelles lectures de données via un… il y a 4 jours  Technicien Système (alternance) H/F CONVO - Aix-en-Provence (13) Télétravail hybride Candidature simplifiée Administration des systèmes : Installer, configurer et maintenir les serveurs (Windows/Linux) et systèmes de virtualisation. Publié à l'instant  Assistant(e) Chef de Projet Événementiel (alternance) H/F CONVO - Aix-en-Provence (13) Télétravail hybride Candidature simplifiée Participer à la gestion des projets événementiels (planification, logistique, coordination). Gérer les relations avec les prestataires et les partenaires … Publié à l'instant  Ne partagez pas cet email Ce message contient des liens sécurisés personnalisés pour vous. Ne partagez pas cet email ni les liens inclus. Si le salaire n’est pas mentionné dans une offre d’emploi, il sera estimé en fonction des salaires proposés pour des postes similaires. Veuillez noter que les salaires estimés ne sont pas approuvés par les employeurs et peuvent différer du salaire réel. © 2024 Indeed Ireland Operations, Ltd. Indeed Ireland Operations Limited, Block B, Capital Dock, 80 Sir John Rogerson's Quay, Grand Canal Dock, Dublin, 2, D02 HE36 Politique de confidentialité:  Conditions d'utilisation:  Centre d'aide:  Configurer les paramètres des emails:  Se désabonner: 
+
+  Document 2: Avisto recherche un/e Ingénieur Data + 16 nouvelles offres de "data science" à aix en provence (13) Date: 2024-10-29 17:40:35+00:00 From: "Indeed" alert@indeed.com Content Alerte Emploi Indeed 16 nouveaux emplois data science - aix en provence (13) Emplois 1-16 sur 16 nouveaux emplois Voir les résultats correspondants sur Indeed :  Ingénieur Data Avisto - Aix-en-Provence (13) Télétravail hybride Conception et implémentation de data lakes sur des plateformes Hadoop. Dans le cadre de notre croissance, nous recherchons un Ingénieur Data talentueux et… il y a 6 jours  CONSULTANT / CONSULTANTE DATA - AIX EN PROVENCE Capgemini - Aix-en-Provence (13) Mise en forme et développement de rapports/dashboards. Vous proposerez des nouvelles lectures de données via un travail de fouille sur les gisements d… il y a 5 jours  Stage - Business/Data Analyst Back Office H/F - Aix en Provence Gojob - Aix-en-Provence (13) Télétravail hybride Candidature simplifiée Audit des flux de data entre les différents outils (ERP back office, logiciel de paie, BI, ERP Comptable), afin de garantir la fiabilité et la qualité de la… il y a 4 jours  Data Analyst Maritime H/F Innova Solutions - Marseille 2e (13) De 40 000 € à 60 000 € par an Candidature simplifiée Apporter un support sur les sujets data quality. Nous recherchons un(e) Analyste de la performance des navires dans le secteur Maritime/Naval chez l’un de nos… il y a 4 jours  Stage - Junior Data Analyst - Aix en Provence Gojob - Aix-en-Provence (13) Télétravail hybride Candidature simplifiée Au sein de l’équipe d’Excellence Opérationnelle, nous cherchons un/une junior Data Analyst pour renforcer notre pôle data constitué de deux Data Analysts. il y a 6 jours  Ingénieur(e) Pile à Combustible H/F - Stage ALSTOM - Aix-en-Provence (13) Participer à la rédaction du manuel d’utilisation du groupe électrogène hydrogène,. Participer à la rédaction du plan de maintenance du groupe électrogène en… il y a 6 jours  Alternance Chargé/Chargée de missions HSE H/F - Aix-en-Provence Capgemini Engineering - Aix-en-Provence (13) Capgemini Engineering, leader mondial des services d'ingénierie, rassemble des équipes d'ingénieurs, de scientifiques et d'architectes pour aider les… il y a 6 jours  Alternance 2024 | collaborateur comptable (H/F) | aix en provence ENDRIX - Aix-en-Provence (13) Candidature simplifiée En tant que Collaborateur(trice) Comptable h/f en alternance chez Endrix, votre équipe vous confiera la gestion d’un portefeuille client. Publié à l'instant  Stage - Ingénieur sur la caractérisation des microplastiques - H/F GROUPE GINGER - Aix-en-Provence (13) Cela se traduit par l’amélioration de techniques de mesures, le développement de nouvelles méthodologies, qui sont d’abord testées et validés sur des projets… il y a 4 jours  STAGE 2025 Support Ingénieur Appareil et Compétitivité (ALL GENDER) Airbus Helicopters SAS - Marignane (13) Une offre de stage intitulée « Stage Support Ingénieur Appareil et Compétitivité (ALL GENDER) » vient de s'ouvrir au sein de Airbus Helicopter sur son site de… il y a 6 jours  Stage Ingénieur réutilisation des eaux usées traitées - H/F SUEZ - Aix-en-Provence (13) Présent dans 40 pays avec 40 000 collaborateurs, SUEZ apporte des services essentiels pour protéger et améliorer la qualité de vie, face à des défis… il y a 4 jours  STAGE - IA MACHINE LEARNING KFS LOGS CLEARSY - Aix-en-Provence (13) À partir de 1 650 € par mois Candidature simplifiée Le calculateur embarqué KCU, cœur du système KFS, enregistre en continu des données temporelles d'état du système et des signaux analogiques bruts dans des… il y a 4 jours  Stage Ingénieur Projet H/F Groupe Ortec - Aix-en-Provence (13) Candidature simplifiée ORYS intègre la compétence Ingénierie et Pilotage de Grands Projets du Groupe ORTEC afin de répondre de manière globale aux problématiques techniques dans l… il y a 5 jours  Stage - Ingénieur d'affaires / Business Manager (H/F) CTS Consulting & Technical Support - Aix-en-Provence (13) Description STAGE UNIQUEMENT ! NOUS NE PRENONS PAS D'ALTERNANT ! Dans le cadre de cette dynamique, le groupe continue de se renforcer et recherche un… il y a 7 jours  Stage Ingénieur simulation procédé AZUR 2 (F/H) TechnicAtome - Aix-en-Provence (13) Candidature simplifiée Analyser l’impact des différentes options de modélisation par rapport aux données concepteur,. Etudiant(e) en école d’ingénieur ou équivalent universitaire avec… il y a 7 jours  STAGE - INGENIEUR TELEDETECTION DE LA CONTRAINTE HYDRIQUE EN CONTEXTE AGRICOLE (H/F) Société du Canal de Provence - Le Tholonet (13) Télétravail hybride Candidature simplifiée Implantée à Aix-en-Provence, la Société du Canal de Provence intervient en Région Sud, en France et à l’International. il y a 7 jours  Ne partagez pas cet email Ce message contient des liens sécurisés personnalisés pour vous. Ne partagez pas cet email ni les liens inclus. Si le salaire n’est pas mentionné dans une offre d’emploi, il sera estimé en fonction des salaires 
+
+  Document 3: Pulse recherche un/e Consultant Data H/F + 19 nouvelles offres de "data science" à aix en provence (13) Date: 2024-09-28 21:23:50+00:00 From: "Indeed" alert@indeed.com Content Alerte Emploi Indeed 19 nouveaux emplois data science - aix en provence (13) Emplois 1-19 sur 19 nouveaux emplois Voir les résultats correspondants sur Indeed :  Consultant Data H/F Pulse - Aix-en-Provence (13) De 40 000 € à 50 000 € par an Candidature simplifiée Notre client (secteur public) est à la recherche d'un(e) Consultant Data pour intégrer leur équipe d'Aix-en-Provence. Vous connaissez Nifi (serait un plus). il y a 2 jours  Consultant DATA/BI REEL IT - Aix-en-Provence (13) Candidature simplifiée Analyse, Modélisation et Gestion des données : Vous participerez activement à l'analyse des données (BI & ETL) et à la gouvernance des données. il y a 4 jours  Consultant DATA/BI H/F HCube Conseil - Aix-en-Provence (13) Candidature simplifiée Hcube Conseil, pôle Assistance & Engineering du groupe Reel IT est spécialiste de l’accompagnement client dans les métiers du développement informatique. il y a 4 jours  Ingénieur data FULLL - Aix-en-Provence (13) De 45 000 € à 50 000 € par an Télétravail hybride Candidature simplifiée Tu prends soin de créer un code propre et performant, utilisant de façon efficace les concepts de data structure/pattern. Type d'emploi : Temps plein, CDI. il y a 5 jours  CONSULTANT / CONSULTANTE DATA - AIX EN PROVENCE Capgemini - Aix-en-Provence (13) Mise en forme et développement de rapports/dashboards. Vous proposerez des nouvelles lectures de données via un travail de fouille sur les gisements d… il y a 5 jours  Data Analyst Maritime H/F Innova Solutions - Marseille 2e (13) De 40 000 € à 60 000 € par an Candidature simplifiée Notre client poursuit ses efforts pour décarboniser sa flotte, s'est lancée dans la numérisation, grâce au produit Smartship. Bac +5 (Master / MBA) (Optionnel). il y a 1 jour  Stage - Ingénieur(e) développement SAP - Aéroline -Aix-en-provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Ces projets data ont pour but d’innover et revisiter l’expérience utilisateur en opérant la transformation digitale chez ce constructeur. il y a 1 jour  Ingénieur Data - TALEND F/H Orange Business - Marseille (13) Nous recherchons aujourd'hui, un Ingénieur DATA expérimenté à même d'intervenir chez nos clients pour les accompagner dans la structuration de leurs SI autour… il y a 3 jours  Stage - Ingénieur(e) BI - Services Publics - Aix-en-Provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Il aide ses clients à mener leur transformation digitale et à obtenir des bénéfices concrets et durables. Le Groupe apporte une réponse globale aux enjeux de… il y a 2 jours  Stage - Ingénieur(e) étude et développement Web, domaine services connectés de jet d'affaire - Aix-en-Provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Il aide ses clients à mener leur transformation digitale et à obtenir des bénéfices concrets et durables. Le Groupe apporte une réponse globale aux enjeux de… il y a 1 jour  Motion Designer en alternance - Aix-en-Provence Galileo Global Education France - Aix-en-Provence (13) Vos missions chez notre partenaire. En collaboration avec les équipes du service digital et communication, vous serez chargé de la création et du déploiement de… il y a 2 jours  Stage ingénieur étude matériaux organiques F/H EDF - Aix-en-Provence (13) Ce que nous pouvons accomplir ensemble. Réaliser une bibliographie sur le vieillissement thermique des matériaux organiques concernés, essentiellement des… il y a 2 jours  Business Developer en alternance à Aix-en-Provence Galileo Global Education France - Aix-en-Provence (13) Piloter l’intégralité du cycle de vente (qualification, suivi, négociation, signature). Gérer ton portefeuille client existant (accompagnement, fidélisation). il y a 2 jours  Stage - Ingénieur Environnement Socotec - Aix-en-Provence (13) Candidature simplifiée Pour accompagner sa croissance, SOCOTEC recrute 1500 nouveaux collaborateurs en 2023. 33% de notre chiffre d’affaires issu de missions contribuant à réduire l… il y a 1 jour  Ingénieur(e) Contrôle Commande Sureté Nucléaire H/F (Stage) Ekium - Aix-en-Provence (13) En dernière année d’une école d'ingénieur (ou équivalent),. Travailler au sein d’une structure à taille humaine et flexible,. il y a 4 jours  Business Developer - Alternance - H/F - Aix-en-Provence Media-Start - Aix-en-Provence (13) Candidature simplifiée Media-Start est une agence de presse qui vise à donner de la visibilité aux petites et moyennes entreprises en leur permettant d’accéder aux plus grands médias… il y a 1 jour  STAGE 2025 Business/Data analyse, Création/Déploiement de méthodes d’ingénierie, prototypage d’outils numériques (H/F) Airbus Helicopters SAS - Marignane (13) Définition et mise en place d'indicateurs pour piloter un processus ou une dérive, pérenne ou temporaires. Codage de modifications sur des outils mineurs et des… il y 
+
+  Document 4: Pulse recherche un/e Consultant Data H/F + 10 nouvelles offres de "data science" à aix en provence (13) Date: 2024-10-03 19:08:54+00:00 From: "Indeed" alert@indeed.com Content Alerte Emploi Indeed 10 nouveaux emplois data science - aix en provence (13) Emplois 1-10 sur 10 nouveaux emplois Voir les résultats correspondants sur Indeed :  Consultant Data H/F Pulse - Aix-en-Provence (13) De 40 000 € à 50 000 € par an Candidature simplifiée Vous voulez imPULSEr un nouvel élan à votre carrière ? Nous recherchons notre futur(e) Consultant(e) Data F/H ! Et vous dans tout ça? : il y a 7 jours  STAGE CONSULTANT / CONSULTANTE DATA - AIX EN PROVENCE Capgemini - Aix-en-Provence (13) Vous disposez d’un premier stage dans la data. Dans votre quotidien, vous contribuerez au partage et à la capitalisation des savoirs et des pratiques au sein de… il y a 3 jours  Data Analyst Maritime H/F Innova Solutions - Marseille 2e (13) De 40 000 € à 60 000 € par an Candidature simplifiée Effectuer une analyse des tendances afin d'identifier les schémas opérationnels et les domaines potentiels d'amélioration, en utilisant des outils de science… il y a 6 jours  Stage Data Analyst H/F ONATERA - Aix-en-Provence (13) Candidature simplifiée Collecter, mesurer, optimiser, tester, mesurer encore la data…pour contribuer à l’augmentation du volume de conversion et pour suivre les performances des… il y a 2 jours  Stage - Ingénieur(e) développement SAP - Aéroline -Aix-en-provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Ces projets data ont pour but d’innover et revisiter l’expérience utilisateur en opérant la transformation digitale chez ce constructeur. il y a 6 jours  Stage - Ingénieur(e) BI - Services Publics - Aix-en-Provence Sopra Steria - Aix-en-Provence (13) Candidature simplifiée Découverte des concepts BI (flux d'alimentation, qualité des données, stockage de grand volumes, Datawarehouse et modèles, data analyse),. il y a 7 jours  STAGE 2025 en Logistique & Data Analyst (ALL GENDER) Airbus Helicopters SAS - Marignane (13) Bonnes connaissances informatiques : notions sur les bases de données, le code (SQL, Python…), la data analyse, les outils de reporting…. il y a 2 jours  Stage - Ingénieur.e Système Poste de Travail - Aix en Provence BPCE Infogérance et Technologies - Aix-en-Provence (13) BPCE-IT, c'est 1 700 collaborateur.trices engagé.es pour proposer des services d'infrastructures, de sécurité informatique et de production applicative pour les… il y a 1 jour  Stage - Ingénieur.e Système Poste de Travail - Aix en Provence Groupe BPCE - Aix-en-Provence (13) BPCE-IT, c'est 1 700 collaborateur.trices engagé.es pour proposer des services d'infrastructures, de sécurité informatique et de production applicative pour les… il y a 1 jour  Stage Ingénieure / Ingénieur Amélioration Continue - Aix en Provence Capgemini Engineering - Aix-en-Provence (13) Capgemini Engineering, leader mondial des services d'ingénierie, rassemble des. Équipes d'ingénieurs, de scientifiques et d'architectes pour aider les… il y a 1 jour  Ne partagez pas cet email Ce message contient des liens sécurisés personnalisés pour vous. Ne partagez pas cet email ni les liens inclus. Si le salaire n’est pas mentionné dans une offre d’emploi, il sera estimé en fonction des salaires proposés pour des postes similaires. Veuillez noter que les salaires estimés ne sont pas approuvés par les employeurs et peuvent différer du salaire réel. © 2024 Indeed Ireland Operations, Ltd. Indeed Ireland Operations Limited, Block B, Capital Dock, 80 Sir John Rogerson's Quay, Grand Canal Dock, Dublin, 2, D02 HE36 Politique de confidentialité:  Conditions d'utilisation:  Centre d'aide:  Configurer les paramètres des emails:  Se désabonner: 
+
+  Document 5: Responsable d'Etudes Statistiques - Marseille (F/H) chez AXA / France : vous seriez un excellent candidat ! Date: 2024-10-07 00:13:21+00:00 From: Emplois Glassdoor noreply@glassdoor.com Content Bonjour ! Découvrez les dernières publications pour le secteur : conseils de carrière, négociations de salaire, astuces pour les entretiens d’embauche Emplois pour vous Bonjour ! Notre mission est de vous aider à trouver l’emploi de vos rêves, vous le trouverez peut-être dans cette liste préparée spécialement pour vous. Pour affiner ces recommandations, recherchez d’autres emplois sur Glassdoor ou mettez votre profil à jour. Nous sommes avec vous ! AXA / France 4.0  Responsable d'Etudes Statistiques - Marseille (F/H) Marseille Candidature facile Logiciel statistique Statistiques Intéressement et participation Power BI Voir plus Ce message a été envoyé à yanis.labeyrie@centrale-med.fr Politique de confidentialité Gérer les paramètres Se désabonner Glassdoor 2261 Market Street, San Francisco, CA 94114, États-Unis Copyright © 2008-2024, Glassdoor LLC. “Glassdoor,” “Worklife Pro,” “Bowls,” and logo are proprietary trademarks of Glassdoor LLC. 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-11-20 01:59:45,034:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-20 01:59:46,405:INFO:_send_single_request:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"

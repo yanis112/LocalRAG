@@ -4,11 +4,14 @@ from PIL import Image
 from streamlit_image_comparison import image_comparison
 from subprojects.image_lab.utils import refine_prompt, analyze_image, prompt2sound, prompt2video, enhance_image
 from subprojects.image_lab.segmind_utils import FluxModel
-from aux_utils.auto_instagram_publi import InstagramDescriptor  # Added import
+from src.aux_utils.auto_instagram_publi import InstagramDescriptor  # Added import
 
 # Directory Setup
 INPUT_DIR = 'subprojects/image_lab/input_images'
 OUTPUT_DIR = 'subprojects/image_lab/output_images'
+
+import warnings
+warnings.filterwarnings("ignore", message="Examining the path of torch.classes")
 
 # Create input and output directories if they don't exist
 os.makedirs(INPUT_DIR, exist_ok=True)
@@ -19,7 +22,7 @@ def main():
     #cinematic_style = st.sidebar.toggle("Cinematic Style 🎥", True)
     generate_instagram = st.sidebar.toggle("Generate Instagram Description 📸", False)  # Added toggle
 
-    uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png","webp"])
     
     #setting toggle
     generate_video_prompt = st.sidebar.toggle("Generate Video Prompt 🎥", False)
@@ -77,12 +80,14 @@ def main():
             #we save the image
             model.save(image)
             #we display the image
-            st.image(image, caption='Generated Image.', use_column_width=True)
+            st.image(image, caption='Generated Image.', use_container_width=True)
         
       
     if uploaded_file is not None:
-        st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+        st.image(uploaded_file, caption='Uploaded Image.', use_container_width=True)
         st.write("")
+        
+        st.session_state["description"] = ""    
         
         # Save the uploaded image to the input directory
         input_path = os.path.join(INPUT_DIR, uploaded_file.name)
@@ -117,8 +122,15 @@ def main():
         with col2:
             if st.button("Analyze Image"):
                 st.write("Analyzing image...")
-                ingredients = analyze_image(uploaded_file)
-                st.write("Ingredients found:", ingredients)
+                st.session_state["description"] = analyze_image(uploaded_file, analyse_prompt="Analyse the image in every detail, people, places, actions, light, style, ect...")
+                
+        if st.session_state["description"]!= "":
+            with st.chat_message("ai"):
+                st.write("Image Description:", str(st.session_state["description"]))
+                
+        if generate_video_prompt:
+            with st.chat_message("ai"):
+                st.write("Video Prompt based on description:", prompt2video(st.session_state["description"]))
 
 if __name__ == "__main__":
     main()

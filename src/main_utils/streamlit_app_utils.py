@@ -324,7 +324,7 @@ def display_chat_history():
                 reasoning, final_output = message["content"].split("<output>", 1)
                 
                 # Display the final output
-                with st.chat_message(message["role"]):
+                with st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg'):
                     st.write(final_output.strip())
                     
                     # Add an expander for the reasoning
@@ -332,9 +332,9 @@ def display_chat_history():
                         st.write(reasoning.strip())
             else:
                 # For all other messages, display normally
-                st.chat_message(message["role"]).write(message["content"])
+                st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg').write(message["content"])
         elif isinstance(message["content"], dict):
-            st.chat_message(message["role"]).json(message["content"])
+            st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg').json(message["content"])
 
 
 def clear_chat_history():
@@ -373,7 +373,7 @@ def process_query(query, streamlit_config, rag_agent):
         st.toast("Deep search enabled ! it may take a while...", icon="⏳")
     
     #we write the query in the chat
-    st.chat_message("user").write(query)
+    st.chat_message("user",avatar='assets/icon_human.jpg').write(query)
 
     if config["field_filter"] != []: #if no specific field is selected we disable the source filter
         config["enable_source_filter"] = True
@@ -401,6 +401,22 @@ def process_query(query, streamlit_config, rag_agent):
                 answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
                 sources = []
         elif intent == "question sur des emails":
+            #fetch the last 100 emails and search for the answer
+            from src.aux_utils.email_utils import EmailAgent
+            with st.spinner("Fetching new emails..."):
+                email_utils = EmailAgent()
+                email_utils.connect()
+                email_utils.fetch_new_emails(last_k=100)
+                email_utils.disconnect()
+                
+           
+            #fill the vectorstore withg the new emails
+            from src.main_utils.vectorstore_utils_v2 import VectorAgent
+            with st.spinner("Filling the vectorstore with new emails..."):
+                agent = VectorAgent(default_config=config,qdrant_client=rag_agent.client)
+                agent.fill()
+                print("Vectorstore filled with new emails !")
+            
             config["data_sources"] = ["emails"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["emails"]
@@ -419,12 +435,22 @@ def process_query(query, streamlit_config, rag_agent):
             with st.spinner("Generating a text for an instagram post..."):
                 answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
                 sources = []
-        
+        elif intent =="generate a graph/diagram":
+            from src.aux_utils.graph_maker_utils import GraphMaker
+            with st.spinner("Generating the graph..."):
+                graph_maker = GraphMaker(model_name='Meta-Llama-3.1-405B-Instruct',llm_provider='github')
+                output_path=graph_maker.generate_graph(base_prompt=query)
+                #show the svg file in the streamlit app
+                st.image(output_path)
+                sources = []
+                answer = "Here is the generated graph !"
+                #convert answer to a generator like object to be treated as a stream
+                answer = (line for line in [answer])
         else: #normal search
             with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant",avatar='assets/icon_ai_2.jpg'):
             answer = st.write_stream(answer)
 
         end_time = time.time()
@@ -485,7 +511,32 @@ def display_sources(sources, hallucination_scores):
     st.dataframe(df_sources)
 
 
+# def display_sources_v2(sources, hallucination_scores):
+#     # Create a dictionary to count the occurrences of each source
+#     source_counts = {source: sources.count(source) for source in sources}
+
+#     # Combine the counts into a single DataFrame
+#     data = []
+#     for source in sources:
+#         absolute_path = os.path.abspath(source)
+#         if absolute_path not in [d["Absolute Path"] for d in data]:  # Avoid adding duplicates
+#             data.append(
+#                 {
+#                     "Absolute Path": absolute_path,
+#                     "Number of times cited": source_counts[source]
+#                 }
+#             )
+#     df_sources = pd.DataFrame(data)
+
+#     # Display the DataFrame without clickable paths
+#     st.markdown(df_sources.to_html(), unsafe_allow_html=True)
+
+@st.fragment
 def display_sources_v2(sources, hallucination_scores):
+    import os
+    import webbrowser
+    import streamlit as st
+
     # Create a dictionary to count the occurrences of each source
     source_counts = {source: sources.count(source) for source in sources}
 
@@ -500,11 +551,22 @@ def display_sources_v2(sources, hallucination_scores):
                     "Number of times cited": source_counts[source]
                 }
             )
-    df_sources = pd.DataFrame(data)
 
-    # Display the DataFrame without clickable paths
-    st.markdown(df_sources.to_html(), unsafe_allow_html=True)
+    # Use st.expander with an appropriate emoji
+    with st.expander("Sources"):
+        # Create the rows with text and toggle
+        for i, item in enumerate(data):
+            col1, col2 = st.columns([5,1])  # Adjust proportions as needed
 
+            with col1:
+                st.write(f"{item['Absolute Path']} ({item['Number of times cited']})")
+
+            with col2:
+                toggle = st.toggle(label="🔍",key=f"toggle_{i}")
+
+            if toggle:
+                # Open the file in the local browser
+                webbrowser.open(f"file://{item['Absolute Path']}")
 
 
 if __name__ == "__main__":

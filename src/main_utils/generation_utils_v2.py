@@ -193,6 +193,7 @@ class RAGAgent:
         self.default_config = default_config
         self.config = config
         self.retrieval_agent = RetrievalAgent(default_config=default_config, config=config)
+        self.client=self.retrieval_agent.client #client transmission to the RAGAgent
 
     @log_execution_time
     def RAG_answer(self, query,merged_config=None):

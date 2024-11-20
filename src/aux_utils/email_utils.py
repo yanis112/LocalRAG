@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from html import unescape
 from bs4 import BeautifulSoup
 
-class EmailUtils:
+class EmailAgent:
     def __init__(self):
         """Initialize the EmailUtils class and load environment variables."""
         load_dotenv()
@@ -188,7 +188,7 @@ def clean_filename(filename):
     return filename
 
 if __name__ == "__main__":
-    email_utils = EmailUtils()
+    email_utils = EmailAgent()
     email_utils.connect()
     email_utils.fetch_new_emails(last_k=100)
     email_utils.disconnect()

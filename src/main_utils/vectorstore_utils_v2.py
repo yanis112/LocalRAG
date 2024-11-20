@@ -13,6 +13,8 @@ from langchain_qdrant import (
     QdrantVectorStore,
     RetrievalMode,
 )
+from qdrant_client import QdrantClient,models
+
 from tqdm import tqdm
 # custom imports 
 from src.main_utils.embedding_model import get_embedding_model, get_sparse_embedding_model
@@ -41,9 +43,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
 
 
 class VectorAgent:
-    def __init__(self, default_config, config={}):
+    def __init__(self, default_config, config={},qdrant_client=None):
         self.config = {**default_config, **config}
-        self.client = None
         self.persist_directory = self.config["persist_directory"]
         self.process_log_file = self.config["process_log_file"]
         self.clone_database = self.config["clone_database"]
@@ -69,6 +70,10 @@ class VectorAgent:
         )
 
         self.log_file_name = self.config["process_log_file"]
+        
+        
+        self.client = QdrantClient(path=self.persist_directory) if qdrant_client is None else qdrant_client
+        self.collection_name = self.config["collection_name"]
 
         # storage variables
         self.total_chunks = []
@@ -430,6 +435,50 @@ class VectorAgent:
             print("Collection does not exist, returning None...")
             self.vectordb = None
             
+    def load_vectordb_V3(self):
+        """
+        Load the vectordb using QdrantClient with support for hybrid search.
+    
+        Returns:
+            vectordb: The loaded vectordb if collection exists, otherwise None.
+        """
+        # Configure logging
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+        logging.basicConfig(
+            filename="vector_store_loading.log",
+            filemode="a",
+            level=logging.INFO,
+            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
+        )
+    
+        try:
+            # Check if collection exists
+            collections = self.client.get_collections().collections
+            if self.collection_name in [c.name for c in collections]:
+                logging.info("Collection exists, loading the Qdrant database...")
+                
+                self.vectordb = QdrantVectorStore(
+                    client=self.client,
+                    collection_name=self.collection_name,
+                    embedding=self.dense_embedding_model,
+                    sparse_embedding=self.sparse_embedding_model,
+                    sparse_vector_name='sparse',
+                    retrieval_mode=RetrievalMode.HYBRID
+                )
+                logging.info("Qdrant database loaded successfully")
+                
+            else:
+                logging.info("Collection does not exist, returning None...")
+                self.vectordb = None
+                
+        except Exception as e:
+            logging.error(f"Error loading vectorstore: {str(e)}")
+            self.vectordb = None
+            raise
+
+    
+        return self.vectordb
             
     def delete(self):
         """
@@ -518,7 +567,7 @@ class VectorAgent:
                     embedding=self.dense_embedding_model,
                     sparse_embedding=self.sparse_embedding_model,
                     path=self.persist_directory,
-                    collection_name="qdrant_vectorstore",
+                    collection_name=self.collection_name,
                     retrieval_mode=RetrievalMode.HYBRID,
                 )
 
@@ -536,20 +585,92 @@ class VectorAgent:
         # #delete the instance
         # del self.vectordb
         
+    def add_documents_to_db_V3(self):
+        """
+        Adds documents to the vector database using a predefined Qdrant client (V3).
+        Supports hybrid search with dense and sparse vectors.
+        
+        Returns:
+            None
+        """
+        # Configure logging
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+        logging.basicConfig(
+            filename="vector_store_building.log",
+            filemode="a",
+            level=logging.INFO,
+            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
+        )
+    
+        logging.info(f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}")
+        if len(self.total_chunks) == 0:
+            logging.info("No chunks to add to the vectorstore - they are already there!")
+            return
+    
+        logging.info("Starting to add documents to the vectorstore...")
+        
+        # Create Qdrant client
+        
+    
+        try:
+            if self.total_chunks:
+                if self.vectordb is None:
+                    logging.info("Vectordb is None, checking for existing collection...")
+    
+                    #Check if collection exists
+                    if not self.client.collection_exists(self.collection_name):
+                        from qdrant_client.http.models import Distance, VectorParams, SparseVectorParams
+                        logging.info("Collection does not exist, creating a new one...")
+                        sparse_vector_name = "sparse"
+                        
+                        self.client.create_collection(
+                            collection_name=self.collection_name,
+                            vectors_config=VectorParams(size=self.config["dense_embedding_size"], distance=Distance.COSINE),
+                            sparse_vectors_config={sparse_vector_name: models.SparseVectorParams(index=models.SparseIndexParams(on_disk=True))}
+                        )
+                       
+    
+                    # Create vectorstore with existing client
+                    self.vectordb = QdrantVectorStore(
+                        client=self.client,
+                        collection_name=self.collection_name,
+                        embedding=self.dense_embedding_model,
+                        sparse_embedding=self.sparse_embedding_model,
+                        sparse_vector_name='sparse',
+                        retrieval_mode=RetrievalMode.HYBRID,
+                    )
+    
+                    # Add documents
+                    self.vectordb.add_documents(documents=self.total_chunks)
+    
+                else:
+                    logging.info("Adding documents to existing vectorstore...")
+                    self.vectordb.add_documents(documents=self.total_chunks)
+    
+                logging.info("Qdrant database successfully updated with new documents!")
+    
+        except Exception as e:
+            logging.error(f"Error adding documents to vectorstore: {str(e)}")
+            raise e
         
 
     def fill(self):
         #self.save_config_file()
         self.create_persist_directory() # create the persist directory if it does not exist
         self.get_log_file_path() # get the log file path or create it if it does not exist
-        self.load_vectordb() # load the vector database if it exists, otherwise create a new one
+        #self.load_vectordb() # load the vector database if it exists, otherwise create a new one
+        #use v3 to load the vectorstore
+        self.load_vectordb_V3()
         self.find_already_processed() # find the already processed documents
         self.process_documents() # process the documents
         self.filter_and_split_chunks() # filter and split the chunks
         print("Number of total documents currently processed:", len(self.total_documents))
         print("Number of total chunks currently processed:", len(self.total_chunks))
         self.get_metrics() # get some metrics about the chunks
-        self.add_documents_to_db_V2()
+        #self.add_documents_to_db_V2()
+        #use v3 to add documents to the vectorstore
+        self.add_documents_to_db_V3()
         
     def get_chunks(self):
         """Return the chunks without pushing them to the vectorstore."""

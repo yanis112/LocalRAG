@@ -1,14 +1,16 @@
-import functools
+
+from functools import lru_cache
 from transformers import pipeline
+import torch
 
 class IntentClassifier:
     def __init__(self, labels):
         self.labels = labels
         self.pipeline = self._get_pipeline()
 
-    @functools.lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)
     def _get_pipeline(self):
-        return pipeline("zero-shot-classification", model="knowledgator/comprehend_it-base", device='cuda')
+        return pipeline("zero-shot-classification", model="knowledgator/comprehend_it-base", device='cuda',torch_dtype=torch.float16)
 
     def classify(self, text):
         results = self.pipeline(text, self.labels)

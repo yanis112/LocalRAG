@@ -9,13 +9,27 @@ from typing import List
 #import easyocr
 from dotenv import load_dotenv
 from functools import lru_cache
+from qdrant_client import QdrantClient
 
 load_dotenv()
 
-os.environ["GROQ_API_KEY"] = (
-    "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"
-)
 
+
+
+# def close_qdrant_connections(persist_directory: str) -> None:
+#     """
+#     Close all active Qdrant client connections for a specific directory.
+    
+#     Args:
+#         persist_directory (str): The directory where Qdrant database is stored
+#     """
+#     try:
+#         # Attempt to get and close the client
+#         client = QdrantClient(path=persist_directory)
+#         client.close()
+#         print(f"Successfully closed Qdrant client connection for {persist_directory}")
+#     except Exception as e:
+#         print(f"Error closing Qdrant client connection: {str(e)}")
 
 def log_execution_time(func):
     """

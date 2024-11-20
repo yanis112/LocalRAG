@@ -3,9 +3,10 @@ config_path: "config/config.yaml"
 
 # Database initialization parameters
 vectordb_provider: "Qdrant" #'Chroma'
-persist_directory: "data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
+persist_directory: "data/vector_stores/qdrant_semantic_jinai" #"data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
 path: "data" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
+collection_name: "qdrant_vectorstore" # Name of the vector collection
 
 #Knowledge graph index parameters
 build_knowledge_graph: false  # Enable or disable the building of the knowledge graph when initializing the database
@@ -47,6 +48,7 @@ data_sources: {
     "emails": "Emails",
     "jobs": "Jobs",
 }
+
    
 # Search filters
 use_autocut: true  # Enable or disable the autocut
@@ -62,8 +64,9 @@ field_filter_type: "$eq"  # Type of field filter (include or exclude)
 
 # Embedding models parameters
 embedding_model: "jinaai/jina-embeddings-v3" #"BAAI/bge-m3" #"jinaai/jina-embeddings-v3" # "BAAI/bge-m3" #"jinaai/jina-embeddings-v3" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"BAAI/bge-m3" #"all-mpnet-base-v2" #"all-MiniLM-L6-v2" #"BAAI/bge-m3" #"sentence_transformers/all-MiniLM-L6-v2" #"BAAI/bge-m3" #"ollama/bge-m3"  #"BAAI/bge-m3" #Embedding model to use for vectorstore creation, retrieval and semantic chunking
+dense_embedding_size: 1024 #Size of the dense embedding model
 sparse_embedding_model: "Qdrant/bm42-all-minilm-l6-v2-attentions" #Embedding model to use for sparse retrieval
-sparse_embedding_size: 1024 #Size of the sparse embedding model
+sparse_embedding_size: 30522 #Size of the sparse embedding model
 
 
 # Reranker parameters
@@ -79,8 +82,8 @@ auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of 
 
 
 # Generation parameters
-llm_provider: "github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
-model_name: "gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
+llm_provider: "groq" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
+model_name: "llama-3.2-90b-text-preview" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
  
 cot_enabled: false  # Enable or disable the Chain-Of-Thoughts (COT) feature for the LLM answer
 stream: false  # Enable or disable the streaming of the generation (if all the output text is generated and then printed in the interface or if the tokens are generated and printed one by one)
@@ -112,7 +115,7 @@ description_model_name: "gemma2:2b" #LLM model to use for generating the entity 
 description_llm_provider: "ollama" # Provider of the LLM model for the entity descriptions
 
 # Possible actions
-actions: ["rediger un texte pour une offre","question sur des emails","rechercher des offres d'emploi","question normale sur des documents","write instagram description"]
+actions: ["rediger un texte pour une offre","question sur des emails","rechercher des offres d'emploi","question normale sur des documents","write instagram description","generate a graph/diagram"]
 
 #Agentic RAG parameters
 query_breaker_model: "o1-mini"

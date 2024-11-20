@@ -16,7 +16,8 @@ def main():
 
     os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "2000"
 
-    # st.sidebar.image("assets/logo_v5.png", output_format="PNG")
+    st.sidebar.image("assets/no_back_logo.png", output_format="PNG")
+    #st.logo("assets/icon_ai.jpg",size='large')
 
     # load configuration
     load_config()
@@ -24,16 +25,7 @@ def main():
     # defining the allowed data sources in the variable options
     options = st.session_state["config"]["data_sources"]
 
-    # Define the persist directory (where the embeddings are stored)
-    embedding_database = st.session_state["config"]["persist_directory"]
-
-    # Add a button to clear the chat
-    if st.sidebar.button(
-        label="Clear Chat 🧹",
-        help="Clear the chat history on the visual interface 🧹",
-    ):
-        from src.main_utils.streamlit_app_utils import clear_chat_history
-        clear_chat_history()
+    
 
 
     # Define sidebar parameters
@@ -52,29 +44,19 @@ def main():
     )
 
     # Define sidebar parameters
-    st.sidebar.header("Data Sources")
-    field_filter = st.sidebar.multiselect(
-        "Select the data fields you want to search in",
-        options=options.keys(),
-        # by default all except chatbot_history
-        default=list(options.keys()),
-        format_func=lambda x: options[x],
-    )
+    # st.sidebar.header("Data Sources")
+    # field_filter = st.sidebar.multiselect(
+    #     "Select the data fields you want to search in",
+    #     options=options.keys(),
+    #     # by default all except chatbot_history
+    #     default=list(options.keys()),
+    #     format_func=lambda x: options[x],
+    # )
 
     # Define sidebar parameters
-    st.sidebar.header("LLM Settings")
-    # a slider to set the temperature of the LLM
-    temperature = st.sidebar.slider(
-        "Set the temperature of the LLM 🔥",
-        0.0,
-        3.0,
-        1.0,
-        step=0.1,
-        help="Set the temperature of the LLM. A higher temperature will make the LLM more creative and less deterministic and factual, but also more prone to hallucination. A lower temperature will make the LLM more deterministic and less creative.",
-    )
-
+    #st.sidebar.header("LLM Settings")
+   
     # Load configuration from config.yaml file and initialize session state
-    load_config()
     initialize_session_state()
     
     st.sidebar.header("Audio Recording/Uploading")
@@ -89,8 +71,28 @@ def main():
         from src.main_utils.generation_utils_v2 import RAGAgent
         agent = RAGAgent(default_config=st.session_state["config"],config=st.session_state["streamlit_config"])
         return agent
+    
+    # Here are defined all usefull variables for the chatbot
+    streamlit_config = {
+        "cot_enabled": use_cot,
+        #"field_filter": field_filter,
+        "deep_search": deep_search,
+        "chat_history": str(
+            "## Chat History: \n\n " + str(st.session_state["messages"])
+        ),  # we keep track of the chat history,
+        "use_history": False,  # this functionnality is in work in progress
+        # "auto_job": auto_job,
+        "return_chunks": True,
+        "stream": True,
+    }
 
 
+    st.session_state["streamlit_config"] = streamlit_config
+    
+    #we define the rag agent 
+    rag_agent=load_rag_agent()
+    
+    
     if st.sidebar.toggle(
         "Enable audio recording 🎤",
         value=False,
@@ -185,38 +187,22 @@ def main():
             st.session_state["transcription"] = str(output_file.decode("utf-8"))
             from src.main_utils.streamlit_app_utils import show_submission_form
             show_submission_form()
-
-
-
-
-    # Here are defined all usefull variables for the chatbot
-    streamlit_config = {
-        "cot_enabled": use_cot,
-        "field_filter": field_filter,
-        "temperature": temperature,
-        "deep_search": deep_search,
-        "chat_history": str(
-            "## Chat History: \n\n " + str(st.session_state["messages"])
-        ),  # we keep track of the chat history,
-        "use_history": False,  # this functionnality is in work in progress
-        # "auto_job": auto_job,
-        "return_chunks": True,
-        "stream": True,
-    }
-
-
-    st.session_state["streamlit_config"] = streamlit_config
+            
+    # Add a button to clear the chat
+    if st.sidebar.button(
+        label="Clear Chat 🧹",
+        help="Clear the chat history on the visual interface 🧹",
+    ):
+        from src.main_utils.streamlit_app_utils import clear_chat_history
+        clear_chat_history()
 
     # Get the query from the user
     query = st.chat_input("Please enter your question")
 
-   
-
-
     # Process the query if submitted
     if query:
         st.session_state["current_query"] = query
-        process_query(query, streamlit_config,rag_agent=load_rag_agent())
+        process_query(query, streamlit_config,rag_agent=rag_agent)
 
 
 if __name__ == "__main__":

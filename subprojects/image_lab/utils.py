@@ -81,18 +81,27 @@ def enhance_image(input_path: str) -> str:
     
     return None
 
-def analyze_image(image):
-    from src.image_analysis import ImageAnalyzer
+def analyze_image(image,analyse_prompt="List with extreme precision all the base ingredients in this photograph, don't forget any."):
+    """
+        Analyzes an image to list all the base ingredients with extreme precision.
+        Args:
+            image: The image file to be analyzed.
+            analyse_prompt (str): The prompt to guide the image analysis. Default is 
+                                  "List with extreme precision all the base ingredients in this photograph, don't forget any."
+        Returns:
+            result: The result of the image analysis, typically a detailed description of the base ingredients in the image.
+    """
+    from src.aux_utils.image_analysis import ImageAnalyzer
     image_path = os.path.join(INPUT_DIR, "temp_image.jpg")
-    with open(image_path, "wb",encoding='utf-8') as f:
+    with open(image_path, "wb") as f:
         f.write(image.getbuffer())
     
-    enhanced_image_path = enhance_image(image_path)
-    if enhanced_image_path:
-        image_path = enhanced_image_path
+    # enhanced_image_path = enhance_image(image_path)
+    # if enhanced_image_path:
+    #     image_path = enhanced_image_path
     
     analyzer = ImageAnalyzer()
-    result = analyzer.describe_advanced(image_path=image_path, prompt="List with extreme precision all the base ingredients in this photograph, don't forget any.", grid_size=2)
+    result = analyzer.describe_advanced(image_path=image_path, prompt=analyse_prompt, grid_size=1)
     return result
 
 # def refine_prompt(prompt, style_prompt=None):
@@ -204,8 +213,8 @@ def refine_prompt(prompt):
     return prompt
 
 def prompt2video(prompt):
-    final_prompt = f"""Here is an image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still:  <prompt_start> {prompt} <prompt_end>. Based on this description, you will make a prompt for an image-to-video generation model whose goal is to animate the scene described in the image in a cinematic way.
-    The prompt should be very concise, precising camera type of movement, characters and their actions, and the setting. The prompt should be only one or two sentence long. Answer the prompt without preamble."""
+    final_prompt = f"""Here is an image description for a text-to-image generation model given by a user, in the intent to generate a movie/film still:  <prompt_start> {prompt} <prompt_end>. Based on this description, you will make a prompt for an image-to-video generation model whose goal is to animate the scene described previously in a cinematic way.
+    The prompt should be very concise, precising camera type of movement, characters and their actions, and the setting. The prompt should be only one or two sentence long and be coherent with the description. Answer the prompt without preamble."""
 
     recipe = LLM_answer_v3(final_prompt, model_name="gpt-4o", llm_provider="github")
     return recipe

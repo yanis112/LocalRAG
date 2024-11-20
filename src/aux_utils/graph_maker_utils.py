@@ -1,5 +1,7 @@
 import subprocess
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
+import os
+import subprocess
 
 class GraphMaker:
     def __init__(self, model_name='gpt-4o',llm_provider='github'):
@@ -254,34 +256,48 @@ container: Application {
 }
 """
 
+    
+    
     def generate_graph(self, base_prompt, output_svg='output.svg'):
-        generation_prompt=f""" Based on the following instructions, your goal is to generate a code in .d2 format that represents a graph. The code should be generated in a way that it can be used by the D2 software to generate a visual representation of the graph. \
+        # Create temp directory if it doesn't exist
+        temp_dir = os.path.join(os.getcwd(), 'temp')
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        generation_prompt = f""" Based on the following instructions, your goal is to generate a code in .d2 format that represents a graph. The code should be generated in a way that it can be used by the D2 software to generate a visual representation of the graph. \
             The instructions are as follows: {base_prompt}. Here are some an exemples of a working .d2 codes: EX1: {self.exemple_code_1}, EX2: {self.exemple_code_2}, EX3: {self.exemple_code_3}. Drawing inspiration from all those exemples codes and only using components, colours, elements , ect, explicitely used in them, you will answer with the code in .d2 format without any preamble."""
             
-        # Appeler le LLM pour obtenir le code .d2
+        # Get D2 code from LLM
         d2_code = LLM_answer_v3(
             prompt=generation_prompt,
             model_name=self.model_name,
             llm_provider=self.llm_provider,
         )
         
-        #process the code by replaxing: ``` by nothing
-        d2_code=d2_code.replace("```","")
+        # Process the code
+        d2_code = d2_code.replace("```","")
         
         print("##############################################")
         print("GENERATED D2 CODE:")
         print(d2_code)
         print("##############################################")
-        # Sauvegarder le code dans input.d2
-        with open('input.d2', 'w', encoding='utf-8') as file:
+        
+        # Save code in temp directory
+        input_file = os.path.join(temp_dir, 'input.d2')
+        output_file = os.path.join(temp_dir, output_svg)
+        
+        with open(input_file, 'w', encoding='utf-8') as file:
             file.write(d2_code)
-        # Générer l'image SVG
+        
+        # Generate SVG
         subprocess.run([
             r"C:\Program Files\D2\d2.exe",
             "--sketch",
-            "input.d2",
-            output_svg,
+            input_file,
+            output_file,
         ], shell=True)
+        
+        #we return relative path to the output_svg
+        return output_file
         
     def convert_svg_to_png(self,input_svg='output.svg', output_png='output.png'):
       import cairosvg
@@ -292,25 +308,7 @@ container: Application {
         import webbrowser
         # Open the SVG file directly in the default browser
         webbrowser.open(f'file://{os.path.abspath(output_svg)}')
-  
-    # def show_graph(self, output_svg='output.svg'):
-    #     import os
-    #     import matplotlib
-    #     matplotlib.use('TkAgg')  # Set interactive backend
-    #     import matplotlib.pyplot as plt
-    #     import matplotlib.image as mpimg
-        
-    #     # Convert SVG to PNG
-    #     output_png = output_svg.replace('.svg', '.png')
-    #     self.convert_svg_to_png(input_svg=output_svg, output_png=output_png)
-        
-    #     # Read and display PNG
-    #     img = mpimg.imread(output_png)
-    #     plt.figure(figsize=(10, 10))
-    #     plt.axis('off')
-    #     plt.imshow(img)
-    #     plt.show(block=True)  # Make sure window stays open
-            
+
 if __name__ == '__main__':
     graph_maker = GraphMaker(model_name='Meta-Llama-3.1-405B-Instruct',llm_provider='github')
     prompt = "A graph for a cooking recipe chatbot application. The graph should include the following components: User, Recipe Database, Recipe Retrieval, Recipe Generation, Recipe Display. The User should be connected to the Recipe Database, the Recipe Retrieval, and the Recipe Generation. The Recipe Database should be connected to the Recipe Retrieval. The Recipe Retrieval should be connected to the Recipe Generation. The Recipe Generation should be connected to the Recipe Display. The Recipe Database should be a stored data component. The Recipe Generation should have a lightgreen fill color."
