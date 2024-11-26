@@ -10,22 +10,19 @@ from src.main_utils.streamlit_app_utils import (
 
 
 
-
 def main():
     load_dotenv()
 
-    os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "2000"
+    os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "5000"
 
     st.sidebar.image("assets/no_back_logo.png", output_format="PNG")
-    #st.logo("assets/icon_ai.jpg",size='large')
+    
 
     # load configuration
     load_config()
 
     # defining the allowed data sources in the variable options
-    options = st.session_state["config"]["data_sources"]
-
-    
+    # options = st.session_state["config"]["data_sources"]
 
 
     # Define sidebar parameters
@@ -103,55 +100,11 @@ def main():
         print("TYPE: ", type(audio))
 
         if audio:
-            print("AUDIO: ", audio)
             print("AUDIO RECORDED !")
-            # Save the recorded audio to a WAV file
-            #if the temp directory doesn't exist, create it
-            if not os.path.exists("temp"):
-                os.makedirs("temp")
-                
-            with open("temp/recorded_audio.wav", "wb") as f:
-                f.write(audio.getbuffer())
-                
-            print("Audio saved as recorded_audio.wav")
+            from src.main_utils.streamlit_app_utils import process_audio_recording
+            process_audio_recording(audio)
+          
             
-            from src.aux_utils.transcription_utils import YouTubeTranscriber
-            
-            with st.spinner("Transcribing audio...🎤"):
-                yt=YouTubeTranscriber()
-                transcription=yt.transcribe("temp/recorded_audio.wav",method="groq")
-                
-            print("TRANSCRIPTION: ", transcription)
-            
-            #write the transcription in the chat messages
-            
-            #st.session_state["messages"].append("🎤 Audio recorded and transcribed: \n\n"+transcription)
-            st.chat_message("assistant").write("🎤 Audio recorded and transcribed: \n\n"+transcription)
-            # save the transcription in a json file
-            # pdf = create_transcription_pdf(transcription)
-            # from src.streamlit_app_utils import create_transcription_txt
-            # txt = create_transcription_txt(transcription)
-            # print("TXT FILE CREATED !")
-            # st.session_state["uploaded_file"] = True
-
-            # with open(txt, "rb") as f:
-            #     data = f.read()
-
-            st.toast("Transcription successfull !", icon="🎉")
-
-            # st.download_button(
-            #     label="Download transcription as txt",
-            #     data=txt,
-            #     file_name="transcription.txt",
-            #     mime="text/plain",
-            # )
-
-            # st.session_state["transcription"] = str(txt)
-
-            # audio = []
-
-            # from src.streamlit_app_utils import show_submission_form
-            # show_submission_form()
 
 
     uploaded_file = st.sidebar.file_uploader(

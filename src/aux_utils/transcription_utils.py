@@ -34,6 +34,19 @@ class YouTubeTranscriber:
         logging.info(f"Répertoire temporaire vérifié ou créé: {self.temp_dir}")
 
     def download_audio(self, url: str, output_dir: str) -> str:
+        """
+        Downloads audio from a given URL and saves it as an MP3 file in the specified output directory.
+
+        Args:
+            url (str): The URL of the audio to download.
+            output_dir (str): The directory where the downloaded audio file will be saved.
+
+        Returns:
+            str: The file path of the downloaded audio file, or None if the download fails.
+
+        Logs:
+            Logs the process of downloading the audio, including success and error messages.
+        """
         logging.info(f"Téléchargement de l'audio depuis l'URL: {url}")
         ydl_opts = {
             'format': 'bestaudio/best',
@@ -56,9 +69,10 @@ class YouTubeTranscriber:
             logging.error(f"Erreur lors du téléchargement de l'audio: {e}")
             return None
 
-    from concurrent.futures import ThreadPoolExecutor
+    
     
     def chunk_audio(self, file_path: str) -> List[str]:
+        from concurrent.futures import ThreadPoolExecutor
         logging.info(f"Découpage de l'audio: {file_path}")
         try:
             audio = AudioSegment.from_file(file_path)
@@ -90,7 +104,7 @@ class YouTubeTranscriber:
         """
         Transcribes audio from a given input path using the specified method.
         Args:
-            input_path (str): The path to the audio file or URL. Supported formats are .wav, .mp3, .m4a, or URLs starting with http:// or https://.
+            input_path (str): The path/url to the audio file or URL. Supported formats are .wav, .mp3, .m4a, or URLs starting with http:// or https://.
             method (str): The transcription method to use. Supported methods are 'insanely-fast-whisper', 'groq', 'whisper-turbo'.
         Returns:
             List[str]: A list of transcribed text chunks. Returns an empty list if an error occurs or if the download fails.
@@ -191,8 +205,8 @@ class YouTubeTranscriber:
                 file=(os.path.basename(downsampled_chunk_path), data),
                 model='whisper-large-v3-turbo',
                 response_format="json",
-                language=self.language,
-                temperature=0.0
+                #language=self.language,
+                #temperature=0.0
             )
             if translation and hasattr(translation, 'text'):
                 logging.info(f"Chunk transcrit avec succès: {chunk}")
@@ -209,8 +223,8 @@ class YouTubeTranscriber:
                         file=(os.path.basename(downsampled_chunk_path), data),
                         model='whisper-large-v3',
                         response_format="json",
-                        language=self.language,
-                        temperature=0.0
+                        #language=self.language,
+                        #temperature=0.0
                     )
                     if translation and hasattr(translation, 'text'):
                         logging.info(f"Chunk transcrit avec succès avec le modèle de secours: {chunk}")

@@ -1,0 +1,50 @@
+Résume la transcription audio de réunion suivante {transcription}. Structure ton résumé en format Markdown, par sections, en extrayant uniquement les points importants et les informations utiles communiquées. Ignore les éléments superflus tels que les plaisanteries et les digressions. Focalise-toi sur :
+
+Objectifs de la réunion: Quel était le but de cette réunion ?
+
+Points importants discutés: Synthétise les sujets abordés et les conclusions importantes.
+
+Décisions prises: Quelles décisions ont été prises lors de la réunion ?
+
+Actions à entreprendre: Liste les actions à entreprendre, qui est responsable et les échéances associées.
+
+Prochaines étapes: Quelles sont les prochaines étapes prévues ?
+
+Utilise le format Markdown suivant pour structurer ton résumé :
+
+# Résumé de la réunion du [Date de la réunion]
+
+## Objectifs
+
+[Description des objectifs]
+
+## Points importants discutés
+
+* [Point 1]
+* [Point 2]
+* [Point 3]
+...
+
+## Décisions prises
+
+* [Décision 1]
+* [Décision 2]
+* [Décision 3]
+...
+
+## Actions à entreprendre
+
+| Action | Responsable | Échéance |
+|---|---|---|
+| [Action 1] | [Responsable 1] | [Date] |
+| [Action 2] | [Responsable 2] | [Date] |
+| [Action 3] | [Responsable 3] | [Date] |
+...
+
+
+## Prochaines étapes
+
+[Description des prochaines étapes]
+content_copy
+Use code with caution.
+Markdown

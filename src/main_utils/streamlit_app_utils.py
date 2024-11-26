@@ -3,7 +3,6 @@ import textwrap
 import time
 from pathlib import Path
 
-import pandas as pd
 import streamlit as st
 import yaml
 
@@ -23,12 +22,14 @@ def save_audio_as_wav(uploaded_file, output_dir):
         str: The path to the saved WAV file.
     """
     from pydub import AudioSegment
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     file_path = os.path.join(output_dir, "input_file.wav")
     audio = AudioSegment.from_file(uploaded_file)
     audio.export(file_path, format="wav")
     return file_path
+
 
 @st.cache_resource
 def load_config():
@@ -103,35 +104,6 @@ def initialize_session_state():
         st.session_state.messages = []
 
 
-def transcribe_audio(audio):
-    """
-    Transcribes the given audio file.
-
-    Args:
-        audio: An audio file object.
-
-    Returns:
-        None
-    """
-    from src.main_utils.utils import StructuredAudioLoaderV2
-    audio.export("temp/input_audio.wav", format="wav")
-    st.write(
-        f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds"
-    )
-    with st.spinner("Transcribing audio..."):
-        transcriptor = StructuredAudioLoaderV2(
-            file_path="temp/input_audio.wav", diarization=True, batch_size=4
-        )
-        transcription = transcriptor.transcribe_audio()
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": "Here is your transcribed audio 🔉📜 ! \n\n "
-            + str(transcription),
-        }
-    )
-
-
 def save_uploaded_pdf(uploaded_file, temp_dir="temp"):
     # Vérifier si le dossier temporaire existe, sinon le créer
     Path(temp_dir).mkdir(parents=True, exist_ok=True)
@@ -150,73 +122,106 @@ def save_uploaded_pdf(uploaded_file, temp_dir="temp"):
 
 @st.fragment
 def handle_uploaded_file(uploaded_file):
+    """
+    Handles the uploaded file and processes it based on its extension.
+    Parameters:
+    uploaded_file (UploadedFile): The file uploaded by the user.
+    Returns:
+    bytes: The data of the processed file if applicable.
+    Processes:
+    - For audio files (mp3, wav, m4a, mp4):
+        - Saves the audio file as a wav file.
+        - Transcribes the audio using YouTubeTranscriber.
+        - Creates a transcription text file.
+        - Displays success messages and returns the transcription data.
+    - For image files (png, jpg, jpeg):
+        - Displays the image.
+        - Saves the image in the temp folder.
+        - Analyzes the image using UniversalImageLoader.
+        - Displays success messages and the extracted content from the image.
+    - For PDF files (pdf):
+        - Saves the uploaded PDF.
+        - Performs OCR on the PDF using StructuredPDFOcerizer.
+        - Displays success messages and the extracted text from the PDF.
+    """
+
     temp_dir = "temp"
     extension = str(Path(uploaded_file.name).suffix)
+
     if extension in [".mp3", ".wav", ".m4a", ".mp4"]:
-        from src.main_utils.utils import StructuredAudioLoaderV2
+        from src.aux_utils.transcription_utils import YouTubeTranscriber
+
         file_path = save_audio_as_wav(uploaded_file, temp_dir)
-        st.success(f"File saved as {file_path}")
-        with st.spinner(
-            "Transcribing the audio file... it should take less than 2 minutes 😜"
-        ):
-            transcriptor = StructuredAudioLoaderV2(
-                file_path=file_path, batch_size=4, diarization=True
-            )
-            transcription = transcriptor.transcribe_audio()
+        #st.success(f"File saved as {file_path}")
+
+        with st.spinner("Transcribing audio 🎤 ..."):
+            yt = YouTubeTranscriber()
+            transcription = yt.transcribe(file_path, method="groq")
+
+        #print("TRANSCRIPTION: ", transcription)
+
         st.session_state.messages.append(
             {
                 "role": "assistant",
-                "content": "Here is your transcribed audio 🔉📜 ! \n\n "
+                "content": "Here is your transcribed audio 🔉📜 ! \n\n"
                 + str(transcription),
             }
         )
-        # pdf = create_transcription_pdf(transcription)
-        txt = create_transcription_txt(transcription)
-        print("TXT FILE CREATED !")
+
+      
         st.session_state["uploaded_file"] = True
+        st.session_state["audio_transcription"] = transcription
+        
+        # txt = create_transcription_txt(transcription)
+        # print("TXT FILE CREATED !")
 
-        with open(txt, "rb") as f:
-            data = f.read()
+        # with open(txt, "rb") as f:
+        #     data = f.read()
 
-        st.toast("Transcription successfull !", icon="🎉")
+        # st.toast("Transcription successful!", icon="🎉")
+        # print("DOWNLOAD BUTTON CREATED !")
 
-        print("DOWNLOAD BUTTON CREATED !")
-        return data
+        # return data
 
     elif extension in [".png", ".jpg", ".jpeg"]:
         st.image(uploaded_file)
-        #save the image in the temp folder
+        # save the image in the temp folder
         uploaded_file.seek(0)
         with open("temp/" + uploaded_file.name, "wb") as f:
             f.write(uploaded_file.read())
-        
-        from image_analysis import UniversalImageLoader
+
+        from src.aux_utils.image_analysis import UniversalImageLoader
+
         with st.spinner(
             "Analyzing the image... it should take less than 2 minutes 😜"
         ):
-            #load the universal image loader
-            structured_output=UniversalImageLoader().universal_extract(image_path="temp/" + uploaded_file.name)
+            # load the universal image loader
+            structured_output = UniversalImageLoader().universal_extract(
+                image_path="temp/" + uploaded_file.name
+            )
             print("TYPE OF STRUCTURED OUTPUT:", type(structured_output))
-   
+
             st.session_state.messages.append(
-                {"role": "assistant", "content": "Here is the content i extracted from your image 🖼️: \n\n"+ str(structured_output)}
+                {
+                    "role": "assistant",
+                    "content": "Here is the content i extracted from your image 🖼️: \n\n"
+                    + str(structured_output),
+                }
             )
             st.session_state["uploaded_file"] = True
 
         st.toast("Image analysis successfull !", icon="🎉")
 
-
     elif extension in [".pdf"]:
         from src.main_utils.utils import StructuredPDFOcerizer
+
         save_uploaded_pdf(uploaded_file)
-        
+
         pdf_loader = StructuredPDFOcerizer()
         with st.spinner("Performing OCR on the PDF..."):
             doc_pdf = pdf_loader.extract_text(
                 pdf_path="temp/" + str(uploaded_file.name)
             )
-
-
 
         st.toast("OCR process successful!", icon="🎉")
 
@@ -234,12 +239,17 @@ def handle_uploaded_file(uploaded_file):
 @st.fragment
 def print_suggestions(list_suggestions):
     from streamlit_pills import stp
+
     selected = stp.pills(
         label="Suggestions", options=list_suggestions, index=None
     )
     if selected:
         st.write("You selected:", selected)
-        process_query(selected, st.session_state["streamlit_config"], st.session_state["rag_agent"])
+        process_query(
+            selected,
+            st.session_state["streamlit_config"],
+            st.session_state["rag_agent"],
+        )
 
     return selected
 
@@ -266,8 +276,8 @@ def query_suggestion(query):
         breaker = QueryBreaker()
         list_sub_queries = breaker.break_query(query=query, context=context)[
             0:3
-        ]  
-        
+        ]
+
     # We print the suggestions
     selected = print_suggestions(list_sub_queries)
 
@@ -286,6 +296,7 @@ def create_transcription_pdf(transcription):
 
     """
     from fpdf import FPDF
+
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -315,32 +326,82 @@ def create_transcription_txt(transcription):
     return txt_file_path
 
 
-
 def display_chat_history():
     for message in st.session_state.messages:
         if isinstance(message["content"], str):
-            if message["role"] == "assistant" and "<output>" in message["content"]:
+            if (
+                message["role"] == "assistant"
+                and "<output>" in message["content"]
+            ):
                 # Split the content at the <output> tag
-                reasoning, final_output = message["content"].split("<output>", 1)
-                
+                reasoning, final_output = message["content"].split(
+                    "<output>", 1
+                )
+
                 # Display the final output
-                with st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg'):
+                with st.chat_message(
+                    message["role"], avatar="assets/icon_ai_2.jpg"
+                ):
                     st.write(final_output.strip())
-                    
+
                     # Add an expander for the reasoning
                     with st.expander("Show intermediate reasoning steps"):
                         st.write(reasoning.strip())
             else:
                 # For all other messages, display normally
-                st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg').write(message["content"])
+                st.chat_message(
+                    message["role"], avatar="assets/icon_ai_2.jpg"
+                ).write(message["content"])
         elif isinstance(message["content"], dict):
-            st.chat_message(message["role"],avatar='assets/icon_ai_2.jpg').json(message["content"])
+            st.chat_message(
+                message["role"], avatar="assets/icon_ai_2.jpg"
+            ).json(message["content"])
 
 
 def clear_chat_history():
     st.session_state.messages = []
     st.toast("Chat history cleared!", icon="🧹")
+
+
+def process_audio_recording(audio):
+    """
+    Process an audio recording by saving it to a temporary file and transcribing it.
+    This function saves the provided audio recording to a temporary file named 
+    'recorded_audio.wav' in a 'temp' directory. It then uses the YouTubeTranscriber 
+    class to transcribe the audio file and displays the transcription in a Streamlit 
+    chat message and a toast notification.
+    Args:
+        audio: An audio recording object that supports the `getbuffer` method to 
+               retrieve the audio data.
+    Returns:
+        str: The transcription of the audio recording.
+    """
+    from src.aux_utils.transcription_utils import YouTubeTranscriber
+
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
+
+    with open("temp/recorded_audio.wav", "wb") as f:
+        f.write(audio.getbuffer())
+
+    print("Audio saved as recorded_audio.wav")
+
+    with st.spinner("Transcribing audio...🎤"):
+        yt = YouTubeTranscriber()
+        transcription = yt.transcribe("temp/recorded_audio.wav", method="groq")
+
+    print("TRANSCRIPTION: ", transcription)
+
+    st.chat_message("assistant").write(
+        "🎤 Audio recorded and transcribed: \n\n" + transcription
+    )
+    st.toast("Transcription successful!", icon="🎉")
     
+    #add transcription to the session state
+    st.session_state["audio_transcription"] = transcription
+
+    return transcription
+
 
 def process_query(query, streamlit_config, rag_agent):
     """
@@ -355,121 +416,212 @@ def process_query(query, streamlit_config, rag_agent):
         None
     """
     from src.aux_utils.text_classification_utils import IntentClassifier
-    
+
     start_time = time.time()
     st.session_state.messages.append({"role": "user", "content": query})
     default_config = st.session_state["config"]
-    
-    #make a fusion between the default config and the streamlit config (the streamlit config has the priority)
-    config = {**default_config, **streamlit_config}
-    
-    #we load the intent classifier into a session state variable so that we check if the intent is already loaded
-    #classifier = IntentClassifier(config["actions"])
-    
-    if "intent_classifier" not in st.session_state:
-        st.session_state["intent_classifier"] = IntentClassifier(config["actions"])
-    
-    #we update the chat history to provide the LLM with the latest chat history
-    config["chat_history"] = str("## Chat History: \n\n "+str(st.session_state['messages'])) #we keep track of the chat history
-    
-    if config["deep_search"]: #if deep search is enabled we notify the user
-        st.toast("Deep search enabled ! it may take a while...", icon="⏳")
-    
-    #we write the query in the chat
-    st.chat_message("user",avatar='assets/icon_human.jpg').write(query)
 
-    if config["field_filter"] != []: #if no specific field is selected we disable the source filter
+    # make a fusion between the default config and the streamlit config (the streamlit config has the priority)
+    config = {**default_config, **streamlit_config}
+
+    # we load the intent classifier into a session state variable so that we check if the intent is already loaded
+
+    if "intent_classifier" not in st.session_state:
+        st.session_state["intent_classifier"] = IntentClassifier(
+            config["actions"]
+        )
+
+    # we update the chat history to provide the LLM with the latest chat history
+    config["chat_history"] = str(
+        "## Chat History: \n\n " + str(st.session_state["messages"])
+    )  # we keep track of the chat history
+
+    if config["deep_search"]:  # if deep search is enabled we notify the user
+        st.toast("Deep search enabled ! it may take a while...", icon="⏳")
+
+    # we write the query in the chat
+    st.chat_message("user", avatar="assets/icon_human.jpg").write(query)
+
+    if (
+        config["field_filter"] != []
+    ):  # if no specific field is selected we disable the source filter
         config["enable_source_filter"] = True
     else:
         config["enable_source_filter"] = False
-            
+
     # we return the chunks to be able to display the sources
     config["return_chunks"] = True
     config["stream"] = True
 
-    if config["deep_search"]: #if deep search is enabled we use the advanced_RAG_answer function and no intent classifier !
-        with st.spinner("Searching relevant documents and formulating answer..."):
+    if config[
+        "deep_search"
+    ]:  # if deep search is enabled we use the advanced_RAG_answer function and no intent classifier !
+        with st.spinner(
+            "Searching relevant documents and formulating answer..."
+        ):
             answer, sources = rag_agent.advanced_RAG_answer(query)
             docs = []
-        
+
     else:
+        
+        #we check if the query contains the command @add to add a document to the vectorstore
+        if "@add" in query:
+            #we create a clean query without the @add command
+            query=query.replace("@add","")
+            #we import the external knowledge manager
+            from src.main_utils.link_gestion import ExternalKnowledgeManager
+            link_manager=ExternalKnowledgeManager(config,client=rag_agent.client)
+            link_manager.extract_rescource(query)
+            link_manager.index_rescource()
+            #we stop the process here
+            st.toast("New rescource indexed !", icon="🎉")
+            return None
+        
         with st.spinner("Determining query intent 🧠 ..."):
-            #we detect the intent of the query
-            #intent = classifier.classify(query)
-            #we use the intent classifier stored in the session state
+            # we detect the intent of the query
             intent = st.session_state["intent_classifier"].classify(query)
             print("Intent detected: ", intent)
-            st.toast("Intent detected: "+intent, icon="🧠")
-            
+            st.toast("Intent detected: " + intent, icon="🧠")
+
         if intent == "rediger un texte pour une offre":
             from src.aux_utils.auto_job import auto_job_writter
+
             with st.spinner("Generating a text for a job offer..."):
-                answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+                answer = LLM_answer_v3(
+                    prompt=auto_job_writter(query, "info.yaml", "cv.txt"),
+                    stream=True,
+                    model_name=config["model_name"],
+                    llm_provider=config["llm_provider"],
+                )
                 sources = []
         elif intent == "question sur des emails":
-            #fetch the last 100 emails and search for the answer
+            # fetch the last 100 emails and search for the answer
             from src.aux_utils.email_utils import EmailAgent
+
             with st.spinner("Fetching new emails..."):
                 email_utils = EmailAgent()
                 email_utils.connect()
                 email_utils.fetch_new_emails(last_k=100)
                 email_utils.disconnect()
-                
-            #fill the vectorstore withg the new emails
+
+            # fill the vectorstore withg the new emails
             from src.main_utils.vectorstore_utils_v2 import VectorAgent
+
             with st.spinner("Filling the vectorstore with new emails..."):
-                agent = VectorAgent(default_config=config,qdrant_client=rag_agent.client)
+                agent = VectorAgent(
+                    default_config=config, qdrant_client=rag_agent.client
+                )
                 agent.fill()
                 print("Vectorstore filled with new emails !")
-            
+
             config["data_sources"] = ["emails"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["emails"]
-            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+            with st.spinner(
+                "Searching relevant documents and formulating answer 📄 ..."
+            ):
                 answer, docs, sources = rag_agent.RAG_answer(query)
-                
+
         elif intent == "rechercher des offres d'emploi":
+            from src.aux_utils.job_scrapper import JobAgent
+
             config["data_sources"] = ["jobs"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["jobs"]
-            
-            #scrapping jobs
-            from src.aux_utils.job_scrapper import JobAgent
+
+            # scrapping jobs
             with st.spinner("Scraping job offers..."):
-                job_scrapper = JobAgent(search_term='Data Scientist', location="Aix en Provence", hours_old=200, results_wanted=20,google_search_term='data scientist aix en provence',is_remote=False)
-                job_scrapper.scrape_and_convert()
-                
-            #fill the vectorstore with the new job offers
+                try:
+                    job_scrapper = JobAgent(
+                        search_term="Data Scientist",
+                        location="Aix en Provence",
+                        hours_old=200,
+                        results_wanted=20,
+                        google_search_term="data scientist aix en provence",
+                        is_remote=False,
+                    )
+                    job_scrapper.scrape_and_convert()
+                except Exception as e:
+                    print("EXCEPTION IN JOB SCRAPPING:", e)
+                    st.error(
+                        "An error occured while scrapping the job offers !"
+                    )
+
+            # fill the vectorstore with the new job offers
             from src.main_utils.vectorstore_utils_v2 import VectorAgent
+
             with st.spinner("Filling the vectorstore with new job offers..."):
-                agent = VectorAgent(default_config=config,qdrant_client=rag_agent.client)
+                agent = VectorAgent(
+                    default_config=config, qdrant_client=rag_agent.client
+                )
                 agent.fill()
                 print("Vectorstore filled with new job offers !")
-            
-            with st.spinner("Searching relevant jobs and formulating answer 📄 ..."):
+
+            with st.spinner(
+                "Searching relevant jobs and formulating answer 📄 ..."
+            ):
                 answer, docs, sources = rag_agent.RAG_answer(query)
-                
+
         elif intent == "write instagram description":
-            from src.aux_utils.auto_instagram_publi import instagram_descr_prompt
+            from src.aux_utils.auto_instagram_publi import (
+                instagram_descr_prompt,
+            )
+
             with st.spinner("Generating a text for an instagram post..."):
-                answer = LLM_answer_v3(prompt=instagram_descr_prompt(query), stream=True, model_name=config["model_name"], llm_provider=config["llm_provider"])
+                answer = LLM_answer_v3(
+                    prompt=instagram_descr_prompt(query),
+                    stream=True,
+                    model_name=config["model_name"],
+                    llm_provider=config["llm_provider"],
+                )
                 sources = []
-        elif intent =="generate a graph/diagram":
+        elif intent == "generate a graph/diagram":
             from src.aux_utils.graph_maker_utils import GraphMaker
+
             with st.spinner("Generating the graph..."):
-                graph_maker = GraphMaker(model_name='Meta-Llama-3.1-405B-Instruct',llm_provider='github')
-                output_path=graph_maker.generate_graph(base_prompt=query)
-                #show the svg file in the streamlit app
+                graph_maker = GraphMaker(
+                    model_name="Meta-Llama-3.1-405B-Instruct",
+                    llm_provider="github",
+                )
+                output_path = graph_maker.generate_graph(base_prompt=query)
+                # show the svg file in the streamlit app
                 st.image(output_path)
                 sources = []
                 answer = "Here is the generated graph !"
-                #convert answer to a generator like object to be treated as a stream
+                # convert answer to a generator like object to be treated as a stream
                 answer = (line for line in [answer])
-        else: #normal search
-            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+
+        elif intent == "Generate meeting summary":
+            # load the meeting summarization prompt from prompts/meeting_summary_prompt.txt
+            with open("src/prompts/meeting_summary_prompt.txt", "r", encoding='utf-8') as f:
+                template = f.read()
+                # Échapper d'abord toutes les accolades
+                template = template.replace("{", "{{").replace("}", "}}")
+                # Définir l'emplacement pour la transcription
+                template = template.replace("{{transcription}}", "{transcription}")
+                
+                # Maintenant .format() fonctionnera correctement
+                full_prompt = template.format(
+                    transcription=st.session_state["audio_transcription"]
+                )
+
+            # give it to the LLM
+            with st.spinner("Generating the meeting summary..."):
+                answer = LLM_answer_v3(
+                    prompt=full_prompt,
+                    stream=True,
+                    model_name=config["model_name"],
+                    llm_provider=config["llm_provider"],
+                )
+                sources = []
+
+        else:  # normal search
+            with st.spinner(
+                "Searching relevant documents and formulating answer 📄 ..."
+            ):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
-        with st.chat_message("assistant",avatar='assets/icon_ai_2.jpg'):
+        with st.chat_message("assistant", avatar="assets/icon_ai_2.jpg"):
             answer = st.write_stream(answer)
 
         end_time = time.time()
@@ -477,7 +629,7 @@ def process_query(query, streamlit_config, rag_agent):
             "Query answered in {:.2f} seconds!".format(end_time - start_time),
             icon="⏳",
         )
-        
+
         # Add the answer to the chat history
         st.session_state.messages.append(
             {"role": "assistant", "content": answer}
@@ -486,63 +638,24 @@ def process_query(query, streamlit_config, rag_agent):
         # Add the sources list to a session state variable
         st.session_state["sources"] = sources
 
-        hallucination_scores = []
-        # hallucination_scores = compute_hallucination_scores(answer, docs)
-
-        display_sources_v2(
-            sources, hallucination_scores
-        )  # we do not compute the hallucination scores here its too long
-
-
-def display_sources(sources, hallucination_scores):
-    # Create a dictionary to hold the total hallucination score for each source
-    source_hallucination_scores = {}
-    for source, score in zip(sources, hallucination_scores):
-        if source not in source_hallucination_scores:
-            source_hallucination_scores[source] = score
-
-    # Calculate the average hallucination score for each source
-    source_counts = {source: sources.count(source) for source in sources}
-    for source in source_hallucination_scores:
-        # Convert the average hallucination score to percentage and format it without decimals and with a '%' sign
-        source_hallucination_scores[source] = (
-            f"{(source_hallucination_scores[source]*10):.0f}%"
-        )
-
-    # Combine the counts and hallucination scores into a single DataFrame
-    data = []
-    for source in sources:
-        if source not in [
-            d["Source (decreasing order of relevance)"] for d in data
-        ]:  # Avoid adding duplicates
-            data.append(
-                {
-                    "Source (decreasing order of relevance)": source,
-                    "Number of times cited": source_counts[source],
-                    "Average Hallucination Score (%)": source_hallucination_scores[
-                        source
-                    ],
-                }
-            )
-    df_sources = pd.DataFrame(data)
-
-    # Display the DataFrame
-    st.dataframe(df_sources)
+        display_sources(sources)
 
 
 @st.fragment
-def display_sources_v2(sources, hallucination_scores):
+def display_sources(sources):
     import os
     import webbrowser
+
     from streamlit_extras.stylable_container import stylable_container
+
     source_counts = {source: sources.count(source) for source in sources}
 
     # Emoji dictionary (you can customize this)
     subdomain_emojis = {
-        'jobs': '💼',
-        'politique': '🏛️',
-        'internet': '🌐',
-        'emails': '📧'
+        "jobs": "💼",
+        "politique": "🏛️",
+        "internet": "🌐",
+        "emails": "📧",
     }
 
     data = []
@@ -550,25 +663,30 @@ def display_sources_v2(sources, hallucination_scores):
         absolute_path = os.path.abspath(source)
         filename = os.path.basename(absolute_path)
 
-         # Extract the subdomain from the path
+        # Extract the subdomain from the path
         subdomain = None
         for domain in subdomain_emojis.keys():
             if domain in absolute_path.lower():
                 subdomain = domain
                 break
-        emoji = subdomain_emojis.get(subdomain, '📄')  # Default emoji if subdomain not found
-
+        emoji = subdomain_emojis.get(
+            subdomain, "📄"
+        )  # Default emoji if subdomain not found
 
         if absolute_path not in [d["Absolute Path"] for d in data]:
-            data.append({
-                "Absolute Path": absolute_path,
-                "Filename": filename,
-                "Count": source_counts[source],
-                "Emoji": emoji,
-            })
+            data.append(
+                {
+                    "Absolute Path": absolute_path,
+                    "Filename": filename,
+                    "Count": source_counts[source],
+                    "Emoji": emoji,
+                }
+            )
 
     with st.expander("Sources 📑"):
-        with stylable_container(key="sources_container", css_styles="""
+        with stylable_container(
+            key="sources_container",
+            css_styles="""
             #sources_container .stButton { /* Targets buttons ONLY within the container */
                 background-color: transparent;
                 border: none;
@@ -589,23 +707,28 @@ def display_sources_v2(sources, hallucination_scores):
                 padding: 10px;
                 margin-bottom: 5px;
             }
-            """): 
-
+            """,
+        ):
             for i, item in enumerate(data):
-                col1, col2, col3, col4 = st.columns([0.1, 0.5, 0.5, 0.1])  # Added emoji column back
+                col1, col2, col3, col4 = st.columns(
+                    [0.1, 0.5, 0.5, 0.1]
+                )  # Added emoji column back
 
                 with col1:
-                    st.write(item['Emoji'])  # Display the emoji
+                    st.write(item["Emoji"])  # Display the emoji
 
                 with col2:
-                    st.write(item['Filename'])
+                    st.write(item["Filename"])
 
                 with col3:
                     st.write(f"({item['Count']})")
 
                 with col4:
                     if st.button("🔍", key=f"button_{i}"):
-                         webbrowser.open(f"file://{item['Absolute Path']}", new=1)
+                        webbrowser.open(
+                            f"file://{item['Absolute Path']}", new=1
+                        )
+
 
 if __name__ == "__main__":
     pass

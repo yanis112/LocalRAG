@@ -44,9 +44,11 @@ suggestions_enabled: false # Enable or disable the query suggestions
 use_history: false # Enable or disable the history of the chat to be used for answering the queries
 chat_history: 'no_chat' # Chat history to use for the queries
 data_sources: {
-    "politique": "Political Content",
-    "emails": "Emails",
-    "jobs": "Jobs",
+    "politique": "Political Content, expert opinions on political, geopolitical and economic issues",
+    "emails": "Emails, chat messages, and other text-based communication",
+    "jobs": "job descriptions, or job offers",
+    "food": "Food,food recipes, and cooking instructions",
+    "linkedin": "LinkedIn posts, technical articles, data science and AI content",
 }
 
    
@@ -115,7 +117,7 @@ description_model_name: "gemma2:2b" #LLM model to use for generating the entity 
 description_llm_provider: "ollama" # Provider of the LLM model for the entity descriptions
 
 # Possible actions
-actions: ["rediger un texte pour une offre","question sur des emails","rechercher des offres d'emploi","question normale sur des documents","write instagram description","generate a graph/diagram"]
+actions: ["rediger un texte pour une offre","question sur des emails","rechercher des offres d'emploi","question normale sur des documents","write instagram description","generate a graph/diagram","Generate meeting summary"]
 
 #Agentic RAG parameters
 query_breaker_model: "o1-mini"
