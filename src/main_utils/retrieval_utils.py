@@ -152,7 +152,7 @@ def directory_to_vectorstore(default_config, config={}):
     if not clone_database:
         # load all the documents in the directory
         start_time = time.time()
-        list_documents = process_documents(
+        list_documents = process_all_documents(
             path=path,
             log_file_path=log_file_path,
             processed_docs=processed_docs,
@@ -375,7 +375,7 @@ def process_file(args):
     return None
 
 
-# def process_documents(path, log_file_path, processed_docs):
+# def process_all_documents(path, log_file_path, processed_docs):
 #     """
 #     Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
 
@@ -429,7 +429,7 @@ def process_file(args):
 
 #     return total_chunks
 
-def process_documents(path, log_file_path, processed_docs):
+def process_all_documents(path, log_file_path, processed_docs):
     """
     Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
 

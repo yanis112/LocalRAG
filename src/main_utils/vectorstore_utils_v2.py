@@ -163,7 +163,7 @@ class VectorAgent:
                 len(self.already_processed_docs),
             )
 
-    def process_documents(self):
+    def process_all_documents(self):
         """
         Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
 
@@ -188,7 +188,7 @@ class VectorAgent:
             for root, dirs, files in os.walk(self.path):
                 for name in files:
                     full_path = os.path.join(root, name)
-                    result = self.process_single_file(
+                    result = self.process_document(
                         name,
                         full_path,
                     )
@@ -197,7 +197,7 @@ class VectorAgent:
                     pbar.update()
 
 
-    def process_single_file(self, name, full_path):
+    def process_document(self, name, full_path):
         """
         Process a single file based on the given arguments.
     
@@ -556,7 +556,7 @@ class VectorAgent:
         #use v3 to load the vectorstore
         self.load_vectordb_V3()
         self.find_already_processed() # find the already processed documents
-        self.process_documents() # process the documents
+        self.process_all_documents() # process the documents
         self.filter_and_split_chunks() # filter and split the chunks
         print("Number of total documents currently processed:", len(self.total_documents))
         print("Number of total chunks currently processed:", len(self.total_chunks))
@@ -567,7 +567,7 @@ class VectorAgent:
         
     def get_chunks(self):
         """Return the chunks without pushing them to the vectorstore."""
-        self.process_documents() # process the documents
+        self.process_all_documents() # process the documents
         self.filter_and_split_chunks() # filter and split the chunks
         return self.total_chunks
 
