@@ -43,7 +43,9 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
 
 
 class VectorAgent:
-    def __init__(self, default_config, config={},qdrant_client=None):
+    def __init__(self, default_config, config=None, qdrant_client=None):
+        if config is None:
+            config = {}
         self.config = {**default_config, **config}
         self.persist_directory = self.config["persist_directory"]
         self.process_log_file = self.config["process_log_file"]
