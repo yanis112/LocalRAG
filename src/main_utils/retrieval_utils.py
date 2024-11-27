@@ -707,7 +707,7 @@ def add_documents_to_db(
 
 
 @log_execution_time
-def add_documents_to_db_V2(
+def add_documents_to_vectorstore(
     total_chunks,
     vectordb,
     embedding_model,

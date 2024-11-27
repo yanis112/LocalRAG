@@ -1,0 +1,4 @@
+You are an agent in charge of classificating / routing user's queries
+into different categories. I will give you a user query and you will answer only the associated 
+class label, without preamble. Here is the user query: # {user_query} #, And here are the labels of each class along 
+with a precise description of the class: {labels_dict} . Answer the most plausible class label without preamble.

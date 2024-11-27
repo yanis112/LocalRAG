@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import traceback
 import warnings
 from datetime import datetime
 
@@ -9,16 +10,17 @@ from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_qdrant import (
-    Qdrant,
     QdrantVectorStore,
     RetrievalMode,
 )
-from qdrant_client import QdrantClient,models
-
+from qdrant_client import QdrantClient, models
 from tqdm import tqdm
-# custom imports 
-from src.main_utils.embedding_model import get_embedding_model, get_sparse_embedding_model
-# from src.query_routing_utils import QueryRouter
+
+# custom imports
+from src.main_utils.embedding_model import (
+    get_embedding_model,
+    get_sparse_embedding_model,
+)
 from src.main_utils.utils import (
     log_execution_time,
     text_preprocessing,
@@ -72,15 +74,18 @@ class VectorAgent:
         )
 
         self.log_file_name = self.config["process_log_file"]
-        
-        
-        self.client = QdrantClient(path=self.persist_directory) if qdrant_client is None else qdrant_client
+
+        self.client = (
+            QdrantClient(path=self.persist_directory)
+            if qdrant_client is None
+            else qdrant_client
+        )
         self.collection_name = self.config["collection_name"]
 
         # storage variables
         self.total_chunks = []
         self.total_documents = []
-        
+
     def create_persist_directory(self):
         """
         Creates the persist directory if it does not already exist.
@@ -93,8 +98,6 @@ class VectorAgent:
             logging.info("Persist directory does not exist!, creating it ...")
             os.makedirs(self.persist_directory)
             logging.info("Persist directory created successfully!")
-        
-
 
     def get_log_file_path(self):
         """
@@ -146,89 +149,108 @@ class VectorAgent:
 
     def find_already_processed(self):
         """
-        Load the list of names of the already processed documents from a log file.
-
-        Args:
-            log_file_path (str): The path to the log file.
-
-        Returns:
-            list: The list of already processed documents.
-
+        Reads a log file to determine which documents have already been processed.
+        This method attempts to open a log file specified by `self.log_file_path` and
+        reads its contents. Each line in the file is considered a document that has
+        already been processed. These documents are stored in the `self.already_processed_docs`
+        attribute as a set. If the log file does not exist, `self.already_processed_docs`
+        is initialized as an empty set.
+        Raises:
+            FileNotFoundError: If the log file does not exist.
+        Prints:
+            The number of already processed documents.
         """
-       
-        with open(self.log_file_path, "r") as file:
-            self.already_processed_docs = file.read().splitlines()
-            print(
-                "Number of already processed documents:",
-                len(self.already_processed_docs),
-            )
+        
+        try:
+            with open(self.log_file_path, "r", encoding="utf-8") as file:
+                self.already_processed_docs = set(file.read().splitlines())
+        except FileNotFoundError:
+            self.already_processed_docs = set()
+        print(
+            f"Number of already processed documents: {len(self.already_processed_docs)}"
+        )
+
+    def get_pending_files(self):
+        """
+        Retrieve a set of pending files that need to be processed.
+        This method walks through the directory specified by `self.path` and collects
+        files that meet the following criteria:
+        - The file extension is in the list of allowed formats (`self.allowed_formats`).
+        - The file has not already been processed (`self.already_processed_docs`).
+        - The file is not named "meta.json".
+        Returns:
+            set: A set of tuples, where each tuple contains the file name and its full path.
+        """
+        
+        pending_files = set()
+        for root, _, files in os.walk(self.path):
+            for name in files:
+                if (
+                    name.split(".")[-1] in self.allowed_formats
+                    and name not in self.already_processed_docs
+                    and name != "meta.json"
+                ):
+                    pending_files.add((name, os.path.join(root, name)))
+        return pending_files
 
     def process_all_documents(self):
         """
-        Process documents by loading and splitting them into chunks, all the files in the directory are processed recursively.
-
-        Args:
-            path (str): The path to the directory containing the documents.
-            chunk_size (int): The size of each chunk in number of characters.
-            chunk_overlap (int): The overlap between consecutive chunks in number of characters.
-            log_file_path (str): The path to the log file.
-            processed_docs (list): A list to store the processed documents.
-            total_chunks (int): The total number of chunks.
-            splitting_method (str): The method used for splitting the documents.
-            dense_embedding_model (str): The embedding model to use for semantic analysis.
-            semantic_threshold (float): The threshold for semantic similarity.
-
+        Process all new documents that haven't been processed before.
+        This method retrieves the list of pending files that need to be processed.
+        If there are no new files to process, it prints a message and returns.
+        Otherwise, it processes each pending file, updates the list of processed
+        documents, and displays a progress bar.
+        The processed documents are appended to the `total_documents` list, and
+        the names of the processed files are added to the `already_processed_docs` set.
         Returns:
             None
         """
 
-        # get the total number of files in the directory
-        total_files = sum([len(files) for r, d, files in os.walk(self.path)])
-        with tqdm(total=total_files, desc="Processing files") as pbar:
-            for root, dirs, files in os.walk(self.path):
-                for name in files:
-                    full_path = os.path.join(root, name)
-                    result = self.process_document(
-                        name,
-                        full_path,
-                    )
-                    if result:
-                        self.total_documents.append(result) # add the processed document to the total documents
-                    pbar.update()
+        pending_files = self.get_pending_files()
+        if not pending_files:
+            print("No new files to process")
+            return
 
+        with tqdm(
+            total=len(pending_files), desc="Processing new files"
+        ) as pbar:
+            for name, full_path in pending_files:
+                result = self.process_document(name, full_path)
+                if result:
+                    self.total_documents.append(result)
+                    # Update processed files set in memory
+                    self.already_processed_docs.add(name)
+                pbar.update()
 
     def process_document(self, name, full_path):
         """
-        Process a single file based on the given arguments.
-    
+        Processes a document by loading it using a specific loader and logs the processed file name.
         Args:
-            name (str): The name of the file.
-            full_path (str): The full path of the file.
-    
+            name (str): The name of the document to be processed.
+            full_path (str): The full path to the document to be processed.
         Returns:
-            object: The processed document if successful, None otherwise.
+            object: The loaded document if successful, otherwise None.
+        Raises:
+            Exception: If there is an error during the loading or logging process, an exception is caught and None is returned.
         """
-        if (
-            name.split(".")[-1] in self.allowed_formats
-            and name not in self.already_processed_docs
-            and name != "meta.json"
-        ):
-            loader = self.find_loader(name, full_path)
+        
+        loader = self.find_loader(name, full_path)
+        try:
+            doc = loader.load()
             try:
-                doc = loader.load()
-                try:
-                    with open(self.log_file_path, "a",encoding="utf-8") as log_file:
-                        log_file.write(name + "\n")
-                except Exception as e:
-                    import traceback
-                    print(f"Error writing to log for {name}:")
-                    print(traceback.format_exc())
+                with open(
+                    self.log_file_path, "a", encoding="utf-8"
+                ) as log_file:
+                    log_file.write(name + "\n")
                 return doc
             except Exception as e:
-                import traceback
-                print(f"Error processing {name}:")
+                print(f"Error writing to log for {name}:")
                 print(traceback.format_exc())
                 return None
+        except Exception as e:
+            print(f"Error processing {name}:")
+            print(traceback.format_exc())
+            return None
 
     def find_loader(self, name, full_path):
         """
@@ -297,25 +319,25 @@ class VectorAgent:
     def filter_and_split_chunks(self):
         """
         Filters and prepares chunks based on the specified splitting method, apply pre-processing to the raw documents before chunking, and remove duplicates.
-    
+
         Args:
             total_chunks (list): A list of Document objects representing the total chunks.
             splitting_method (str): The method used for splitting the chunks. Can be "recursive" or any other value.
             embedding_model (str): The name of the embedding model to be used.
             semantic_threshold (float): The threshold value for semantic chunking.
-    
+
         Returns:
             list: A list of Document objects representing the filtered and prepared chunks.
         """
         print("STARTING TO SPLIT THE DOCUMENTS INTO CHUNKS ...")
-    
+
         if self.config["splitting_method"] == "semantic":
             semantic_splitter = SemanticChunker(
                 embeddings=self.chunking_embedding_model,
                 breakpoint_threshold_type="percentile",
                 breakpoint_threshold_amount=self.config["semantic_threshold"],
             )
-    
+
             # get the total content of the documents
             total_docs_content = [
                 text_preprocessing(chunk[0].page_content)
@@ -325,21 +347,22 @@ class VectorAgent:
             total_docs_metadata = [
                 chunk[0].metadata for chunk in self.total_documents
             ]
-            
+
             chunks = semantic_splitter.create_documents(
                 texts=total_docs_content, metadatas=total_docs_metadata
             )
         else:
             from langchain.text_splitter import RecursiveCharacterTextSplitter
-    
-            chunk_size = self.config["chunk_size"] # default chunk size
-            chunk_overlap = self.config["chunk_overlap"]  # default chunk overlap
-    
+
+            chunk_size = self.config["chunk_size"]  # default chunk size
+            chunk_overlap = self.config[
+                "chunk_overlap"
+            ]  # default chunk overlap
+
             character_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=chunk_size,
-                chunk_overlap=chunk_overlap
+                chunk_size=chunk_size, chunk_overlap=chunk_overlap
             )
-    
+
             # get the total content of the documents
             total_docs_content = [
                 text_preprocessing(chunk[0].page_content)
@@ -349,61 +372,61 @@ class VectorAgent:
             total_docs_metadata = [
                 chunk[0].metadata for chunk in self.total_documents
             ]
-    
+
             chunks = [
-                Document(
-                    page_content=content,
-                    metadata=metadata
-                ) for content, metadata in zip(total_docs_content, total_docs_metadata)
+                Document(page_content=content, metadata=metadata)
+                for content, metadata in zip(
+                    total_docs_content, total_docs_metadata
+                )
             ]
-    
+
             # Split the documents into chunks
             chunks = character_splitter.create_documents(
                 texts=[doc.page_content for doc in chunks],
-                metadatas=[doc.metadata for doc in chunks]
+                metadatas=[doc.metadata for doc in chunks],
             )
-    
-        print(
-            "SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ..."
-        )
-    
+
+        print("SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ...")
+
         # remove duplicate chunks
         cleaned_chunks = remove_duplicate_chunks(chunks)
-    
+
         # add the result to class variable
         self.total_chunks = cleaned_chunks
-        
+
     def get_metrics(self) -> None:
         """Get some metrics about the chunks and print them in terminal."""
-        
+
         if not self.total_chunks:
             print("No chunks to analyze")
             return
-            
+
         try:
             # Filter out chunks with empty content and compute lengths
             valid_lengths = [
-                len(chunk.page_content.split()) 
-                for chunk in self.total_chunks 
+                len(chunk.page_content.split())
+                for chunk in self.total_chunks
                 if chunk and chunk.page_content and chunk.page_content.strip()
             ]
-            
+
             if not valid_lengths:
                 print("No valid chunks with content found")
                 return
-                
+
             avg_chunk_length = sum(valid_lengths) / len(valid_lengths)
-            print(f"Average chunk length in number of words: {avg_chunk_length:.2f}")
+            print(
+                f"Average chunk length in number of words: {avg_chunk_length:.2f}"
+            )
             print(f"Total valid chunks analyzed: {len(valid_lengths)}")
-            
+
         except Exception as e:
             print(f"Error computing metrics: {str(e)}")
 
-    @log_execution_time         
+    @log_execution_time
     def load_vectordb_V3(self):
         """
         Load the vectordb using QdrantClient with support for hybrid search.
-    
+
         Returns:
             vectordb: The loaded vectordb if collection exists, otherwise None.
         """
@@ -416,40 +439,42 @@ class VectorAgent:
             level=logging.INFO,
             format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
         )
-    
+
         try:
             # Check if collection exists
             collections = self.client.get_collections().collections
             if self.collection_name in [c.name for c in collections]:
-                logging.info("Collection exists, loading the Qdrant database...")
-                
+                logging.info(
+                    "Collection exists, loading the Qdrant database..."
+                )
+
                 self.vectordb = QdrantVectorStore(
                     client=self.client,
                     collection_name=self.collection_name,
                     embedding=self.dense_embedding_model,
                     sparse_embedding=self.sparse_embedding_model,
-                    sparse_vector_name='sparse',
-                    retrieval_mode=RetrievalMode.HYBRID
+                    sparse_vector_name="sparse",
+                    retrieval_mode=RetrievalMode.HYBRID,
                 )
                 logging.info("Qdrant database loaded successfully")
-                
+
             else:
                 logging.info("Collection does not exist, returning None...")
                 self.vectordb = None
-                
+
         except Exception as e:
             logging.error(f"Error loading vectorstore: {str(e)}")
             self.vectordb = None
             raise
 
-    
         return self.vectordb
-            
+
     def delete(self):
         """
         Deletes the vectorstore from the persist directory.
         """
         import shutil
+
         if os.path.exists(self.persist_directory):
             try:
                 shutil.rmtree(self.persist_directory)
@@ -464,8 +489,9 @@ class VectorAgent:
         """
         Forcefully deletes a directory by terminating processes that lock it.
         """
-        import psutil
         import shutil
+
+        import psutil
 
         for proc in psutil.process_iter():
             try:
@@ -476,13 +502,12 @@ class VectorAgent:
                 continue
         shutil.rmtree(directory)
         print("Vectorstore forcefully deleted!")
-        
 
     def add_documents_to_db_V3(self):
         """
         Adds documents to the vector database using a predefined Qdrant client (V3).
         Supports hybrid search with dense and sparse vectors.
-        
+
         Returns:
             None
         """
@@ -495,80 +520,105 @@ class VectorAgent:
             level=logging.INFO,
             format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
         )
-    
-        logging.info(f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}")
+
+        logging.info(
+            f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}"
+        )
         if len(self.total_chunks) == 0:
-            logging.info("No chunks to add to the vectorstore - they are already there!")
+            logging.info(
+                "No chunks to add to the vectorstore - they are already there!"
+            )
             return
-    
+
         logging.info("Starting to add documents to the vectorstore...")
-        
+
         # Create Qdrant client
-        
-    
+
         try:
             if self.total_chunks:
                 if self.vectordb is None:
-                    logging.info("Vectordb is None, checking for existing collection...")
-    
-                    #Check if collection exists
+                    logging.info(
+                        "Vectordb is None, checking for existing collection..."
+                    )
+
+                    # Check if collection exists
                     if not self.client.collection_exists(self.collection_name):
-                        from qdrant_client.http.models import Distance, VectorParams, SparseVectorParams
-                        logging.info("Collection does not exist, creating a new one...")
+                        from qdrant_client.http.models import (
+                            Distance,
+                            SparseVectorParams,
+                            VectorParams,
+                        )
+
+                        logging.info(
+                            "Collection does not exist, creating a new one..."
+                        )
                         sparse_vector_name = "sparse"
-                        
+
                         self.client.create_collection(
                             collection_name=self.collection_name,
-                            vectors_config=VectorParams(size=self.config["dense_embedding_size"], distance=Distance.COSINE),
-                            sparse_vectors_config={sparse_vector_name: models.SparseVectorParams(index=models.SparseIndexParams(on_disk=True))}
+                            vectors_config=VectorParams(
+                                size=self.config["dense_embedding_size"],
+                                distance=Distance.COSINE,
+                            ),
+                            sparse_vectors_config={
+                                sparse_vector_name: models.SparseVectorParams(
+                                    index=models.SparseIndexParams(on_disk=True)
+                                )
+                            },
                         )
-                       
-    
+
                     # Create vectorstore with existing client
                     self.vectordb = QdrantVectorStore(
                         client=self.client,
                         collection_name=self.collection_name,
                         embedding=self.dense_embedding_model,
                         sparse_embedding=self.sparse_embedding_model,
-                        sparse_vector_name='sparse',
+                        sparse_vector_name="sparse",
                         retrieval_mode=RetrievalMode.HYBRID,
                     )
-    
+
                     # Add documents
                     self.vectordb.add_documents(documents=self.total_chunks)
-    
+
                 else:
                     logging.info("Adding documents to existing vectorstore...")
                     self.vectordb.add_documents(documents=self.total_chunks)
-    
-                logging.info("Qdrant database successfully updated with new documents!")
-    
+
+                logging.info(
+                    "Qdrant database successfully updated with new documents!"
+                )
+
         except Exception as e:
             logging.error(f"Error adding documents to vectorstore: {str(e)}")
             raise e
-        
 
     def fill(self):
-        #self.save_config_file()
-        self.create_persist_directory() # create the persist directory if it does not exist
-        self.get_log_file_path() # get the log file path or create it if it does not exist
-        #self.load_vectordb() # load the vector database if it exists, otherwise create a new one
-        #use v3 to load the vectorstore
+        # self.save_config_file()
+        self.create_persist_directory()  # create the persist directory if it does not exist
+        self.get_log_file_path()  # get the log file path or create it if it does not exist
+        # self.load_vectordb() # load the vector database if it exists, otherwise create a new one
+        # use v3 to load the vectorstore
         self.load_vectordb_V3()
-        self.find_already_processed() # find the already processed documents
-        self.process_all_documents() # process the documents
-        self.filter_and_split_chunks() # filter and split the chunks
-        print("Number of total documents currently processed:", len(self.total_documents))
-        print("Number of total chunks currently processed:", len(self.total_chunks))
-        self.get_metrics() # get some metrics about the chunks
-        #self.add_documents_to_db_V2()
-        #use v3 to add documents to the vectorstore
+        self.find_already_processed()  # find the already processed documents
+        self.process_all_documents()  # process the documents
+        self.filter_and_split_chunks()  # filter and split the chunks
+        print(
+            "Number of total documents currently processed:",
+            len(self.total_documents),
+        )
+        print(
+            "Number of total chunks currently processed:",
+            len(self.total_chunks),
+        )
+        self.get_metrics()  # get some metrics about the chunks
+        # self.add_documents_to_vectorstore()
+        # use v3 to add documents to the vectorstore
         self.add_documents_to_db_V3()
-        
+
     def get_chunks(self):
         """Return the chunks without pushing them to the vectorstore."""
-        self.process_all_documents() # process the documents
-        self.filter_and_split_chunks() # filter and split the chunks
+        self.process_all_documents()  # process the documents
+        self.filter_and_split_chunks()  # filter and split the chunks
         return self.total_chunks
 
 

@@ -31,7 +31,6 @@ def save_audio_as_wav(uploaded_file, output_dir):
     return file_path
 
 
-@st.cache_resource
 def load_config():
     """
     Loads the configuration from the config.yaml file and stores it in the session state.
@@ -361,6 +360,8 @@ def display_chat_history():
 def clear_chat_history():
     st.session_state.messages = []
     st.toast("Chat history cleared!", icon="🧹")
+    #rerun the app to clear the chat
+    st.rerun()
 
 
 def process_audio_recording(audio):
@@ -427,9 +428,7 @@ def process_query(query, streamlit_config, rag_agent):
     # we load the intent classifier into a session state variable so that we check if the intent is already loaded
 
     if "intent_classifier" not in st.session_state:
-        st.session_state["intent_classifier"] = IntentClassifier(
-            config["actions"]
-        )
+        st.session_state["intent_classifier"] = IntentClassifier(labels_dict=config["actions_dict"])
 
     # we update the chat history to provide the LLM with the latest chat history
     config["chat_history"] = str(
@@ -479,11 +478,11 @@ def process_query(query, streamlit_config, rag_agent):
         
         with st.spinner("Determining query intent 🧠 ..."):
             # we detect the intent of the query
-            intent = st.session_state["intent_classifier"].classify(query)
+            intent = st.session_state["intent_classifier"].classify(query,method="LLM")
             print("Intent detected: ", intent)
             st.toast("Intent detected: " + intent, icon="🧠")
 
-        if intent == "rediger un texte pour une offre":
+        if intent == "employer contact writing":
             from src.aux_utils.auto_job import auto_job_writter
 
             with st.spinner("Generating a text for a job offer..."):
@@ -494,7 +493,7 @@ def process_query(query, streamlit_config, rag_agent):
                     llm_provider=config["llm_provider"],
                 )
                 sources = []
-        elif intent == "question sur des emails":
+        elif intent == "email support inquiry":
             # fetch the last 100 emails and search for the answer
             from src.aux_utils.email_utils import EmailAgent
 
@@ -522,7 +521,7 @@ def process_query(query, streamlit_config, rag_agent):
             ):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
-        elif intent == "rechercher des offres d'emploi":
+        elif intent == "job search assistance":
             from src.aux_utils.job_scrapper import JobAgent
 
             config["data_sources"] = ["jobs"]
@@ -562,20 +561,21 @@ def process_query(query, streamlit_config, rag_agent):
             ):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
-        elif intent == "write instagram description":
-            from src.aux_utils.auto_instagram_publi import (
-                instagram_descr_prompt,
-            )
+        # elif intent == "social media content creation":
+        #     from src.aux_utils.auto_instagram_publi import (
+        #         instagram_descr_prompt,
+        #     )
 
-            with st.spinner("Generating a text for an instagram post..."):
-                answer = LLM_answer_v3(
-                    prompt=instagram_descr_prompt(query),
-                    stream=True,
-                    model_name=config["model_name"],
-                    llm_provider=config["llm_provider"],
-                )
-                sources = []
-        elif intent == "generate a graph/diagram":
+        #     with st.spinner("Generating a text for an instagram post..."):
+        #         answer = LLM_answer_v3(
+        #             prompt=instagram_descr_prompt(query),
+        #             stream=True,
+        #             model_name=config["model_name"],
+        #             llm_provider=config["llm_provider"],
+        #         )
+        #         sources = []
+        
+        elif intent == "graph creation request":
             from src.aux_utils.graph_maker_utils import GraphMaker
 
             with st.spinner("Generating the graph..."):
@@ -591,7 +591,7 @@ def process_query(query, streamlit_config, rag_agent):
                 # convert answer to a generator like object to be treated as a stream
                 answer = (line for line in [answer])
 
-        elif intent == "Generate meeting summary":
+        elif intent == "meeting notes summarization" :
             # load the meeting summarization prompt from prompts/meeting_summary_prompt.txt
             with open("src/prompts/meeting_summary_prompt.txt", "r", encoding='utf-8') as f:
                 template = f.read()
@@ -607,13 +607,34 @@ def process_query(query, streamlit_config, rag_agent):
 
             # give it to the LLM
             with st.spinner("Generating the meeting summary..."):
-                answer = LLM_answer_v3(
+                raw_answer = LLM_answer_v3(
                     prompt=full_prompt,
-                    stream=True,
+                    stream=False,
                     model_name=config["model_name"],
                     llm_provider=config["llm_provider"],
                 )
                 sources = []
+                #transform the answer into a stream / generator object
+                answer = (line for line in raw_answer.split("\n"))
+                #save the transcription in a file, the name of the file is the date of the meeting (today)
+                
+                with open("data/meeting_summary/"+str(time.strftime("%Y-%m-%d"))+".txt", "w", encoding='utf-8') as f:
+                    #write a header with the date at the beginning of the file
+                    f.write("Meeting summary for the date: "+str(time.strftime("%Y-%m-%d"))+"\n\n")
+                    f.write(raw_answer)
+                    
+                #add a toast to notify the user that the meeting summary has been saved
+                st.toast("Meeting summary saved !", icon="🎉")
+                #fill the vectorstore with the new meeting summary
+                from src.main_utils.vectorstore_utils_v2 import VectorAgent
+                vector_agent = VectorAgent(default_config=st.session_state["config"],qdrant_client=rag_agent.client)
+                vector_agent.fill()
+                print("Vectorstore filled with new meeting summary !")
+                st.toast("Meeting summary indexed !", icon="📋")
+                #put st.session_state["audio_transcription"] to None now that the meeting summary has been saved
+                del st.session_state["audio_transcription"]
+                    
+                
 
         else:  # normal search
             with st.spinner(

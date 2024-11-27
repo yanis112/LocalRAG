@@ -7,6 +7,7 @@ from email.utils import parsedate_to_datetime
 from dotenv import load_dotenv
 from html import unescape
 from bs4 import BeautifulSoup
+from numpy import short
 
 class EmailAgent:
     def __init__(self):
@@ -97,7 +98,9 @@ class EmailAgent:
         for email_data in emails:
             subject = clean_filename(email_data['subject'][:50])
             date_str = email_data['date'].strftime('%Y-%m-%d_%H-%M-%S')
-            filename = f"data/emails/{date_str}_{subject}.md"
+            #just keep the day and month, and year, no need for the time (H-M-S)
+            short_date_str = email_data['date'].strftime('%Y-%m-%d')
+            filename = f"data/emails/{short_date_str}_{subject}.md"
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(f"# {email_data['subject']}\n\n")
                 f.write(f"**Date:** {email_data['date']}\n\n")

@@ -1,4 +1,5 @@
 import os
+from openai import audio
 import streamlit as st
 from dotenv import load_dotenv
 from src.main_utils.streamlit_app_utils import (
@@ -27,6 +28,8 @@ def main():
 
     # Define sidebar parameters
     st.sidebar.header("Search Settings")
+    
+    # Define sidebar parameters
     use_cot = st.sidebar.toggle(
         "Enable Justification 📝",
         value=False,
@@ -39,6 +42,21 @@ def main():
         value=False,
         help="Enable or disable the deep search. This will make a search divided in several steps, fit to solve complex queries, more powerfull but longer...",
     )
+    
+    #selectbox for LLM
+    formatted_options = [f"{model} ({provider})" for model, provider in st.session_state["config"]["models_dict"].items()]
+    llm_choice=st.sidebar.selectbox(
+        "Select the LLM model",
+        options=formatted_options,
+        index=0,
+        help="Select the LLM model you want to use for the answer generation."
+    )
+    
+    if llm_choice:
+        selected_model = llm_choice.split(" (")[0]
+        print("Selected model: ", selected_model)
+        selected_provider = llm_choice.split(" (")[1].rstrip(")")
+        print("Selected provider: ", selected_provider)
 
     # Define sidebar parameters
     # st.sidebar.header("Data Sources")
@@ -72,13 +90,13 @@ def main():
     # Here are defined all usefull variables for the chatbot
     streamlit_config = {
         "cot_enabled": use_cot,
-        #"field_filter": field_filter,
         "deep_search": deep_search,
         "chat_history": str(
             "## Chat History: \n\n " + str(st.session_state["messages"])
         ),  # we keep track of the chat history,
+        "model_name": selected_model,
+        "llm_provider": selected_provider,
         "use_history": False,  # this functionnality is in work in progress
-        # "auto_job": auto_job,
         "return_chunks": True,
         "stream": True,
     }
@@ -92,20 +110,16 @@ def main():
         value=False,
         help="You can allow audio recording (will make a recording button appear) and then it will be immediately transcribed.",
     ):
-        audio = st.audio_input(
-            "Start recording"
-        )
         
-        print("AUDIO: ", audio)
-        print("TYPE: ", type(audio))
-
-        if audio:
-            print("AUDIO RECORDED !")
+        audio = st.audio_input("Start recording")
+        
+        if audio and "audio_transcription" not in st.session_state:
             from src.main_utils.streamlit_app_utils import process_audio_recording
-            process_audio_recording(audio)
-          
-            
-
+            transcription = process_audio_recording(audio)
+            st.session_state["audio_transcription"] = transcription
+        
+        
+         
 
     uploaded_file = st.sidebar.file_uploader(
         label="Choose a file (audio or image)",
@@ -148,6 +162,9 @@ def main():
         
     #we define the rag agent 
     rag_agent=load_rag_agent()
+    
+    #modify the rag agent config attribute to add the streamlit config
+    rag_agent.config=st.session_state["streamlit_config"]
 
     # Get the query from the user
     query = st.chat_input("Please enter your question")

@@ -1,0 +1,23 @@
+### Task Overview
+You are an agent tasked with cleaning LinkedIn posts. Your role is to EXTRACT AND PRESERVE the complete original post content while removing only extraneous elements. Do not summarize or modify the main text in any way.
+
+### Instructions
+- PRESERVE the entire original post text exactly as written - do not summarize or modify
+- Remove only:
+  * Reaction buttons/counts
+  * Hashtags
+  * Social media links
+  * Navigation elements
+  * UI components
+  * Promotional content
+- Include only:
+  * The complete, unmodified main post text
+  * Image URLs (if present)
+
+Input:
+# {post} #
+
+Output format:
+[Main post text]
+
+[Image URLs, if any]

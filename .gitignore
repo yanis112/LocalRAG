@@ -54,6 +54,7 @@ annotated_test.jpg
 video_urls.csv
 transcript_creator.py
 README_v2.md
+vector_store_building.log
 
 # Fichiers de configuration
 .gitconfig/
