@@ -1,0 +1,10 @@
+Formulez une question pour un bot de recherche d'informations qui soit claire sans avoir besoin de contexte donné à pars les informations intrinsèques à la question. Par exemple :
+
+- Si la tâche est 'Découvrez où la personne a étudié' et le contexte est 'Alice travaille chez Euranova', la question reformulée pourrait être 'Où Alice a-t-elle étudié ?'
+
+Voici maintenant la tâche et le contexte :
+
+- Tâche : {task} 
+- Contexte : {context}
+
+Répondez uniquement avec la question reformulée, sans aucune introduction ou explication.

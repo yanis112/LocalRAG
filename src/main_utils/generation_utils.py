@@ -11,7 +11,6 @@ import yaml
 from dotenv import load_dotenv
 from langchain.schema import StrOutputParser
 from langchain_core.output_parsers import JsonOutputParser
-from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
 # custom imports
@@ -129,36 +128,36 @@ def LLM_answer_v3(
     
     logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
     
-    if llm_provider == 'github':
-        token = os.environ["GITHUB_TOKEN"]
-        endpoint = "https://models.inference.ai.azure.com"
-        client = OpenAI(base_url=endpoint, api_key=token)
+    # if llm_provider == 'github':
+    #     token = os.environ["GITHUB_TOKEN"]
+    #     endpoint = "https://models.inference.ai.azure.com"
+    #     client = OpenAI(base_url=endpoint, api_key=token)
         
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
+    #     messages = [
+    #         {"role": "system", "content": "You are a helpful assistant."},
+    #         {"role": "user", "content": prompt}
+    #     ]
         
-        if stream:
-            response = client.chat.completions.create(
-                messages=messages,
-                model=model_name,
-                temperature=temperature,
-                stream=True
-            )
-            def stream_generator():
-                for update in response:
-                    if update.choices[0].delta.content:
-                        yield update.choices[0].delta.content
-            return stream_generator()
+    #     if stream:
+    #         response = client.chat.completions.create(
+    #             messages=messages,
+    #             model=model_name,
+    #             temperature=temperature,
+    #             stream=True
+    #         )
+    #         def stream_generator():
+    #             for update in response:
+    #                 if update.choices[0].delta.content:
+    #                     yield update.choices[0].delta.content
+    #         return stream_generator()
         
-        else:
-            response = client.chat.completions.create(
-                messages=messages,
-                model=model_name,
-                temperature=temperature
-            )
-            return response.choices[0].message.content
+    #     else:
+    #         response = client.chat.completions.create(
+    #             messages=messages,
+    #             model=model_name,
+    #             temperature=temperature
+    #         )
+    #         return response.choices[0].message.content
     
     # Existing logic for other providers
     if llm_provider == 'ollama':

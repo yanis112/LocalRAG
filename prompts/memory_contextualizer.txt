@@ -1,0 +1,7 @@
+Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question that expands the user question in a way that it can be understood without the chat history, by adding contextual elements. If the question contains enough contextual elements to be answered return it as is, otherwise add usefull contextual elements. Here is the latest user question to reformulate:
+
+{query}
+
+And here is the chat history:
+
+{context}

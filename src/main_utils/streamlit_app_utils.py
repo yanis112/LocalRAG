@@ -3,6 +3,7 @@ import textwrap
 import time
 from pathlib import Path
 
+from litellm import transcription
 import streamlit as st
 import yaml
 
@@ -158,6 +159,7 @@ def handle_uploaded_file(uploaded_file):
             transcription = yt.transcribe(file_path, method="groq")
 
         #print("TRANSCRIPTION: ", transcription)
+        st.toast("Transcription successful !", icon="🎤")
 
         st.session_state.messages.append(
             {
@@ -499,9 +501,9 @@ def process_query(query, streamlit_config, rag_agent):
 
             with st.spinner("Fetching new emails..."):
                 email_utils = EmailAgent()
-                email_utils.connect()
+                #email_utils.connect()
                 email_utils.fetch_new_emails(last_k=100)
-                email_utils.disconnect()
+                #email_utils.disconnect()
 
             # fill the vectorstore withg the new emails
             from src.main_utils.vectorstore_utils_v2 import VectorAgent
@@ -592,19 +594,14 @@ def process_query(query, streamlit_config, rag_agent):
                 answer = (line for line in [answer])
 
         elif intent == "meeting notes summarization" :
+            from langchain_core.prompts import PromptTemplate
             # load the meeting summarization prompt from prompts/meeting_summary_prompt.txt
-            with open("src/prompts/meeting_summary_prompt.txt", "r", encoding='utf-8') as f:
+            with open("prompts/meeting_summary_prompt.txt", "r", encoding='utf-8') as f:
                 template = f.read()
-                # Échapper d'abord toutes les accolades
-                template = template.replace("{", "{{").replace("}", "}}")
-                # Définir l'emplacement pour la transcription
-                template = template.replace("{{transcription}}", "{transcription}")
                 
-                # Maintenant .format() fonctionnera correctement
-                full_prompt = template.format(
-                    transcription=st.session_state["audio_transcription"]
-                )
-
+            template= PromptTemplate.from_template(template)
+            full_prompt=template.format(transcription=st.session_state["audio_transcription"],user_query=query)
+               
             # give it to the LLM
             with st.spinner("Generating the meeting summary..."):
                 raw_answer = LLM_answer_v3(

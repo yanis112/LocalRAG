@@ -1,5 +1,6 @@
 # The goal of this file is to manage the links given by the user to extract the associate rescource and save it in the database
 import asyncio
+import re
 import traceback
 from typing import Optional
 
@@ -9,55 +10,59 @@ from crawl4ai.crawl4ai import (
     AsyncWebCrawler,
 )  # Replace this with  just crawl4ai in the final version !!!!
 
-import re
-
-from subprojects.image_lab.utils import LLM_PROVIDER
 
 def clean_linkedin_post(text):
     # Remove cookie/consent banner and header UI
-    text = re.sub(r'.*?(and 3rd parties use.*?Cookie Policy\..*?Join now Sign in)', '', text, flags=re.DOTALL)
-    
+    text = re.sub(
+        r".*?(and 3rd parties use.*?Cookie Policy\..*?Join now Sign in)",
+        "",
+        text,
+        flags=re.DOTALL,
+    )
+
     # Remove LinkedIn header/cookie notice
-    text = re.sub(r'LinkedIn and 3rd parties.*?Cookie Policy\..*?Sign in', '', text, flags=re.DOTALL)
-    
+    text = re.sub(
+        r"LinkedIn and 3rd parties.*?Cookie Policy\..*?Sign in",
+        "",
+        text,
+        flags=re.DOTALL,
+    )
+
     # Remove everything before the post content
-    text = re.sub(r'.*Post\n', '', text, flags=re.DOTALL)
-    
+    text = re.sub(r".*Post\n", "", text, flags=re.DOTALL)
+
     # Remove profile information and timestamps
-    text = re.sub(r'\n.*?\d+[mdh]\s*(Edited)?\s*', '', text)
-    
+    # text = re.sub(r'\n.*?\d+[mdh]\s*(Edited)?\s*', '', text)
+
     # Remove empty links and references
-    text = re.sub(r'\[\]\([^)]*\)', '', text)
-    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
-    text = re.sub(r'\[([^\]]+)\](\([^)]+\))?', '', text)
-    
+    text = re.sub(r"\[\]\([^)]*\)", "", text)
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    text = re.sub(r"\[([^\]]+)\](\([^)]+\))?", "", text)
+
     # Remove URLs
-    text = re.sub(r'https?://\S+', '', text)
-    
+    text = re.sub(r"https?://\S+", "", text)
+
     # Remove social interaction elements and counts
-    text = re.sub(r'\d+\s*(Reactions?|Comments?|shares?)', '', text, flags=re.IGNORECASE)
-    text = re.sub(r'(Like|Comment|Share|Copy|Report this)\s*(post|comment)?', '', text)
-    text = re.sub(r'(LinkedIn|Facebook|Twitter)', '', text)
-    text = re.sub(r'To view or add a comment, sign in.*', '', text, flags=re.DOTALL)
-    
-    # Remove image descriptions
-    text = re.sub(r'!\[.*?\]\(.*?\)', '', text)
-    text = re.sub(r'No alternative text description for this image', '', text)
-    
+    text = re.sub(
+        r"\d+\s*(Reactions?|Comments?|shares?)", "", text, flags=re.IGNORECASE
+    )
+    text = re.sub(
+        r"(Like|Comment|Share|Copy|Report this)\s*(post|comment)?", "", text
+    )
+    text = re.sub(r"(LinkedIn|Facebook|Twitter)", "", text)
+    text = re.sub(
+        r"To view or add a comment, sign in.*", "", text, flags=re.DOTALL
+    )
     # Remove hashtags and "More Relevant Posts" section
-    text = re.sub(r'(#\w+\s*)+', '', text)
-    text = re.sub(r'More Relevant Posts.*', '', text, flags=re.DOTALL)
-    
-    # Clean up extra whitespace and formatting
-    text = re.sub(r'\n\s*\n', '\n', text)
-    text = re.sub(r'^\s+|\s+$', '', text, flags=re.MULTILINE)
-    text = re.sub(r'\s+', ' ', text)
-    text = re.sub(r'[*_~`"\[\](){}]', '', text)
-    
+    text = re.sub(r"(#\w+\s*)+", "", text)
+    text = re.sub(r"More Relevant Posts.*", "", text, flags=re.DOTALL)
+
     return text.strip()
 
 
-def clean_scrapped_content(text: str, model_name: str, llm_provider: str) -> str:
+def clean_scrapped_content(
+    text: str, model_name: str, llm_provider: str
+) -> str:
     """
     Takes a text crawled from a website and cleans it by removing irrelevant noisy infos using an LLM model.
 
@@ -65,26 +70,31 @@ def clean_scrapped_content(text: str, model_name: str, llm_provider: str) -> str
         text (str): The text to be cleaned.
         model_name (str): The name of the LLM model to use for cleaning.
         llm_provider (str): The provider of the LLM model.
-        
+
     Returns:
         str: The cleaned text.
 
     """
-    from src.main_utils.generation_utils_v2 import LLM_answer_v3
     from langchain_core.prompts import PromptTemplate
-    
-    #load the cleanning prompt template from a txt file
-    with open("prompts/linkedin_cleaning.txt", "r",encoding='utf-8') as file:
+
+    from src.main_utils.generation_utils_v2 import LLM_answer_v3
+
+    # load the cleanning prompt template from a txt file
+    with open("prompts/linkedin_cleaning.txt", "r", encoding="utf-8") as file:
         cleaning_prompt = file.read()
-        
+
         # Instantiation using from_template (recommended)
         cleaning_prompt = PromptTemplate.from_template(cleaning_prompt)
-        #format the prompt
-        full_prompt=cleaning_prompt.format(post=text)
-        
-    return LLM_answer_v3(prompt=full_prompt,model_name=model_name,llm_provider=llm_provider,stream=False)
-          
-    
+        # format the prompt
+        full_prompt = cleaning_prompt.format(post=text)
+
+    return LLM_answer_v3(
+        prompt=full_prompt,
+        model_name=model_name,
+        llm_provider=llm_provider,
+        stream=False,
+    )
+
 
 def extract_linkedin(link: str, timeout: int = 30) -> Optional[str]:
     """
@@ -115,7 +125,13 @@ def extract_linkedin(link: str, timeout: int = 30) -> Optional[str]:
                     crawler.arun(url=url), timeout=timeout
                 )
                 return (
-                    clean_scrapped_content(str(result.markdown),model_name="llama-3.1-8b-instant",llm_provider='groq') if result and result.markdown else None
+                    clean_scrapped_content(
+                        str(result.markdown),
+                        model_name="llama-3.1-8b-instant",
+                        llm_provider="groq",
+                    )
+                    if result and result.markdown
+                    else None
                 )
 
         except asyncio.TimeoutError:
@@ -239,7 +255,9 @@ class ExternalKnowledgeManager:
             )
 
             # get the associated topic description
-            topic = topic_classifier.classify(self.current_rescource,method="LLM")
+            topic = topic_classifier.classify(
+                self.current_rescource, method="LLM"
+            )
 
             print("Topic Finded by classifier: ", topic)
 

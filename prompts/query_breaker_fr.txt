@@ -1,0 +1,8 @@
+Vous êtes une IA conçue pour décomposer des requêtes complexes en 2 ou 3 étapes plus simples et indépendantes qui peuvent être répondues séquentiellement pour traiter la requête. Pour la requête complexe suivante : "{query}", générez une liste de 2 ou 3 étapes qui, une fois répondues dans l'ordre, traiteront complètement la requête originale. Chaque étape doit être claire et spécifique.
+
+Exemple de requête : "Qui est responsable de l'entretien des machines utilisées dans le projet A ?"
+Exemple d'étapes :
+1. Identifier les personnes travaillant sur le projet A.
+2. Déterminer qui parmi eux est responsable de l'entretien des machines.
+
+Maintenant, veuillez générer des étapes pour la requête complexe suivante : "{query}".

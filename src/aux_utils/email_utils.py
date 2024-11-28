@@ -1,28 +1,57 @@
 import email
+import functools
 import imaplib
+import json
 import os
 import re
+from datetime import datetime
 from email.header import decode_header, make_header
 from email.utils import parsedate_to_datetime
-from dotenv import load_dotenv
 from html import unescape
+
 from bs4 import BeautifulSoup
-from numpy import short
+from dotenv import load_dotenv
+
+
+def cache_daily(func):
+    """Decorator to cache email fetching operations for one day"""
+    cache_file = "aux_data/email_fetch_cache.json"
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # Créer le dossier aux_data s'il n'existe pas
+        os.makedirs("aux_data", exist_ok=True)
+
+        today = datetime.now().date().isoformat()
+
+        # Check if cache file exists and is from today
+        if os.path.exists(cache_file):
+            with open(cache_file, "r") as f:
+                cache = json.load(f)
+                if cache.get("last_fetch_date") == today:
+                    print("Using cached email fetch from today")
+                    return True  # Indique que le cache a été utilisé
+
+        # Si pas de cache, exécuter la fonction
+        result = func(*args, **kwargs)
+
+        # Mettre à jour le cache
+        with open(cache_file, "w") as f:
+            json.dump({"last_fetch_date": today}, f)
+
+        return result
+
+    return wrapper
+
 
 class EmailAgent:
     def __init__(self):
         """Initialize the EmailUtils class and load environment variables."""
         load_dotenv()
-        self.imap_server = os.getenv('IMAP_SERVER')
-        self.email_address = os.getenv('EMAIL_ADDRESS')
-        self.password = os.getenv('EMAIL_PASSWORD')
+        self.imap_server = os.getenv("IMAP_SERVER")
+        self.email_address = os.getenv("EMAIL_ADDRESS")
+        self.password = os.getenv("EMAIL_PASSWORD")
         self.imap = None
-
-    def connect(self):
-        """Connect to the IMAP server and login."""
-        self.imap = imaplib.IMAP4_SSL(self.imap_server)
-        self.imap.login(self.email_address, self.password)
-        self.imap.select("Inbox")
 
     def get_emails(self, last_k=100):
         """
@@ -52,22 +81,29 @@ class EmailAgent:
 
             for part in message.walk():
                 content_type = part.get_content_type()
-                disposition = str(part.get('Content-Disposition'))
+                disposition = str(part.get("Content-Disposition"))
 
-                if content_type == "text/plain" and 'attachment' not in disposition:
+                if (
+                    content_type == "text/plain"
+                    and "attachment" not in disposition
+                ):
                     payload = part.get_payload(decode=True)
-                    charset = part.get_content_charset() or 'utf-8'
-                    decoded_content = payload.decode(charset, errors='ignore')
+                    charset = part.get_content_charset() or "utf-8"
+                    decoded_content = payload.decode(charset, errors="ignore")
                     cleaned_content = clean_text(decoded_content)
                     content += cleaned_content + "\n"
-                elif content_type == "text/html" and 'attachment' not in disposition and not content.strip():
+                elif (
+                    content_type == "text/html"
+                    and "attachment" not in disposition
+                    and not content.strip()
+                ):
                     payload = part.get_payload(decode=True)
-                    charset = part.get_content_charset() or 'utf-8'
-                    decoded_content = payload.decode(charset, errors='ignore')
+                    charset = part.get_content_charset() or "utf-8"
+                    decoded_content = payload.decode(charset, errors="ignore")
                     text = html_to_text(decoded_content)
                     cleaned_content = clean_text(text)
                     content += cleaned_content + "\n"
-                elif 'attachment' in disposition:
+                elif "attachment" in disposition:
                     filename = part.get_filename()
                     if filename:
                         filename = self.decode_header(filename)
@@ -78,12 +114,13 @@ class EmailAgent:
                 "content": content.strip(),
                 "sender": sender,
                 "attachment": attachments,
-                "subject": subject
+                "subject": subject,
             }
             emails.append(email_dict)
 
         return emails
 
+    @cache_daily
     def fetch_new_emails(self, last_k=100):
         """
         Fetch the latest `last_k` emails and save them as markdown files.
@@ -91,30 +128,42 @@ class EmailAgent:
         Args:
             last_k (int): Number of latest emails to retrieve.
         """
+
+        # launch the connect function
+        self.connect()
+
         emails = self.get_emails(last_k=last_k)
-        if not os.path.exists('data/emails'):
-            os.makedirs('data/emails')
+        if not os.path.exists("data/emails"):
+            os.makedirs("data/emails")
 
         for email_data in emails:
-            subject = clean_filename(email_data['subject'][:50])
-            date_str = email_data['date'].strftime('%Y-%m-%d_%H-%M-%S')
-            #just keep the day and month, and year, no need for the time (H-M-S)
-            short_date_str = email_data['date'].strftime('%Y-%m-%d')
+            subject = clean_filename(email_data["subject"][:50])
+            # just keep the day and month, and year, no need for the time (H-M-S)
+            short_date_str = email_data["date"].strftime("%Y-%m-%d")
             filename = f"data/emails/{short_date_str}_{subject}.md"
-            with open(filename, 'w', encoding='utf-8') as f:
+            with open(filename, "w", encoding="utf-8") as f:
                 f.write(f"# {email_data['subject']}\n\n")
                 f.write(f"**Date:** {email_data['date']}\n\n")
                 f.write(f"**From:** {email_data['sender']}\n\n")
-                if email_data['attachment']:
-                    attachments = ', '.join(email_data['attachment'])
+                if email_data["attachment"]:
+                    attachments = ", ".join(email_data["attachment"])
                     f.write(f"**Attachments:** {attachments}\n\n")
                 f.write("## Content\n\n")
-                f.write(email_data['content'])
+                f.write(email_data["content"])
+
+        # disconnect from the email server
+        self.disconnect()
 
     def disconnect(self):
         """Close the connection to the IMAP server."""
         self.imap.close()
         self.imap.logout()
+
+    def connect(self):
+        """Connect to the IMAP server and login."""
+        self.imap = imaplib.IMAP4_SSL(self.imap_server)
+        self.imap.login(self.email_address, self.password)
+        self.imap.select("Inbox")
 
     @staticmethod
     def decode_header(header_value):
@@ -145,6 +194,7 @@ class EmailAgent:
         """
         return parsedate_to_datetime(date_str)
 
+
 def clean_text(text):
     """
     Clean the text by removing unwanted characters and formatting.
@@ -162,6 +212,7 @@ def clean_text(text):
     text = text.strip()
     return text
 
+
 def html_to_text(html_content):
     """
     Convert HTML content to plain text.
@@ -172,9 +223,10 @@ def html_to_text(html_content):
     Returns:
         str: The plain text extracted from HTML.
     """
-    soup = BeautifulSoup(html_content, 'html.parser')
-    text = soup.get_text(separator='\n')
+    soup = BeautifulSoup(html_content, "html.parser")
+    text = soup.get_text(separator="\n")
     return text
+
 
 def clean_filename(filename):
     """
@@ -187,8 +239,9 @@ def clean_filename(filename):
         str: The cleaned filename.
     """
     filename = re.sub(r'[\\/*?:"<>|]', "_", filename)
-    filename = filename.strip().replace(' ', '_')
+    filename = filename.strip().replace(" ", "_")
     return filename
+
 
 if __name__ == "__main__":
     email_utils = EmailAgent()

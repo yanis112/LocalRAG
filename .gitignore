@@ -69,6 +69,7 @@ vector_store_building.log
 *.png
 *.jpg
 *.mp3
+*.log
 
 .env
 transcript_creator.py

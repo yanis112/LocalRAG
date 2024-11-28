@@ -1,25 +1,26 @@
 import logging
 from functools import lru_cache
+
 import torch
 import yaml
 from dotenv import load_dotenv
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import DocumentCompressorPipeline
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-from langchain_qdrant import Qdrant
+from langchain_qdrant import Qdrant, QdrantVectorStore, RetrievalMode
+from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 from transformers import logging as transformers_logging
-from langchain_qdrant import (
-    Qdrant,
-    QdrantVectorStore,
-    RetrievalMode)
 
-
-from qdrant_client import QdrantClient,models
-    
 # custom imports
-from src.main_utils.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor
-from src.main_utils.embedding_model import get_embedding_model,get_sparse_embedding_model
+from src.main_utils.custom_langchain_componants import (
+    CustomCrossEncoderReranker,
+    TopKCompressor,
+)
+from src.main_utils.embedding_model import (
+    get_embedding_model,
+    get_sparse_embedding_model,
+)
 from src.main_utils.utils import log_execution_time
 
 # Load the environment variables (API keys, etc...)
@@ -28,14 +29,35 @@ load_dotenv()
 
 class RetrievalAgent:
     def __init__(self, default_config, config={}):
+        """
+        Initialize the retrieval utility with the given configuration.
+
+        Args:
+            default_config (dict): The default configuration dictionary.
+            config (dict, optional): An optional configuration dictionary that 
+                overrides the default configuration. Defaults to an empty dictionary.
+
+        Attributes:
+            config (dict): The combined configuration dictionary.
+            embedding_model: The embedding model initialized based on the configuration.
+            sparse_embedding_model: The sparse embedding model initialized based on the configuration.
+            client (QdrantClient): The Qdrant client initialized with the persist directory from the configuration.
+            raw_database: The existing Qdrant database retrieved using the configuration.
+        """
         self.config = {**default_config, **config}
-        self.embedding_model = get_embedding_model(model_name=self.config["embedding_model"])
-        self.sparse_embedding_model = get_sparse_embedding_model(model_name=self.config["sparse_embedding_model"])
-        #self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
-        self.client=QdrantClient(path=self.config["persist_directory"])
+        self.embedding_model = get_embedding_model(
+            model_name=self.config["embedding_model"]
+        )
+        self.sparse_embedding_model = get_sparse_embedding_model(
+            model_name=self.config["sparse_embedding_model"]
+        )
+        # self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
+        self.client = QdrantClient(path=self.config["persist_directory"])
         self.raw_database = self.get_existing_qdrant_v3()
-        
-    def apply_field_filter_qdrant(self,search_kwargs, field_filter, field_filter_type):
+
+    def apply_field_filter_qdrant(
+        self, search_kwargs, field_filter, field_filter_type
+    ):
         """
         Apply a field filter to the search_kwargs dictionary based on the given field_filter and field_filter_type.
 
@@ -63,24 +85,46 @@ class RetrievalAgent:
         existing_filter = search_kwargs["filter"]
 
         if isinstance(field_filter, list) and len(field_filter) > 1:
-            conditions = [create_filter_condition("field", field, field_filter_type) for field in field_filter]
+            conditions = [
+                create_filter_condition("field", field, field_filter_type)
+                for field in field_filter
+            ]
             if field_filter_type == "$ne":
                 existing_filter.setdefault("should", []).extend(conditions)
             elif field_filter_type == "$eq":
                 existing_filter.setdefault("must", []).extend(conditions)
         else:
-            field = field_filter if isinstance(field_filter, str) else field_filter[0]
-            condition = create_filter_condition("field", field, field_filter_type)
+            field = (
+                field_filter
+                if isinstance(field_filter, str)
+                else field_filter[0]
+            )
+            condition = create_filter_condition(
+                "field", field, field_filter_type
+            )
             if field_filter_type == "$ne":
-                existing_filter.setdefault("must_not", []).extend(condition["must_not"])
+                existing_filter.setdefault("must_not", []).extend(
+                    condition["must_not"]
+                )
             elif field_filter_type == "$eq":
                 existing_filter.setdefault("must", []).extend(condition["must"])
 
-        print("Searching for the following fields:", field_filter, "with filter type:", field_filter_type)
+        print(
+            "Searching for the following fields:",
+            field_filter,
+            "with filter type:",
+            field_filter_type,
+        )
         return search_kwargs
 
-
-    def get_filtering_kwargs_qdrant(self,source_filter, source_filter_type, field_filter, field_filter_type, length_threshold=None):
+    def get_filtering_kwargs_qdrant(
+        self,
+        source_filter,
+        source_filter_type,
+        field_filter,
+        field_filter_type,
+        length_threshold=None,
+    ):
         """
         Generate filtering keyword arguments for querying data in Qdrant.
 
@@ -97,7 +141,9 @@ class RetrievalAgent:
         search_kwargs = {}
 
         def create_filter_condition(field, value):
-            return qdrant_models.FieldCondition(key=field, match=qdrant_models.MatchValue(value=value))
+            return qdrant_models.FieldCondition(
+                key=field, match=qdrant_models.MatchValue(value=value)
+            )
 
         conditions_should = []
         conditions_must = []
@@ -130,14 +176,17 @@ class RetrievalAgent:
                 conditions_must.append(length_condition)
 
         search_kwargs["filter"] = qdrant_models.Filter(
-            should=conditions_should, must=conditions_must, must_not=conditions_not
+            should=conditions_should,
+            must=conditions_must,
+            must_not=conditions_not,
         )
 
         return search_kwargs
 
-
     @log_execution_time
-    def apply_advanced_hybrid_search_v3(self, base_retriever, nb_chunks, query, search_kwargs):
+    def apply_advanced_hybrid_search_v3(
+        self, base_retriever, nb_chunks, query, search_kwargs
+    ):
         """
         Applies advanced hybrid search by filtering and retrieving documents based on various criteria (V3 is using a unique vectorstore instead of two).
 
@@ -150,17 +199,15 @@ class RetrievalAgent:
         Returns:
             Retriever: The hybrid retriever with the filtered and retrieved documents.
         """
-       
+
         base_retriever = self.raw_database.as_retriever(
             search_kwargs=search_kwargs, search_type=self.config["search_type"]
         )
 
-    
         return base_retriever
 
-
     @lru_cache(maxsize=None)
-    def load_reranker(self,model_name, device="cuda", show_progress=False):
+    def load_reranker(self, model_name, device="cuda", show_progress=False):
         """
         Load the reranker model based on the given model name and device.
 
@@ -187,7 +234,9 @@ class RetrievalAgent:
             else {"device": device}
         )
 
-        return HuggingFaceCrossEncoder(model_name=model_name, model_kwargs=model_kwargs)
+        return HuggingFaceCrossEncoder(
+            model_name=model_name, model_kwargs=model_kwargs
+        )
 
     @log_execution_time
     def apply_reranker(self, query, base_retriever):
@@ -203,7 +252,7 @@ class RetrievalAgent:
         """
 
         reranker = self.load_reranker(self.config["reranker_model"])
-       
+
         logging.info("RERANKER LOADED !")
 
         intelligent_compression = self.config["llm_token_target"] != 0
@@ -217,7 +266,10 @@ class RetrievalAgent:
             token_target=self.config["llm_token_target"],
         )
 
-        intelligent_compression = self.config["reranker_token_target"] not in [0, None]
+        intelligent_compression = self.config["reranker_token_target"] not in [
+            0,
+            None,
+        ]
 
         # Apply the top-k compressor
         top_k_compressor = TopKCompressor(
@@ -225,7 +277,7 @@ class RetrievalAgent:
             intelligent_compression=intelligent_compression,
             token_target=self.config["reranker_token_target"],
         )
-        
+
         pipeline_compressor = DocumentCompressorPipeline(
             transformers=[top_k_compressor, reranker_compressor]
         )
@@ -235,12 +287,13 @@ class RetrievalAgent:
             base_retriever=base_retriever,
         )
 
-        compressed_docs = compression_retriever.get_relevant_documents(query=query)
+        compressed_docs = compression_retriever.get_relevant_documents(
+            query=query
+        )
         return compressed_docs
 
-   
-    #@lru_cache(maxsize=None)
-    def get_existing_qdrant(self,persist_directory, embedding_model_name):
+    # @lru_cache(maxsize=None)
+    def get_existing_qdrant(self, persist_directory, embedding_model_name):
         """
         Get an existing Qdrant database from the specified directory.
 
@@ -257,15 +310,15 @@ class RetrievalAgent:
             embedding=embedding_model,
             collection_name="qdrant_vectorstore",
         )
-        
+
     def get_existing_qdrant_v3(self):
         """
         Get an existing Qdrant database using QdrantClient.
-    
+
         Args:
             persist_directory (str): The directory where the Qdrant database is stored.
             embedding_model_name (str): The name of the embedding model used in the database.
-    
+
         Returns:
             QdrantVectorStore: The existing Qdrant database if collection exists, otherwise None.
         """
@@ -278,33 +331,33 @@ class RetrievalAgent:
             level=logging.INFO,
             format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
         )
-    
+
         try:
-            
             # Check if collection exists
             collections = self.client.get_collections().collections
             if "qdrant_vectorstore" in [c.name for c in collections]:
-                logging.info("Collection exists, loading the Qdrant database...")
-                
+                logging.info(
+                    "Collection exists, loading the Qdrant database..."
+                )
+
                 vectordb = QdrantVectorStore(
                     client=self.client,
                     collection_name="qdrant_vectorstore",
                     sparse_vector_name="sparse",
                     embedding=self.embedding_model,
                     sparse_embedding=self.sparse_embedding_model,
-                    retrieval_mode=RetrievalMode.HYBRID
+                    retrieval_mode=RetrievalMode.HYBRID,
                 )
                 logging.info("Qdrant database loaded successfully")
                 return vectordb
-                
+
             else:
                 logging.info("Collection does not exist, returning None...")
                 return None
-                
+
         except Exception as e:
             logging.error(f"Error loading Qdrant database: {str(e)}")
             raise
-
 
     @log_execution_time
     def query_database(self, query):
@@ -319,7 +372,6 @@ class RetrievalAgent:
         Returns:
             list: The list of compressed documents. format: [Document, Document, ...]
         """
-  
 
         logging.info("Trying to load the qdrant database...")
 
@@ -342,7 +394,9 @@ class RetrievalAgent:
                 must=[
                     qdrant_models.FieldCondition(
                         key="word_filter",
-                        match=qdrant_models.MatchValue(value=self.config["word_filter"]),
+                        match=qdrant_models.MatchValue(
+                            value=self.config["word_filter"]
+                        ),
                     )
                 ]
             )
@@ -352,7 +406,9 @@ class RetrievalAgent:
         )
 
         if self.config["use_multi_query"]:
-            base_retriever = self.apply_multi_query_retriever(base_retriever, self.config["nb_chunks"])
+            base_retriever = self.apply_multi_query_retriever(
+                base_retriever, self.config["nb_chunks"]
+            )
 
         if self.config["advanced_hybrid_search"]:
             base_retriever = self.apply_advanced_hybrid_search_v3(
@@ -363,20 +419,24 @@ class RetrievalAgent:
             )
 
         if self.config["use_reranker"]:
-            compressed_docs = self.apply_reranker(query=query, base_retriever=base_retriever)
+            compressed_docs = self.apply_reranker(
+                query=query, base_retriever=base_retriever
+            )
         else:
             compressed_docs = base_retriever.get_relevant_documents(query=query)
 
-        logging.info("FIELDS FOUND: %s", [k.metadata["field"] for k in compressed_docs])
+        logging.info(
+            "FIELDS FOUND: %s", [k.metadata["field"] for k in compressed_docs]
+        )
         return compressed_docs
+
 
 if __name__ == "__main__":
     with open("config/test_config.yaml") as f:
         config = yaml.safe_load(f)
-        
+
     agent = RetrievalAgent(config)
-    
-    
+
     # Query the database
     query = "How to write a good resume?"
     compressed_docs = agent.query_database(query, config)

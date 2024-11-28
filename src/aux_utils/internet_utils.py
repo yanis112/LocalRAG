@@ -1,9 +1,13 @@
 import asyncio
+import yaml
 
 class InternetAgent:
     
     def __init__(self):
         self.list_pages = []
+        #load the internet/internet_config.yaml from the config folder
+        with open("config/internet_config.yaml", "r") as file:
+            self.internet_config = yaml.safe_load(file)
     
     async def fetch_content(self,url):
         """
@@ -77,8 +81,14 @@ class InternetAgent:
         print("Number or urls found by get_url: ", len(urls))
         return urls
     
+    def fill_internet_vectorstore(self):
+        from src.main_utils.vectorstore_utils_v2 import VectorAgent
+        
+        #create a vector agent
+        vector_agent = VectorAgent(default_config=self.internet_config)
+        #fill the vector store with the pages
+        vector_agent.fill()
     
-  
     
     def linkedin_post_cleaner(self, raw_content):
         """

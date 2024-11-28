@@ -139,6 +139,23 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
+            
+        elif self.llm_provider == "github":
+            from src.aux_utils.github_llm import GithubLLM
+            self.llm = GithubLLM(
+                github_token=os.getenv("GITHUB_TOKEN"),
+                model_name=self.llm_name,
+                temperature=self.llm_temperature,
+                top_p=1.0,
+                max_tokens=1000,
+            )
+            
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", "You are a helpful assistant."),
+                    ("human", "{text}"),
+                ]
+            )
 
         else:
             raise ValueError(

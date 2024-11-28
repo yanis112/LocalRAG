@@ -1,66 +1,115 @@
 import os
 from notion_client import Client
 import re
+from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()
 class NotionScrapper:
-    def __init__(self, token):
-        self.notion = Client(auth=token)
+    def __init__(self):
+        self.notion = Client(auth=os.getenv("NOTION_API_KEY"))
         self.data_folder = "data/notion"
         os.makedirs(self.data_folder, exist_ok=True)
 
     def sanitize_filename(self, filename):
-        # Remove or replace invalid characters for Windows file names
         return re.sub(r'[<>:"/\\|?*]', '_', filename)
 
-    def download_page(self, page_id):
-        # Retrieve page content
-        page_content = self.notion.blocks.children.list(block_id=page_id)
+    def get_text_content(self, rich_text):
+        if not rich_text:
+            return ""
+        return "".join(text.get("text", {}).get("content", "") for text in rich_text)
+
+    def handle_block(self, block):
+        block_type = block["type"]
+        content = ""
+
+        if block_type == "paragraph":
+            text = self.get_text_content(block["paragraph"].get("rich_text", []))
+            content = f"{text}\n\n" if text else "\n"
+            
+        elif block_type == "heading_1":
+            text = self.get_text_content(block["heading_1"].get("rich_text", []))
+            content = f"# {text}\n\n"
+            
+        elif block_type == "heading_2":
+            text = self.get_text_content(block["heading_2"].get("rich_text", []))
+            content = f"## {text}\n\n"
+            
+        elif block_type == "heading_3":
+            text = self.get_text_content(block["heading_3"].get("rich_text", []))
+            content = f"### {text}\n\n"
+            
+        elif block_type == "bulleted_list_item":
+            text = self.get_text_content(block["bulleted_list_item"].get("rich_text", []))
+            content = f"* {text}\n"
+            
+        elif block_type == "numbered_list_item":
+            text = self.get_text_content(block["numbered_list_item"].get("rich_text", []))
+            content = f"1. {text}\n"
+            
+        elif block_type == "to_do":
+            text = self.get_text_content(block["to_do"].get("rich_text", []))
+            checked = "x" if block["to_do"].get("checked", False) else " "
+            content = f"- [{checked}] {text}\n"
+            
+        elif block_type == "toggle":
+            text = self.get_text_content(block["toggle"].get("rich_text", []))
+            content = f"<details>\n<summary>{text}</summary>\n\n"
+            
+        elif block_type == "code":
+            text = self.get_text_content(block["code"].get("rich_text", []))
+            language = block["code"].get("language", "")
+            content = f"```{language}\n{text}\n```\n\n"
+            
+        elif block_type == "quote":
+            text = self.get_text_content(block["quote"].get("rich_text", []))
+            content = f"> {text}\n\n"
+            
+        elif block_type == "divider":
+            content = "---\n\n"
+            
+        return content
+
+    async def get_block_children(self, block_id):
+        children = []
+        cursor = None
         
-        # Retrieve page metadata
+        while True:
+            response = await self.notion.blocks.children.list(block_id=block_id, start_cursor=cursor)
+            children.extend(response["results"])
+            
+            if not response["has_more"]:
+                break
+                
+            cursor = response["next_cursor"]
+            
+        return children
+
+    def download_page(self, page_id):
+        page_content = self.notion.blocks.children.list(block_id=page_id)
         page_metadata = self.notion.pages.retrieve(page_id=page_id)
         
-        # Combine content and metadata
-        full_page = {
-            "metadata": page_metadata,
-            "content": page_content
-        }
-        
-        # Save the page in markdown format
-        page_title = page_metadata["properties"]["title"]["title"][0]["text"]["content"]
-        sanitized_title = self.sanitize_filename(page_title)
+        title = page_metadata["properties"].get("title", {}).get("title", [{}])[0].get("text", {}).get("content", "Untitled")
+        sanitized_title = self.sanitize_filename(title)
         file_path = os.path.join(self.data_folder, f"{sanitized_title}.md")
         
-        print(f"Saving page '{page_title}' to '{file_path}'")
+        print(f"Saving page '{title}' to '{file_path}'")
+        
+        markdown_content = f"# {title}\n\n"
+        for block in page_content["results"]:
+            markdown_content += self.handle_block(block)
+            
+            # Handle nested blocks
+            if "has_children" in block and block["has_children"]:
+                children = self.notion.blocks.children.list(block_id=block["id"])
+                for child in children["results"]:
+                    markdown_content += "    " + self.handle_block(child).replace("\n", "\n    ")
         
         with open(file_path, "w", encoding="utf-8") as f:
-            f.write(self.convert_to_markdown(full_page))
+            f.write(markdown_content)
 
-    def convert_to_markdown(self, full_page):
-        # Convert the full page content to markdown format
-        # This is a simplified example, you may need to handle different block types
-        markdown_content = f"# {full_page['metadata']['properties']['title']['title'][0]['text']['content']}\n\n"
-        for block in full_page["content"]["results"]:
-            print(f"Processing block: {block}")
-            if block["type"] == "paragraph":
-                if "rich_text" in block["paragraph"] and block["paragraph"]["rich_text"]:
-                    for text in block["paragraph"]["rich_text"]:
-                        if "text" in text and "content" in text["text"]:
-                            markdown_content += text["text"]["content"] + "\n\n"
-                        else:
-                            print(f"Skipping text due to missing 'content': {text}")
-                else:
-                    print(f"Skipping block due to missing 'rich_text': {block}")
-            else:
-                print(f"Skipping block of type '{block['type']}': {block}")
-        return markdown_content
-
-    def scrapo(self):
-        # Search for all pages
-        search_results = self.notion.search(filter={"property": "object", "value": "page"}).get("results")
-        #Search things thare are not pages
-        other_search_results = self.notion.search().get("results")
-        print(f"Found {len(other_search_results)} other things.")
-        
+    def scrape(self):
+        search_results = self.notion.search(filter={"property": "object", "value": "page"}).get("results", [])
         print(f"Found {len(search_results)} pages.")
         
         for result in search_results:
@@ -71,6 +120,5 @@ class NotionScrapper:
                 print(f"Page downloaded: {page_id}")
 
 if __name__ == "__main__":
-    token = "secret_nOS3VbDLoHawArgBdmAQDRfueWLruEDloCVCKcUGalW"
-    scrapper = NotionScrapper(token)
-    scrapper.scrapo()
+    scrapper = NotionScrapper()
+    scrapper.scrape()
