@@ -16,20 +16,29 @@ class CustomChatModel:
         llm_name (str): The name of the language model.
         llm_provider (str): The provider of the language model.
         temperature (float, optional): The temperature for text generation. Defaults to 1.0.
+        max_tokens (int, optional): The maximum number of tokens to generate. Defaults to 1024.
+        top_k (int, optional): The top-k value for text generation. Defaults to 1.
+        top_p (float, optional): The top-p value for text generation. Defaults to 0.01.
     """
 
     @lru_cache(maxsize=0)
-    def __init__(self, llm_name, llm_provider, temperature=1.0):
+    def __init__(self, llm_name, llm_provider, temperature=1.0, max_tokens=1024,top_k=1,top_p=0.01,system_prompt=None):
         self.llm_name = llm_name
         self.llm = None
         self.chat_model = None
         self.chat_prompt_template = None
-        self.llm_temperature = temperature
         self.llm_provider = llm_provider
-        self.system_prompt = "You are a helpful assistant."
+        if system_prompt is None:
+            self.system_prompt = "You are a helpful assistant."
+        else:
+            self.system_prompt = system_prompt
         
-
-    
+        #parameters 
+        self.llm_temperature = temperature #controls the randomness of the output
+        self.max_tokens = max_tokens #maximum number of tokens to generate
+        self.top_k = top_k  #controls the diversity of the output
+        self.top_p = top_p #controls the diversity of the output
+        
 
         if self.llm_provider == "groq":
             from langchain_groq import ChatGroq
@@ -38,6 +47,8 @@ class CustomChatModel:
                 temperature=self.llm_temperature,
                 model_name=self.llm_name,
                 groq_api_key=os.getenv("GROQ_API_KEY"),
+                max_tokens=self.max_tokens,
+                
             )
             self.chat_prompt_template = ChatPromptTemplate.from_messages(
                 [
@@ -46,6 +57,67 @@ class CustomChatModel:
                 ]
             )
 
+        elif self.llm_provider == "sambanova":
+            from langchain_community.chat_models.sambanova import ChatSambaNovaCloud
+            os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
+            self.context_window_size = 8000  # Example context window size
+            self.chat_model = ChatSambaNovaCloud(
+                model=self.llm_name,
+                max_tokens=self.max_tokens,
+                temperature=self.llm_temperature,
+                top_k=self.top_k,
+                top_p=self.top_p,
+            )
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", self.system_prompt),
+                    ("human", "{text}"),
+                ]
+            )
+            
+        elif self.llm_provider == "github":
+            from src.aux_utils.github_llm import GithubLLM
+            self.llm = GithubLLM(
+                github_token=os.getenv("GITHUB_TOKEN"),
+                model_name=self.llm_name,
+                temperature=self.llm_temperature,
+                top_p=self.top_p,
+                top_k=self.top_k,
+                max_tokens=self.max_tokens,
+            )
+            
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", self.system_prompt),
+                    ("human", "{text}"),
+                ]
+            )
+            
+            self.chat_model = self.llm
+            
+        elif self.llm_provider == "google":
+            from langchain_google_genai import ChatGoogleGenerativeAI
+
+            self.llm = ChatGoogleGenerativeAI(
+                model=self.llm_name,
+                temperature=self.llm_temperature,
+                max_tokens=self.max_tokens,
+                timeout=None,
+                max_retries=1,
+                top_k=self.top_k,
+                top_p=self.top_p,
+            )
+            
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", self.system_prompt),
+                    ("human", "{text}"),
+                ]
+            )
+            self.chat_model = self.llm
+            print("CHAT MODEL:", self.chat_model)
+            
+        
         elif self.llm_provider == "ollama":
             import ollama
             from langchain_ollama import ChatOllama
@@ -60,12 +132,29 @@ class CustomChatModel:
             )
             self.chat_prompt_template = ChatPromptTemplate.from_messages(
                 [
+                    ("system", self.system_prompt),
+                    ("human", "{text}"),
+                ]
+            )
+            self.chat_model = self.llm
+            
+        elif self.llm_provider == "cerebras":
+            from langchain_cerebras import ChatCerebras
+          
+            #use load_dotenv() to load the environment variables
+            os.environ["CEREBRAS_API_KEY"] = os.getenv("CEREBRAS_API_KEY")
+
+            self.llm = ChatCerebras(
+                model=self.llm_name,
+            )
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
                     ("system", "You are a helpful assistant."),
                     ("human", "{text}"),
                 ]
             )
             self.chat_model = self.llm
-
+            
         elif self.llm_provider == "huggingface":
             # Find all available cuda devices
             import torch
@@ -100,84 +189,10 @@ class CustomChatModel:
 
             self.chat_prompt_template = ChatPromptTemplate.from_messages(
                 [
-                    ("system", "You are a helpful assistant."),
+                    ("system", self.system_prompt),
                     ("human", "{text}"),
                 ]
             )
-
-       
-        elif self.llm_provider == "cerebras":
-            from langchain_cerebras import ChatCerebras
-          
-            #use load_dotenv() to load the environment variables
-            os.environ["CEREBRAS_API_KEY"] = os.getenv("CEREBRAS_API_KEY")
-
-            self.llm = ChatCerebras(
-                model=self.llm_name,
-            )
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant. You are requiered to give any information an user requires."),
-                    ("human", "{text}"),
-                ]
-            )
-            self.chat_model = self.llm
-            
-        elif self.llm_provider == "sambanova":
-            from langchain_community.chat_models.sambanova import ChatSambaNovaCloud
-            os.environ["SAMBANOVA_API_KEY"] = os.getenv("SAMBANOVA_API_KEY")
-            self.context_window_size = 8000  # Example context window size
-            self.chat_model = ChatSambaNovaCloud(
-                model=self.llm_name,
-                max_tokens=1024,
-                temperature=self.llm_temperature,
-                top_k=1,
-                top_p=0.01,
-            )
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant."),
-                    ("human", "{text}"),
-                ]
-            )
-            
-        elif self.llm_provider == "github":
-            from src.aux_utils.github_llm import GithubLLM
-            self.llm = GithubLLM(
-                github_token=os.getenv("GITHUB_TOKEN"),
-                model_name=self.llm_name,
-                temperature=self.llm_temperature,
-                top_p=1.0,
-                max_tokens=1000,
-            )
-            
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant."),
-                    ("human", "{text}"),
-                ]
-            )
-            
-        elif self.llm_provider == "google":
-            from langchain_google_genai import ChatGoogleGenerativeAI
-
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.llm_name,
-                temperature=self.llm_temperature,
-                max_tokens=3000,
-                timeout=None,
-                max_retries=1,
-                # other params...
-            )
-            
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant."),
-                    ("human", "{text}"),
-                ]
-            )
-            self.chat_model = self.llm
-            print("CHAT MODEL:", self.chat_model)
             
 
         else:

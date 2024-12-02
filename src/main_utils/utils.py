@@ -2,70 +2,15 @@ import json
 import os
 import re
 import subprocess
-import time
-from functools import wraps
+from functools import lru_cache
 from typing import List
 
-#import easyocr
+# import easyocr
 from dotenv import load_dotenv
-from functools import lru_cache
+from src.aux_utils.logging_utils import log_execution_time
 
 load_dotenv()
 
-
-
-
-# def close_qdrant_connections(persist_directory: str) -> None:
-#     """
-#     Close all active Qdrant client connections for a specific directory.
-    
-#     Args:
-#         persist_directory (str): The directory where Qdrant database is stored
-#     """
-#     try:
-#         # Attempt to get and close the client
-#         client = QdrantClient(path=persist_directory)
-#         client.close()
-#         print(f"Successfully closed Qdrant client connection for {persist_directory}")
-#     except Exception as e:
-#         print(f"Error closing Qdrant client connection: {str(e)}")
-
-def log_execution_time(func):
-    """
-    Decorator function that logs the execution time of a given function.
-
-    Args:
-        func (callable): The function to be decorated.
-
-    Returns:
-        callable: The decorated function.
-
-    Example:
-        @log_execution_time
-        def my_function():
-            # Function code here
-
-        my_function()  # This will log the execution time of my_function
-    """
-    from loguru import logger
-    logger.remove()
-    logger.add(
-        "execution_time.log",
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
-    )
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        execution_time = end_time - start_time
-        logger.info(
-            f"Function '{func.__name__}' executed in {execution_time:.4f} seconds"
-        )
-        return result
-
-    return wrapper
 
 def detect_language(text: str) -> str:
     """
@@ -76,19 +21,19 @@ def detect_language(text: str) -> str:
 
     Returns:
         str: 'en' if the text is in English, 'fr' if the text is in French.
-        
+
     """
-    #lazy loading of the module
+    # lazy loading of the module
     from lingua import Language, LanguageDetectorBuilder
-    
+
     languages = [Language.ENGLISH, Language.FRENCH]
     detector = LanguageDetectorBuilder.from_languages(*languages).build()
     language = detector.detect_language_of(text)
-    
+
     if language == Language.ENGLISH:
-        return 'en'
+        return "en"
     else:
-        return 'fr'
+        return "fr"
 
 
 def get_strutured_format(type):
@@ -100,10 +45,10 @@ def get_strutured_format(type):
         str: The formatted JSON instance that conforms to the specified JSON schema.
     Raises:
         ValueError: If the specified type is not valid.
-   
+
     """
-    
-    if type=='list':
+
+    if type == "list":
         format_instruction = """ The output should be formatted as a JSON instance that conforms to the JSON schema below.
 
 For the given schema:
@@ -146,8 +91,8 @@ An example of a JSON instance that does not conform to this schema would be:
 Here is the output schema:
 
  """
- 
-    if type=='dictionary':
+
+    if type == "dictionary":
         format_instruction = """The output should be formatted as a JSON instance that conforms to the JSON schema below.
 
 As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
@@ -158,11 +103,12 @@ Here is the output schema:"""
     return format_instruction
 
 
-
 @lru_cache(maxsize=None)
 def load_translation_model(source, target):
     from deep_translator import GoogleTranslator
+
     return GoogleTranslator(source=source, target=target)
+
 
 @log_execution_time
 def translate_to_english(text):
@@ -170,12 +116,12 @@ def translate_to_english(text):
     translated_text = translator.translate(text)
     return translated_text
 
+
 @log_execution_time
 def translate_to_french(text):
     translator = load_translation_model("french", "french")
     translated_text = translator.translate(text)
     return translated_text
-
 
 
 def text_preprocessing(text_str):
@@ -222,10 +168,6 @@ def text_preprocessing(text_str):
     text_str = re.sub(r"\S+ has joined the channel\.", "", text_str)
 
     return text_str
-
-
-
-
 
 
 class StructuredAudioLoaderV2:
@@ -370,6 +312,7 @@ class StructuredAudioLoaderV2:
         doc = {"page_content": texts, "metadata": {"source": self.file_path}}
 
         return doc
+
 
 if __name__ == "__main__":
     pass

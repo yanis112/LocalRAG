@@ -31,7 +31,7 @@ def get_embedding_model(model_name, show_progress=False):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model_kwargs = {"device": device,"trust_remote_code": True}
 
-    if "bge" in model_name and not "ollama" in model_name:
+    if "bge" in model_name and "ollama" not in model_name:
         encode_kwargs = {
             "normalize_embeddings": True,
             "precision": "float32",

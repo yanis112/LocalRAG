@@ -1,6 +1,4 @@
-import logging
 from functools import lru_cache
-
 import torch
 import yaml
 from dotenv import load_dotenv
@@ -10,21 +8,29 @@ from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_qdrant import Qdrant, QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
-from transformers import logging as transformers_logging
+#from transformers import logger as transformers_logger
 
 # custom imports
 from src.main_utils.custom_langchain_componants import (
     CustomCrossEncoderReranker,
     TopKCompressor,
 )
-from src.main_utils.embedding_model import (
+from src.main_utils.embedding_utils import (
     get_embedding_model,
     get_sparse_embedding_model,
 )
-from src.main_utils.utils import log_execution_time
+
+from src.aux_utils.logging_utils import setup_logger,log_execution_time
+
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
+
+logger = setup_logger(
+    __name__,
+    "query_database.log",
+    log_format="%(asctime)s:%(levelname)s:%(message)s"
+)
 
 
 class RetrievalAgent:
@@ -219,9 +225,9 @@ class RetrievalAgent:
         Returns:
             Reranker: The reranker model object.
         """
-        if not show_progress:
-            transformers_logging.set_verbosity_error()
-            logging.getLogger("transformers").setLevel(logging.ERROR)
+        # if not show_progress:
+        #     transformers_logger.set_verbosity_error()
+        #     logger.getLogger("transformers").setLevel(logger.ERROR)
 
         model_kwargs = (
             {
@@ -253,7 +259,7 @@ class RetrievalAgent:
 
         reranker = self.load_reranker(self.config["reranker_model"])
 
-        logging.info("RERANKER LOADED !")
+        logger.info("RERANKER LOADED !")
 
         intelligent_compression = self.config["llm_token_target"] != 0
 
@@ -287,9 +293,8 @@ class RetrievalAgent:
             base_retriever=base_retriever,
         )
 
-        compressed_docs = compression_retriever.get_relevant_documents(
-            query=query
-        )
+        compressed_docs = compression_retriever.invoke(query)
+        
         return compressed_docs
 
     # @lru_cache(maxsize=None)
@@ -322,21 +327,13 @@ class RetrievalAgent:
         Returns:
             QdrantVectorStore: The existing Qdrant database if collection exists, otherwise None.
         """
-        # Configure logging
-        for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
-        logging.basicConfig(
-            filename="qdrant_loading.log",
-            filemode="a",
-            level=logging.INFO,
-            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
-        )
+       
 
         try:
             # Check if collection exists
             collections = self.client.get_collections().collections
             if "qdrant_vectorstore" in [c.name for c in collections]:
-                logging.info(
+                logger.info(
                     "Collection exists, loading the Qdrant database..."
                 )
 
@@ -348,15 +345,15 @@ class RetrievalAgent:
                     sparse_embedding=self.sparse_embedding_model,
                     retrieval_mode=RetrievalMode.HYBRID,
                 )
-                logging.info("Qdrant database loaded successfully")
+                logger.info("Qdrant database loaded successfully")
                 return vectordb
 
             else:
-                logging.info("Collection does not exist, returning None...")
+                logger.info("Collection does not exist, returning None...")
                 return None
 
         except Exception as e:
-            logging.error(f"Error loading Qdrant database: {str(e)}")
+            logger.error(f"Error loading Qdrant database: {str(e)}")
             raise
 
     @log_execution_time
@@ -373,9 +370,9 @@ class RetrievalAgent:
             list: The list of compressed documents. format: [Document, Document, ...]
         """
 
-        logging.info("Trying to load the qdrant database...")
+        logger.info("Trying to load the qdrant database...")
 
-        logging.info("USING QDRANT SEARH KWARGS !")
+        logger.info("USING QDRANT SEARH KWARGS !")
         search_kwargs = self.get_filtering_kwargs_qdrant(
             source_filter=self.config["source_filter"],
             source_filter_type=self.config["source_filter_type"],
@@ -386,8 +383,8 @@ class RetrievalAgent:
 
         search_kwargs["k"] = self.config["nb_chunks"]
 
-        logging.info("QUERY: %s", query)
-        logging.info("USED SEARCH KWARGS: %s", search_kwargs)
+        logger.info("QUERY: %s", query)
+        logger.info("USED SEARCH KWARGS: %s", search_kwargs)
 
         if self.config["hybrid_search"]:
             search_kwargs["where_document"] = qdrant_models.Filter(
@@ -425,7 +422,7 @@ class RetrievalAgent:
         else:
             compressed_docs = base_retriever.get_relevant_documents(query=query)
 
-        logging.info(
+        logger.info(
             "FIELDS FOUND: %s", [k.metadata["field"] for k in compressed_docs]
         )
         return compressed_docs

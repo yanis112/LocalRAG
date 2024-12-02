@@ -7,7 +7,7 @@ import yaml
 from langchain_qdrant import Qdrant
 from pydantic import BaseModel
 
-from src.main_utils.embedding_model import get_embedding_model
+from src.main_utils.embedding_utils import get_embedding_model
 
 # custom imports
 from src.main_utils.generation_utils import LLM_answer_v3

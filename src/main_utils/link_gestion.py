@@ -76,7 +76,7 @@ def clean_scrapped_content(
 
     from src.main_utils.generation_utils_v2 import LLM_answer_v3
 
-    # load the cleanning prompt template from a txt file
+    # load the cleaning prompt template from a txt file
     with open("prompts/linkedin_cleaning.txt", "r", encoding="utf-8") as file:
         cleaning_prompt = file.read()
 
@@ -247,7 +247,7 @@ class ExternalKnowledgeManager:
         # First we save the rescource in a file in the appropriate folder
         from src.aux_utils.text_classification_utils import IntentClassifier
 
-        with st.spinner("Indexing the rescource..."):
+        with st.spinner("Indexing the resource..."):
             topic_classifier = IntentClassifier(
                 labels_dict=self.config["data_sources"]
             )
@@ -264,7 +264,7 @@ class ExternalKnowledgeManager:
             # save the rescource in the data/{directory} folder in .md format
 
             with open(
-                f"data/{directory}/rescource_{time.time()}.md",
+                f"data/{directory}/resource_{time.time()}.md",
                 "w",
                 encoding="utf-8",
             ) as file:

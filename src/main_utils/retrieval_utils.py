@@ -35,7 +35,7 @@ from transformers import logging as transformers_logging
 
 # custom imports
 from src.main_utils.custom_langchain_componants import CustomCrossEncoderReranker,TopKCompressor,compute_sparse_vector
-from src.main_utils.embedding_model import get_embedding_model, get_sparse_embedding_model
+from src.main_utils.embedding_utils import get_embedding_model, get_sparse_embedding_model
 from src.main_utils.LLM import CustomChatModel
 #from src.query_routing_utils import QueryRouter
 from src.main_utils.utils import (
@@ -44,7 +44,8 @@ from src.main_utils.utils import (
 )
 
 import logging
-from src.main_utils.utils import log_execution_time
+from src.aux_utils.logging_utils import log_execution_time
+
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()

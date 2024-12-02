@@ -1,26 +1,13 @@
-import os
 from openai import OpenAI
-import logging
-from pydantic import BaseModel, ValidationError, Field, SecretStr
-from typing import Dict, List, Any, Optional, Union, Tuple
+from pydantic import Field, SecretStr
+from typing import Dict, List, Any, Optional
 from langchain_openai.chat_models.base import BaseChatOpenAI
-from langchain_core.language_models.chat_models import LangSmithParams
 from langchain_core.utils import from_env, secret_from_env
 from typing_extensions import Self
-#import model validator
-
 # We ignore the "unused imports" here since we want to reexport these from this package.
-from langchain_openai.chat_models.base import (
-    BaseChatOpenAI,
-)
 from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    SecretStr,
     model_validator,
 )
-from typing_extensions import Self
 
 GITHUB_BASE_URL = "https://models.inference.ai.azure.com"
 

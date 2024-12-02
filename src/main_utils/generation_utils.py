@@ -20,8 +20,9 @@ from src.main_utils.retrieval_utils import (
 )
 from src.main_utils.utils import (
     detect_language,
-    log_execution_time,
 )
+from src.aux_utils.logging_utils import log_execution_time
+
 
 load_dotenv()
 

@@ -4,7 +4,7 @@ import seaborn as sns
 import yaml
 from langchain_qdrant import Qdrant
 
-from src.main_utils.embedding_model import get_embedding_model
+from src.main_utils.embedding_utils import get_embedding_model
 from src.main_utils.utils import get_k_random_chunks_qdrant
 
 """

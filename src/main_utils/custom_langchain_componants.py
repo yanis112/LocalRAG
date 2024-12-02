@@ -34,15 +34,15 @@ from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts.prompt import PromptTemplate
 from pydantic import Field
 from langchain_qdrant import Qdrant
-from pydantic import Field
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import models
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from src.main_utils.embedding_model import get_embedding_model
+from src.main_utils.embedding_utils import get_embedding_model
 
 # custom imports
-from src.main_utils.utils import log_execution_time
+from src.aux_utils.logging_utils import log_execution_time
+
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()

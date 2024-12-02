@@ -1,4 +1,4 @@
-import logging
+
 import os
 import time
 from functools import lru_cache
@@ -8,11 +8,11 @@ import yaml
 
 # load environment variables
 from dotenv import load_dotenv
-from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
 
 # custom imports
+from src.aux_utils.logging_utils import setup_logger
 from src.main_utils.LLM import CustomChatModel
 from src.main_utils.retrieval_utils_v2 import RetrievalAgent
 from src.main_utils.utils import (
@@ -23,15 +23,26 @@ from src.main_utils.utils import (
 load_dotenv()
 
 
-# Configure logging
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
-logging.basicConfig(
-    filename="rag_answer.log",
-    filemode="a",
-    level=logging.INFO,
-    format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
+# Create logger directory if it doesn't exist
+# log_dir = "logger"
+# os.makedirs(log_dir, exist_ok=True)
+
+# # Configure logger
+# for handler in logger.root.handlers[:]:
+#     logger.root.removeHandler(handler)
+
+# logger.basicConfig(
+#     filename=os.path.join(log_dir, "rag_answer.log"),
+#     filemode="a",
+#     level=logger.INFO,
+#     format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
+# )
+
+logger = setup_logger(
+    __name__, 
+    "rag_answer.log"
 )
+
 
 def token_calculation_prompt(query: str) -> str:
     """
@@ -42,7 +53,7 @@ def token_calculation_prompt(query: str) -> str:
     return num_tokens
 
 @lru_cache(maxsize=None)
-def load_chat_model(model_name, temperature, llm_provider):
+def load_chat_model(model_name, temperature, llm_provider,system_prompt=None):
     """load the chat model from the model name and the temperature
 
     Args:
@@ -54,7 +65,7 @@ def load_chat_model(model_name, temperature, llm_provider):
         CustomChatModel: the chat model object
     """
     chat_model_1 = CustomChatModel(
-        llm_name=model_name, temperature=temperature, llm_provider=llm_provider
+        llm_name=model_name, temperature=temperature, llm_provider=llm_provider,system_prompt=system_prompt
     )
     return chat_model_1
 
@@ -97,6 +108,7 @@ def LLM_answer_v3(
     temperature=1,
     stream=False,
     llm_provider=None,
+    system_prompt=None,
 ):
     """
     Generates an answer using a specified language model (LLM) based on the provided prompt and configuration parameters.
@@ -115,46 +127,50 @@ def LLM_answer_v3(
         ValidationError: If an error occurs during JSON parsing when json_formatting is True.
     """
     
-    logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
+    logger.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
     
-    if llm_provider == 'github':
-        token = os.environ["GITHUB_TOKEN"]
-        endpoint = "https://models.inference.ai.azure.com"
-        client = OpenAI(base_url=endpoint, api_key=token)
+    # if llm_provider == 'github':
+    #     token = os.environ["GITHUB_TOKEN"]
+    #     endpoint = "https://models.inference.ai.azure.com"
+    #     client = OpenAI(base_url=endpoint, api_key=token)
         
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
+    #     messages = [
+    #         {"role": "system", "content": "You are a helpful assistant."},
+    #         {"role": "user", "content": prompt}
+    #     ]
         
-        if stream:
-            response = client.chat.completions.create(
-                messages=messages,
-                model=model_name,
-                temperature=temperature,
-                stream=True
-            )
-            def stream_generator():
-                for update in response:
-                    if update.choices[0].delta.content:
-                        yield update.choices[0].delta.content
-            return stream_generator()
+    #     if stream:
+    #         response = client.chat.completions.create(
+    #             messages=messages,
+    #             model=model_name,
+    #             temperature=temperature,
+    #             stream=True
+    #         )
+    #         def stream_generator():
+    #             for update in response:
+    #                 if update.choices[0].delta.content:
+    #                     yield update.choices[0].delta.content
+    #         return stream_generator()
         
-        else:
-            response = client.chat.completions.create(
-                messages=messages,
-                model=model_name,
-                temperature=temperature
-            )
-            return response.choices[0].message.content
+    #     else:
+    #         response = client.chat.completions.create(
+    #             messages=messages,
+    #             model=model_name,
+    #             temperature=temperature
+    #         )
+    #         return response.choices[0].message.content
     
     # Existing logic for other providers
     if llm_provider == 'ollama':
         pull_model(model_name)
 
-    chat_model_1 = load_chat_model(model_name, temperature, llm_provider)
-    chat = chat_model_1.chat_model
-    prompt_template = chat_model_1.chat_prompt_template
+    llm_object = load_chat_model(model_name, temperature, llm_provider)
+    if system_prompt is not None:
+        llm_object.system_prompt = system_prompt
+    #define the chat and prompt_template
+    chat = llm_object.chat_model
+    prompt_template = llm_object.chat_prompt_template
+    
 
     if json_formatting and issubclass(pydantic_object, BaseModel):
         from langchain_core.output_parsers import JsonOutputParser
@@ -172,7 +188,7 @@ def LLM_answer_v3(
             result = chain.invoke({"text": total_prompt})
             return result
         except ValidationError as e:
-            logging.error("JSON PARSING ERROR: %s", e)
+            logger.error("JSON PARSING ERROR: %s", e)
             return None
     else:
         from langchain.schema import StrOutputParser
@@ -193,19 +209,14 @@ class RAGAgent:
     def RAG_answer(self, query,merged_config=None):
         if merged_config is None:
             merged_config = {**self.default_config, **self.config}
-        logging.basicConfig(
-            filename="rag_answer.log",
-            filemode="a",
-            level=logging.INFO,
-            format="%(asctime)s:%(levelname)s:%(message)s",
-        )
-        logging.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
+        
+        logger.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
 
         if merged_config['llm_provider'] == 'ollama':
             pull_model(merged_config["model_name"])
 
         detected_language = detect_language(query)
-        logging.info("QUERY LANGUAGE: %s", detected_language)
+        logger.info("QUERY LANGUAGE: %s", detected_language)
         merged_config["prompt_language"] = detected_language
 
         language_flags = {
@@ -217,7 +228,7 @@ class RAGAgent:
 
         useful_docs = self.retrieval_agent.query_database(query)
         print("Number of useful docs:", len(useful_docs))
-        logging.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
+        logger.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
 
         start_time = time.time()
         list_content = [doc.page_content for doc in useful_docs]
@@ -282,10 +293,10 @@ class RAGAgent:
                 prompt = f"""Answer the following question: {query}. To answer it, you will use the information contained in the following documents: 
                 \n\n {str_context}. Do not explicitly cite the documents and answer in English. Do not include facts not explicitly mentioned in the documents in your answer."""
 
-        logging.info("TIME TO FORMAT CONTEXT: %f", time.time() - start_time)
+        logger.info("TIME TO FORMAT CONTEXT: %f", time.time() - start_time)
         nb_tokens = token_calculation_prompt(prompt)
-        logging.info("APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: %d", nb_tokens)
-        logging.info("PROMPT: %s", prompt)
+        logger.info("APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: %d", nb_tokens)
+        logger.info("PROMPT: %s", prompt)
 
         stream_generator = LLM_answer_v3(
             prompt,
@@ -305,13 +316,8 @@ class RAGAgent:
     @log_execution_time
     def advanced_RAG_answer(self, query):
         merged_config = {**self.default_config, **self.config}
-        logging.basicConfig(
-            filename="rag_answer.log",
-            filemode="a",
-            level=logging.INFO,
-            format="%(asctime)s:%(levelname)s:%(message)s",
-        )
-        logging.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
+       
+        logger.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
 
         if merged_config['llm_provider'] == 'ollama':
             pull_model(merged_config["model_name"])
@@ -443,7 +449,7 @@ class RAGAgent:
         #make a new merged config using self.merge_config and internet_config
         internet_merged_config = {**merged_config,**internet_config}
         
-        from src.internet_utils import InternetAgent
+        from src.aux_utils.internet_utils import InternetAgent
         internet_agent = InternetAgent()
         
         #we empty the internet folder of its contents

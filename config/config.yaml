@@ -85,7 +85,7 @@ auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of 
 
 # Generation parameters
 llm_provider: "groq" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
-model_name: "llama-3.2-90b-text-preview" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
+model_name: "llama-3.1-70b-versatile" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
 models_dict: {"gpt-4o": "github",
               "meta-Llama-3.1-405B-Instruct": "github",
               "gpt-4o-mini": "github",

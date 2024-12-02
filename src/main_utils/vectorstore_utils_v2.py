@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import traceback
 import warnings
@@ -17,31 +16,34 @@ from qdrant_client import QdrantClient, models
 from tqdm import tqdm
 
 # custom imports
-from src.main_utils.embedding_model import (
+from src.main_utils.embedding_utils import (
     get_embedding_model,
     get_sparse_embedding_model,
 )
 from src.main_utils.utils import (
-    log_execution_time,
     text_preprocessing,
 )
+
+from src.aux_utils.logging_utils import log_execution_time
+
+from src.aux_utils.logging_utils import setup_logger
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
 
-# Configure logging
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
 
-logging.basicConfig(
-    filename="query_database.log",
-    filemode="a",
-    level=logging.INFO,
-    format="%(asctime)s:%(levelname)s:%(message)s",
+
+logger = setup_logger(
+    __name__,
+    "vectorstore_utils.log",
+    log_format="%(asctime)s:%(levelname)s:%(message)s"
 )
+
 
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
+
+
 
 
 class VectorAgent:
@@ -95,9 +97,9 @@ class VectorAgent:
         creates the directory, and then logs a message indicating that the directory was created successfully.
         """
         if not os.path.exists(self.persist_directory):
-            logging.info("Persist directory does not exist!, creating it ...")
+            logger.info("Persist directory does not exist!, creating it ...")
             os.makedirs(self.persist_directory)
-            logging.info("Persist directory created successfully!")
+            logger.info("Persist directory created successfully!")
 
     def get_log_file_path(self):
         """
@@ -231,7 +233,7 @@ class VectorAgent:
         Returns:
             object: The loaded document if successful, otherwise None.
         Raises:
-            Exception: If there is an error during the loading or logging process, an exception is caught and None is returned.
+            Exception: If there is an error during the loading or logger process, an exception is caught and None is returned.
         """
         
         loader = self.find_loader(name, full_path)
@@ -430,21 +432,12 @@ class VectorAgent:
         Returns:
             vectordb: The loaded vectordb if collection exists, otherwise None.
         """
-        # Configure logging
-        for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
-        logging.basicConfig(
-            filename="vector_store_loading.log",
-            filemode="a",
-            level=logging.INFO,
-            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
-        )
 
         try:
             # Check if collection exists
             collections = self.client.get_collections().collections
             if self.collection_name in [c.name for c in collections]:
-                logging.info(
+                logger.info(
                     "Collection exists, loading the Qdrant database..."
                 )
 
@@ -456,14 +449,14 @@ class VectorAgent:
                     sparse_vector_name="sparse",
                     retrieval_mode=RetrievalMode.HYBRID,
                 )
-                logging.info("Qdrant database loaded successfully")
+                logger.info("Qdrant database loaded successfully")
 
             else:
-                logging.info("Collection does not exist, returning None...")
+                logger.info("Collection does not exist, returning None...")
                 self.vectordb = None
 
         except Exception as e:
-            logging.error(f"Error loading vectorstore: {str(e)}")
+            logger.error(f"Error loading vectorstore: {str(e)}")
             self.vectordb = None
             raise
 
@@ -511,33 +504,24 @@ class VectorAgent:
         Returns:
             None
         """
-        # Configure logging
-        for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
-        logging.basicConfig(
-            filename="vector_store_building.log",
-            filemode="a",
-            level=logging.INFO,
-            format="%(asctime)s:%(levelname)s:%(funcName)s:%(message)s",
-        )
 
-        logging.info(
+        logger.info(
             f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}"
         )
         if len(self.total_chunks) == 0:
-            logging.info(
+            logger.info(
                 "No chunks to add to the vectorstore - they are already there!"
             )
             return
 
-        logging.info("Starting to add documents to the vectorstore...")
+        logger.info("Starting to add documents to the vectorstore...")
 
         # Create Qdrant client
 
         try:
             if self.total_chunks:
                 if self.vectordb is None:
-                    logging.info(
+                    logger.info(
                         "Vectordb is None, checking for existing collection..."
                     )
 
@@ -549,7 +533,7 @@ class VectorAgent:
                             VectorParams,
                         )
 
-                        logging.info(
+                        logger.info(
                             "Collection does not exist, creating a new one..."
                         )
                         sparse_vector_name = "sparse"
@@ -581,15 +565,15 @@ class VectorAgent:
                     self.vectordb.add_documents(documents=self.total_chunks)
 
                 else:
-                    logging.info("Adding documents to existing vectorstore...")
+                    logger.info("Adding documents to existing vectorstore...")
                     self.vectordb.add_documents(documents=self.total_chunks)
 
-                logging.info(
+                logger.info(
                     "Qdrant database successfully updated with new documents!"
                 )
 
         except Exception as e:
-            logging.error(f"Error adding documents to vectorstore: {str(e)}")
+            logger.error(f"Error adding documents to vectorstore: {str(e)}")
             raise e
 
     def fill(self):

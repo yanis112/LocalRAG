@@ -23,12 +23,15 @@ jobs:
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Install dependencies
+      - name: Create venv and install dependencies
         run: |
+          uv venv
+          source .venv/bin/activate
           uv pip install ruff
 
       - name: Format with Ruff
         run: |
+          source .venv/bin/activate
           ruff check . --fix
           ruff format .
 

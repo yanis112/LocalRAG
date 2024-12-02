@@ -3,7 +3,7 @@ import csv
 import logging
 from typing import List
 from tqdm import tqdm
-from src.subtitle_scrapper import get_youtube_subtitles,get_video_id
+from src.aux_utils.subtitle_scrapper import get_youtube_subtitles,get_video_id
 
 # Configure logging
 logging.basicConfig(

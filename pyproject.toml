@@ -13,9 +13,11 @@ dependencies = [
     "googlesearch-python>=1.2.5",
     "gradio-client>=1.4.3",
     "langchain-community>=0.3.8",
+    "langchain-experimental>=0.3.3",
     "langchain-google-genai>=2.0.6",
     "langchain-groq>=0.2.1",
     "langchain-huggingface>=0.1.2",
+    "langchain-openai>=0.2.10",
     "langchain-qdrant>=0.2.0",
     "lingua-language-detector>=2.0.2",
     "linkedin-api>=2.3.1",
@@ -28,6 +30,7 @@ dependencies = [
     "streamlit-extras>=0.5.0",
     "streamlit-image-comparison>=0.0.4",
     "transformers>=4.46.3",
+    "unstructured>=0.16.8",
     "yt-dlp>=2024.11.18",
 ]
 
