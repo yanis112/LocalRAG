@@ -68,7 +68,15 @@ class IntentClassifier:
             from src.main_utils.generation_utils_v2 import LLM_answer_v3
             full_prompt=self.classification_prompt.format(user_query=text,labels_dict=str(self.labels_dict))
             #print("Full formatted prompt:",full_prompt)
-            answer=LLM_answer_v3(prompt=full_prompt,model_name="meta-Llama-3.1-405B-Instruct",llm_provider="github",stream=False)
+            #try to classify the text using the LLM model llama3.1
+            try:
+                answer=LLM_answer_v3(prompt=full_prompt,model_name="llama-3.1-70b-versatile",llm_provider="groq",stream=False)
+                #answer=LLM_answer_v3(prompt=full_prompt,model_name="meta-Llama-3.1-405B-Instruct",llm_provider="github",stream=False)
+            except Exception as e:
+                #show full error message in terminal
+                print(e)
+                print("failed classification using Llama-3.1 model, trying with groq provider")
+                answer=LLM_answer_v3(prompt=full_prompt,model_name="llama-3.1-70b-versatile",llm_provider="groq",stream=False)
             return answer
             
         

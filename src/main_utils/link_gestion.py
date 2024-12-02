@@ -5,10 +5,7 @@ import traceback
 from typing import Optional
 
 import streamlit as st
-
-from crawl4ai.crawl4ai import (
-    AsyncWebCrawler,
-)  # Replace this with  just crawl4ai in the final version !!!!
+from crawl4ai import AsyncWebCrawler, CacheMode
 
 
 def clean_linkedin_post(text):
@@ -119,14 +116,15 @@ def extract_linkedin(link: str, timeout: int = 30) -> Optional[str]:
 
     async def main(url: str) -> Optional[str]:
         try:
-            async with AsyncWebCrawler(verbose=True) as crawler:
+            async with AsyncWebCrawler(verbose=True, headless=True) as crawler:
                 # Add timeout to the crawl operation
                 result = await asyncio.wait_for(
-                    crawler.arun(url=url), timeout=timeout
+                    crawler.arun(url=url, cache_mode=CacheMode.BYPASS),
+                    timeout=timeout,
                 )
                 return (
                     clean_scrapped_content(
-                        str(result.markdown),
+                        str(result.markdown_v2.raw_markdown),
                         model_name="llama-3.1-8b-instant",
                         llm_provider="groq",
                     )

@@ -24,10 +24,13 @@ class InternetAgent:
             str: The content of the web page in markdown format, or an empty string if an error occurs.
         """
         from crawl4ai import AsyncWebCrawler
+        from crawl4ai import AsyncWebCrawler, CacheMode
+        from crawl4ai.content_filter_strategy import BM25ContentFilter
+        from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
         try:
-            async with AsyncWebCrawler(verbose=False) as crawler:
-                result = await crawler.arun(url=url)
-                return result.markdown
+            async with AsyncWebCrawler(verbose=False,headless=True) as crawler:
+                result = await crawler.arun(url=url,cache_mode=CacheMode.BYPASS,)
+                return result.markdown_v2.raw_markdown
         except Exception as e:
             print(f"[ERROR] 🚫 Failed to crawl {url}, error: {e}")
             return ""

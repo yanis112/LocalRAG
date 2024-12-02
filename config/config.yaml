@@ -95,6 +95,8 @@ models_dict: {"gpt-4o": "github",
               "llama-3.1-70b-versatile": "groq",
               "llama-3.1-8b-instant": "groq",
               "llama-3.2-3b-preview": "groq",
+              "gemini-1.5-pro":"google",
+              "gemini-1.5-flash":"google",
               
 }
  

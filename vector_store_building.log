@@ -1090,3 +1090,46 @@ One Point ont il répondu a ma candidature d'apres mes mails ? . Pour y répondre,
 2024-11-28 16:48:04,668:INFO:add_documents_to_db_V3:No chunks to add to the vectorstore - they are already there!
 2024-11-28 17:03:50,656:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
 2024-11-28 17:03:52,135:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:57:36,982:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 5
+2024-11-28 22:57:36,982:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-28 22:57:36,983:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-28 22:58:07,912:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-28 22:58:38,383:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 22:58:39,498:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 22:58:39,507:INFO:RAG_answer:FINAL CONFIG FILTERS: []
+2024-11-28 22:58:39,564:INFO:RAG_answer:QUERY LANGUAGE: fr
+2024-11-28 22:58:39,566:INFO:query_database:Trying to load the qdrant database...
+2024-11-28 22:58:39,566:INFO:query_database:USING QDRANT SEARH KWARGS !
+2024-11-28 22:58:39,568:INFO:query_database:QUERY: J'ai besoin d'un modèle pour faire du time series forecasting, des idées ?
+2024-11-28 22:58:39,568:INFO:query_database:USED SEARCH KWARGS: {'filter': Filter(should=[FieldCondition(key='metadata.chunk_length', match=None, range=Range(lt=None, gt=None, gte=40.0, lte=None), geo_bounding_box=None, geo_radius=None, geo_polygon=None, values_count=None)], min_should=None, must=[], must_not=[]), 'k': 7}
+2024-11-28 22:58:39,569:INFO:apply_reranker:RERANKER LOADED !
+2024-11-28 22:58:50,480:INFO:query_database:FIELDS FOUND: ['linkedin', 'notion', 'emails']
+2024-11-28 22:58:50,481:INFO:RAG_answer:NUMBER OF DOCS FROM QUERY DATABASE : 3
+2024-11-28 22:58:50,481:INFO:RAG_answer:TIME TO FORMAT CONTEXT: 0.000000
+2024-11-28 22:58:50,482:INFO:RAG_answer:APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: 1575
+2024-11-28 22:58:50,482:INFO:RAG_answer:PROMPT: Réponds à la question suivante : J'ai besoin d'un modèle pour faire du time series forecasting, des idées ? . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+                
+
+ Document 0: This is a linkedin post ### Machine Learning Scientist | PhD in Generative Modeling \ufe0f Big News Alert! \ufe0f Thrilled to unveil what we’ve been brewing over the past few months: Chronos-Bolt\ufe0f—our latest pretrained model for time series forecasting! Here’s how Chronos-Bolt improves over the original Chronos models:  5% lower error (on average)  up to 20x more memory efficient  up to 250x faster Chronos-Bolt models are now live on Hugging Face, available in four sizes: Tiny (9M), Mini (21M), Small (48M), and Base (205M). They run on CPUs too!  But wait, there’s more!  We’ve also integrated Chronos-Bolt into the latest AutoGluon v1.2 release. In our benchmarking on 68 datasets, AutoGluon v1.2 achieves a 70%+ win rate over v1.1, thanks to Chronos-Bolt and other enhancements. These models are now integrated into the "best_quality," "high_quality," and "medium_quality" presets in AutoGluon, meaning you’ll automatically benefit from some Chronos-Bolt magic whenever you use AutoGluon. AutoGluon v1.2 also supports fine-tuning these models and integrating them with tabular covariate regressors to incorporate exogenous information. Here’s how you can get started:  For researchers: Use our lightweight inference library:   For production: Leverage AutoGluon for zero-shot inference, fine-tuning, integration of covariates, ensembling, and easy deployment on AWS:  \u2b50\ufe0f Don’t forget to star our repos on GitHub, if you find this useful for your work! \ufe0f Behind the Scenes \ufe0f Chronos-Bolt is based on the T5 encoder-decoder architecture and has been trained on nearly 100 billion time series observations. It chunks the historical time series context into patches of multiple observations and generates direct multi-step quantile forecasts. The attached benchmark shows the probabilistic and point forecasting performance of Chronos-Bolt aggregated over 27 datasets. In zero-shot mode, Chronos-Bolt models outperform commonly used statistical models and deep learning models that have been trained on these datasets (highlighted by *). They also perform better than other foundation models, denoted by a +, which indicates that these models were pretrained on certain datasets in our benchmark and are not entirely zero-shot. Notably, Chronos-Bolt (Base) also surpasses the Chronos (Large) model in forecasting accuracy while being over 600x faster!  Let’s make forecasting faster, smarter, and more accessible.  Many thanks to my amazing colleagues whose tireless efforts have made this a reality: Caner Türkmen Oleksandr Shchur Lorenzo Stella Huibin Shen Hugo Senetaire Nick Erickson Cuixiong (Tony) Hu Michael Bohlke-Schneider Yuyang (Bernie) Wang! Special thanks to Imry Kissos and team for constantly providing feedback on the models! 
+
+  Document 1: RAG-RL Idées: Utiliser le RAG pour trouver des états proches de l'état actuelle, la similarité cosinus doit représenter des Q values proches (récompenses futures actualisées) Éliminer la notion de reward function (trop instable) Pour explorer l'espace des états et des actions de manière intelligente, utiliser un world model Faire une seule prédiction revient à prédire la moyenne des états: pas bon, pour compenser ça il faut utiliser la méthode JEPA : prédire une représentation de l'état suivant Plus simple de prédire une représentation latente compréssée qu'une représentation complète Self supervised learning for world model: aprendre à prédire impact de l'action sur l'environnement Unceetainty handled by energy based models: gère mieux l'incertitude par une courbe de niveau plutot que des probas qui somment à un Model predictive control Dreamer v3 (World Model) 
+
+  Document 2: modélisation et quantification de l'occurrence des scénarios incidentel… il y a 1 jour  Ne partagez pas cet email Ce message contient des liens sécurisés personnalisés pour vous. Ne partagez pas cet email ni les liens inclus. Si le salaire n’est pas mentionné dans une offre d’emploi, il sera estimé en fonction des salaires proposés pour des postes similaires. Veuillez noter que les salaires estimés ne sont pas approuvés par les employeurs et peuvent différer du salaire réel. © 2024 Indeed Ireland Operations, Ltd. Indeed Ireland Operations Limited, Block B, Capital Dock, 80 Sir John Rogerson's Quay, Grand Canal Dock, Dublin, 2, D02 HE36 Politique de confidentialité:  Conditions d'utilisation:  Centre d'aide:  Configurer les paramètres des emails:  Se désabonner: 
+
+ . Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse
+2024-11-28 22:58:50,484:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 22:58:51,404:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:01:56,756:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 23:01:58,498:INFO:_send_single_request:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:02:01,692:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 23:02:02,020:INFO:_retry_request:Retrying request to /chat/completions in 0.402445 seconds
+2024-11-28 23:02:02,425:INFO:_retry_request:Retrying request to /chat/completions in 0.764336 seconds
+2024-11-28 23:02:26,084:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 23:02:27,159:INFO:_send_single_request:HTTP Request: POST https://models.inference.ai.azure.com/chat/completions "HTTP/1.1 200 OK"
+2024-11-28 23:04:03,534:INFO:add_documents_to_db_V3:TOTAL NUMBER OF CHUNKS GENERATED: 1
+2024-11-28 23:04:03,535:INFO:add_documents_to_db_V3:Starting to add documents to the vectorstore...
+2024-11-28 23:04:03,535:INFO:add_documents_to_db_V3:Adding documents to existing vectorstore...
+2024-11-28 23:04:03,770:INFO:add_documents_to_db_V3:Qdrant database successfully updated with new documents!
+2024-11-28 23:04:30,800:INFO:LLM_answer_v3:TEMPERATURE USED IN LLM CALL: 1
+2024-11-28 23:04:31,047:INFO:_retry_request:Retrying request to /chat/completions in 0.435121 seconds
+2024-11-28 23:04:31,484:INFO:_retry_request:Retrying request to /chat/completions in 0.787823 seconds

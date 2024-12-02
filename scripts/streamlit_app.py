@@ -1,5 +1,4 @@
 import os
-from openai import audio
 import streamlit as st
 from dotenv import load_dotenv
 from src.main_utils.streamlit_app_utils import (

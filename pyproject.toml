@@ -5,15 +5,30 @@ description = "Une brève description de votre projet"
 dependencies = [
     "accelerate>=0.26.0",
     "azure-ai-inference>=1.0.0b6",
-    "crawl4ai[sync]>=0.3.742",
+    "chainlit>=0.1.0",
+    "crawl4ai==0.3.746",
     "datasets>=3.1.0",
+    "einops>=0.8.0",
     "fastembed-gpu>=0.4.2",
     "googlesearch-python>=1.2.5",
     "gradio-client>=1.4.3",
+    "langchain-community>=0.3.8",
+    "langchain-google-genai>=2.0.6",
+    "langchain-groq>=0.2.1",
+    "langchain-huggingface>=0.1.2",
+    "langchain-qdrant>=0.2.0",
+    "lingua-language-detector>=2.0.2",
     "linkedin-api>=2.3.1",
+    "matplotlib>=3.9.3",
     "notion-client>=2.2.1",
+    "pdoc3>=0.11.3",
     "python-jobspy>=1.1.75",
+    "scalene>=1.5.48",
+    "selenium>=4.27.1",
+    "streamlit-extras>=0.5.0",
     "streamlit-image-comparison>=0.0.4",
+    "transformers>=4.46.3",
+    "yt-dlp>=2024.11.18",
 ]
 
 [tool.kedro]
@@ -157,9 +172,6 @@ langchain-groq = "^0.2.1"
 langchain-experimental = "^0.3.3"
 langchain-community = "^0.3.5"
 langchain-qdrant = "^0.1.4"
-uv = "^0.5.2"
-
-
 
 
 [tool.ruff]

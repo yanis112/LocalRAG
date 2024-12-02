@@ -9,7 +9,6 @@ from typing import List
 #import easyocr
 from dotenv import load_dotenv
 from functools import lru_cache
-from qdrant_client import QdrantClient
 
 load_dotenv()
 

@@ -1,8 +1,5 @@
 import os
 from functools import lru_cache
-import ollama
-
-import transformers
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -29,6 +26,8 @@ class CustomChatModel:
         self.chat_prompt_template = None
         self.llm_temperature = temperature
         self.llm_provider = llm_provider
+        self.system_prompt = "You are a helpful assistant."
+        
 
     
 
@@ -48,6 +47,7 @@ class CustomChatModel:
             )
 
         elif self.llm_provider == "ollama":
+            import ollama
             from langchain_ollama import ChatOllama
             template = ollama.show(self.llm_name)["template"]
             self.context_window_size = 8192
@@ -69,6 +69,7 @@ class CustomChatModel:
         elif self.llm_provider == "huggingface":
             # Find all available cuda devices
             import torch
+            import transformers
             pipeline = transformers.pipeline(
                 "text-generation",
                 model=self.llm_name,
@@ -156,6 +157,28 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
+            
+        elif self.llm_provider == "google":
+            from langchain_google_genai import ChatGoogleGenerativeAI
+
+            self.llm = ChatGoogleGenerativeAI(
+                model=self.llm_name,
+                temperature=self.llm_temperature,
+                max_tokens=3000,
+                timeout=None,
+                max_retries=1,
+                # other params...
+            )
+            
+            self.chat_prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", "You are a helpful assistant."),
+                    ("human", "{text}"),
+                ]
+            )
+            self.chat_model = self.llm
+            print("CHAT MODEL:", self.chat_model)
+            
 
         else:
             raise ValueError(

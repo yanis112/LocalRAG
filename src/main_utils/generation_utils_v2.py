@@ -23,12 +23,6 @@ from src.main_utils.utils import (
 load_dotenv()
 
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"  # UTILE !!
-os.environ["LANGCHAIN_API_KEY"] = (
-    "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"
-)
-os.environ["LANGCHAIN_END_POINT"] = "https://api.smith.langchain.com"
-
 # Configure logging
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
