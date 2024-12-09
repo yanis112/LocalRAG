@@ -44,13 +44,13 @@ def get_embedding_model(model_name, show_progress=False):
             encode_kwargs=encode_kwargs,
         )
 
-    elif "ollama" in model_name:
-        #try tu pull the model from ollama using command ollama pull model_name
+    # elif "ollama" in model_name:
+    #     #try tu pull the model from ollama using command ollama pull model_name
      
-        embed = OllamaEmbeddings(model=model_name.split("/")[-1])
+    #     embed = OllamaEmbeddings(model=model_name.split("/")[-1])
 
-    elif "snowflake" in model_name or "Snowflake" in model_name:
-        embed = CustomFastEmbedEmbeddings(model_name=model_name)
+    # elif "snowflake" in model_name or "Snowflake" in model_name:
+    #     embed = CustomFastEmbedEmbeddings(model_name=model_name)
 
     else:
         encode_kwargs = {"batch_size": 4} #, "show_progress_bar": show_progress}

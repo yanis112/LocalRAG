@@ -1,20 +1,4 @@
 {
-  "[python]": {
-    "editor.defaultFormatter": "charliermarsh.ruff"
-  },
-  "ruff.format.args": [
-    "--config",
-    "C:\\Users\\Yanis\\Documents\\RAG\\pyproject.toml"
-  ],
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    ".",
-    "-p",
-    "test*.py"
-  ],
-  "python.testing.pytestEnabled": false,
-  "python.testing.unittestEnabled": true,
   "ruff.configPath": "C:\\Users\\Yanis\\Documents\\RAG\\pyproject.toml",
   "python.defaultInterpreterPath": "${workspaceFolder}\\activate\\Scripts\\python.exe",
   "python.analysis.extraPaths": [
@@ -25,15 +9,27 @@
   "python.analysis.indexing": true,
   "python.terminal.activateEnvironment": true,
   "python.analysis.autoImportCompletions": true,
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  // "terminal.integrated.defaultProfile.windows": "Python",
+  // "terminal.integrated.profiles.windows": {
+  //   "Python": {
+  //     "source": "Python",
+  //     "icon": "terminal-python",
+  //     "args": ["-i"]
+  //   }
+  // },
+  "terminal.integrated.defaultProfile.windows": "Python Venv PowerShell",
   "terminal.integrated.profiles.windows": {
-    "PowerShell": {
-      "source": "PowerShell",
-      "args": [
-        "-NoExit",
-        "-Command",
-        "& '${workspaceFolder}\\.venv\\Scripts\\Activate.ps1'"
-      ]
-    }
-  }
+    "Python Venv PowerShell": {
+      "path": "powershell.exe",
+      "args": ["-NoExit", "-Command", "& '${workspaceFolder}\\.venv\\Scripts\\Activate.ps1'"],
+      "icon": "terminal-powershell"}
+  },
+
+
+
+  "python.analysis.indexing": true,
+  "python.analysis.cacheFolding": true,
+  "python.analysis.persistentStorage": true,
+  "editor.suggestSelection": "first",
+  "python.languageServer": "Pylance"
 }

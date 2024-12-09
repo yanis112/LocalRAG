@@ -184,7 +184,7 @@ class ExternalKnowledgeManager:
         else:
             return "website"
 
-    def extract_rescource(self, link):
+    def extract_rescource_from_link(self, link):
         """
         Extracts the resource from the given link based on its classification.
         This method classifies the provided link and extracts the resource accordingly.
@@ -221,6 +221,15 @@ class ExternalKnowledgeManager:
                 return rescource
             else:
                 return self.extract_website(link)
+            
+    def extract_rescource(self,text):
+        """Extract the rescource from the given text. no link.
+        Args:
+            text (str): The text to be extracted.
+        """
+        self.current_rescource = text
+        print("Rescource extracted successfully !")
+        return text
 
     def index_rescource(self):
         """
@@ -248,7 +257,7 @@ class ExternalKnowledgeManager:
         from src.aux_utils.text_classification_utils import IntentClassifier
 
         with st.spinner("Indexing the resource..."):
-            topic_classifier = IntentClassifier(
+            topic_classifier = IntentClassifier(config=self.config,
                 labels_dict=self.config["data_sources"]
             )
 
@@ -292,7 +301,7 @@ if __name__ == "__main__":
     #     config = yaml.safe_load(file)
     # manager=ExternalKnowledgeManager(config)
     # link="https://youtu.be/_4ZoBEmcFXI?si=LLManhdxYnzJMc7K"
-    # manager.extract_rescource(link)
+    # manager.extract_rescource_from_link(link)
     # manager.index_rescource()
     link = "https://www.linkedin.com/posts/yanis-labeyrie-67b11b225_openai-gpt5-o1-activity-7240116943750385664-uxzS?utm_source=share&utm_medium=member_desktop"
     content = extract_linkedin(link)

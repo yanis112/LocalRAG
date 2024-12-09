@@ -83,3 +83,12 @@ README_v2.md
 *.png
 *.log
 *.srt
+
+# Build et compilation
+build/
+dist/
+*.c
+*.so
+*.pyd
+__pycache__/
+*.pyc

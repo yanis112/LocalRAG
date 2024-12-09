@@ -395,19 +395,6 @@ def few_shot_faithfull_judge(claim, context): #DEPRECATED
     return verdict
 
 
-def ROUGE_score(question, answer): #DEPRECATED
-    """
-    Function that calculates the ROUGE score between a question and an answer
-    input:
-        question: the question to evaluate. type: str
-        answer: the answer to evaluate. type: str
-    output:
-        The ROUGE score between the question and the answer. type: dict
-    """
-    rouge = Rouge()
-    scores = rouge.get_scores(answer, question, avg=True)
-    return scores
-
 def create_query_model(k):
     fields = {f"query{i}": (str,...) for i in range(1, k + 1)}
     return create_model("QueryList", **fields)

@@ -89,7 +89,7 @@ def create_prompt(message_type, user_message, include_cv=False, cv_path=None):
         prompt += cv_content
     
     #add the usefull information to the prompt
-    info_dict=read_user_info("info.yaml")
+    info_dict=read_user_info("aux_data/info.yaml")
     prompt += "\n\n### Informations utiles:\n" + "Nom: " + info_dict["nom_complet"] + " Téléphone: " + info_dict["numero_telephone"]
 
     return prompt
@@ -110,7 +110,7 @@ def auto_job_writter(user_input, info_path, cv_path):
 # Example usage
 if __name__ == "__main__":
     user_input = "Je voudrais postuler pour un poste de Data Scientist chez votre entreprise."
-    info_path = "info.yaml"
-    cv_path = "cv.txt"
+    info_path = "aux_data/info.yaml"
+    cv_path = "aux_data/cv.txt"
     prompt = auto_job_writter(user_input, info_path, cv_path)
     print(prompt)

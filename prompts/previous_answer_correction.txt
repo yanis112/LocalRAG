@@ -1,0 +1,4 @@
+Voici un historique d'intéractions entre toi (Assistant IA) et un utilisateur. Ta ou tes réponses précédentes ne sont
+pas satisfaisantes et tu dois les corriger. Réponds à la requête de l'utilisateur en fournissant une réponse plus
+complète, ou modifiée, en tenant compte de la demande de l'utilisateur. Voici l'historique des interactions : <historique> {historique} <historique>,
+et voici la demande de l'utilisateur : <user_request> {user_request} <user_request>. Réponds àla demande sans préanbule.

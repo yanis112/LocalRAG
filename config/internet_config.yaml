@@ -85,16 +85,18 @@ auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of 
 
 # Generation parameters
 llm_provider: "groq" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
-model_name: "llama-3.2-90b-text-preview" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
-models_dict: {"gpt-4o": "github",
+model_name: "llama-3.3-70b-versatile" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
+models_dict: {"llama-3.3-70b-versatile":"groq",
+              "gpt-4o": "github",
               "meta-Llama-3.1-405B-Instruct": "github",
               "gpt-4o-mini": "github",
               "o1-mini": "github",
               "o1-preview": "github",
               "llama3-405b": "sambanova",
-              "llama-3.1-70b-versatile": "groq",
               "llama-3.1-8b-instant": "groq",
               "llama-3.2-3b-preview": "groq",
+              "gemini-1.5-pro":"google",
+              "gemini-1.5-flash":"google",
               
 }
  
@@ -141,3 +143,6 @@ actions_dict: {
 #Agentic RAG parameters
 query_breaker_model: "o1-mini"
 query_breaker_provider: "github"
+
+#internet search parameters
+num_urls: 5

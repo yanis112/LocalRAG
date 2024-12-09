@@ -1,0 +1,39 @@
+Extract all relevant information from the attached image, including but not limited to text. Analyze the image content and determine if it is best represented in Markdown or JSON format.
+
+Format Guidelines:
+
+Markdown: Use for text-heavy content like social media posts, documents, and general text blocks. Also, use it to describe visual elements that are not easily represented in JSON (e.g. the general look of an image). Preserve original formatting where possible (bold, italics, headings, lists, tables).
+
+JSON: Use for structured data like charts, graphs, tables, diagrams, and code snippets, but also for describing other relevant data points that are not text.
+
+Charts/Graphs: Extract data into a JSON format that includes labels, axes, data points, and legends. If relevant, include information about colors, shapes, and other visual characteristics. For example, for a bar chart:
+
+{
+  "type": "bar",
+  "labels": ["Jan", "Feb", "Mar"],
+  "data": [12, 19, 3],
+  "colors": ["red", "blue", "green"]
+}
+Use code with caution.
+Json
+Tables: Represent as an array of objects, each with keys as column headers. Include additional information about cell formatting or styling if pertinent.
+
+Diagrams: Create a JSON structure with nodes, connections, and labels. Add information about node shapes, colors, and connection types if relevant.
+
+Code: Extract to a code property. Identify the language in a language property if possible.
+
+Instructions:
+
+Perform accurate OCR.
+
+Identify and extract all relevant information: text, data, visual elements, relationships between elements, and overall context.
+
+Classify the content type (social media, document, chart, table, diagram, code, etc.).
+
+Choose Markdown or JSON based on the dominant content type and the best way to structure the extracted information. You may also combine both if needed.
+
+Generate the output, prioritizing accuracy, format fidelity, and completeness of information.
+
+If no information is found, return an empty JSON or Markdown document.
+
+Return the formatted output without preamble."

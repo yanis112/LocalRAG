@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from src.image_analysis import ImageAnalyzer
+from src.image_analysis import ImageAnalyzerAgent
 from tqdm import tqdm
 
 class InstagramAgent:
@@ -8,7 +8,7 @@ class InstagramAgent:
         self.image_source_folder = image_source_folder
         self.persistence_dir = "./subprojects/instagram_gestion"
         self.csv_path = os.path.join(self.persistence_dir, 'instagram_data.csv')
-        self.image_analyzer = ImageAnalyzer(model_name="gpt-4o")
+        self.image_analyzer = ImageAnalyzerAgent(model_name="gpt-4o")
         self.prompt ="Describe this image in a very detailled way, including poses, objects, and actions."
         
         # Create persistence directory if it doesn't exist

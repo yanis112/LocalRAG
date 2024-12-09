@@ -91,7 +91,7 @@ def analyze_image(image,analyse_prompt="List with extreme precision all the base
         Returns:
             result: The result of the image analysis, typically a detailed description of the base ingredients in the image.
     """
-    from src.aux_utils.image_analysis import ImageAnalyzer
+    from src.aux_utils.image_analysis import ImageAnalyzerAgent
     image_path = os.path.join(INPUT_DIR, "temp_image.jpg")
     with open(image_path, "wb") as f:
         f.write(image.getbuffer())
@@ -100,7 +100,7 @@ def analyze_image(image,analyse_prompt="List with extreme precision all the base
     # if enhanced_image_path:
     #     image_path = enhanced_image_path
     
-    analyzer = ImageAnalyzer()
+    analyzer = ImageAnalyzerAgent()
     result = analyzer.describe_advanced(image_path=image_path, prompt=analyse_prompt, grid_size=1)
     return result
 

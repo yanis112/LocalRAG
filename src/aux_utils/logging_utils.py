@@ -1,10 +1,8 @@
-# src/aux_utils/logger_config.py
-
 import logging
+import os
 from pathlib import Path
 from functools import wraps
 import time
-import os
 
 def setup_logger(name, log_file, level=logging.INFO, log_format=None):
     """Configure a named logger with file handler
@@ -37,6 +35,10 @@ def setup_logger(name, log_file, level=logging.INFO, log_format=None):
     
     # Add handler to logger
     logger.addHandler(file_handler)
+    
+    # Remove all handlers associated with the root logger object.
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
     
     return logger
 

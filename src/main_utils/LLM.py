@@ -24,7 +24,6 @@ class CustomChatModel:
     @lru_cache(maxsize=0)
     def __init__(self, llm_name, llm_provider, temperature=1.0, max_tokens=1024,top_k=1,top_p=0.01,system_prompt=None):
         self.llm_name = llm_name
-        self.llm = None
         self.chat_model = None
         self.chat_prompt_template = None
         self.llm_provider = llm_provider
@@ -77,7 +76,7 @@ class CustomChatModel:
             
         elif self.llm_provider == "github":
             from src.aux_utils.github_llm import GithubLLM
-            self.llm = GithubLLM(
+            self.chat_model = GithubLLM(
                 github_token=os.getenv("GITHUB_TOKEN"),
                 model_name=self.llm_name,
                 temperature=self.llm_temperature,
@@ -92,13 +91,12 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
-            
-            self.chat_model = self.llm
+
             
         elif self.llm_provider == "google":
             from langchain_google_genai import ChatGoogleGenerativeAI
 
-            self.llm = ChatGoogleGenerativeAI(
+            self.chat_model = ChatGoogleGenerativeAI(
                 model=self.llm_name,
                 temperature=self.llm_temperature,
                 max_tokens=self.max_tokens,
@@ -114,8 +112,6 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
-            self.chat_model = self.llm
-            print("CHAT MODEL:", self.chat_model)
             
         
         elif self.llm_provider == "ollama":
@@ -123,7 +119,7 @@ class CustomChatModel:
             from langchain_ollama import ChatOllama
             template = ollama.show(self.llm_name)["template"]
             self.context_window_size = 8192
-            self.llm = ChatOllama(
+            self.chat_model = ChatOllama(
                 model=self.llm_name,
                 keep_alive=0,
                 num_ctx=self.context_window_size,
@@ -136,7 +132,7 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
-            self.chat_model = self.llm
+
             
         elif self.llm_provider == "cerebras":
             from langchain_cerebras import ChatCerebras
@@ -153,46 +149,46 @@ class CustomChatModel:
                     ("human", "{text}"),
                 ]
             )
-            self.chat_model = self.llm
+
             
-        elif self.llm_provider == "huggingface":
-            # Find all available cuda devices
-            import torch
-            import transformers
-            pipeline = transformers.pipeline(
-                "text-generation",
-                model=self.llm_name,
-                model_kwargs={"torch_dtype": torch.bfloat16},
-                device_map="auto",
-            )
+        # elif self.llm_provider == "huggingface":
+        #     # Find all available cuda devices
+        #     import torch
+        #     import transformers
+        #     pipeline = transformers.pipeline(
+        #         "text-generation",
+        #         model=self.llm_name,
+        #         model_kwargs={"torch_dtype": torch.bfloat16},
+        #         device_map="auto",
+        #     )
 
-            terminators = [
-                pipeline.tokenizer.eos_token_id,
-                pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
-            ]
+        #     terminators = [
+        #         pipeline.tokenizer.eos_token_id,
+        #         pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+        #     ]
 
-            self.llm = HuggingFacePipeline.from_model_id(
-                model_id=self.llm_name,
-                task="text-generation",
-                device_map="auto",
-                pipeline_kwargs=dict(
-                    max_new_tokens=1024,
-                    temperature=self.llm_temperature,
-                    torch_dtype=torch.bfloat16,
-                    eos_token_id=terminators,
-                    do_sample=True,
-                    top_p=0.9,
-                ),
-            )
+        #     self.chat_model = HuggingFacePipeline.from_model_id(
+        #         model_id=self.llm_name,
+        #         task="text-generation",
+        #         device_map="auto",
+        #         pipeline_kwargs=dict(
+        #             max_new_tokens=1024,
+        #             temperature=self.llm_temperature,
+        #             torch_dtype=torch.bfloat16,
+        #             eos_token_id=terminators,
+        #             do_sample=True,
+        #             top_p=0.9,
+        #         ),
+        #     )
 
-            self.chat_model = ChatHuggingFace(llm=self.llm)
+        #     self.chat_model = ChatHuggingFace(llm=self.chat_model)
 
-            self.chat_prompt_template = ChatPromptTemplate.from_messages(
-                [
-                    ("system", self.system_prompt),
-                    ("human", "{text}"),
-                ]
-            )
+        #     self.chat_prompt_template = ChatPromptTemplate.from_messages(
+        #         [
+        #             ("system", self.system_prompt),
+        #             ("human", "{text}"),
+        #         ]
+        #     )
             
 
         else:

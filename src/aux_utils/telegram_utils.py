@@ -1,35 +1,27 @@
 import time
-
-# Dictionary to store import times
-import_times = {}
-
-# Measure time to import telebot
-start_time = time.time()
 import telebot
-end_time = time.time()
-import_times['telebot'] = end_time - start_time
-
-# Measure time to import requests
-start_time = time.time()
 import requests
-end_time = time.time()
-import_times['requests'] = end_time - start_time
-
-# Measure time to import ImageAnalyzer
-start_time = time.time()
-from src.image_analysis import ImageAnalyzer
-end_time = time.time()
-import_times['ImageAnalyzer'] = end_time - start_time
-
-# Print the time taken to import each module
-for module, duration in import_times.items():
-    print(f"Time taken to import {module}: {duration:.6f} seconds")
+from src.aux_utils.image_analysis import ImageAnalyzerAgent
+import os
 
 # Remplacez 'YOUR_BOT_TOKEN' par le token obtenu via BotFather
 TOKEN = '7871847224:AAGh9s0DFUjT-YQW0L6nA6L2HRHpJ69p99c'
 
+# Fichier pour enregistrer les IDs des images traitées
+PROCESSED_IMAGES_FILE = 'processed_images.txt'
+
 # Création de l'instance du bot
 bot = telebot.TeleBot(TOKEN)
+
+def load_processed_images():
+    if not os.path.exists(PROCESSED_IMAGES_FILE):
+        return set()
+    with open(PROCESSED_IMAGES_FILE, 'r') as file:
+        return set(line.strip() for line in file)
+
+def save_processed_image(image_id):
+    with open(PROCESSED_IMAGES_FILE, 'a') as file:
+        file.write(f"{image_id}\n")
 
 # Gestionnaire pour la commande /start
 @bot.message_handler(commands=['start'])
@@ -45,22 +37,14 @@ def echo_all(message):
 @bot.message_handler(content_types=['photo'])
 def handle_images(message):
     try:
-        # We get the doc from github
-        from github import Github
-        import os
-        g = Github(os.getenv("GITHUB_TOKEN"))
-        repo = g.get_repo("yanis112/SOTA_machine_learning")
-        # Get the content of the README.md file
-        file = repo.get_contents("README.md")
-        current_content = file.decoded_content.decode()
-        
-        # We find the section that is the good one
-        from src.long_doc_editor import LongDocEditor
-        editor = LongDocEditor(current_content)
-        list_sections = editor.get_sections()
-        editor.compute_embeddings()
+        processed_images = load_processed_images()
 
         for i, photo in enumerate(message.photo):
+            image_id = photo.file_id
+            if image_id in processed_images:
+                bot.reply_to(message, "Cette image a déjà été traitée.")
+                continue
+
             # Télécharger l'image
             file_info = bot.get_file(photo.file_id)
             downloaded_file = bot.download_file(file_info.file_path)
@@ -71,11 +55,25 @@ def handle_images(message):
                 new_file.write(downloaded_file)
             
             # We structure-ocerise the image to obtain the text
-            analyser = ImageAnalyzer(model_name="gpt-4o-mini")
+            analyser = ImageAnalyzerAgent(model_name="gpt-4o-mini")
             prompt = """Extract the technical information from the image. You will only extract the info explaining why is good (better than current SOTA), and for which task (computer vision / natural language processing , ect... ), and maybe a link, nothing else. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
     + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """
             description = analyser.describe_advanced(image_path, prompt=prompt, grid_size=1)
             print("### Description found:", description)
+            
+            # We get the doc from github
+            from github import Github
+            g = Github(os.getenv("GITHUB_TOKEN"))
+            repo = g.get_repo("yanis112/SOTA_machine_learning")
+            # Get the content of the README.md file
+            file = repo.get_contents("README.md")
+            current_content = file.decoded_content.decode()
+            
+            # We find the section that is the good one
+            from src.aux_utils.long_doc_editor import LongDocEditor
+            editor = LongDocEditor(current_content)
+            list_sections = editor.get_sections()
+            editor.compute_embeddings()
             
             most_relevant = editor.most_relevant_section(description)
             print("### Most relevant section found:", most_relevant)
@@ -86,8 +84,11 @@ def handle_images(message):
             lines.insert(end_line + 1, description)
             current_content = '\n'.join(lines)
         
-        # Update the README.md file in the repository
-        repo.update_file(file.path, "Update README with new sections", current_content, file.sha)
+            # Update the README.md file in the repository
+            repo.update_file(file.path, "Update README with new sections", current_content, file.sha)
+            
+            # Enregistrer l'ID de l'image traitée
+            save_processed_image(image_id)
         
         # Envoyer la réponse à l'utilisateur
         bot.reply_to(message, "Les images ont été traitées et le README a été mis à jour.")

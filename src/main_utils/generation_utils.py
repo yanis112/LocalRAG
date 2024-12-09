@@ -296,36 +296,36 @@ def RAG_answer(query, default_config, config={"stream": False}):
     str_context = " ".join(list_context)
 
     # if we allow the retrieval of the knowledge graph information we add it to the context
-    if merged_config["allow_kg_retrieval"]:
+    # if merged_config["allow_kg_retrieval"]:
         
         
-        str_context += f"Document {len(list_metadata)}:"
-        # add usefull relations
-        str_context += (
-            " Important relations concerning the entities mentionned: \n  "
-        )
+    #     str_context += f"Document {len(list_metadata)}:"
+    #     # add usefull relations
+    #     str_context += (
+    #         " Important relations concerning the entities mentionned: \n  "
+    #     )
         
-        if usefull_info["selected_relations"]:
-            for relation in usefull_info["selected_relations"]:
-                str_context += relation + " ;"
-            # add the descriptions
-            str_context += (
-                " Descriptions of the entities mentionned in the query : \n"
-            )
-        #only if the description is not empty
-        if usefull_info["selected_descriptions"]:
-            for description in usefull_info["selected_descriptions"]:
-                str_context += description + " ;"
+    #     if usefull_info["selected_relations"]:
+    #         for relation in usefull_info["selected_relations"]:
+    #             str_context += relation + " ;"
+    #         # add the descriptions
+    #         str_context += (
+    #             " Descriptions of the entities mentionned in the query : \n"
+    #         )
+    #     #only if the description is not empty
+    #     if usefull_info["selected_descriptions"]:
+    #         for description in usefull_info["selected_descriptions"]:
+    #             str_context += description + " ;"
                 
-        # add the communities
-        #only if the community is not empty
-        if usefull_info["selected_communities"]:
-            str_context += "\n\n Entities mantionned in the query belongs to the following communities: \n"
-            for community in usefull_info["selected_communities"]:
-                str_context += community + " ;"
+    #     # add the communities
+    #     #only if the community is not empty
+    #     if usefull_info["selected_communities"]:
+    #         str_context += "\n\n Entities mantionned in the query belongs to the following communities: \n"
+    #         for community in usefull_info["selected_communities"]:
+    #             str_context += community + " ;"
                 
-        #ajoute un saut de ligne à la fin
-        str_context += "\n\n"
+    #     #ajoute un saut de ligne à la fin
+    #     str_context += "\n\n"
 
     if merged_config["cot_enabled"]:
         # We define a COT prompt for the LLM model

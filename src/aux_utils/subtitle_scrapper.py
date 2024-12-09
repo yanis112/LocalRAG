@@ -56,5 +56,5 @@ def obtain_subtitles():
     else:
         print("No subtitles available for this video.")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

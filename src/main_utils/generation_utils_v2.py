@@ -129,47 +129,16 @@ def LLM_answer_v3(
     
     logger.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
     
-    # if llm_provider == 'github':
-    #     token = os.environ["GITHUB_TOKEN"]
-    #     endpoint = "https://models.inference.ai.azure.com"
-    #     client = OpenAI(base_url=endpoint, api_key=token)
-        
-    #     messages = [
-    #         {"role": "system", "content": "You are a helpful assistant."},
-    #         {"role": "user", "content": prompt}
-    #     ]
-        
-    #     if stream:
-    #         response = client.chat.completions.create(
-    #             messages=messages,
-    #             model=model_name,
-    #             temperature=temperature,
-    #             stream=True
-    #         )
-    #         def stream_generator():
-    #             for update in response:
-    #                 if update.choices[0].delta.content:
-    #                     yield update.choices[0].delta.content
-    #         return stream_generator()
-        
-    #     else:
-    #         response = client.chat.completions.create(
-    #             messages=messages,
-    #             model=model_name,
-    #             temperature=temperature
-    #         )
-    #         return response.choices[0].message.content
-    
     # Existing logic for other providers
     if llm_provider == 'ollama':
         pull_model(model_name)
 
-    llm_object = load_chat_model(model_name, temperature, llm_provider)
+    llm = load_chat_model(model_name, temperature, llm_provider)
     if system_prompt is not None:
-        llm_object.system_prompt = system_prompt
+        llm.system_prompt = system_prompt
     #define the chat and prompt_template
-    chat = llm_object.chat_model
-    prompt_template = llm_object.chat_prompt_template
+    chat = llm.chat_model   
+    prompt_template = llm.chat_prompt_template
     
 
     if json_formatting and issubclass(pydantic_object, BaseModel):
@@ -202,13 +171,37 @@ class RAGAgent:
     def __init__(self, default_config, config={"stream": False}):
         self.default_config = default_config
         self.config = config
+        self.merged_config = {**default_config, **config}
         self.retrieval_agent = RetrievalAgent(default_config=default_config, config=config)
         self.client=self.retrieval_agent.client #client transmission to the RAGAgent
+        self.system_prompt=None
 
     @log_execution_time
-    def RAG_answer(self, query,merged_config=None):
+    def RAG_answer(self, query,merged_config=None,system_prompt=None):
+        """
+        Generate an answer to a given query using a Retrieval-Augmented Generation (RAG) approach.
+        This method processes the query, retrieves relevant documents from a database, and generates a response
+        using a language model. The response can be formatted with specific prompts and configurations.
+        Args:
+            query (str): The input query for which an answer is to be generated.
+            merged_config (dict, optional): Configuration dictionary for the RAG process. If None, the default
+                configuration is used. Defaults to None.
+            system_prompt (str, optional): An optional system prompt to guide the language model's response.
+                Defaults to None.
+        Returns:
+            generator: A generator that yields the language model's response in chunks.
+            list: A list of document contents used for generating the response (if `return_chunks` is True).
+            list: A list of document sources used for generating the response (if `return_chunks` is True).
+        Raises:
+            ValueError: If the language model provider specified in the configuration is not supported.
+        Notes:
+            - The method detects the language of the query and adjusts the prompt language accordingly.
+            - It supports both English and French languages for the Chain of Thought (CoT) reasoning process.
+            - The method logs various stages of the process, including the number of retrieved documents and
+                the time taken to format the context.
+        """
         if merged_config is None:
-            merged_config = {**self.default_config, **self.config}
+            merged_config = self.merged_config
         
         logger.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
 
@@ -304,6 +297,7 @@ class RAGAgent:
             llm_provider=merged_config["llm_provider"],
             stream=merged_config["stream"],
             temperature=merged_config["temperature"],
+            system_prompt=system_prompt
         )
 
         #del self.retrieval_agent
@@ -315,25 +309,25 @@ class RAGAgent:
 
     @log_execution_time
     def advanced_RAG_answer(self, query):
-        merged_config = {**self.default_config, **self.config}
+        
        
-        logger.info("FINAL CONFIG FILTERS: %s", merged_config["field_filter"])
+        logger.info("FINAL CONFIG FILTERS: %s", self.merged_config["field_filter"])
 
-        if merged_config['llm_provider'] == 'ollama':
-            pull_model(merged_config["model_name"])
+        if self.merged_config['llm_provider'] == 'ollama':
+            pull_model(self.merged_config["model_name"])
 
         detected_language = detect_language(query)
-        merged_config["prompt_language"] = detected_language
+        self.merged_config["prompt_language"] = detected_language
 
         chat_history = None
-        if 'chat_history' in merged_config and merged_config['use_history']:
-            chat_history = merged_config['chat_history']
+        if 'chat_history' in self.merged_config and self.merged_config['use_history']:
+            chat_history = self.merged_config['chat_history']
             
         from src.main_utils.agentic_rag_utils import ChabotMemory, QueryBreaker, TaskTranslator
 
-        memory = ChabotMemory(config=merged_config)
-        task_translator = TaskTranslator(config=merged_config)
-        query_breaker = QueryBreaker(config=merged_config)
+        memory = ChabotMemory(config=self.merged_config)
+        task_translator = TaskTranslator(config=self.merged_config)
+        query_breaker = QueryBreaker(config=self.merged_config)
 
         language_flags = {
             "en": "🇬🇧",
@@ -370,8 +364,8 @@ class RAGAgent:
 
         list_sources = list(set(list_sources))
         str_context = memory.get_content()
-        if merged_config["cot_enabled"]:
-            if merged_config['prompt_language'] == 'fr':
+        if self.merged_config["cot_enabled"]:
+            if self.merged_config['prompt_language'] == 'fr':
                 prompt_final = f"""Tu es un assistant IA conçu pour fournir des réponses détaillées, étape par étape. Tes réponses doivent suivre cette structure :
                 Commence par une section <thinking>.
                 À l'intérieur de la section thinking :
@@ -412,7 +406,7 @@ class RAGAgent:
                 Make sure all <tags> are on separate lines with no other text. Do not include other text on a line containing a tag.
                 Based on the intermediate steps and their respective answers, provide a final answer to the following query: {query}, using the intermediate reasoning steps and answers: {str_context}. Do not explicitly cite the steps in the final answer."""
         else:
-            if merged_config['prompt_language'] == 'fr':
+            if self.merged_config['prompt_language'] == 'fr':
                 prompt_final = f"""Réponds à la question suivante : {query}. Pour y répondre, tu utiliseras les informations contenues dans les étapes intermédiaires et leurs réponses respectives : {str_context}. Ne cite pas explicitement les étapes dans la réponse finale et répond en français."""
             else:
                 prompt_final = f"""Answer the following question: {query}. To answer it, you will use the information contained in the intermediate steps and their respective answers: {str_context}. Do not explicitly cite the steps in the final answer and answer in English."""
@@ -420,14 +414,14 @@ class RAGAgent:
         with st.spinner("Working on the final answer... 🤔⚙️ "):
             stream_generator = LLM_answer_v3(
                 prompt_final,
-                model_name=merged_config["model_name"],
-                llm_provider=merged_config["llm_provider"],
-                stream=merged_config["stream"],
-                temperature=merged_config["temperature"],
+                model_name=self.merged_config["model_name"],
+                llm_provider=self.merged_config["llm_provider"],
+                stream=self.merged_config["stream"],
+                temperature=self.merged_config["temperature"],
+                system_prompt=self.system_prompt
             )
 
         return stream_generator, list_sources
-    
     
     
     def internet_rag(self,query):
@@ -439,21 +433,18 @@ class RAGAgent:
             str: The answer to the user's query.
             
         """
+        from src.aux_utils.internet_utils import InternetAgent
+        import shutil
         #load internet_config
         with open("config/internet_config.yaml") as f:
             internet_config = yaml.safe_load(f)
-            
-        #create a merged config using self.merge_config and internet_config
-        merged_config = {**self.default_config,**self.config}
-            
+
         #make a new merged config using self.merge_config and internet_config
-        internet_merged_config = {**merged_config,**internet_config}
+        internet_merged_config = {**self.merged_config,**internet_config}
         
-        from src.aux_utils.internet_utils import InternetAgent
         internet_agent = InternetAgent()
         
         #we empty the internet folder of its contents
-        import shutil
         shutil.rmtree("data/internet")
         
         #create an internet folder in the data folder if it does not exist already
@@ -477,67 +468,12 @@ class RAGAgent:
         # Create a VectorAgent object
         agent = VectorAgent(default_config=internet_merged_config)
         # Fill the vectorstore with the pages
-        #agent.fill()
-        list_pages=agent.get_chunks()
+        agent.fill()
         
-        print("Number of chunks created:",len(list_pages))
-            
-        # Embed the documents using SentenceTransformer
-        model = self.load_embedding_model()
-        # Python
+        #answer to the query using RAG_answer
+        answer = self.RAG_answer(query,merged_config=internet_merged_config)
         
-        list_pages_text = [page.page_content for page in list_pages]
-        doc_embeddings = model.encode(list_pages_text, convert_to_tensor=True,device='cuda')
-        #doc_embeddings = model.encode(list_pages, convert_to_tensor=True)
-        query_embedding = model.encode([query], convert_to_tensor=True,device='cuda')
-        
-        # Compute the similarity between the query and the documents
-        similarities = model.similarity(query_embedding, doc_embeddings)
-        topk_values, topk_indices = similarities.topk(5)
-        
-        # Retrieve the top-k documents based on similarity
-        topk_docs = [list_pages[idx] for idx in topk_indices[0]]
-        
-        # Create the prompt using the context documents
-        context = "\n\n".join([doc.page_content for doc in topk_docs])
-        prompt = f"""
-        You are an AI assistant. Use the following documents as context to answer the user's question.
-        
-        Context:
-        {context}
-        
-        Question:
-        {query}
-        
-        Answer:
-        """
-        
-        #query the vectorstore with RAG_answer method
-        if self.config["return_chunks"]:
-            #add return_chunks to the config
-      
-             # Call the LLM_answer_v3 function with the prompt
-            answer = LLM_answer_v3(prompt,model_name=internet_merged_config["model_name"],stream=internet_merged_config["stream"],llm_provider=internet_merged_config["llm_provider"])
-        
-            #stream_generator, list_content, list_sources = self.RAG_answer(query,merged_config=internet_config)
-            #delete the vectorstore (its persist directory)
-            #agent.delete()
-            #delete the internet folder
-            # import shutil
-            # shutil.rmtree("data/internet")
-            return answer,topk_docs
-            
-        else:
-            #add return_chunks to the config
-
-            # Call the LLM_answer_v3 function with the prompt
-            answer = LLM_answer_v3(prompt,model_name=internet_merged_config["model_name"],stream=internet_merged_config["stream"],llm_provider=internet_merged_config["llm_provider"])
-            #stream_generator = self.RAG_answer(query,merged_config=internet_config)
-            #agent.delete()
-            #delete the internet folder
-            # import shutil
-            # shutil.rmtree("data/internet")
-            return answer
+        return answer
         
     @lru_cache(maxsize=None)
     def load_embedding_model(self):
@@ -554,25 +490,26 @@ if __name__ == "__main__":
     with open("config/config.yaml") as f:
         config = yaml.safe_load(f)
 
-    query = "Qui est Simon Boiko ?"
-    agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
-    answer = agent.RAG_answer(query)
-    print("Answer:", answer)
-    exit()
+    # query = "Qui est Simon Boiko ?"
+    # agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
+    # answer = agent.RAG_answer(query)
+    # print("Answer:", answer)
+    # exit()
     #test internet rag
     agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
     query = "Est il vrai que Elon Musk a proposé de l'argent à des américains pour qu'ils votent pour Trump explicitement ?"
     start_time = time.time()
     stream_generator = agent.internet_rag(query)
     end_time = time.time()
+    print("FINAL_ANSWER:",stream_generator)
     
-    #reconstruct the answer from stream_generator
-    print("Answer:")
+    # #reconstruct the answer from stream_generator
+    # print("Answer:")
  
-    print('stream_generator:', stream_generator)
-    # for chunk in stream_generator:
-    #     print(chunk)
+    # print('stream_generator:', stream_generator)
+    # # for chunk in stream_generator:
+    # #     print(chunk)
     
     
-    print("Time taken:", end_time - start_time)
+    # print("Time taken:", end_time - start_time)
 

@@ -49,6 +49,7 @@ data_sources: {
     "jobs": "job descriptions, or job offers",
     "food": "Food,food recipes, and cooking instructions",
     "linkedin": "LinkedIn posts, technical articles, data science and AI content",
+    "prompts": "refined prompts made by the user",
 }
 
    
@@ -85,14 +86,14 @@ auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of 
 
 # Generation parameters
 llm_provider: "groq" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
-model_name: "llama-3.1-70b-versatile" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
-models_dict: {"gpt-4o": "github",
+model_name: "llama-3.3-70b-versatile" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
+models_dict: {"llama-3.3-70b-versatile":"groq",
+              "gpt-4o": "github",
               "meta-Llama-3.1-405B-Instruct": "github",
               "gpt-4o-mini": "github",
               "o1-mini": "github",
               "o1-preview": "github",
               "llama3-405b": "sambanova",
-              "llama-3.1-70b-versatile": "groq",
               "llama-3.1-8b-instant": "groq",
               "llama-3.2-3b-preview": "groq",
               "gemini-1.5-pro":"google",
@@ -136,10 +137,15 @@ actions_dict: {
     "job search assistance": "Providing guidance and help with finding job opportunities, including search strategies and job board navigation",
     "document content question": "Addressing general queries about document content, or any particular request that is not covered properly by the other actions",
     "graph creation request": "User asks explicitelly to create charts, graphs, and diagrams",
-    "meeting notes summarization": "Converting meeting recordings or raw notes into concise, structured summaries"
+    "meeting notes summarization": "Converting meeting recordings or raw notes into concise, structured summaries",
+    #"previous answer correction": "User asks to correct a previous answer, modifying an already created content, shortening or expanding it, or changing the content or wanting to add more information that was not included in the previous answer (e.g. user starts his prompt with 'no, more details about...','make this shorter', 'no i search for...') the object of the modification is not explicitely present in his query.",
+    "prompt engineering request": "User asks the system to generate a detailed prompt for a specific task or scenario, refining the prompt until it meets the user's needs"
 }
-
 
 #Agentic RAG parameters
 query_breaker_model: "o1-mini"
 query_breaker_provider: "github"
+
+#Intent classifier parameters
+query_classification_model: "llama-3.3-70b-versatile"
+query_classification_provider: "groq"

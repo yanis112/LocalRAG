@@ -226,74 +226,74 @@ class QueryRouter:
             return 1 - probas[1]
         
         
-def calibrate_model_temperature_scaling(model):
-    """
-    Calibrates the trained model using temperature scaling on a softmax function.
-    Temperature scaling is a post-processing step to adjust the confidence of the model's predictions.
+# def calibrate_model_temperature_scaling(model):
+#     """
+#     Calibrates the trained model using temperature scaling on a softmax function.
+#     Temperature scaling is a post-processing step to adjust the confidence of the model's predictions.
 
-    Parameters:
-    - model: The trained SetFitModel instance.
-    - val_dataset: The validation dataset used for calibration.
+#     Parameters:
+#     - model: The trained SetFitModel instance.
+#     - val_dataset: The validation dataset used for calibration.
 
-    Returns:
-    - The model with its logits adjusted by the learned temperature.
-    """
+#     Returns:
+#     - The model with its logits adjusted by the learned temperature.
+#     """
 
-    import numpy as np
-    from scipy.optimize import minimize
+#     import numpy as np
+#     from scipy.optimize import minimize
     
-    train_sentences, val_sentences, train_labels, val_labels = train_test_split(
-    sentences, labels, test_size=0.1, random_state=42
-)
-    train_data = {"sentence": train_sentences, "label": train_labels}
-    val_data = {"sentence": val_sentences, "label": val_labels}
+#     train_sentences, val_sentences, train_labels, val_labels = train_test_split(
+#     sentences, labels, test_size=0.1, random_state=42
+# )
+#     train_data = {"sentence": train_sentences, "label": train_labels}
+#     val_data = {"sentence": val_sentences, "label": val_labels}
 
-    train_dataset = Dataset.from_dict(train_data)
-    val_dataset = Dataset.from_dict(val_data)
+#     train_dataset = Dataset.from_dict(train_data)
+#     val_dataset = Dataset.from_dict(val_data)
 
-    def softmax_temperature(logits, temperature):
-        """
-        Applies softmax function with temperature scaling.
-        """
-        e_x = np.exp((logits - np.max(logits)) / temperature)
-        return e_x / e_x.sum(axis=1, keepdims=True)
+#     def softmax_temperature(logits, temperature):
+#         """
+#         Applies softmax function with temperature scaling.
+#         """
+#         e_x = np.exp((logits - np.max(logits)) / temperature)
+#         return e_x / e_x.sum(axis=1, keepdims=True)
 
-    def nll_loss(temperature, logits, labels):
-        """
-        Computes the Negative Log Likelihood loss given a temperature.
-        """
-        scaled_logits = softmax_temperature(logits, temperature)
-        return -np.mean(np.log(scaled_logits[np.arange(len(labels)), labels]))
+#     def nll_loss(temperature, logits, labels):
+#         """
+#         Computes the Negative Log Likelihood loss given a temperature.
+#         """
+#         scaled_logits = softmax_temperature(logits, temperature)
+#         return -np.mean(np.log(scaled_logits[np.arange(len(labels)), labels]))
 
-    def find_optimal_temperature(logits, labels):
-        """
-        Finds the optimal temperature using the NLL loss as the objective function.
-        """
-        result = minimize(nll_loss, x0=1.0, args=(logits, labels), bounds=[(0.01, 5.0)])
-        return result.x[0]
+#     def find_optimal_temperature(logits, labels):
+#         """
+#         Finds the optimal temperature using the NLL loss as the objective function.
+#         """
+#         result = minimize(nll_loss, x0=1.0, args=(logits, labels), bounds=[(0.01, 5.0)])
+#         return result.x[0]
 
-    # Extract logits and labels from the validation dataset
-    logits = []
-    labels = []
-    for example in val_dataset:
-        logits.append(model.predict([example['sentence']])[0])
-        labels.append(example['label'])
+#     # Extract logits and labels from the validation dataset
+#     logits = []
+#     labels = []
+#     for example in val_dataset:
+#         logits.append(model.predict([example['sentence']])[0])
+#         labels.append(example['label'])
 
-    logits = np.array(logits)
-    labels = np.array(labels)
+#     logits = np.array(logits)
+#     labels = np.array(labels)
 
-    # Find the optimal temperature
-    optimal_temperature = find_optimal_temperature(logits, labels)
+#     # Find the optimal temperature
+#     optimal_temperature = find_optimal_temperature(logits, labels)
 
-    # Adjust the model's logits using the learned temperature
-    def adjust_logits_with_temperature(model_logits):
-        return softmax_temperature(model_logits, optimal_temperature)
+#     # Adjust the model's logits using the learned temperature
+#     def adjust_logits_with_temperature(model_logits):
+#         return softmax_temperature(model_logits, optimal_temperature)
 
-    # Assuming the model has a method to adjust logits or a way to apply a custom function to its output
-    # This part is pseudo-code and needs to be adapted to the actual model implementation
-    model.adjust_logits = adjust_logits_with_temperature
+#     # Assuming the model has a method to adjust logits or a way to apply a custom function to its output
+#     # This part is pseudo-code and needs to be adapted to the actual model implementation
+#     model.adjust_logits = adjust_logits_with_temperature
 
-    return model
+#     return model
 
 
 if __name__ == "__main__":

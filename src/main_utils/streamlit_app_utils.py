@@ -1,14 +1,75 @@
 import os
-import textwrap
-import time
 from pathlib import Path
 
-from litellm import transcription
+import qrcode
 import streamlit as st
 import yaml
+import time 
 
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
 
+
+def get_network_url():
+    """
+    Get the network URL of the local machine.
+
+    This function attempts to determine the local machine's IP address by creating a temporary
+    socket connection to an external server (Google's public DNS server at 8.8.8.8) and then
+    retrieves the local IP address from the socket. It constructs a URL using this IP address
+    and the default Streamlit port (8501).
+
+    Returns:
+        str: The network URL in the format "http://<local_ip>:8501". If an error occurs, it
+        returns "http://localhost:8501".
+    """
+    import socket
+    try:
+        # Crée une connexion socket temporaire pour obtenir l'IP locale
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        port = 8501  # Port par défaut de Streamlit
+        return f"http://{ip}:{port}"
+    except Exception:
+        return "http://localhost:8501"
+
+def create_qrcode() -> bool:
+    """
+    Generate QR code from URL and save it to assets/qr_code.png
+    
+    Args:
+        url: URL to encode in QR code
+    Returns:
+        bool: True if QR code was generated successfully
+    """
+    
+    #obtain network URL
+    url = get_network_url()
+    # Check if already generated
+    if st.session_state.get('is_qrcode_generated', False):
+        return True
+    
+    try:
+        # Create assets directory if it doesn't exist
+        Path('assets').mkdir(exist_ok=True)
+        
+        # Generate QR code
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(url)
+        qr.make(fit=True)
+        
+        # Create and save image
+        qr_image = qr.make_image(fill_color="black", back_color="white")
+        qr_image.save('assets/qr_code.png')
+        
+        # Update session state
+        st.session_state["is_qrcode_generated"] = True
+        return True
+        
+    except Exception as e:
+        st.error(f"Error generating QR code: {e}")
+        return False
 
 # Fonction pour sauvegarder le fichier audio en .wav
 def save_audio_as_wav(uploaded_file, output_dir):
@@ -188,25 +249,32 @@ def handle_uploaded_file(uploaded_file):
         st.image(uploaded_file)
         # save the image in the temp folder
         uploaded_file.seek(0)
+        
+        #create the temp folder if not existing yet
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+        
         with open("temp/" + uploaded_file.name, "wb") as f:
             f.write(uploaded_file.read())
 
-        from src.aux_utils.image_analysis import UniversalImageLoader
+        from src.aux_utils.image_analysis import ImageAnalyzerAgent
 
         with st.spinner(
             "Analyzing the image... it should take less than 2 minutes 😜"
         ):
             # load the universal image loader
-            structured_output = UniversalImageLoader().universal_extract(
-                image_path="temp/" + uploaded_file.name
-            )
-            print("TYPE OF STRUCTURED OUTPUT:", type(structured_output))
+            analyser = ImageAnalyzerAgent(model_name='gpt-4o')
+            #load the task prompt from prompts/image2markdown.txt
+            with open("prompts/image2markdown.txt", "r", encoding='utf-8') as f:
+                prompt = f.read()
+            output = analyser.describe_advanced(image_path="temp/" + uploaded_file.name,prompt=prompt,grid_size=1)
+            print("IMAGE ANALYSIS OUTPUT: ", output)
 
             st.session_state.messages.append(
                 {
                     "role": "assistant",
                     "content": "Here is the content i extracted from your image 🖼️: \n\n"
-                    + str(structured_output),
+                    + str(output),
                 }
             )
             st.session_state["uploaded_file"] = True
@@ -235,6 +303,9 @@ def handle_uploaded_file(uploaded_file):
             }
         )
         st.session_state["uploaded_file"] = True
+    
+    #refresh the displaying of chat messages
+    display_chat_history()
 
 
 @st.fragment
@@ -430,7 +501,7 @@ def process_query(query, streamlit_config, rag_agent):
     # we load the intent classifier into a session state variable so that we check if the intent is already loaded
 
     if "intent_classifier" not in st.session_state:
-        st.session_state["intent_classifier"] = IntentClassifier(labels_dict=config["actions_dict"])
+        st.session_state["intent_classifier"] = IntentClassifier(config=config)
 
     # we update the chat history to provide the LLM with the latest chat history
     config["chat_history"] = str(
@@ -470,13 +541,18 @@ def process_query(query, streamlit_config, rag_agent):
             #we create a clean query without the @add command
             query=query.replace("@add","")
             #we import the external knowledge manager
-            from src.main_utils.link_gestion import ExternalKnowledgeManager
-            link_manager=ExternalKnowledgeManager(config,client=rag_agent.client)
-            link_manager.extract_rescource(query)
-            link_manager.index_rescource()
-            #we stop the process here
-            st.toast("New rescource indexed !", icon="🎉")
-            return None
+            if 'http' in query:
+                #we extract the rescource from the link
+                from src.main_utils.link_gestion import ExternalKnowledgeManager
+                link_manager=ExternalKnowledgeManager(config,client=rag_agent.client)
+                link_manager.extract_rescource_from_link(query)
+                link_manager.index_rescource()
+                #we stop the process here
+                st.toast("New rescource indexed !", icon="🎉")
+                return None
+            else:
+                #we extract directly the pasted rescource
+                pass
         
         with st.spinner("Determining query intent 🧠 ..."):
             # we detect the intent of the query
@@ -489,7 +565,7 @@ def process_query(query, streamlit_config, rag_agent):
 
             with st.spinner("Generating a text for a job offer..."):
                 answer = LLM_answer_v3(
-                    prompt=auto_job_writter(query, "info.yaml", "cv.txt"),
+                    prompt=auto_job_writter(query, "aux_data/info.yaml", "aux_data/cv.txt"),
                     stream=True,
                     model_name=config["model_name"],
                     llm_provider=config["llm_provider"],
@@ -518,6 +594,8 @@ def process_query(query, streamlit_config, rag_agent):
             config["data_sources"] = ["emails"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["emails"]
+            #actualize the rag agent config to the new config
+            rag_agent.merged_config=config
             with st.spinner(
                 "Searching relevant documents and formulating answer 📄 ..."
             ):
@@ -529,6 +607,11 @@ def process_query(query, streamlit_config, rag_agent):
             config["data_sources"] = ["jobs"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["jobs"]
+            
+            #actualize the rag agent config to the new config
+            rag_agent.merged_config=config
+            
+            
 
             # scrapping jobs
             with st.spinner("Scraping job offers..."):
@@ -630,8 +713,49 @@ def process_query(query, streamlit_config, rag_agent):
                 st.toast("Meeting summary indexed !", icon="📋")
                 #put st.session_state["audio_transcription"] to None now that the meeting summary has been saved
                 del st.session_state["audio_transcription"]
-                    
                 
+        elif intent == "prompt engineering request":
+            config["data_sources"] = ["prompts"]
+            config["enable_source_filter"] = True
+            config["field_filter"] = ["prompts"]
+            
+            system_prompt="""You are a prompt engineering assistant in charge of creating professional prompts, drawing inspiration 
+            from the prompts examples given to you and their style or structure."""
+            
+            #actualize the rag agent config to the new config
+            rag_agent.merged_config=config
+            
+            with st.spinner(
+                "Searching relevant documents and formulating answer 📄 ..."
+            ):
+                answer, docs, sources = rag_agent.RAG_answer(query,system_prompt=system_prompt)
+            
+                
+        # elif intent =="previous answer correction":
+        #     from langchain_core.prompts import PromptTemplate
+        #     #load the prompt for previous answer correction
+        #     with open("prompts/previous_answer_correction.txt", "r", encoding='utf-8') as f:
+        #         template = f.read()
+            
+        #     template= PromptTemplate.from_template(template)
+            
+        #     #convert the history of messages to a dictionary str
+        #     template.format(historique=str(st.session_state["messages"]),user_query=query)
+            
+        #     print("################## TEMPLATE ##################")
+        #     print("FULL ANSWER CORRECTION PROMPT: ", template)
+        #     print("################## TEMPLATE ##################")
+            
+        #     # give it to the LLM
+        #     with st.spinner("Generating the corrected answer..."):
+        #         answer = LLM_answer_v3(
+        #             prompt=template,
+        #             stream=True,
+        #             model_name=config["model_name"],
+        #             llm_provider=config["llm_provider"],
+        #         )
+        #         sources = []
+            
 
         else:  # normal search
             with st.spinner(
@@ -674,6 +798,7 @@ def display_sources(sources):
         "politique": "🏛️",
         "internet": "🌐",
         "emails": "📧",
+        "prompts": "📝",
     }
 
     data = []

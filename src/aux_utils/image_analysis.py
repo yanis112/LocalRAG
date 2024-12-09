@@ -2,7 +2,50 @@
 from PIL import Image
 from groq import Groq
 
-class ImageAnalyzer:
+class ImageAnalyzerAgent:
+    """
+    A class used to analyze and describe images using various AI models.
+    Attributes
+    ----------
+    prompt : str
+        The prompt used for generating image descriptions.
+    device : str
+        The device to run the model on, either 'cuda:0' or 'cpu'.
+    torch_dtype : torch.dtype
+        The data type for torch tensors, either torch.float16 or torch.float32.
+    token : str
+        The API token for accessing the OpenAI service.
+    endpoint : str
+        The endpoint URL for the OpenAI service.
+    model_name : str
+        The name of the model to use for generating descriptions.
+    model : transformers.PreTrainedModel
+        The loaded model for generating descriptions.
+    groq_token : str
+        The API key for accessing the Groq service.
+    processor : transformers.PreTrainedProcessor
+        The processor for preparing inputs for the model.
+    groq_client : Groq
+        The client for accessing the Groq service.
+    Methods
+    -------
+    __init__(model_name="gpt-4o-mini")
+        Initializes the ImageAnalyzerAgent with the specified model name.
+    load_florence_model()
+        Loads the Florence-2 model and processor.
+    get_image_data_url(image_file: str, image_format: str) -> str
+        Converts an image file to a data URL string.
+    describe_piece(client, image_data_url, prompt, i, j) -> str
+        Describes a piece of the image using OpenAI's model.
+    resize_image(image: Image, max_size: int = 512) -> Image
+        Resizes the image if it exceeds the maximum dimension while maintaining aspect ratio.
+    describe_advanced(image_path: str, prompt: str, grid_size: int, max_size: int = 768) -> str
+        Describes an image using OpenAI's model with optional grid processing.
+    describe_with_groq(image_path: str, prompt: str, grid_size: int, max_size: int = 768) -> str
+        Describes an image using Groq's vision model.
+    describe(image_path: str, grid_size: int = 1, method: str = 'florence2') -> str
+        Describes an image using the specified method and grid size.
+    """
     prompt = "<MORE_DETAILED_CAPTION>"
 
     def __init__(self, model_name="gpt-4o-mini"):
@@ -290,7 +333,7 @@ class ImageAnalyzer:
 # Example usage
 if __name__ == "__main__":
     import time
-    analyzer = ImageAnalyzer()
+    analyzer = ImageAnalyzerAgent()
     image_path = "generated_image.png"
     # prompt = """ Extract the technical information from the image. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
     # + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """

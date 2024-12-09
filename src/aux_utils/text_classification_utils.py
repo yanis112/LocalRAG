@@ -8,8 +8,11 @@ class IntentClassifier:
     """
     A classifier for determining the intent of a given text using zero-shot classification.
     Attributes:
-        labels (list): A list of possible labels for classification.
-        pipeline (Pipeline): A Hugging Face pipeline for zero-shot classification.
+        config (dict): The configuration dictionary containing the labels and model details.
+        labels (list): The list of class labels for classification.
+        pipeline (Pipeline): The zero-shot classification pipeline.
+        
+       
     Methods:
         __init__(labels):
             Initializes the IntentClassifier with the given labels.
@@ -18,9 +21,14 @@ class IntentClassifier:
         classify(text):
             Classifies the given text and returns the most probable class label.
     """
-    def __init__(self, labels_dict):
-        self.labels_dict = labels_dict
-        self.labels = list(labels_dict.keys())
+    def __init__(self, config,labels_dict=None):
+        #get the labels dictionary from the config file
+        if labels_dict is None:
+            self.labels_dict = config["actions_dict"]
+            self.labels = list(self.labels_dict.keys())
+        else:
+            self.labels_dict = labels_dict
+            self.labels = list(labels_dict.keys())
         self.pipeline = self._get_pipeline()
         #load the classification prompt template from a txt file
         with open("prompts/llm_text_classification.txt", "r",encoding='utf-8') as file:
@@ -28,7 +36,8 @@ class IntentClassifier:
         
         # Instantiation using from_template (recommended)
         self.classification_prompt = PromptTemplate.from_template(self.classification_prompt)
-          
+        self.query_classification_model = config["query_classification_model"]
+        self.query_classification_provider = config["query_classification_provider"]
         
     @lru_cache(maxsize=None)
     def _get_pipeline(self):
@@ -67,16 +76,9 @@ class IntentClassifier:
         elif method=="LLM":
             from src.main_utils.generation_utils_v2 import LLM_answer_v3
             full_prompt=self.classification_prompt.format(user_query=text,labels_dict=str(self.labels_dict))
-            #print("Full formatted prompt:",full_prompt)
-            #try to classify the text using the LLM model llama3.1
-            try:
-                answer=LLM_answer_v3(prompt=full_prompt,model_name="llama-3.1-70b-versatile",llm_provider="groq",stream=False)
-                #answer=LLM_answer_v3(prompt=full_prompt,model_name="meta-Llama-3.1-405B-Instruct",llm_provider="github",stream=False)
-            except Exception as e:
-                #show full error message in terminal
-                print(e)
-                print("failed classification using Llama-3.1 model, trying with groq provider")
-                answer=LLM_answer_v3(prompt=full_prompt,model_name="llama-3.1-70b-versatile",llm_provider="groq",stream=False)
+
+            answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,stream=False)
+        
             return answer
             
         

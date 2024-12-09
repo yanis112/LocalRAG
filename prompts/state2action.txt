@@ -1,0 +1,4 @@
+Given this website screenshot and the following global web search objective: {global_objective},
+give the most probable unitary action to take to reach the objective in the current state (screenshot).
+You can choose from the following list of actions: {action_dict}. You must answer in the following 
+format: {"action": "action_name","value": "action_value"}.

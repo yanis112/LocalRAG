@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
+
 from src.main_utils.streamlit_app_utils import (
     display_chat_history,
     initialize_session_state,
@@ -16,7 +17,6 @@ def main():
     os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "5000"
 
     st.sidebar.image("assets/no_back_logo.png", output_format="PNG")
-    
 
     # load configuration
     load_config()
@@ -151,6 +151,18 @@ def main():
             from src.main_utils.streamlit_app_utils import show_submission_form
             show_submission_form()
             
+    #we define the rag agent 
+    rag_agent=load_rag_agent()
+            
+    if st.sidebar.button(label="Index 🗃️",help="Index the last message in the chat to the database"):
+        from src.main_utils.link_gestion import ExternalKnowledgeManager
+        link_manager=ExternalKnowledgeManager(config=rag_agent.merged_config,client=rag_agent.client)
+        #the text is the last message in the chat
+        link_manager.extract_rescource(text=st.session_state["messages"][-1]["content"])
+        link_manager.index_rescource()
+        #we stop the process here
+        st.toast("New rescource indexed !", icon="🎉")
+            
     # Add a button to clear the chat
     if st.sidebar.button(
         label="Clear Chat 🧹",
@@ -158,9 +170,13 @@ def main():
     ):
         from src.main_utils.streamlit_app_utils import clear_chat_history
         clear_chat_history()
-        
-    #we define the rag agent 
-    rag_agent=load_rag_agent()
+    
+    if st.sidebar.toggle("Qrcode", False):
+        from src.main_utils.streamlit_app_utils import create_qrcode
+        create_qrcode()
+        st.sidebar.image("assets/qr_code.png", output_format="PNG")
+    
+    
     
     #modify the rag agent config attribute to add the streamlit config
     rag_agent.config=st.session_state["streamlit_config"]
