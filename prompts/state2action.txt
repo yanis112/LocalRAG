@@ -1,4 +1,8 @@
 Given this website screenshot and the following global web search objective: {global_objective},
-give the most probable unitary action to take to reach the objective in the current state (screenshot).
+give the most probable unitary action to take to reach the objective in the current state (screenshot). Pay attention 
+to the fact that the good action depends on the current state and the previous actions taken for exemple if login ids and passwords
+are already written you can click on login button, but not if they are not written. Here is the list of previous actions taken: {previous_actions}.
 You can choose from the following list of actions: {action_dict}. You must answer in the following 
-format: {"action": "action_name","value": "action_value"}.
+json/dict format:  {{"function": {{"name": "get_weather","arguments": {{"city": "New York"}}}}}} or
+in our case {{"function": {{"name": "click","arguments": {{"element": "search_button"}}}}}} or {{"function": {{"name": "write","arguments": {{"text": "username","into": "Username"}}}}}}.
+Answer the json/dict format without preamble.

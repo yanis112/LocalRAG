@@ -257,17 +257,18 @@ def handle_uploaded_file(uploaded_file):
         with open("temp/" + uploaded_file.name, "wb") as f:
             f.write(uploaded_file.read())
 
-        from src.aux_utils.image_analysis import ImageAnalyzerAgent
+        from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
 
         with st.spinner(
             "Analyzing the image... it should take less than 2 minutes 😜"
         ):
             # load the universal image loader
-            analyser = ImageAnalyzerAgent(model_name='gpt-4o')
+            analyser = ImageAnalyzerAgent()
             #load the task prompt from prompts/image2markdown.txt
             with open("prompts/image2markdown.txt", "r", encoding='utf-8') as f:
                 prompt = f.read()
-            output = analyser.describe_advanced(image_path="temp/" + uploaded_file.name,prompt=prompt,grid_size=1)
+            
+            output = analyser.describe(image_path="temp/" + uploaded_file.name, prompt=prompt, vllm_provider=st.session_state["config"]["vllm_provider"],vllm_name=st.session_state["config"]["vllm_model_name"])
             print("IMAGE ANALYSIS OUTPUT: ", output)
 
             st.session_state.messages.append(

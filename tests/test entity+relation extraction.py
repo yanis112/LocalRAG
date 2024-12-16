@@ -1,5 +1,5 @@
 from gliner import GLiNER
-from gliner import GLiNER
+
 import json
 from src.knowledge_graph import KnowledgeGraphIndex,EntityExtractor
 

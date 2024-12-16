@@ -81,39 +81,6 @@ def enhance_image(input_path: str) -> str:
     
     return None
 
-def analyze_image(image,analyse_prompt="List with extreme precision all the base ingredients in this photograph, don't forget any."):
-    """
-        Analyzes an image to list all the base ingredients with extreme precision.
-        Args:
-            image: The image file to be analyzed.
-            analyse_prompt (str): The prompt to guide the image analysis. Default is 
-                                  "List with extreme precision all the base ingredients in this photograph, don't forget any."
-        Returns:
-            result: The result of the image analysis, typically a detailed description of the base ingredients in the image.
-    """
-    from src.aux_utils.image_analysis import ImageAnalyzerAgent
-    image_path = os.path.join(INPUT_DIR, "temp_image.jpg")
-    with open(image_path, "wb") as f:
-        f.write(image.getbuffer())
-    
-    # enhanced_image_path = enhance_image(image_path)
-    # if enhanced_image_path:
-    #     image_path = enhanced_image_path
-    
-    analyzer = ImageAnalyzerAgent()
-    result = analyzer.describe_advanced(image_path=image_path, prompt=analyse_prompt, grid_size=1)
-    return result
-
-# def refine_prompt(prompt, style_prompt=None):
-#     final_prompt = f"""Here is an image description for a text-to-image generation model given by a user: {prompt}. Refine the prompt to make it more suitable for the model. For this
-#     you will make it clearer, better written, with correct gramar. The prompt should be 5-10 sentences long and highly detailed, only visual elements and camera angles, light effects should be described, no atmoshpere or emotions or intanangible elements, the prompt should't contain any proper nouns of places, people, ect.. but only precise visual descriptions of those elements. Answer without preamble."""
-    
-#     if style_prompt:
-#         final_prompt = f"{final_prompt}. You will refine the current prompt by adding effects / fixing camera angles such as described in the following guide: {style_prompt}"
-
-#     recipe = LLM_answer_v3(final_prompt, model_name="llama3-405b", llm_provider="sambanova", temperature=1)
-#     return recipe
-
 
 
 class RefinementExpert:

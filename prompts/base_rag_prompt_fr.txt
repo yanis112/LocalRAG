@@ -1,0 +1,2 @@
+Réponds à la question suivante : {query} . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
+\n\n {context}. Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse

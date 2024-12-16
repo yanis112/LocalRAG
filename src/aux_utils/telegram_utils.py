@@ -1,7 +1,7 @@
 import time
 import telebot
 import requests
-from src.aux_utils.image_analysis import ImageAnalyzerAgent
+from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
 import os
 
 # Remplacez 'YOUR_BOT_TOKEN' par le token obtenu via BotFather
@@ -58,7 +58,7 @@ def handle_images(message):
             analyser = ImageAnalyzerAgent(model_name="gpt-4o-mini")
             prompt = """Extract the technical information from the image. You will only extract the info explaining why is good (better than current SOTA), and for which task (computer vision / natural language processing , ect... ), and maybe a link, nothing else. You will format it in markdown in the following way, EXEMPLE: * **BifRefNet**: A State-of-the-Art Background Removal Model  
     + [BifRefNet](https://huggingface.co/spaces/ZhengPeng7/BiRefNet_demo) 🕊️ (free) is a highly performant background removal model that achieves high accuracy on various images. """
-            description = analyser.describe_advanced(image_path, prompt=prompt, grid_size=1)
+            description = analyser.describe(image_path, prompt=prompt, grid_size=1)
             print("### Description found:", description)
             
             # We get the doc from github

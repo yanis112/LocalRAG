@@ -9,6 +9,7 @@ import yaml
 # load environment variables
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
+from langchain_core.prompts import PromptTemplate
 
 
 # custom imports
@@ -216,8 +217,8 @@ class RAGAgent:
             "en": "🇬🇧",
             "fr": "🇫🇷",
         }
-        flag_emoji = language_flags.get(detected_language, "🔍")
-        st.toast(f"Language detected: {flag_emoji}", icon="🔍")
+        flag_emoji = language_flags.get(detected_language)
+        st.toast(f"Language detected: {flag_emoji}", icon=flag_emoji)
 
         useful_docs = self.retrieval_agent.query_database(query)
         print("Number of useful docs:", len(useful_docs))
@@ -239,53 +240,35 @@ class RAGAgent:
         str_context = " ".join(list_context)
         if merged_config["cot_enabled"]:
             if merged_config['prompt_language'] == 'fr':
-                prompt = f"""Tu es un assistant IA conçu pour fournir des réponses détaillées, étape par étape. Tes réponses doivent suivre cette structure :
-                Commence par une section <thinking>.
-                À l'intérieur de la section thinking :
-                a. Analyse brièvement la question et présente ton approche.
-                b. Présente un plan clair d'étapes pour résoudre le problème.
-                c. Utilise un processus de raisonnement "Chain of Thought" si nécessaire, en décomposant ton processus de réflexion en étapes numérotées.
-                Inclue une section <reflection> pour chaque idée où tu :
-                a. Révérifies ton raisonnement.
-                b. Vérifies les erreurs ou omissions potentielles.
-                c. Confirme ou ajuste ta conclusion si nécessaire.
-                Assure-toi de fermer toutes les sections de réflexion.
-                Termine la section thinking avec </thinking>.
-                Fournis ta réponse finale dans une section <output>.
-                Utilise toujours ces balises dans tes réponses. Sois minutieux dans tes explications, en montrant chaque étape de ton processus de réflexion. 
-                Vise à être précis et logique dans ton approche, et n'hésite pas à décomposer les problèmes complexes en composants plus simples. 
-                Ton ton doit être analytique et légèrement formel, en se concentrant sur la communication claire de ton processus de réflexion.
-                N'oublie pas : les balises <thinking> et <reflection> doivent être fermées à la fin de chaque section.
-                Assure-toi que toutes les balises <tags> sont sur des lignes séparées sans autre texte. Ne mets pas d'autre texte sur une ligne contenant une balise.
-                Réponds à la question suivante : {query}. Pour y répondre, tu utiliseras les informations contenues dans les documents suivants (nom du doc et page) : \n\n {str_context}"""
+                #load the cot prompt from the prompts folder
+                with open("prompts/cot_prompt_fr.txt") as f:
+                    prompt=f.read()
+                
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
+                
             else:
-                prompt = f"""You are an AI assistant designed to provide detailed, step-by-step responses. Your outputs should follow this structure:
-                Begin with a <thinking> section.
-                Inside the thinking section:
-                a. Briefly analyze the question and outline your approach.
-                b. Present a clear plan of steps to solve the problem.
-                c. Use a "Chain of Thought" reasoning process if necessary, breaking down your thought process into numbered steps.
-                Include a <reflection> section for each idea where you:
-                a. Review your reasoning.
-                b. Check for potential errors or oversights.
-                c. Confirm or adjust your conclusion if necessary.
-                Be sure to close all reflection sections.
-                Close the thinking section with </thinking>.
-                Provide your final answer in an <output> section.
-                Always use these tags in your responses. Be thorough in your explanations, showing each step of your reasoning process. 
-                Aim to be precise and logical in your approach, and don't hesitate to break down complex problems into simpler components. 
-                Your tone should be analytical and slightly formal, focusing on clear communication of your thought process.
-                Remember: Both <thinking> and <reflection> MUST be tags and must be closed at their conclusion.
-                Make sure all <tags> are on separate lines with no other text. Do not include other text on a line containing a tag.
-                Answer the following question: {query}. To answer it, you will use the information contained in the following documents (document name and page): \n\n {str_context}"""
+                with open("prompts/cot_prompt_en.txt") as f:
+                    prompt=f.read()
+                    
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
         else:
             if merged_config['prompt_language'] == 'fr':
-                prompt = f"""Réponds à la question suivante : {query} . Pour y répondre, tu utiliseras les informations contenues dans les documents suivants: 
-                \n\n {str_context}. Ne cite pas les documents et répond en français, n'inclue pas de faits non mentionnés explicitement dans les documents dans ta réponse"""
+                with open("prompts/base_rag_prompt_fr.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
             else:
-                prompt = f"""Answer the following question: {query}. To answer it, you will use the information contained in the following documents: 
-                \n\n {str_context}. Do not explicitly cite the documents and answer in English. Do not include facts not explicitly mentioned in the documents in your answer."""
-
+                with open("prompts/base_rag_prompt_en.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
+                    
         logger.info("TIME TO FORMAT CONTEXT: %f", time.time() - start_time)
         nb_tokens = token_calculation_prompt(prompt)
         logger.info("APPROXIMATE NUMBER OF TOKENS IN THE PROMPT: %d", nb_tokens)
@@ -300,17 +283,16 @@ class RAGAgent:
             system_prompt=system_prompt
         )
 
-        #del self.retrieval_agent
-
         if merged_config["return_chunks"]:
             return stream_generator, list_content, list_sources
         else:
             return stream_generator
 
     @log_execution_time
-    def advanced_RAG_answer(self, query):
+    def advanced_RAG_answer(self, query, system_prompt=None):
         
-       
+       #we turn off the stream for the advanced RAG answer
+        self.merged_config["stream"] = False
         logger.info("FINAL CONFIG FILTERS: %s", self.merged_config["field_filter"])
 
         if self.merged_config['llm_provider'] == 'ollama':
@@ -318,6 +300,10 @@ class RAGAgent:
 
         detected_language = detect_language(query)
         self.merged_config["prompt_language"] = detected_language
+        
+        
+        #we want to return the sources
+        self.merged_config["return_chunks"] = True
 
         chat_history = None
         if 'chat_history' in self.merged_config and self.merged_config['use_history']:
@@ -325,16 +311,16 @@ class RAGAgent:
             
         from src.main_utils.agentic_rag_utils import ChabotMemory, QueryBreaker, TaskTranslator
 
-        memory = ChabotMemory(config=self.merged_config)
-        task_translator = TaskTranslator(config=self.merged_config)
-        query_breaker = QueryBreaker(config=self.merged_config)
+        memory = ChabotMemory(config=self.merged_config) #memory to store the context of the reflexion
+        task_translator = TaskTranslator(config=self.merged_config) #translator to translate reflexion steps into prompts for the rag
+        query_breaker = QueryBreaker(config=self.merged_config) #query breaker to break the query into reflexion steps
 
         language_flags = {
             "en": "🇬🇧",
             "fr": "🇫🇷",
         }
-        flag_emoji = language_flags.get(detected_language, "🔍")
-        st.toast(f"Language detected: {flag_emoji}", icon="🔍")
+        flag_emoji = language_flags.get(detected_language)
+        st.toast("Language detected", icon=flag_emoji)
 
         with st.spinner("Getting intermediate thinking steps..."):
             intermediate_steps = query_breaker.break_query(query, context=chat_history)
@@ -354,7 +340,7 @@ class RAGAgent:
                 print("#################################################")
                 print("TASK PROMPT:", prompt)
             with st.spinner(f"🤖 Answering intermediate query: {prompt}"):
-                answer, docs, sources = self.RAG_answer(prompt)
+                answer, docs, sources = self.RAG_answer(prompt, system_prompt=system_prompt)
                 sources = [str(source) for source in sources]
                 print("#################################################")
                 print("INTERMEDIATE ANSWER:", answer)
@@ -366,54 +352,37 @@ class RAGAgent:
         str_context = memory.get_content()
         if self.merged_config["cot_enabled"]:
             if self.merged_config['prompt_language'] == 'fr':
-                prompt_final = f"""Tu es un assistant IA conçu pour fournir des réponses détaillées, étape par étape. Tes réponses doivent suivre cette structure :
-                Commence par une section <thinking>.
-                À l'intérieur de la section thinking :
-                a. Analyse brièvement la question et présente ton approche.
-                b. Présente un plan clair d'étapes pour résoudre le problème.
-                c. Utilise un processus de raisonnement "Chain of Thought" si nécessaire, en décomposant ton processus de réflexion en étapes numérotées.
-                Inclue une section <reflection> pour chaque idée où tu :
-                a. Révérifies ton raisonnement.
-                b. Vérifies les erreurs ou omissions potentielles.
-                c. Confirme ou ajuste ta conclusion si nécessaire.
-                Assure-toi de fermer toutes les sections de réflexion.
-                Termine la section thinking avec </thinking>.
-                Fournis ta réponse finale dans une section <output>.
-                Utilise toujours ces balises dans tes réponses. Sois minutieux dans tes explications, en montrant chaque étape de ton processus de réflexion. 
-                Vise à être précis et logique dans ton approche, et n'hésite pas à décomposer les problèmes complexes en composants plus simples. 
-                Ton ton doit être analytique et légèrement formel, en se concentrant sur la communication claire de ton processus de réflexion.
-                N'oublie pas : les balises <thinking> et <reflection> doivent être fermées à la fin de chaque section.
-                Assure-toi que toutes les balises <tags> sont sur des lignes séparées sans autre texte. Ne mets pas d'autre texte sur une ligne contenant une balise.
-                Basé sur les étapes intermédiaires et leurs réponses respectives, fournis une réponse finale à la question suivante : {query}, en utilisant les étapes de raisonnement intermédiaires et les réponses : {str_context}. Ne cite pas explicitement les étapes dans la réponse finale."""
+                with open("prompts/cot_prompt_fr.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
             else:
-                prompt_final = f"""You are an AI assistant designed to provide detailed, step-by-step responses. Your outputs should follow this structure:
-                Begin with a <thinking> section.
-                Inside the thinking section:
-                a. Briefly analyze the question and outline your approach.
-                b. Present a clear plan of steps to solve the problem.
-                c. Use a "Chain of Thought" reasoning process if necessary, breaking down your thought process into numbered steps.
-                Include a <reflection> section for each idea where you:
-                a. Review your reasoning.
-                b. Check for potential errors or oversights.
-                c. Confirm or adjust your conclusion if necessary.
-                Be sure to close all reflection sections.
-                Close the thinking section with </thinking>.
-                Provide your final answer in an <output> section.
-                Always use these tags in your responses. Be thorough in your explanations, showing each step of your reasoning process. 
-                Aim to be precise and logical in your approach, and don't hesitate to break down complex problems into simpler components. 
-                Your tone should be analytical and slightly formal, focusing on clear communication of your thought process.
-                Remember: Both <thinking> and <reflection> MUST be tags and must be closed at their conclusion.
-                Make sure all <tags> are on separate lines with no other text. Do not include other text on a line containing a tag.
-                Based on the intermediate steps and their respective answers, provide a final answer to the following query: {query}, using the intermediate reasoning steps and answers: {str_context}. Do not explicitly cite the steps in the final answer."""
+                with open("prompts/cot_prompt_en.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
         else:
             if self.merged_config['prompt_language'] == 'fr':
-                prompt_final = f"""Réponds à la question suivante : {query}. Pour y répondre, tu utiliseras les informations contenues dans les étapes intermédiaires et leurs réponses respectives : {str_context}. Ne cite pas explicitement les étapes dans la réponse finale et répond en français."""
+                with open("prompts/base_rag_prompt_fr.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
             else:
-                prompt_final = f"""Answer the following question: {query}. To answer it, you will use the information contained in the intermediate steps and their respective answers: {str_context}. Do not explicitly cite the steps in the final answer and answer in English."""
-
+                with open("prompts/base_rag_prompt_en.txt") as f:
+                    prompt=f.read()
+                #format using prompt template
+                prompt_template = PromptTemplate.from_template(prompt)
+                prompt = prompt_template.format(query=query,context=str_context)
+                
         with st.spinner("Working on the final answer... 🤔⚙️ "):
+            #we turn the streaming back on for the final answer
+            #turn back the stream to True
+            self.merged_config["stream"] = True
             stream_generator = LLM_answer_v3(
-                prompt_final,
+                prompt,
                 model_name=self.merged_config["model_name"],
                 llm_provider=self.merged_config["llm_provider"],
                 stream=self.merged_config["stream"],

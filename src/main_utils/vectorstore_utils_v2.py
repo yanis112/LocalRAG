@@ -1,8 +1,11 @@
+import argparse
 import json
 import os
+import sys
 import traceback
 import warnings
 from datetime import datetime
+from pathlib import Path
 
 import yaml
 from dotenv import load_dotenv
@@ -15,6 +18,8 @@ from langchain_qdrant import (
 from qdrant_client import QdrantClient, models
 from tqdm import tqdm
 
+from src.aux_utils.logging_utils import log_execution_time, setup_logger
+
 # custom imports
 from src.main_utils.embedding_utils import (
     get_embedding_model,
@@ -24,26 +29,19 @@ from src.main_utils.utils import (
     text_preprocessing,
 )
 
-from src.aux_utils.logging_utils import log_execution_time
-
-from src.aux_utils.logging_utils import setup_logger
-
 # Load the environment variables (API keys, etc...)
 load_dotenv()
-
 
 
 logger = setup_logger(
     __name__,
     "vectorstore_utils.log",
-    log_format="%(asctime)s:%(levelname)s:%(message)s"
+    log_format="%(asctime)s:%(levelname)s:%(message)s",
 )
 
 
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
-
-
 
 
 class VectorAgent:
@@ -162,7 +160,7 @@ class VectorAgent:
         Prints:
             The number of already processed documents.
         """
-        
+
         try:
             with open(self.log_file_path, "r", encoding="utf-8") as file:
                 self.already_processed_docs = set(file.read().splitlines())
@@ -183,7 +181,7 @@ class VectorAgent:
         Returns:
             set: A set of tuples, where each tuple contains the file name and its full path.
         """
-        
+
         pending_files = set()
         for root, _, files in os.walk(self.path):
             for name in files:
@@ -213,9 +211,7 @@ class VectorAgent:
             print("No new files to process")
             return
 
-        with tqdm(
-            total=len(pending_files), desc="Processing new files"
-        ) as pbar:
+        with tqdm(total=len(pending_files), desc="Processing new files") as pbar:
             for name, full_path in pending_files:
                 result = self.process_document(name, full_path)
                 if result:
@@ -235,14 +231,12 @@ class VectorAgent:
         Raises:
             Exception: If there is an error during the loading or logger process, an exception is caught and None is returned.
         """
-        
+
         loader = self.find_loader(name, full_path)
         try:
             doc = loader.load()
             try:
-                with open(
-                    self.log_file_path, "a", encoding="utf-8"
-                ) as log_file:
+                with open(self.log_file_path, "a", encoding="utf-8") as log_file:
                     log_file.write(name + "\n")
                 return doc
             except Exception as e:
@@ -310,9 +304,7 @@ class VectorAgent:
                 "EXTENSION ISSUE:",
                 ext,
                 "TEST:",
-                str(
-                    ext in ["pdf", "docx", "html", "pptx", "txt", "md", "json"]
-                ),
+                str(ext in ["pdf", "docx", "html", "pptx", "txt", "md", "json"]),
             )
 
         return loader
@@ -346,9 +338,7 @@ class VectorAgent:
                 for chunk in self.total_documents
             ]
             # get the total metadata of the documents
-            total_docs_metadata = [
-                chunk[0].metadata for chunk in self.total_documents
-            ]
+            total_docs_metadata = [chunk[0].metadata for chunk in self.total_documents]
 
             chunks = semantic_splitter.create_documents(
                 texts=total_docs_content, metadatas=total_docs_metadata
@@ -357,9 +347,7 @@ class VectorAgent:
             from langchain.text_splitter import RecursiveCharacterTextSplitter
 
             chunk_size = self.config["chunk_size"]  # default chunk size
-            chunk_overlap = self.config[
-                "chunk_overlap"
-            ]  # default chunk overlap
+            chunk_overlap = self.config["chunk_overlap"]  # default chunk overlap
 
             character_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=chunk_size, chunk_overlap=chunk_overlap
@@ -371,15 +359,11 @@ class VectorAgent:
                 for chunk in self.total_documents
             ]
             # get the total metadata of the documents
-            total_docs_metadata = [
-                chunk[0].metadata for chunk in self.total_documents
-            ]
+            total_docs_metadata = [chunk[0].metadata for chunk in self.total_documents]
 
             chunks = [
                 Document(page_content=content, metadata=metadata)
-                for content, metadata in zip(
-                    total_docs_content, total_docs_metadata
-                )
+                for content, metadata in zip(total_docs_content, total_docs_metadata)
             ]
 
             # Split the documents into chunks
@@ -416,9 +400,7 @@ class VectorAgent:
                 return
 
             avg_chunk_length = sum(valid_lengths) / len(valid_lengths)
-            print(
-                f"Average chunk length in number of words: {avg_chunk_length:.2f}"
-            )
+            print(f"Average chunk length in number of words: {avg_chunk_length:.2f}")
             print(f"Total valid chunks analyzed: {len(valid_lengths)}")
 
         except Exception as e:
@@ -437,9 +419,7 @@ class VectorAgent:
             # Check if collection exists
             collections = self.client.get_collections().collections
             if self.collection_name in [c.name for c in collections]:
-                logger.info(
-                    "Collection exists, loading the Qdrant database..."
-                )
+                logger.info("Collection exists, loading the Qdrant database...")
 
                 self.vectordb = QdrantVectorStore(
                     client=self.client,
@@ -505,13 +485,9 @@ class VectorAgent:
             None
         """
 
-        logger.info(
-            f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}"
-        )
+        logger.info(f"TOTAL NUMBER OF CHUNKS GENERATED: {len(self.total_chunks)}")
         if len(self.total_chunks) == 0:
-            logger.info(
-                "No chunks to add to the vectorstore - they are already there!"
-            )
+            logger.info("No chunks to add to the vectorstore - they are already there!")
             return
 
         logger.info("Starting to add documents to the vectorstore...")
@@ -521,9 +497,7 @@ class VectorAgent:
         try:
             if self.total_chunks:
                 if self.vectordb is None:
-                    logger.info(
-                        "Vectordb is None, checking for existing collection..."
-                    )
+                    logger.info("Vectordb is None, checking for existing collection...")
 
                     # Check if collection exists
                     if not self.client.collection_exists(self.collection_name):
@@ -533,9 +507,7 @@ class VectorAgent:
                             VectorParams,
                         )
 
-                        logger.info(
-                            "Collection does not exist, creating a new one..."
-                        )
+                        logger.info("Collection does not exist, creating a new one...")
                         sparse_vector_name = "sparse"
 
                         self.client.create_collection(
@@ -568,9 +540,7 @@ class VectorAgent:
                     logger.info("Adding documents to existing vectorstore...")
                     self.vectordb.add_documents(documents=self.total_chunks)
 
-                logger.info(
-                    "Qdrant database successfully updated with new documents!"
-                )
+                logger.info("Qdrant database successfully updated with new documents!")
 
         except Exception as e:
             logger.error(f"Error adding documents to vectorstore: {str(e)}")
@@ -658,9 +628,7 @@ def remove_duplicate_chunks(chunks):
 
     total_chunks = []
 
-    for chunk in tqdm(
-        unique_chunks, desc="Creating Document objects from the chunks"
-    ):
+    for chunk in tqdm(unique_chunks, desc="Creating Document objects from the chunks"):
         raw_chunk = chunk.page_content
         chunk_length = len(raw_chunk.split())
 
@@ -668,9 +636,7 @@ def remove_duplicate_chunks(chunks):
 
         # Handle both forward and backward slashes and get the folder before the last part
         source_parts = source.replace("\\", "/").split("/")
-        source_field = (
-            source_parts[-2] if len(source_parts) > 1 else source_parts[0]
-        )
+        source_field = source_parts[-2] if len(source_parts) > 1 else source_parts[0]
 
         # obtain the modification date of the chunk based on the source
         modif_date = get_modif_date(chunk.metadata["source"])
@@ -693,14 +659,35 @@ def remove_duplicate_chunks(chunks):
 
 
 if __name__ == "__main__":
-    # Load the configuration file
-    with open("config/config.yaml", "r") as file:
-        config = yaml.safe_load(file)
+    parser = argparse.ArgumentParser(
+        description="Fill vector database from config file"
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="config/config.yaml",
+        help="Path to config file (default: config/config.yaml)",
+    )
 
-    # Create a VectorAgent object
-    agent = VectorAgent(default_config=config)
+    args = parser.parse_args()
+    config_path = Path(args.config)
 
-    agent.fill()
+    try:
+        # Load the configuration file
+        if not config_path.exists():
+            print(f"Error: Config file not found at {config_path}")
+            sys.exit(1)
 
-    # chunks = agent.get_chunks()
-    # print("Number of chunks:", len(chunks))
+        with open(config_path, "r") as file:
+            config = yaml.safe_load(file)
+
+        # Create a VectorAgent object and fill database
+        print(f"Loading config from: {config_path}")
+        agent = VectorAgent(default_config=config)
+        print("Filling vector database...")
+        agent.fill()
+        print("Database filled successfully!")
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)

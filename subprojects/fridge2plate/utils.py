@@ -1,4 +1,4 @@
-from src.image_analysis import ImageAnalyzerAgent
+from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
 from src.main_utils.generation_utils import LLM_answer_v3
 
 
@@ -9,7 +9,7 @@ def analyze_image(image):
         f.write(image.getbuffer())
     
     analyzer = ImageAnalyzerAgent()
-    result = analyzer.describe_advanced(image_path=image_path, prompt="List with extreme precision all the base ingredients in this photograph, don't forget any.", grid_size=2)
+    result = analyzer.describe(image_path=image_path, prompt="List with extreme precision all the base ingredients in this photograph, don't forget any.", grid_size=2)
     return result
 
 

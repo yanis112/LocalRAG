@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from src.image_analysis import ImageAnalyzerAgent
+from src.vision_utils_v2 import ImageAnalyzerAgent
 from tqdm import tqdm
 
 class InstagramAgent:

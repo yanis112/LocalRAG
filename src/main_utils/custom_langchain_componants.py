@@ -1,4 +1,3 @@
-
 import operator
 import os
 from collections.abc import Hashable
@@ -15,6 +14,7 @@ from typing import (
 
 import numpy as np
 import torch
+from docling.document_converter import DocumentConverter
 from dotenv import load_dotenv
 from langchain.retrievers.document_compressors.base import (
     BaseDocumentCompressor,
@@ -28,27 +28,25 @@ from langchain_community.retrievers import (
 from langchain_core.callbacks import (
     Callbacks,
 )
-from langchain_core.callbacks.manager import Callbacks
-from langchain_core.documents import BaseDocumentCompressor, Document
-from langchain_core.output_parsers import BaseOutputParser
-from langchain_core.prompts.prompt import PromptTemplate
-from pydantic import Field
+from langchain_core.document_loaders import BaseLoader
+from langchain_core.documents import Document
+from langchain_core.documents import Document as LCDocument
 from langchain_qdrant import Qdrant
+from pydantic import Field
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import models
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from src.main_utils.embedding_utils import get_embedding_model
-
 # custom imports
 from src.aux_utils.logging_utils import log_execution_time
-
+from src.main_utils.embedding_utils import get_embedding_model
 
 # Load the environment variables (API keys, etc...)
 load_dotenv()
 
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # solve too many warnings
+
 
 # defining the Sparse Encoder
 @lru_cache(maxsize=None)
@@ -65,30 +63,16 @@ def default_preprocessing_func(text: str) -> List[str]:
     return text.lower().split()
 
 
+class DoclingPDFLoader(BaseLoader):
+    def __init__(self, file_path: str | list[str]) -> None:
+        self._file_paths = file_path if isinstance(file_path, list) else [file_path]
+        self._converter = DocumentConverter()
 
-class LineListOutputParser(BaseOutputParser[List[str]]):
-    """Output parser for a list of lines."""
-
-    def parse(self, text: str) -> List[str]:
-        lines = text.strip().split("\n")
-        return lines
-
-
-# Default prompt
-DEFAULT_QUERY_PROMPT = PromptTemplate(
-    input_variables=["question"],
-    template="""You are an AI language model assistant. Your task is 
-    to generate 3 different versions of the given user 
-    question to retrieve relevant documents from a vector  database. 
-    By generating multiple perspectives on the user question, 
-    your goal is to help the user overcome some of the limitations 
-    of distance-based similarity search. Provide these alternative 
-    questions separated by newlines. Original question: {question}""",
-)
-
-
-def _unique_documents(documents: Sequence[Document]) -> List[Document]:
-    return [doc for i, doc in enumerate(documents) if doc not in documents[:i]]
+    def lazy_load(self) -> Iterator[LCDocument]:
+        for source in self._file_paths:
+            dl_doc = self._converter.convert(source).document
+            text = dl_doc.export_to_markdown()
+            yield LCDocument(page_content=text)
 
 
 def token_calculation_prompt(query: str) -> str:
@@ -98,6 +82,7 @@ def token_calculation_prompt(query: str) -> str:
     coefficient = 1 / 0.45
     num_tokens = len(query.split()) * coefficient
     return num_tokens
+
 
 class TopKCompressor(BaseDocumentCompressor):
     """Document compressor that returns the top k documents.
@@ -178,9 +163,8 @@ class CustomCrossEncoderReranker(BaseDocumentCompressor):
     class Config:
         """Configuration for this pydantic object."""
 
-        extra = 'forbid'   #Extra.forbid
+        extra = "forbid"  # Extra.forbid
         arbitrary_types_allowed = True
-        
 
     def compress_documents(
         self,
@@ -200,30 +184,31 @@ class CustomCrossEncoderReranker(BaseDocumentCompressor):
             A sequence of compressed documents.
         """
 
-        scores = self.model.score(
-            [(query, doc.page_content) for doc in documents]
-        )
+        scores = self.model.score([(query, doc.page_content) for doc in documents])
         docs_with_scores = list(zip(documents, scores))
         sorted_docs_with_scores = sorted(
             docs_with_scores, key=operator.itemgetter(1), reverse=True
         )
-        
+
         # Plotting the scores
         import matplotlib.pyplot as plt
+
         scores_sorted = [score for _, score in sorted_docs_with_scores]
-        
+
         # Calculate the autocut index
         autocut_index = self.autocut_v2(scores_sorted, min_docs=3)
-        
+
         plt.figure(figsize=(10, 6))
-        plt.plot(range(1, len(scores_sorted) + 1), scores_sorted, marker='o')
+        plt.plot(range(1, len(scores_sorted) + 1), scores_sorted, marker="o")
         if autocut_index is not None:
-            plt.plot(autocut_index + 1, scores_sorted[autocut_index], 'ro')  # Mark the drop point in red
-        plt.xlabel('Document Number')
-        plt.ylabel('Score')
-        plt.title('Document Scores from Highest to Lowest')
+            plt.plot(
+                autocut_index + 1, scores_sorted[autocut_index], "ro"
+            )  # Mark the drop point in red
+        plt.xlabel("Document Number")
+        plt.ylabel("Score")
+        plt.title("Document Scores from Highest to Lowest")
         plt.grid(True)
-        plt.savefig('document_scores.png')
+        plt.savefig("aux_data/document_scores.png")
         plt.close()
 
         if self.use_autocut and autocut_index is not None:
@@ -257,7 +242,10 @@ class CustomCrossEncoderReranker(BaseDocumentCompressor):
         Returns:
             The index where the significant drop occurs, or None if no such drop is found.
         """
-        baisses = [scores_sorted[i] - scores_sorted[i + 1] for i in range(len(scores_sorted) - 1)]
+        baisses = [
+            scores_sorted[i] - scores_sorted[i + 1]
+            for i in range(len(scores_sorted) - 1)
+        ]
         std_baisses = np.std(baisses)
 
         for i, baisse in enumerate(baisses):
@@ -265,27 +253,37 @@ class CustomCrossEncoderReranker(BaseDocumentCompressor):
                 return i + 1  # Return the index where the drop occurs
 
         return None
-    
+
     def autocut_v2(self, scores_sorted: list, min_docs: int = 1) -> int:
         """
         Calculate the index where the largest drop occurs, ensuring a minimum number of documents retrieved.
-    
+
         Args:
             scores_sorted: List of scores sorted in descending order.
             min_docs: Minimum number of documents to retrieve before auto-cutting.
-    
+
         Returns:
             The index before the largest drop occurs, or min_docs if the calculated index is smaller than min_docs.
         """
         if len(scores_sorted) < min_docs:
-            return len(scores_sorted)  # Return the total number of documents if less than min_docs
-    
-        baisses = [scores_sorted[i] - scores_sorted[i + 1] for i in range(len(scores_sorted) - 1)]
+            return len(
+                scores_sorted
+            )  # Return the total number of documents if less than min_docs
+
+        baisses = [
+            scores_sorted[i] - scores_sorted[i + 1]
+            for i in range(len(scores_sorted) - 1)
+        ]
         if not baisses:
-            return len(scores_sorted)  # Return the total number of documents if no drops are found
-    
+            return len(
+                scores_sorted
+            )  # Return the total number of documents if no drops are found
+
         max_baisse_index = np.argmax(baisses)
-        return max(max_baisse_index + 1, min_docs)  # Ensure the index is at least min_docs
+        return max(
+            max_baisse_index + 1, min_docs
+        )  # Ensure the index is at least min_docs
+
 
 T = TypeVar("T")
 H = TypeVar("H", bound=Hashable)
@@ -306,8 +304,6 @@ def unique_by_key(iterable: Iterable[T], key: Callable[[T], H]) -> Iterator[T]:
         if (k := key(e)) not in seen:
             seen.add(k)
             yield e
-
-
 
 
 def extract_and_map_sparse_vector(vector, tokenizer):
@@ -361,14 +357,14 @@ def compute_sparse_vector(
     Returns:
         tuple: A tuple containing the indices and values of the sparse vector.
     """
-    
-    #load the model and tokenizer (cached)
-    model, tokenizer = load_sparse_encoder(model_id)
-    device="cuda" if torch.cuda.is_available() else "cpu"
 
-    tokens = tokenizer(
-        text, return_tensors="pt", truncation=True, max_length=512
-    ).to(device)
+    # load the model and tokenizer (cached)
+    model, tokenizer = load_sparse_encoder(model_id)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    tokens = tokenizer(text, return_tensors="pt", truncation=True, max_length=512).to(
+        device
+    )
     output = model(**tokens)
     logits, attention_mask = output.logits, tokens.attention_mask
     relu_log = torch.log(1 + torch.relu(logits))
@@ -401,7 +397,7 @@ def initialize_sparse_vectorstore(
         None
     """
     from src.main_utils.utils import get_all_docs_qdrant
-    
+
     embedding_model = get_embedding_model(model_name=config["embedding_model"])
 
     # separate clients to avoid conflicts !
@@ -411,14 +407,14 @@ def initialize_sparse_vectorstore(
         collection_name="qdrant_vectorstore",
     )
 
-    #get all the documents from the database instead of reproccessing them
+    # get all the documents from the database instead of reproccessing them
     documents = get_all_docs_qdrant(raw_database=raw_database)
 
     doc_copy = documents.copy()
-    #del raw_database  # USEFULL OR NOT ??
-    
-    #We create the custom persist for the sparse vector based on the one from the dense
-    sparse_persist = config['persist_directory'] + "_sparse_vector"
+    # del raw_database  # USEFULL OR NOT ??
+
+    # We create the custom persist for the sparse vector based on the one from the dense
+    sparse_persist = config["persist_directory"] + "_sparse_vector"
 
     # Qdrant client setup
     client = QdrantClient(path=sparse_persist)
@@ -428,7 +424,7 @@ def initialize_sparse_vectorstore(
         print("Sparse vector collection already exists. Skipping initialization !")
         return
 
-    #initialize the sparse vector collection
+    # initialize the sparse vector collection
     client.create_collection(
         collection_name="sparse_vector",
         vectors_config=models.VectorParams(
@@ -443,17 +439,20 @@ def initialize_sparse_vectorstore(
             )
         },
     )
-    
+
     from functools import partial
-    compute_sparse_vector_with_model = partial(compute_sparse_vector, model_id=config["sparse_embedding_model"])
+
+    compute_sparse_vector_with_model = partial(
+        compute_sparse_vector, model_id=config["sparse_embedding_model"]
+    )
 
     # Create a retriever with the new encoder
     retriever = QdrantSparseVectorRetriever(
         client=client,
         collection_name="sparse_vector",
         sparse_vector_name="text",
-        sparse_encoder=compute_sparse_vector_with_model
-        #compute_sparse_vector(model_id=config["sparse_embedding_model"]),
+        sparse_encoder=compute_sparse_vector_with_model,
+        # compute_sparse_vector(model_id=config["sparse_embedding_model"]),
     )
 
     retriever.add_documents(documents=doc_copy)

@@ -2,7 +2,7 @@
 config_path: "config/config.yaml"
 
 # Database initialization parameters
-vectordb_provider: "Qdrant" #'Chroma'
+vectordb_provider: "Qdrant" # Provider of the vector database (Qdrant or Faiss)
 persist_directory: "data/vector_stores/qdrant_semantic_jinai" #"data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
 path: "data" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
@@ -36,8 +36,8 @@ search_type: "similarity"  # Type of search to use for the documents (similarity
 hybrid_search: false  # Enable or disable the hybrid search (keyword + similarity)
 length_threshold: 40  # Threshold for the length of the chunks (number of words)
 use_multi_query: false  # Enable or disable the multi-query
-advanced_hybrid_search: true # Enable or disable the advanced hybrid search (merge retrievers + routing if activated)
-deep_search: true # Enable or disable the advanced RAG answer (Multi step answer generation)
+advanced_hybrid_search: true # Enable or disable the advanced hybrid search (semantic + lexical, merging the results)
+deep_search: false # Enable or disable the advanced RAG answer (Multi step answer generation)
 alpha: 0.5 # Alpha parameter for the Advanced Hybrid Search
 enable_routing: false # Enable or disable the routing of the queries to lexical/semantic search
 suggestions_enabled: false # Enable or disable the query suggestions
@@ -98,9 +98,15 @@ models_dict: {"llama-3.3-70b-versatile":"groq",
               "llama-3.2-3b-preview": "groq",
               "gemini-1.5-pro":"google",
               "gemini-1.5-flash":"google",
+              "gemini-2.0-flash-exp":"google",
               
 }
- 
+
+#vllm parameters
+vllm_model_name: "gemini-2.0-flash-exp" #VLLM model to use for the generation
+vllm_provider: "gemini" # Provider of the VLLM model
+
+#LLM parameters
 cot_enabled: false  # Enable or disable the Chain-Of-Thoughts (COT) feature for the LLM answer
 stream: false  # Enable or disable the streaming of the generation (if all the output text is generated and then printed in the interface or if the tokens are generated and printed one by one)
 temperature: 1  # Temperature for the generation
@@ -139,7 +145,8 @@ actions_dict: {
     "graph creation request": "User asks explicitelly to create charts, graphs, and diagrams",
     "meeting notes summarization": "Converting meeting recordings or raw notes into concise, structured summaries",
     #"previous answer correction": "User asks to correct a previous answer, modifying an already created content, shortening or expanding it, or changing the content or wanting to add more information that was not included in the previous answer (e.g. user starts his prompt with 'no, more details about...','make this shorter', 'no i search for...') the object of the modification is not explicitely present in his query.",
-    "prompt engineering request": "User asks the system to generate a detailed prompt for a specific task or scenario, refining the prompt until it meets the user's needs"
+    "prompt engineering request": "User asks the system to generate a detailed prompt for articial image creation, refining the prompt until it meets the user's needs",
+    "political question": "User asks a question about political, geopolitical, or economic issues, or about a personnality, or ask the assistant to do a task related to political thinking",
 }
 
 #Agentic RAG parameters

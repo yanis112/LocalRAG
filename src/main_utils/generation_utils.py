@@ -15,9 +15,7 @@ from pydantic import BaseModel, ValidationError
 
 # custom imports
 from src.main_utils.LLM import CustomChatModel
-from src.main_utils.retrieval_utils import (
-    query_database_v2,
-)
+
 from src.main_utils.utils import (
     detect_language,
 )

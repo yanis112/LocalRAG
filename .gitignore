@@ -19,6 +19,7 @@ docs/
 data_test/
 mlruns/
 checkpoints/
+aux_data/
 test_docs/
 runs/
 test_factures/

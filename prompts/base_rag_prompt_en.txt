@@ -1,0 +1,2 @@
+Answer the following question: {query}. To answer it, you will use the information contained in the following documents: 
+n\n {context}. Do not explicitly cite the documents and answer in English. Do not include facts not explicitly mentioned in the documents in your answer.
