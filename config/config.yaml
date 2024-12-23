@@ -102,6 +102,10 @@ models_dict: {"llama-3.3-70b-versatile":"groq",
               
 }
 
+#Prompting parameters
+fr_rag_prompt_path: "prompts/base_rag_prompt_fr.txt" #Path to the file containing the RAG prompt
+en_rag_prompt_path: "prompts/base_rag_prompt_en.txt" #Path to the file containing the RAG prompt
+
 #vllm parameters
 vllm_model_name: "gemini-2.0-flash-exp" #VLLM model to use for the generation
 vllm_provider: "gemini" # Provider of the VLLM model

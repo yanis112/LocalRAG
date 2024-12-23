@@ -257,13 +257,13 @@ class RAGAgent:
                 prompt = prompt_template.format(query=query,context=str_context)
         else:
             if merged_config['prompt_language'] == 'fr':
-                with open("prompts/base_rag_prompt_fr.txt") as f:
+                with open(merged_config["fr_rag_prompt_path"]) as f:
                     prompt=f.read()
                 #format using prompt template
                 prompt_template = PromptTemplate.from_template(prompt)
                 prompt = prompt_template.format(query=query,context=str_context)
             else:
-                with open("prompts/base_rag_prompt_en.txt") as f:
+                with open(merged_config["en_rag_prompt_path"]) as f:
                     prompt=f.read()
                 #format using prompt template
                 prompt_template = PromptTemplate.from_template(prompt)

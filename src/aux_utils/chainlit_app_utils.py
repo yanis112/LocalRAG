@@ -54,7 +54,7 @@ def process_query(query, config):
     else:
         intent = classifier.classify(query)
         if intent == "rediger un texte pour une offre":
-            from aux_utils.auto_job import auto_job_writter
+            from aux_utils.job_agent_v1 import auto_job_writter
             answer = LLM_answer_v3(prompt=auto_job_writter(query, "info.yaml", "cv.txt"), stream=False, model_name=config["model_name"], llm_provider=config["llm_provider"])
             sources = []
         elif intent == "question sur des emails":

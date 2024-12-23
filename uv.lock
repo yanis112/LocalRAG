@@ -2101,6 +2101,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "notion-client" },
     { name = "pdoc3" },
+    { name = "pydub" },
     { name = "pygithub" },
     { name = "pytelegrambotapi" },
     { name = "pytest" },
@@ -2144,6 +2145,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.9.3" },
     { name = "notion-client", specifier = ">=2.2.1" },
     { name = "pdoc3", specifier = ">=0.11.3" },
+    { name = "pydub", specifier = ">=0.25.1" },
     { name = "pygithub", specifier = ">=2.5.0" },
     { name = "pytelegrambotapi", specifier = ">=4.25.0" },
     { name = "pytest", specifier = ">=8.3.3" },
@@ -3449,6 +3451,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a1/ca/40e14e196864a0f61a92abb14d09b3d3da98f94ccb03b49cf51688140dab/pydeck-0.9.1.tar.gz", hash = "sha256:f74475ae637951d63f2ee58326757f8d4f9cd9f2a457cf42950715003e2cb605", size = 3832240 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ab/4c/b888e6cf58bd9db9c93f40d1c6be8283ff49d88919231afe93a6bcf61626/pydeck-0.9.1-py2.py3-none-any.whl", hash = "sha256:b3f75ba0d273fc917094fa61224f3f6076ca8752b93d46faf3bcfd9f9d59b038", size = 6900403 },
+]
+
+[[package]]
+name = "pydub"
+version = "0.25.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/9a/e6bca0eed82db26562c73b5076539a4a08d3cffd19c3cc5913a3e61145fd/pydub-0.25.1.tar.gz", hash = "sha256:980a33ce9949cab2a569606b65674d748ecbca4f0796887fd6f46173a7b0d30f", size = 38326 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a6/53/d78dc063216e62fc55f6b2eebb447f6a4b0a59f55c8406376f76bf959b08/pydub-0.25.1-py2.py3-none-any.whl", hash = "sha256:65617e33033874b59d87db603aa1ed450633288aefead953b30bded59cb599a6", size = 32327 },
 ]
 
 [[package]]

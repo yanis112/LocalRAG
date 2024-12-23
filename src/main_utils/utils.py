@@ -7,9 +7,37 @@ from typing import List
 
 # import easyocr
 from dotenv import load_dotenv
+import re
 from src.aux_utils.logging_utils import log_execution_time
 
 load_dotenv()
+
+
+
+def extract_url(text: str) -> str | None:
+    """Extract URL from input text if present.
+    
+    This function searches for a URL pattern in the input text and returns
+    the first URL found. If no URL is found, returns None.
+    
+    Args:
+        text: Input string that may contain a URL
+        
+    Returns:
+        str: Extracted URL if found
+        None: If no URL is found in the text
+        
+    Examples:
+        >>> extract_url("Visit https://www.example.com today!")
+        'https://www.example.com'
+        >>> extract_url("No URL in this text")
+        None
+    """
+    # URL pattern that matches http/https/ftp with optional www
+    url_pattern = r'https?://(?:www\.)?[\w\-\.]+\.[a-zA-Z]{2,}(?:/[^\s]*)?'
+    
+    match = re.search(url_pattern, text)
+    return match.group(0) if match else None
 
 
 def detect_language(text: str) -> str:

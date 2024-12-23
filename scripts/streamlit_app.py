@@ -51,12 +51,10 @@ def main():
         help="Select the LLM model you want to use for the answer generation."
     )
     
-    if llm_choice:
-        selected_model = llm_choice.split(" (")[0]
-        print("Selected model: ", selected_model)
-        selected_provider = llm_choice.split(" (")[1].rstrip(")")
-        print("Selected provider: ", selected_provider)
-
+    
+    selected_model = llm_choice.split(" (")[0]
+    selected_provider = llm_choice.split(" (")[1].rstrip(")")
+    
     # Define sidebar parameters
     # st.sidebar.header("Data Sources")
     # field_filter = st.sidebar.multiselect(

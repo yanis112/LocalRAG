@@ -15,7 +15,7 @@ You are an agent tasked with cleaning LinkedIn posts. Your role is to EXTRACT AN
   * Image URLs (if present)
 
 Input:
-# {post} #
+# {resource} #
 
 Output format:
 [Main post text]

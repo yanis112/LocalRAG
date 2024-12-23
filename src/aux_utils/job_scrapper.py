@@ -1,70 +1,120 @@
 import os
+from functools import lru_cache
+import streamlit as st
 from jobspy import scrape_jobs
-
+from time import sleep
+from requests.exceptions import RequestException
+import pandas as pd
+from typing import Union, List
+    
+    
 class JobAgent:
     """
-    A class used to scrape job listings from various websites and convert them to markdown files.
+    A class used to represent a Job Agent that scrapes job listings from various websites.
+    
     Attributes
     ----------
-    search_term : str
-        The term to search for in job listings.
-    location : str
-        The location to search for job listings.
-    hours_old : int
-        The maximum age of job listings in hours.
-    results_wanted : int
-        The number of job listings to retrieve.
-    Methods
-    -------
-    scrape_and_convert():
-        Scrapes job listings and converts them to markdown files.
+    search_terms : Union[str, List[str]], optional
+        Single term or list of terms to search for in job listings (default is None)
+    locations : Union[str, List[str]], optional
+        Single location or list of locations to search for job listings (default is None)
+    hours_old : int, optional
+        The maximum age of job listings in hours (default is None)
+    results_wanted : int, optional
+        Total number of job listings to fetch across all searches (default is None)
+    google_search_terms : Union[str, List[str]], optional
+        Search terms for Google job listings, should match search_terms (default is None)
+    is_remote : bool, optional
+        Whether to search for remote jobs (default is False)
     """
-    def __init__(self, search_term, location, hours_old, results_wanted,google_search_term,is_remote=False):
-        self.search_term = search_term
-        self.location = location
+    def __init__(self, search_terms=None, locations=None, hours_old=None, 
+                 results_wanted=None, google_search_terms=None, is_remote=False):
+        self.search_terms = [search_terms] if isinstance(search_terms, str) else search_terms
+        self.locations = [locations] if isinstance(locations, str) else locations
         self.hours_old = hours_old
         self.results_wanted = results_wanted
-        self.google_search_term = google_search_term
+        self.google_search_terms = [google_search_terms] if isinstance(google_search_terms, str) else google_search_terms
         self.is_remote = is_remote
+
+    @lru_cache(maxsize=None)
+    def _fetch_jobs(self, search_term: str, location: str, hours_old: int, 
+                   results_wanted: int, google_search_term: str, is_remote: bool):
+        """
+        Fetch jobs for a single search term and location combination.
+        
+        Args:
+            search_term (str): Single search term
+            location (str): Single location
+            hours_old (int): Maximum age of listings
+            results_wanted (int): Number of results for this specific search
+            google_search_term (str): Google-specific search term
+            is_remote (bool): Remote job filter
+            
+        Returns:
+            pd.DataFrame: Job listings or None if error occurs
+        """
+        try:
+            return scrape_jobs(
+                site_name=["indeed", "linkedin", "glassdoor", "google"],
+                google_search_term=google_search_term,
+                search_term=search_term,
+                location=location,
+                results_wanted=results_wanted,
+                hours_old=hours_old,
+                country_indeed='france',
+                is_remote=is_remote
+            )
+        except Exception as e:
+            st.error(f"Error fetching jobs for {search_term} in {location}: {str(e)}")
+            return None
 
     def scrape_and_convert(self):
         """
-        Scrape job listings from multiple job sites and convert them to markdown files.
-        This method scrapes job listings from Indeed, LinkedIn, and Glassdoor based on the 
-        search term, location, and other parameters specified in the instance. It then 
-        converts each job listing into a markdown file and saves it in the 'data/jobs' directory.
-        The markdown file contains the job title, company, location, job type, date posted, 
-        salary range, remote status, job description, and job URL.
-        If the 'data/jobs' directory does not exist, it will be created.
-        Attributes:
-            site_name (list): List of job sites to scrape from.
-            search_term (str): The search term for the job listings.
-            location (str): The location for the job listings.
-            results_wanted (int): The number of job listings to retrieve.
-            hours_old (int): The maximum age of job listings in hours.
-            country_indeed (str): The country for Indeed job listings.
-            is_remote (bool): Whether to filter for remote jobs.
-            google_search_term (str): The search term for Google job listings.
+        Scrape job listings for all search term and location combinations.
+        
+        Distributes results_wanted across all search combinations and combines results.
+        Converts results to markdown files in the 'data/jobs' directory.
+        
         Raises:
-            OSError: If there is an issue creating the 'data/jobs' directory or writing the markdown files.
+            ValueError: If required parameters are not set
         """
-        jobs = scrape_jobs(
-            site_name=["indeed", "linkedin", "glassdoor","google"],
-            google_search_term=self.google_search_term,
-            search_term=self.search_term,
-            location=self.location,
-            results_wanted=self.results_wanted,
-            hours_old=self.hours_old,
-            country_indeed='france',
-            is_remote=self.is_remote
-        )
-        print(f"Found {len(jobs)} jobs")
-        print(jobs.columns)
-
+        if not all([self.search_terms, self.locations, self.hours_old, 
+                   self.results_wanted, self.google_search_terms]):
+            raise ValueError("All parameters must be set before scraping")
+            
+        # Calculate results per combination
+        total_combinations = len(self.search_terms) * len(self.locations)
+        results_per_search = max(1, self.results_wanted // total_combinations)
+        
+        all_jobs = []
+        
+        # Fetch jobs for each combination
+        for search_term, google_term in zip(self.search_terms, self.google_search_terms):
+            for location in self.locations:
+                jobs = self._fetch_jobs(
+                    search_term, 
+                    location,
+                    self.hours_old,
+                    results_per_search,
+                    google_term,
+                    self.is_remote
+                )
+                if jobs is not None:
+                    all_jobs.append(jobs)
+                sleep(1)  # Rate limiting
+        
+        if not all_jobs:
+            return
+            
+        # Combine all results
+        combined_jobs = pd.concat(all_jobs, ignore_index=True)
+        
+        # Create directory if needed
         if not os.path.exists('data/jobs'):
             os.makedirs('data/jobs')
 
-        for _, job in jobs.iterrows():
+        # Save to markdown files
+        for _, job in combined_jobs.iterrows():
             job_id = job['id']
             markdown_content = f"# {job['title']}\n\n"
             markdown_content += f"**Company:** {job['company']}\n\n"
@@ -80,6 +130,13 @@ class JobAgent:
                 file.write(markdown_content)
 
 if __name__ == "__main__":
-    # Example usage
-    scraper = JobAgent(search_term="Data Scientist", location="Aix en Provence", hours_old=200, results_wanted=20,google_search_term="Data Scientist Aix en Provence",is_remote=False)
+    # Example usage with multiple search terms and locations
+    scraper = JobAgent(
+        search_terms=["Data Scientist", "Machine Learning Engineer"],
+        locations=["Aix en Provence", "Marseille"],
+        hours_old=200,
+        results_wanted=40,
+        google_search_terms=["Data Scientist Provence", "Data Engineer Provence"],
+        is_remote=False
+    )
     scraper.scrape_and_convert()

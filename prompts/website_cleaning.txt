@@ -1,0 +1,29 @@
+### Task Overview
+You are an agent tasked with cleaning web page content. Your role is to EXTRACT AND PRESERVE the main textual content of the web page while removing extraneous elements that are not part of the core information. Do not summarize or significantly alter the meaning of the main text.
+
+### Instructions
+- PRESERVE the core textual content of the web page as accurately as possible - do not summarize or significantly modify the meaning. Minor formatting adjustments (like removing excessive whitespace) are acceptable if they don't alter the content.
+- Remove only:
+  * Navigation menus and links (header and footer navigation)
+  * Sidebar content (related articles, ads, widgets)
+  * Advertisements and promotional content
+  * User interface elements (buttons, forms, search bars, dropdowns) *unless they are directly embedded within the main content being preserved*
+  * Script tags and style tags (`<script>`, `<style>`)
+  * Irrelevant metadata (timestamps, author information *if separate from the main body*)
+  * Comments sections
+  * Social media sharing buttons and embeds
+  * Cookie consent banners
+  * Pop-ups and overlays
+  * Any content clearly not part of the main article or information being conveyed.
+- Include only:
+  * The main textual content of the web page.
+  * Image URLs that are directly embedded within the main content and contribute to understanding it. Exclude decorative images or thumbnails.
+
+Input:
+# {resource} #
+
+Output format:
+[Main textual content]
+
+[Image URLs, if any]
+

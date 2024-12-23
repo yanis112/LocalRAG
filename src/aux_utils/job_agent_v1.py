@@ -66,14 +66,44 @@ def classify_intention(user_input):
     return result['labels'][0]
 
 def read_cv(cv_path):
+    """
+    Read the content of a file at the given path.
+
+    Args:
+        cv_path (str): The path to the file to be read.
+
+    Returns:
+        str: The content of the file as a string.
+    """
     with open(cv_path, 'r', encoding='utf-8') as f:
         return f.read()
 
 def read_user_info(info_path):
+    """
+    Read user information from a YAML file.
+
+    Args:
+        info_path (str): The path to the YAML file containing user information.
+
+    Returns:
+        dict: A dictionary containing the user information loaded from the YAML file.
+    """
     with open(info_path, 'r') as file:
         return yaml.safe_load(file)
 
 def create_prompt(message_type, user_message, include_cv=False, cv_path=None):
+    """
+    Generate a prompt based on the given message type and user message.
+    Args:
+        message_type (str): The type of message to generate. Must be a key in EXAMPLE_MESSAGES.
+        user_message (str): The user's message to include in the prompt.
+        include_cv (bool, optional): Whether to include CV content in the prompt. Defaults to False.
+        cv_path (str, optional): The file path to the CV. Required if include_cv is True. Defaults to None.
+    Returns:
+        str: The generated prompt.
+    Raises:
+        ValueError: If the message_type is not supported.
+    """
     if message_type not in EXAMPLE_MESSAGES:
         raise ValueError(f"Type de message '{message_type}' non supporté.")
     
@@ -95,12 +125,22 @@ def create_prompt(message_type, user_message, include_cv=False, cv_path=None):
     return prompt
 
 def auto_job_writter(user_input, info_path, cv_path):
+    """
+    Generate a prompt based on the user's input and additional information.
+    This function classifies the user's intention from the input, reads user
+    information from a YAML file, and creates a prompt that includes the user's
+    CV if specified.
+    Args:
+        user_input (str): The input provided by the user.
+        info_path (str): The file path to the YAML file containing user information.
+        cv_path (str): The file path to the user's CV.
+    Returns:
+        str: The generated prompt based on the user's input and additional information.
+    """
     # Classify the user's intention
     message_type = classify_intention(user_input)
     print("Intention classifiée:", message_type)
     
-    # Read user information from the YAML file
-    user_info = read_user_info(info_path)
     
     # Create the prompt
     prompt = create_prompt(message_type, user_input, include_cv=True, cv_path=cv_path)

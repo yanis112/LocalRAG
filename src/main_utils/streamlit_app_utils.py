@@ -6,6 +6,7 @@ import streamlit as st
 import yaml
 import time 
 
+from src.aux_utils.job_scrapper import JobAgent
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
 
 
@@ -498,6 +499,9 @@ def process_query(query, streamlit_config, rag_agent):
 
     # make a fusion between the default config and the streamlit config (the streamlit config has the priority)
     config = {**default_config, **streamlit_config}
+    
+    #add this config to the rag agent
+    rag_agent.merged_config=config
 
     # we load the intent classifier into a session state variable so that we check if the intent is already loaded
 
@@ -536,12 +540,13 @@ def process_query(query, streamlit_config, rag_agent):
             docs = []
 
     else:
-        
+        from src.main_utils.utils import extract_url
         #we check if the query contains the command @add to add a document to the vectorstore
         if "@add" in query:
             #we create a clean query without the @add command
-            query=query.replace("@add","")
+            query=extract_url(query)
             #we import the external knowledge manager
+            
             if 'http' in query:
                 #we extract the rescource from the link
                 from src.main_utils.link_gestion import ExternalKnowledgeManager
@@ -553,25 +558,50 @@ def process_query(query, streamlit_config, rag_agent):
                 return None
             else:
                 #we extract directly the pasted rescource
+                st.toast("No url detected, processing the pasted rescource...", icon="🔍")
                 pass
         
         with st.spinner("Determining query intent 🧠 ..."):
             # we detect the intent of the query
             intent = st.session_state["intent_classifier"].classify(query,method="LLM")
-            print("Intent detected: ", intent)
             st.toast("Intent detected: " + intent, icon="🧠")
 
         if intent == "employer contact writing":
-            from src.aux_utils.auto_job import auto_job_writter
+            # from aux_utils.job_agent_v1 import auto_job_writter
+            # from langchain_core.prompts import PromptTemplate
+            # import json
+            # #modify the systeem prompt of the LLM to tailor it to the job writing task
+            # system_prompt="""You are a job application assistant in charge of writing messages to potential employers."""
 
-            with st.spinner("Generating a text for a job offer..."):
-                answer = LLM_answer_v3(
-                    prompt=auto_job_writter(query, "aux_data/info.yaml", "aux_data/cv.txt"),
-                    stream=True,
-                    model_name=config["model_name"],
-                    llm_provider=config["llm_provider"],
-                )
-                sources = []
+            # with st.spinner("Generating a text for a job offer..."):
+                
+            #     #load the prompt for job writing from prompts/company_contact_prompt.txt
+            #     with open("prompts/company_contact_prompt.txt", "r", encoding='utf-8') as f:
+            #         template = f.read()
+            #     #format the template with langchain prompt template
+            #     template= PromptTemplate.from_template(template)
+            #     #load infos with yaml aux_data/info.yaml
+            #     info_dict=json.dumps(yaml.safe_load(open("aux_data/info.yaml", "r")))
+            #     #load the cv with the "aux_data/cv.txt"
+            #     cv=json.dumps(open("aux_data/cv.txt", "r").read())
+            #     #create the full prompt
+            #     full_prompt=template.format(query=query,infos=info_dict,cv=cv)
+                
+            #     answer = LLM_answer_v3(
+            #         prompt= full_prompt, #auto_job_writter(query, "aux_data/info.yaml", "aux_data/cv.txt"),
+            #         stream=True,
+            #         model_name=config["model_name"],
+            #         llm_provider=config["llm_provider"],
+            #         system_prompt=system_prompt
+            #     )
+            #     sources = []
+            
+            from src.aux_utils.job_agent_v2 import JobWriterAgent
+            job_agent=JobWriterAgent(config=config)
+            
+            answer,_=job_agent.generate_content(query)
+            sources=[]
+                
         elif intent == "email support inquiry":
             # fetch the last 100 emails and search for the answer
             from src.aux_utils.email_utils import EmailAgent
@@ -603,26 +633,63 @@ def process_query(query, streamlit_config, rag_agent):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
         elif intent == "job search assistance":
-            from src.aux_utils.job_scrapper import JobAgent
+            print("Launched job search !")
+            
+            #from src.aux_utils.job_scrapper import JobAgent
 
             config["data_sources"] = ["jobs"]
             config["enable_source_filter"] = True
             config["field_filter"] = ["jobs"]
             
-            #actualize the rag agent config to the new config
-            rag_agent.merged_config=config
+            prompt = f'''Here is a textual query for a job search from a user "{query}", 
+            please provide the structured search parameters in the following dictionary format:
+            {{"search_terms": ["keywords_1", "keywords_2", ...], "locations": ["location_1", "location_2", ...]}}. Return the
+            the str dict without preamble.'''
             
+            answer=LLM_answer_v3(prompt,model_name=config["model_name"],llm_provider=config['llm_provider'],stream=False)
+            #transform the str dict into real dict
+            import ast
+            def str_to_dict(dict_str: str) -> dict:
+                """
+                Convert a string representation of a dictionary to an actual dictionary.
+                
+                Args:
+                    dict_str (str): String representation of dictionary
+                    
+                Returns:
+                    dict: Converted dictionary
+                    
+                Raises:
+                    ValueError: If string cannot be converted to dictionary
+                """
+                try:
+                    # Remove any whitespace and normalize quotes
+                    cleaned_str = dict_str.strip().replace("'", '"')
+                    return ast.literal_eval(cleaned_str)
+                except (ValueError, SyntaxError) as e:
+                    raise ValueError(f"Invalid dictionary string: {e}")
+            
+            print("Raw dict answer:", answer)
+            dict_params= str_to_dict(answer)
+            print("Obtained dict parameters:", dict_params)
+            #get search terms from the dict
+            search_terms=dict_params["search_terms"]
+            locations=dict_params["locations"]
             
 
-            # scrapping jobs
+            #scrapping jobs
             with st.spinner("Scraping job offers..."):
                 try:
+                    print("Initializing job scrapper...")
                     job_scrapper = JobAgent(
-                        search_term="Data Scientist",
-                        location="Aix en Provence",
+                        #search_terms="Data Scientist",
+                        #locations="Aix en Provence",
+                        search_terms=search_terms,
+                        locations=locations,
                         hours_old=200,
                         results_wanted=20,
-                        google_search_term="data scientist aix en provence",
+                        #add locations to each of the search_terms as google_search terms
+                        google_search_terms=[search_term+" "+location for search_term in search_terms for location in locations],
                         is_remote=False,
                     )
                     job_scrapper.scrape_and_convert()
@@ -720,17 +787,27 @@ def process_query(query, streamlit_config, rag_agent):
             config["enable_source_filter"] = True
             config["field_filter"] = ["prompts"]
             
-            system_prompt="""You are a prompt engineering assistant in charge of creating professional prompts, drawing inspiration 
-            from the prompts examples given to you and their style or structure."""
+            from src.aux_utils.cinematic_agent_prompter import AgentCinematicExpert
+            
+            #define system prompt
+            #system_prompt="""You are a prompt engineering assistant in charge of creating and refining professional prompts."""
+            
+            # config["en_rag_prompt_path"]="prompts/image_prompt_engineering.txt"
             
             #actualize the rag agent config to the new config
-            rag_agent.merged_config=config
+    
             
-            with st.spinner(
-                "Searching relevant documents and formulating answer 📄 ..."
-            ):
-                answer, docs, sources = rag_agent.RAG_answer(query,system_prompt=system_prompt)
-            
+            # with st.spinner(
+            #     "Searching relevant documents and formulating answer 📄 ..."
+            # ):
+            #     answer, docs, sources = rag_agent.RAG_answer(query,system_prompt=system_prompt)
+            with st.spinner("🧠 Refining your prompt..."):
+                print("model currently used: ",config["model_name"])
+                agent = AgentCinematicExpert(model_name=config["model_name"], llm_provider=config["llm_provider"])
+                answer=agent.transform_chain(query)
+                sources=[]
+                #transform the answer into a stream / generator object
+                answer = (line for line in answer.split("\n"))
                 
         # elif intent =="previous answer correction":
         #     from langchain_core.prompts import PromptTemplate
@@ -786,9 +863,22 @@ def process_query(query, streamlit_config, rag_agent):
 
 @st.fragment
 def display_sources(sources):
+    """
+Display a list of source files with their counts and associated emojis in a Streamlit app.
+
+This function takes a list of source file paths, counts the occurrences of each source,
+and displays them in an expandable container within a Streamlit app. Each source is
+displayed with an associated emoji, filename, and count. A button is provided to open
+the source file in the default web browser.
+
+Args:
+    sources (list): A list of source file paths.
+
+Returns:
+    None
+    """
     import os
     import webbrowser
-
     from streamlit_extras.stylable_container import stylable_container
 
     source_counts = {source: sources.count(source) for source in sources}

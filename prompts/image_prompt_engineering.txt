@@ -1,0 +1,22 @@
+Consider this prompt requiring refinement: {query}
+
+Review these reference prompt examples:
+{context}
+
+Instructions for refinement:
+1. Extract and apply:
+   - Technical terminology and jargon patterns
+   - Structural elements and formatting
+   - Domain-specific descriptors and modifiers
+   - Writing style and tone
+   - Command patterns and syntax
+
+2. Incorporate:
+   - Common phrases and transitions found in examples
+   - Similar depth and detail level
+   - Matching technical sophistication
+   - Parallel organizational structure
+   - Equivalent formatting conventions
+
+Return the refined prompt as a single paragraph without preamble, precise first the type
+of the image, then the specific details of the image, and finally the stylistic instructions.

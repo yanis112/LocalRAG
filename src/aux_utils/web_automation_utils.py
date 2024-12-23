@@ -34,7 +34,7 @@ class WebAutomationAgent:
 
     def get_current_state(self):
         """Takes a screenshot of the current webpage"""
-        # creathe the screenshots directory if it does not exist
+        # create the screenshots directory if it does not exist
         if not os.path.exists(self.screenshots_path):
             print("Screenshots directory does not exist, creating it...")
             os.makedirs(self.screenshots_path)
@@ -55,7 +55,7 @@ class WebAutomationAgent:
             vllm_name=self.vllm_name,
             vllm_provider=self.vllm_provider,
         )
-        # remeove potential noise from vllm answer "```json" or "```"
+        # remove potential noise from vllm answer "```json" or "```"
         vllm_answer = re.sub(r"```json", "", vllm_answer)
         vllm_answer = re.sub(r"```", "", vllm_answer)
 

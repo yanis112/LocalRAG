@@ -58,8 +58,7 @@ def clean_linkedin_post(text):
 
 
 def clean_scrapped_content(
-    text: str, model_name: str, llm_provider: str
-) -> str:
+    text: str, model_name: str, llm_provider: str, resource_type: str ='linkedin') -> str:
     """
     Takes a text crawled from a website and cleans it by removing irrelevant noisy infos using an LLM model.
 
@@ -73,17 +72,21 @@ def clean_scrapped_content(
 
     """
     from langchain_core.prompts import PromptTemplate
-
     from src.main_utils.generation_utils_v2 import LLM_answer_v3
+    
+    if resource_type == "linkedin":
+        cleaning_prompt_path = "prompts/linkedin_cleaning.txt"
+    else:
+        cleaning_prompt_path = "prompts/website_cleaning.txt"
 
     # load the cleaning prompt template from a txt file
-    with open("prompts/linkedin_cleaning.txt", "r", encoding="utf-8") as file:
+    with open(cleaning_prompt_path, "r", encoding="utf-8") as file:
         cleaning_prompt = file.read()
 
         # Instantiation using from_template (recommended)
         cleaning_prompt = PromptTemplate.from_template(cleaning_prompt)
         # format the prompt
-        full_prompt = cleaning_prompt.format(post=text)
+        full_prompt = cleaning_prompt.format(resource=text)
 
     return LLM_answer_v3(
         prompt=full_prompt,
@@ -93,7 +96,9 @@ def clean_scrapped_content(
     )
 
 
-def extract_linkedin(link: str, timeout: int = 30) -> Optional[str]:
+    
+    
+def extract_resource(link: str, timeout: int = 30,resource_type: str = "linkedin") -> Optional[str]:
     """
     Takes a Linkedin post link as input and extracts the content of the post.
 
@@ -127,7 +132,8 @@ def extract_linkedin(link: str, timeout: int = 30) -> Optional[str]:
                         str(result.markdown_v2.raw_markdown),
                         model_name="llama-3.1-8b-instant",
                         llm_provider="groq",
-                    )
+                        resource_type=resource_type,
+                    ) #clean the resource depending of its type (will change the cleaning prompt depending on if its from website or linkedin)
                     if result and result.markdown
                     else None
                 )
@@ -175,7 +181,7 @@ class ExternalKnowledgeManager:
             and 'website' for general websites.
         """
 
-        if "youtu" in str(link):
+        if "youtube" in str(link):
             print("This is a youtube video !")
             return "video"
         elif "linkedin" in str(link):
@@ -197,7 +203,7 @@ class ExternalKnowledgeManager:
             str: The extracted transcription if the resource is a video, or the extracted content from LinkedIn or a website.
         """
 
-        with st.spinner("Extracting the rescource..."):
+        with st.spinner("⛏️ Extracting the url content ..."):
             if self.classify_rescource(link) == "video":
                 from src.aux_utils.transcription_utils import YouTubeTranscriber
 
@@ -212,7 +218,7 @@ class ExternalKnowledgeManager:
                 return transcription
 
             elif self.classify_rescource(link) == "linkedin":
-                rescource = str(extract_linkedin(link))
+                rescource = str(extract_resource(link,resource_type="linkedin"))
                 print("FULL RESCOURCE: ", rescource)
                 self.current_rescource = (
                     "### This is a linkedin post ### " + rescource
@@ -220,7 +226,14 @@ class ExternalKnowledgeManager:
                 print("Rescource extracted successfully !")
                 return rescource
             else:
-                return self.extract_website(link)
+                #extract using website type
+                rescource = str(extract_resource(link,resource_type="website"))
+                print("FULL RESCOURCE: ", rescource)
+                self.current_rescource = (
+                    "### This is a website content ### " + rescource
+                )
+                print("Rescource extracted successfully !")
+                return rescource
             
     def extract_rescource(self,text):
         """Extract the rescource from the given text. no link.
