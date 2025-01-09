@@ -1,42 +1,42 @@
-# .github/workflows/format.yml
-name: Format Code
+# # .github/workflows/format.yml
+# name: Format Code
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+# on:
+#   push:
+#     branches: [ main, master ]
+#   pull_request:
+#     branches: [ main, master ]
 
-jobs:
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+# jobs:
+#   format:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
 
-      - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+#       - name: Install uv
+#         run: |
+#           curl -LsSf https://astral.sh/uv/install.sh | sh
+#           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Create venv and install dependencies
-        run: |
-          uv venv
-          source .venv/bin/activate
-          uv pip install ruff
+#       - name: Create venv and install dependencies
+#         run: |
+#           uv venv
+#           source .venv/bin/activate
+#           uv pip install ruff
 
-      - name: Format with Ruff
-        run: |
-          source .venv/bin/activate
-          ruff check . --fix
-          ruff format .
+#       - name: Format with Ruff
+#         run: |
+#           source .venv/bin/activate
+#           ruff check . --fix
+#           ruff format .
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "style: format code with ruff"
-          file_pattern: '*.py'
+#       - name: Commit changes
+#         uses: stefanzweifel/git-auto-commit-action@v5
+#         with:
+#           commit_message: "style: format code with ruff"
+#           file_pattern: '*.py'
