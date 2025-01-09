@@ -9,10 +9,7 @@ load_dotenv()
 
 async def main():
     agent = Agent(
-        task="Find who is Pierre Yves Rougeyron.",
-    #     llm=ChatGoogleGenerativeAI(
-    #         model='gemini-2.0-flash-exp')
-    # )
+        task="Find who is XXX.",
         llm=ChatGroq(
             model='llama-3.3-70b-versatile'))
     result = await agent.run()

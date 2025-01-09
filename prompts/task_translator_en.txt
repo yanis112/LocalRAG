@@ -1,6 +1,6 @@
 Formulate a question for an information search bot that is clear without needing any given context aside from the intrisic information contained in the question. For example: 
 
-- If the Task is 'Find out where the person studied' and the Context is 'Alice works at Euranova', the reformulated question could be 'Where did Alice study?'
+- If the Task is 'Find out where the person studied' and the Context is 'Alice works at XXX', the reformulated question could be 'Where did Alice study?'
 
 Now, here are the task and context:
 

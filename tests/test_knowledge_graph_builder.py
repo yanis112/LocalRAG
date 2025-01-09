@@ -44,25 +44,12 @@ if __name__ == "__main__":
     
     exit()
     
-    print(builder.retrieve_linked_entities("Nexter Robotics"))
+    print(builder.retrieve_linked_entities("Alice"))
        
     
     exit()
 
-    text = """ le soucis c'est que pour les personnes dont le uid n'a pas été défini de manière centralisée,
-    il y a un uid sur la machine qui ne correspondrait pas à ce qu'on pourrait forcer depuis jumpcloud. tout a été fait de puis odin et c'est d'ailleur freyja
-    l'hôte de slurm et non odin depuis quelle machine est-ce toutes ces commandes sont lancées ? j'ai un souvenir d'un update qui avait été fait par mathias et
-    thomas sur les uid et gid de chacun : ils avaient harmonisé tous les uid et gid de chacun entre les machines, pour être de type 90xx. par exemple, pour moi 
-    : screenshot je ne sais pas à quel point cela un impact sur slurm, mais j'ai remarqué que ton uid / gid n'était pas de type 90xx @hakima.arroubat @yanis.labeyrie 
-    @mohamad.ammar @marouane.najime en écho au précédent message de @alice.martzloff, je vous transmets le lien vers notre dossier tutorials  qui contiendra la réponse 
-    à beaucoup de questions it, notamment pour se connecter sur les machines. si vous avez des idées pour pérénniser le process, plutôt que de passer par newgrp à chaque 
-    fois ainsi que pour le problème d'affectation à de mauvais groupes, je suis preneur. bonjour à @all , nous nous sommes penché sur slurm avec @alice.martzloff cette
-    semaine que nous avons réussi à refaire fonctionner via une solution de contournement. nous allons donc essayer de retourner dessus prochainement. le problème vient 
-    d'un problème de group, slurm ayant une taille très limité pour l'affectation aux groupes, ne passant pas l'information de notre appartenance à celui de docker. 
-    id lancé en ligne de commande : uid=10010(robin.mancini) gid=1010(docker) groups=1010(docker),27(sudo),33221(nexter),33224(robin.mancini) id lancé dans slurm 
-    (qui part en erreur car n'accède pas au group docker) : uid=10010(robin.mancini) gid=33224(robin.mancini) groups=33224(robin.mancini),27(sudo),23445(ai4pet) 
-    id lancé via session newgrp docker et qui fonctionne : uid=10010(robin.mancini) gid=1010(docker) groups=1010(docker),27(sudo),23445(ai4pet) autre chose étrange,
-    on voit qu'il me met dans le groupe 23445 ai4pet alors que je n'y suis pas : """
+    text = """Bonjour à tous, je me permets de vous écrire car j'ai un souci avec mon compte jumpcloud et R. est le responsable de ce service."""
     
     
     text2= """Bonjour à tous, je me permets de vous écrire car j'ai un souci avec mon compte jumpcloud et Robin Mancini est le responsable de ce service."""
