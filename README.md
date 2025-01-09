@@ -1,112 +1,207 @@
-# LLMs and RAG
+# 🚀 Project Description
 
-This project is a **Retrieval Augmented Generation (RAG)** based question-answering system that uses the Qdrant database to answer questions based on the content of all Euranova's documents and available information. The system utilizes a Language Model (LLM) to generate answers to questions and a retrieval pipeline to fetch relevant information from the database. It can answer simple questions based on the content of the documents and can also handle complex questions by breaking them down into sub-questions and generating answers for each.
+Prepare to enter a new era of AI assistance! 🚀 This project isn't just a chatbot; it's a **cognitive revolution** 🧠, a **personal assistant supercharged with digital steroids** that far surpasses the capabilities of ChatGPT! 💪
+
+Imagine a **Retrieval Augmented Generation (RAG)** 📚 system that draws its power from **all** your documents and the vast expanse of available information, all accessible in the blink of an eye from your computer. 💻
+
+But wait, that's just the beginning! 🤩 Our chatbot is a true **Swiss Army knife of AI**, packed with functionalities that will leave you speechless:
+
+*   **Lightning-Fast Audio Transcription** ⚡: Endless meetings? 🥱 Lengthy YouTube videos? 😴 Our AI transcribes them at the speed of light, faster than you can say "artificial intelligence"! ✨
+*   **Limitless Virtual Brain** 🧠: Graphs, images, captivating LinkedIn posts, audio transcriptions, PDFs... 📊🖼️📝 Absolutely **every imaginable format** is analyzed and stored in a virtual brain that expands infinitely, ready to answer your most complex queries.
+*   **Master of Your Emails** 📧: Say goodbye to email overload! 📥 Our chatbot dives into your inbox, answers your questions, and frees you from the burden of email management.
+*   **Notion Page Creator** 📑: Need to organize your ideas? Our AI generates structured and elegant Notion pages in an instant, allowing you to focus on what matters most.
+*   **Ultimate LLM Flexibility** 😎: Llama 3, Gemini, GPT-4o... 🦙♊🤖 No matter the language model, our system **supports them all**! You have the power to choose the best tool for each task, offering unprecedented flexibility in the world of AI.
+*   **Breathtaking Speed and Performance** 🏎️: Forget endless waiting times. Our chatbot is optimized for **ultra-fast** processing and response speed, delivering **state-of-the-art** performance that redefines efficiency.
+
+This project is much more than just a tool; it's your **intelligent companion**, your **ultimate assistant**, ready to propel you to new heights of productivity and creativity. 🚀
+
+**Join the revolution and unleash the unlimited potential of AI!** 🔥🔥🔥
+
 
 <img src="assets/logo_v4.png" alt="Logo" width="300" height="300">
 
 ## 🔑 Key Features
 
+-**Support All Free LLMs providers !**: Our system supports all free tiers LLM providers: Forget the expensive OpenAI API, we support lightning fast Llama3.3 calls with Groq, Gemini 2.0 access through google ai studio, GPT4o through google marketplace, everything is there for free !
 - **Simple Question Answering**: Uses the HuggingFace language model to answer questions based on the content of documents loaded into the Chroma database.
 - **Advanced Question Answering**: Can answer complex questions by decomposing them into sub-questions and aggregating answers from multiple sources.
 - **Evaluation**: Provides scripts for evaluating the performance of the language model.
 - **Document Loading**: Functions for loading documents into the Chroma database.
 - **Streamlit Interface**: Offers a Streamlit interface for user interaction with the application.
-- **Audio Transcription**: Transcribes audio files to text using an optimized implementation of the WhisperV3 model and PyAnnote speaker diarization model.
-- **Optical Character Recognition (OCR)**: Extracts text from images using a state-of-the-art OCR model, extracts information from charts and tables, and generates summaries.
+- **Audio Transcription**: Transcribes audio files to text in a blink of an eye using an optimized implementation of the WhisperV3 model through Groq API and PyAnnote speaker diarization model.
+- **Optical Character Recognition (OCR)**: Extracts text from images using a state-of-the-art OCR model or Vision LLMs, extracts information from charts and tables, and generates structured equivalents in json or markdown format.
+- **Mail Assistant**: Reads and answers emails, extracts information, and performs actions based on the content of the emails.
 
-## 🛠️ Installation
 
-# Activate venv
- .\.venv\Scripts\Activate.ps1
+## 🛠️ Installation: Choose Your Own Adventure! 🚀
+
+Ready to unleash the power of our revolutionary AI assistant? 🤩 You have two epic paths to choose from:
+
+### **Option 1: Docker - The Containerized Kingdom** 🐳
+
+For those who love the streamlined elegance of Docker, this is your path to AI glory! 🛡️
 
 1. **Clone the Repository**
 
-   ```bash
-   git clone [repository_url]
-   ```
+    ```bash
+    git clone [repository_url]
+    ```
 
 2. **Navigate to the Project Root Directory**
 
-   ```bash
-   cd llms-rag
-   $env:PYTHONPATH = "$env:PYTHONPATH;$(Get-Location)"
-   ```
+    ```bash
+    cd llms-rag
+    $env:PYTHONPATH = "$env:PYTHONPATH;$(Get-Location)"
+    ```
 
 3. **Build the Docker Image**
 
-   ```bash
-   docker build -t llms-rag/demo:latest --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
-   ```
+    ```bash
+    docker build -t llms-rag/demo:latest --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
+    ```
 
-   *Optional: Build from scratch (not usually needed)*
+    *Optional: Build from scratch (not usually needed) - for the hardcore builders!* 💪
 
-   ```bash
-   docker build --no-cache -t llms-rag/demo:latest --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
-   ```
+    ```bash
+    docker build --no-cache -t llms-rag/demo:latest --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .
+    ```
 
 4. **Run the Docker Container**
 
-   *Specify the device you want to use with the `--gpus` flag:*
+    *Specify the device you want to use with the `--gpus` flag: like a true AI warrior!* ⚔️
 
-   ```bash
-   docker run -d --rm --gpus '"device=0"' -v $(pwd):/home/user/llms --name=llms llms-rag/demo:latest 
-   ```
+    ```bash
+    docker run -d --rm --gpus '"device=0"' -v $(pwd):/home/user/llms --name=llms llms-rag/demo:latest
+    ```
 
-   *For a permanent run:*
+    *For a permanent run: because this AI deserves to be eternal!* ✨
 
-   ```bash
-   docker run -d --restart=always --gpus '"device=0"' -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest  
-   ```
-
-  ```bash
-   docker run -d --restart=always -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest  
-   ```
+    ```bash
+    docker run -d --restart=always --gpus '"device=0"' -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest
+    ```
+     ```bash
+    docker run -d --restart=always -v $(pwd):/home/user/llms -p 8501:8501 --name=llms llms-rag/demo:latest
+    ```
 
 5. **Run the Streamlit Application**
 
-   ```bash
-   streamlit run streamlit_app.py --browser.serverAddress 0.0.0.0
-   ```
+    ```bash
+    streamlit run streamlit_app.py --browser.serverAddress 0.0.0.0
+    ```
 
-   *If streamlit asks you to enter your email just press enter to pass this step.*
+    *If Streamlit asks you to enter your email, just press Enter to bypass this step like a ninja!* 🥷
 
-   *From this container, follow the instructions below to run the project.*
+    *From this container, follow the instructions below to run the project.*
+
+### **Option 2: Local Installation - Unleash the Power of `uv`!** ⚡
+
+Prefer a more hands-on approach? Want to harness the blazing-fast speed of `uv`, the revolutionary Python package manager and environment gestion tool? Then this is your path! 🔥
+
+1. **Clone the Repository**
+
+    ```bash
+    git clone [repository_url]
+    ```
+
+2. **Navigate to the Project Root Directory**
+
+    ```bash
+    cd llms-rag
+    ```
+
+3. **Install Dependencies with `uv`** - Experience the speed! 🤯 `uv` will automatically detect and install dependencies from your `pyproject.toml` file.
+     If you don't already have `uv` installed, install it first:
+    ```bash
+     curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+    Then install the dependencies:
+    ```bash
+    uv pip install -e .
+    ```
+
+4. **Run the Streamlit Application**
+
+    ```bash
+    streamlit run streamlit_app.py
+    ```
+
+    *If Streamlit asks you to enter your email, just press Enter to skip this step.* 😎
+
+**No matter which path you choose, prepare for an AI experience like no other!** 🎉
+
 
 ## 📦 Setup
 
-First, you need to fill the `env` file with the following variables:
+First, you need to fill the `.env` file with the following variables (not all of them are mandatory for running the project):
 
 ```bash
 GROQ_API_KEY="..."
 LANGCHAIN_API_KEY="..."
 LANGCHAIN_END_POINT="https://api.smith.langchain.com"
-LANGCHAIN_TRACING_v2="true"
-HUGGINGFACEHUB_API_TOKEN="..."
-GITLAB_URL='https://code.euranova.eu/'  
-PRIVATE_TOKEN='...' 
+LANGCHAIN_TRACING_v2="true" #or false
+HUGGINGFACEHUB_API_TOKEN="..." # Deprecated, use HUGGINGFACE_TOKEN instead
+HUGGINGFACE_TOKEN="..."
+GITLAB_URL='https://code....'
+GITLAB_TOKEN="..."
 STREAMLIT_URL='http://10.0.13.231:8501'
 ALLOWED_FORMATS=["pdf", "docx", "xlsx", "html", "pptx", "txt", "md"]
-URL_MATTERMOST="chat.euranova.eu"
-MATTERMOST_TOKEN="7u5pdaay5jrbmppqxiubwamklp4h"
+URL_MATTERMOST="..." # Deprecated
+MATTERMOST_TOKEN="..." # Deprecated
+EMAIL="..."
+PASSWORD="..."
+SAMBANOVA_API_KEY="..."
+GITHUB_TOKEN="..."
+IMAP_SERVER="..."
+EMAIL_ADDRESS="..."
+EMAIL_PASSWORD="..."
+SUNO_COOKIE="..."
+PYTHONPATH="..."
+LINKEDIN_USERNAME="..."
+LINKEDIN_PASSWORD="..."
+NOTION_API_KEY="..."
+GOOGLE_API_KEY="..."
+GOOGLE_SERVICE_MAIL="..."
+VERTEX_API_KEY="..."
 ```
 
-- **GROQ_API_KEY**: Obtain from the Groq Cloud website.
-- **LANGCHAIN_API_KEY**: Obtain from the LangChain website.
-- **HUGGINGFACEHUB_API_TOKEN**: Obtain from the HuggingFace website (allow all permissions).
-- **GITLAB_URL** and **PRIVATE_TOKEN**: Used to access the Euranova GitLab repository for gitlab, you need to go to your gitlab settings and create a new personal access token with the `api` scope, and paste it here.
+- **GROQ_API_KEY**: Obtain from the [Groq Cloud website](https://console.groq.com/keys).
+- **LANGCHAIN_API_KEY**: Obtain from the [LangChain website](https://smith.langchain.com/settings).
+- **LANGCHAIN_END_POINT**: Endpoint for the LangChain API (default: `https://api.smith.langchain.com`).
+- **LANGCHAIN_TRACING_v2**: Enable or disable LangChain tracing (set to `true` or `false`).
+- **HUGGINGFACEHUB_API_TOKEN**: **Deprecated**. Use `HUGGINGFACE_TOKEN` instead.
+- **HUGGINGFACE_TOKEN**: Obtain from the [HuggingFace website](https://huggingface.co/settings/tokens) (create a new token with "write" permissions).
+- **GITLAB_URL**: URL of your GitLab instance (e.g., `https://code.euranova.eu/`).
+- **PRIVATE_TOKEN**: **Deprecated**. Use `GITLAB_TOKEN` instead.
+- **GITLAB_TOKEN**: Personal Access Token for GitLab. Go to your GitLab settings -> Access Tokens, and create a new token with the `api` scope.
 - **STREAMLIT_URL**: URL of the Streamlit application.
 - **ALLOWED_FORMATS**: Specifies the allowed file formats for documents (no other formats are supported).
-- **MATTERMOST_TOKEN**: Access token for Mattermost, you can obtain it by going to a mattermost channel (e.g., `https://chat.euranova.eu/euranova/channels/town-square`) and left click on 'inspect element' and go to the 'network' tab, click on any place on the page, click on any connection you see in the 'network' tab, and look for the cookies section and select the MMAUTHTOKEN	cookie, copy the value and paste it here.
+- **URL_MATTERMOST**: **Deprecated**.
+- **MATTERMOST_TOKEN**: **Deprecated**.
+- **EMAIL**: Your email address (used for general purposes within the application).
+- **PASSWORD**: Your email password (used for general purposes within the application).
+- **SAMBANOVA_API_KEY**: Obtain from the SambaNova website.
+- **GITHUB_TOKEN**: Personal Access Token for GitHub. Go to your GitHub settings -> Developer settings -> Personal access tokens, and create a new token with the necessary permissions (e.g., `repo`, `read:org`).
+- **IMAP_SERVER**: The address of the IMAP server of your email adress (e.g., `imap.centrale-med.fr`).
+- **EMAIL_ADDRESS**: Your email address (used for email functionalities).
+- **EMAIL_PASSWORD**: Your email password (used for email functionalities).
+- **SUNO_COOKIE**: Your Suno AI cookie. Obtain it by inspecting your browser's network requests while using Suno AI.
+- **PYTHONPATH**:  Set this to the root directory of the project if you encounter import issues.
+- **LINKEDIN_USERNAME**: Your LinkedIn username.
+- **LINKEDIN_PASSWORD**: Your LinkedIn password.
+- **NOTION_API_KEY**: Your Notion API key. Obtain it from your Notion workspace settings.
+- **GOOGLE_API_KEY**: Your Google Cloud API key. Obtain it from the Google Cloud Console.
+- **GOOGLE_SERVICE_MAIL**: Your Google service account email.
+- **VERTEX_API_KEY**: Your Vertex AI API key. Obtain it from the Google Cloud Console.
 
-Once you have filled the `env` file, rename it to `.env`.
+Once you have filled the `env` file with the correct values, rename it to `.env`.
 
 ## 🚀 Quickstart
 
 Here's a summary of the most important steps to start using the project:
 
-1. **Ensure the Docker Container is Running**
+1. **Ensure the Docker Container is Running / venv is setup**
 
-   Make sure the Docker container is up and running.
+   Make sure the Docker container is up and running or that the venv is correctly setup.
 
 2. **Verify the Project Root**
 
@@ -143,13 +238,13 @@ Here's a summary of the most important steps to start using the project:
    Run the application using:
 
    ```bash
-   streamlit run streamlit_app.py
+   streamlit run scripts/streamlit_app.py
    ```
 
 2. **Use the Interface**
 
-   - Use the `Advanced search` toggle to enable or disable advanced search features.
-   - Type your question in the text box.
+   - Use the parameters in the sidebar to configure the assistant as you wish.
+   - Type your question in the user input field.
    - Click the `Ask` button to get an answer.
 
 ## 📁 Directory Structure
@@ -165,14 +260,14 @@ The project is organized as follows:
 
 - **`src` Directory**
 
-  - `retrieval_utils.py`: Functions for loading documents into the Chroma database/filling the database.
-  - `data/`: Directory containing all the data: drive_docs, HTML pages, vector_stores, drive_happeo.
+  - `retrieval_utils.py`: Functions for loading documents into the vector store.
+  - `data/`: Directory containing all the data of the user's documents.
   - `evaluate_pipeline.py`: Functions for evaluating the performance of the language model.
   - `generation_utils.py`: Implementation of the question-answering model/RAG pipeline and associated functions.
   - `utils.py`: Various utility functions used throughout the project.
   - `knowledge_graph.py`: Functions to create a knowledge graph from the documents.
-  - `LLM.py`: Implementation of the language model at the base of the project and the way to access the different LLMs implemented (through Ollama or LangChain/Groq API).
-  - `data_archive.py`: Functions to process special JSON data from Euranova's archives.
+  - `LLM.py`: Implementation of all language models available for free on the market, at the base of the project and the way to access the different LLMs implemented (through Ollama or LangChain/Groq API, ect..).
+
 
 - **`scripts` Directory**
 
@@ -190,19 +285,14 @@ The project is organized as follows:
 
 ## 🔄 Fill the Qdrant Database
 
-The `fill_database` command is used to initialize the Qdrant database. It takes as an argument the name of the YAML configuration file that contains the necessary parameters for creating the database if it does not already exist and fills it with the documents from the specified directory. Documents already in the database will not be added again.
+The `fill_database` command is used to initialize the Qdrant vector store. It takes as an argument the name of the YAML configuration file that contains the necessary parameters for creating the vector store if it does not already exist and fills it with the documents from the specified directory. Documents already in the database will not be added again.
 
 Here's how you can use this command:
 
 ```bash
-python scripts/fill_database.py config.yaml
+python src/vectorstore_utils_v4.py config.yaml
 ```
 
-Or, simply:
-
-```bash
-python scripts/fill_database.py
-```
 
 **Note:** Replace `config/config.yaml` with the path to your configuration file.
 
@@ -215,98 +305,137 @@ The `fill_database` command performs the following operations:
 3. Loads the configuration parameters from the YAML file.
 4. Calls the `directory_to_vectorstore` function with the loaded configuration parameters to create the Chroma/Qdrant database using the specified parameters.
 
-### 🔧 Configuration Parameters
+Okay, here's the revised configuration parameters section, reflecting the changes in your updated config file, removing deprecated parameters, adding new ones, and formulated in a more understandable and engaging way:
 
-Here are the configuration parameters that you can define in the YAML file:
+### ⚙️ Configuration: Fine-Tune Your AI Brain! 🧠
 
-- **Database Initialization Parameters**
-  - `config_path`: Path to the configuration file.
-  - `vectordb_provider`: The vector store provider to use for the documents (Chroma or Qdrant).
-  - `persist_directory`: The directory to store the vector store.
-  - `splitting_method`: The method to split the documents into chunks (semantic or "recursive").
-  - `path`: The path of the root folder of the documents you want to include in the index (will be explored recursively).
-  - `process_log_file`: Log file to track processed documents.
+This section details the powerful configuration options, allowing you to customize the behavior of our AI assistant like a true maestro! 🎻 These parameters, defined in your `config/config.yaml` file, are the key to unlocking its full potential.
 
-- **Knowledge Graph Index Parameters**
-  - `build_knowledge_graph`: Enable or disable building the knowledge graph when initializing the database.
-  - `nb_nodes`: Number of nodes to retrieve from the knowledge graph when querying.
-  - `allow_kg_retrieval`: Enable or disable retrieval of information from the knowledge graph during generation.
+**Here’s a breakdown of the different settings:**
 
-- **Chunking Parameters** (only for recursive splitting, which is not used anymore)
-  - `chunk_size`: The chunk size for the documents in terms of the number of characters.
-  - `chunk_overlap`: The overlap between chunks in terms of the number of characters.
-  - `semantic_threshold`: The threshold for the semantic similarity between two chunks.
-  - `chunking_embedding_model`: Embedding model to use for chunking.
+- **🗄️ Database & Indexing Setup:**
+    -   `config_path`: The path to this very configuration file. Think of it as the AI's control panel address.
+    -   `vectordb_provider`: Choose your vector database warrior: `Qdrant` (fast and furious) or `Faiss` (classic and reliable).
+    -   `persist_directory`: Where the AI stores its memories (the vector database). It's like the library where your documents are indexed and kept safe.
+    -   `collection_name`: The name of the vector collection in the database.
+    -   `path`: The path to the root folder containing all the documents the AI will learn from. This is where the magic begins! ✨
+    -   `process_log_file`: A log file to keep track of which documents have already been processed, preventing any double processing.
+    -   `splitting_method`: How the AI should break up documents into manageable chunks: `"constant"` (keeps the chunks of similar sizes), `"semantic"` (chunks based on the content semantic).
+    
+- **🧠 Knowledge Graph Enhancement:**
+    -   `build_knowledge_graph`: Enable this to build a knowledge graph (or disable it), a structured representation of the relationships between concepts.
+    -   `nb_nodes`: When querying, how many nodes should be retrieved from the knowledge graph (similar to the number of chunks).
+    -   `allow_kg_retrieval`: Enable information retrieval from the knowledge graph during answer generation.
+    -   `kg_target_context`: Number of tokens to target for the knowledge graph retrieval.
+    -   `min_relations_pct`: Minimum number of relations required for the entity to be a node in the community description.
+    -   `min_descriptions_pct`: Minimum number of descriptions required for the entity to be a node in the community description.
+    -   `min_communities_pct`: Minimum number of communities required for the entity to be a node in the community description.
 
-- **Search Parameters**
-  - `nb_chunks`: The number of chunks to retrieve from the database.
-  - `search_type`: The type of search to use for the documents (similarity or exact).
-  - `hybrid_search`: Enable or disable hybrid search (keyword + similarity).
-  - `length_threshold`: The threshold for the length of the chunks (number of words).
-  - `auto_hybrid_search`: Enable or disable the ability for the model to find the keyword itself.
-  - `use_multi_query`: Enable or disable multi-query.
-  - `advanced_hybrid_search`: Enable or disable advanced hybrid search (merge retrievers + routing if activated).
-  - `alpha`: Alpha parameter for the Advanced Hybrid Search.
-  - `enable_routing`: Enable or disable routing of queries to lexical/semantic search.
-  - `data_sources`: Dictionary of data sources.
+-   **✂️ Chunking Strategy (for constant splitting method):**
+    -   `chunk_size`: The size of each document chunk in number of characters.
+    -   `chunk_overlap`: The overlap size between chunks in number of characters.
+    -   `semantic_threshold`: The similarity threshold between two chunks when splitting using semantic splitting.
+    -    `chunking_embedding_model`: The embedding model used for chunking if using semantic splitting.
+   
+- **🗂️ Database Cloning (Advanced Users):**
+    - `clone_database`: If you want to clone an existing database to initialize your new one, set this to true, if not, disable this parameter.
+    - `clone_persist`: Path to the directory where the existing index is stored.
+    - `clone_embedding_model`: Embedding model of the index to be cloned.
 
-- **Search Filters**
-  - `filter_on_length`: Filter the chunks based on length (number of words).
-  - `enable_source_filter`: Enable or disable source filtering.
-  - `word_filter`: Filter the results based on a keyword.
-  - `source_filter`: Filter the results based on the source.
-  - `source_filter_type`: Type of source filter (include or exclude).
-  - `field_filter`: Field to filter on (source or length).
-  - `field_filter_type`: Type of field filter (include or exclude).
+-   **🔍 Search & Retrieval Customization:**
+    -   `nb_chunks`: How many document chunks should the AI retrieve when searching.
+    -   `search_type`:  How should the AI perform the search? `"similarity"` (semantic search) or `"exact"` (keyword search).
+    -   `hybrid_search`: Combine the power of keyword search with semantic search for better results.
+    -   `length_threshold`: Filter chunks that are too short.
+    -  `use_multi_query`: Enable multiple queries from the user input.
+    -  `advanced_hybrid_search`: Enable or disable advanced hybrid search (merging the results of different retrievers and routing).
+    -  `deep_search`: Enable or disable advanced RAG answer (Multi step answer generation).
+    -  `alpha`: A parameter for the Advanced Hybrid Search, defining the weight given to the semantic retriever and lexical retriever.
+    -   `enable_routing`: Route user queries to either lexical or semantic search based on the query type.
+    - `suggestions_enabled`: Enable or disable the suggestions of the query.
+    - `use_history`: Enable the use of the chat history to answer the user queries.
+    - `chat_history`: Chat history to use for the queries.
+    -   `data_sources`: A dictionary of different data sources with their description, helping the model to pick the appropriate sources for the context.
 
-- **Embedding Models Parameters**
-  - `embedding_model`: Embedding model to use for vector store creation, retrieval, and semantic chunking.
-  - `sparse_embedding_model`: Embedding model to use for sparse retrieval.
-  - `sparse_embedding_size`: Size of the sparse embedding model.
+-  **🔎 Search Filters**
+    -  `use_autocut`: Automatically cut the chunks depending on the length threshold (if there is a big downward tendency, cut).
+    -  `autocut_beta`: Beta parameter for the autocut.
+    -  `filter_on_length`: Filter chunks based on their length.
+    -  `enable_source_filter`: Filter the chunks depending on their source.
+    -  `word_filter`: Filter the chunks containing a particular word.
+    -   `source_filter`: List of specific sources to be included or excluded.
+    -   `source_filter_type`: Should the AI include or exclude the sources specified in `source_filter`? ($eq for include and $neq for exclude)
+    -   `field_filter`:  Filter based on specific fields (source or length).
+    -   `field_filter_type`: How should the filtering occur (include or exclude). ($eq for include and $neq for exclude)
 
-- **Re-ranker Parameters**
-  - `reranker_token_target`: Number of tokens to reach for the re-ranker.
-  - `token_compression`: Enable or disable token compression.
-  - `nb_rerank`: Number of documents to re-rank.
-  - `use_reranker`: Enable or disable the re-ranker.
-  - `reranker_model`: Re-ranker model to use.
+-   **✨ Embedding Power:**
+    -   `embedding_model`: The embedding model for creating vector representations of your text data.
+    -  `dense_embedding_size`: Size of the dense embedding model.
+    -   `sparse_embedding_model`: The embedding model used for sparse retrieval.
+    -  `sparse_embedding_size`: Size of the sparse embedding model.
 
-- **Auto-Merging Parameters**
-  - `auto_merging`: Enable or disable automatic merging of chunks.
-  - `auto_merging_threshold`: Threshold for merging chunks (number of concomitant sources).
+-   **🥇 Reranking Refinement:**
+    -  `reranker_token_target`: Number of tokens to target for the re-ranker.
+    -  `token_compression`: Compress the number of tokens of the chunks in order to respect `reranker_token_target`.
+    -   `nb_rerank`: Number of documents to keep from the reranking process.
+    -   `use_reranker`: Enable the reranker, a secondary model that re-orders the documents based on their relevance.
+    -   `reranker_model`: The re-ranking model that will be used.
 
-- **Generation Parameters**
-  - `llm_provider`: Provider of the LLM model ('huggingface', 'ollama', or 'groq').
-  - `model_name`: Model name.
-  - `cot_enabled`: Enable or disable the Chain-of-Thought (COT) feature for the LLM answer.
-  - `stream`: Enable or disable streaming of the generation.
-  - `temperature`: Temperature for the generation.
-  - `llm_token_target`: Number of tokens to reach for the LLM.
-  - `save_answer`: Enable or disable saving the answer.
-  - `fragmented_answer`: Enable or disable fragmented answers.
-  - `prompt_language`: Language of the prompt.
+-  **🔄 Auto-Merging Magic**
+    -  `auto_merging`: Enables the automatic merging of chunks (if multiple chunks coming from the same source).
+    -  `auto_merging_threshold`: The threshold for the auto merging.
 
-- **Evaluation Parameters**
-  - `top_k`: Evaluation is valid if the ground truth is in the top k chunks retrieved.
-  - `evaluate_generation`: Enable or disable evaluation of the generation.
-  - `answer_relevancy_llm`: LLM model to use for artificial queries.
-  - `answer_relevancy_provider`: Provider of the LLM model for artificial queries.
-  - `answer_relevancy_embedding`: Embedding model to use for artificial queries.
-  - `metrics_list`: List of metrics to evaluate.
+-   **🤖 Generation & Response Settings:**
+    -   `llm_provider`:  Choose your LLM provider (like `groq`, `github`, or `sambanova`).
+    -    `model_name`: The specific language model to use (make sure it matches the selected provider).
+    -    `models_dict`: Dictionnary of models linked with their provider.
+    -    `fr_rag_prompt_path`: Path to the file containing the RAG prompt in French.
+    -    `en_rag_prompt_path`: Path to the file containing the RAG prompt in English.
+    -    `vllm_model_name`: LLM model to use with the VLLM interface.
+    -    `vllm_provider`: Provider for the VLLM interface.
+    -   `cot_enabled`: Unleash the power of Chain-of-Thought reasoning for more sophisticated answers (or disable if you don't need it).
+    -   `stream`: Whether the answers should be printed token by token or all at once.
+    -   `temperature`: Adjusts the creativity of the LLM responses (lower values = more deterministic).
+    -   `llm_token_target`: The number of tokens that we give to the llm. If set to 0, this feature is disabled. If autocut is enabled, this feature is not used.
+    -   `save_answer`: Save or not the answer.
+    -   `prompt_language`: Language of all the prompts used by the model.
 
-- **Entity/Relation Extraction Parameters**
-  - `entity_model_name`: Model name for entity extraction.
-  - `relation_model_name`: Model name for relation extraction.
-  - `allowed_entities_path`: Path to allowed entities JSON file.
-  - `allowed_relations_path`: Path to allowed relations JSON file.
-  - `allowed_precise_relations_path`: Path to allowed detailed relations JSON file.
-  - `entity_detection_threshold`: Threshold for entity detection.
-  - `relation_extraction_threshold`: Threshold for relation extraction.
-  - `disambiguate_threshold`: Threshold for disambiguation.
+- **📊 Evaluation Metrics:**
+    -   `top_k`: The retrieval is considered successful if the correct document is in the top k results.
+    -   `evaluate_generation`: Enable evaluation of the whole pipeline (or just the retrieval if disabled).
+    -   `answer_relevancy_llm`:  The LLM model for generating artificial queries for retrieval evaluation.
+    -   `answer_relevancy_provider`: The provider of the LLM model for artificial queries.
+    -   `answer_relevancy_embedding`: Embedding model to use for artificial queries.
+    -   `metrics_list`: The list of metrics to compute.
 
-- **Community Summarization/Entity Description Parameters**
-  - `description_model_name`: Model name for community summarization.
-  - `description_llm_provider`: Provider of the LLM model for community summarization.
+- **🎭 Entity/Relation Extraction:**
+    -   `entity_model_name`: The model to extract named entities from the text.
+    -   `relation_model_name`: The model to identify relationships between entities.
+    -   `allowed_entities_path`: Path to the file containing the allowed entities types.
+    -   `allowed_relations_path`: Path to the file containing the allowed relations types.
+    -   `allowed_precise_relations_path`: Path to the file containing the allowed detailed relations types.
+    -   `entity_detection_threshold`: Minimum confidence score for an entity to be detected.
+    -   `relation_extraction_threshold`: Minimum confidence score for a relation to be detected.
+    -   `disambiguate_threshold`: Minimum similarity score for disambiguation.
+
+-  **🗣️ Community & Entity Descriptions:**
+    -   `description_model_name`: The LLM model for creating a description for communities and entities.
+    -  `description_llm_provider`: Provider of the LLM model for the entity descriptions.
+
+- **🎯 Actions Classifier**
+    - `actions_dict`: Dictionary of the actions that the user can ask, with their description.
+    
+- **🤖 Agentic RAG parameters**
+    - `query_breaker_model`: The LLM model used for decomposing the queries.
+    - `query_breaker_provider`: The provider of the LLM model used for decomposing the queries.
+    
+- **🧠 Intent Classifier Parameters:**
+     - `query_classification_model`: LLM model to classify the intent of the user query.
+     - `query_classification_provider`: Provider of the LLM model for the intent classifier.
+
+With these settings, you can mold the AI to fit your needs perfectly! 🎉 Don't hesitate to experiment and see what magic you can create! 🪄
+
+
 
 ## 💻 Run the RAG with CLI Command
 
@@ -333,7 +462,7 @@ python scripts/launch_rag.py --question "Your question here" --config_file "Your
 Example:
 
 ```bash
-python scripts/launch_rag.py --question "What are the values of Euranova?" --config_file "config/config.yaml"
+python scripts/launch_rag.py --question "What says my last medical record ?" --config_file "config/config.yaml"
 ```
 
 ## 📊 Running the Evaluation
