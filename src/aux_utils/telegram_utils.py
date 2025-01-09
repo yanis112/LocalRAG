@@ -3,9 +3,11 @@ import telebot
 import requests
 from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Remplacez 'YOUR_BOT_TOKEN' par le token obtenu via BotFather
-TOKEN = '7871847224:AAGh9s0DFUjT-YQW0L6nA6L2HRHpJ69p99c'
+TOKEN = os.getenv('BOT_FATHER_TOKEN')
 
 # Fichier pour enregistrer les IDs des images traitées
 PROCESSED_IMAGES_FILE = 'processed_images.txt'

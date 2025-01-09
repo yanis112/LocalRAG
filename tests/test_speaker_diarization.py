@@ -48,4 +48,6 @@ if __name__ == "__main__":
     auth_token = os.getenv('HUGGINGFACE_TOKEN')
     
     diar=run_diarization(audio_path, auth_token)
-    print(diar)
+    print(diar) 
+  
+  

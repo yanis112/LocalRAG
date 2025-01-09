@@ -1,10 +1,15 @@
+from json import load
 import requests
 import io
 from PIL import Image
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 API_URL = "https://api-inference.huggingface.co/models/enhanceaiteam/Flux-Uncensored-V2"
 #"https://api-inference.huggingface.co/models/XLabs-AI/flux-RealismLora"
-headers = {"Authorization": "Bearer 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"}
+TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+headers = {"Authorization": "Bearer " + TOKEN}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)

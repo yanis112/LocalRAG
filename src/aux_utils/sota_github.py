@@ -2,9 +2,11 @@ import telebot
 import requests
 import time
 from src.vision_utils import UniversalImageLoader
-
+from dotenv import load_dotenv
+import os
 # Remplacez 'YOUR_BOT_TOKEN' par le token obtenu via BotFather
-TOKEN = '7871847224:AAGh9s0DFUjT-YQW0L6nA6L2HRHpJ69p99c'
+load_dotenv()
+TOKEN=os.getenv('BOT_FATHER_TOKEN')
 
 # Création de l'instance du bot
 bot = telebot.TeleBot(TOKEN)
