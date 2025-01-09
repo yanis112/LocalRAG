@@ -1,6 +1,7 @@
 import json
 from functools import lru_cache
 from typing import List
+import os
 
 import numpy as np
 import yaml
@@ -102,7 +103,8 @@ def similarity_score(question, list_retrieved_docs):
     import requests
 
     API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-    headers = {"Authorization": "Bearer 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"}
+    TOKEN=os.getenv("HUGGINGFACE_TOKEN")
+    headers = {"Authorization": "Bearer " + TOKEN}
 
     def query(payload):
         response = requests.post(API_URL, headers=headers, json=payload)

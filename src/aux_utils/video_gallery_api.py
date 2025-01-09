@@ -1,4 +1,7 @@
 import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 
 def download_videos(keyword: str, n_videos: int, orientation: str = None, size: str = None):
@@ -14,7 +17,7 @@ def download_videos(keyword: str, n_videos: int, orientation: str = None, size: 
     Example:
         download_videos("nature", 5, orientation="landscape", size="medium")
     """
-    API_KEY = 'GTpWYa4yf3uIa5mdHrt4vXwf1jwdSvBzWx1b4H2PQQItrm4KtQG7L6Zz'  # Replace with your Pexels API key
+    API_KEY = os.getenv("PEXELS_API_KEY")  # Replace with your Pexels API key
     url = f"https://api.pexels.com/videos/search?query={keyword}&per_page={n_videos}"
     
     if orientation:
