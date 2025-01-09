@@ -128,8 +128,8 @@ if __name__ == "__main__":
 
     # Example 1: Clone voice using a local audio file and save to a specific directory
     try:
-        reference_audio = "subprojects/movie_studio/voice_library/woman_narator.mp3"  # Replace with your reference audio file
-        text_to_speak = "For generations, they ruled the skies, masters of fire and shadow, Valyria, a name whispered with awe, a power unmatched. Their ambition knew no bounds; they bent dragons to their will, shaped the land itself to their desires, and delved into magics best left undisturbed. But power, unchecked, breeds arrogance, and arrogance invites its own destruction. The earth trembled, the mountains unleashed their fury, and in one cataclysmic night, the greatest empire the world had ever known was reduced to ash. This is not a story of heroes or villains, this is a warning, of what happens when hubris dares to challenge the very nature of the world. The Doom of Valyria, the legends say the dragons were destroyed, but some may have survived... and what do you do when the dragons return?"
+        reference_audio = "subprojects/movie_studio/voice_library/agamemnon.mp3"  # Replace with your reference audio file
+        text_to_speak = "Burn Guiss ! Burn it for the glory of Valyria !"  # Replace with your desired text
         output_directory = "cloned_voices" # Specify your desired output directory
 
         # Create the output directory if it doesn't exist

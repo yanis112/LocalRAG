@@ -14,4 +14,4 @@ def post_to_instagram(username, password, image_path, caption):
     return media
 
 # Usage
-post_to_instagram("aiandcivilization", "labeyrie06", "received_image.png", "Check out this cool photo! #instagram #python")
+post_to_instagram("account", "password", "received_image.png", "Check out this cool photo! #instagram #python")

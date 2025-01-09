@@ -12,12 +12,12 @@ def agent(config):
     return RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
 
 def test_RAG_answer(agent):
-    query = "Who is Simon Boiko?"
+    query = "Who is Simon ?"
     answer = agent.RAG_answer(query)
     assert isinstance(answer, str)
 
 def test_advanced_RAG_answer(agent):
-    query = "Who is Simon Boiko?"
+    query = "Who is Simon ?"
     answer = agent.advanced_RAG_answer(query)
     assert isinstance(answer, str)
 
