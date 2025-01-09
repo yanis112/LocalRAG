@@ -24,13 +24,13 @@
 .vscode-server/
 __pycache__/
 
-aux_data/
-checkpoints/
-data/
-generated_images/
-google_json_keys/
-logging/
-subprojects/
+aux_data
+checkpoints
+data
+generated_images
+google_json_keys
+logging
+subprojects
 
 # Fichiers
 annotated_test.jpg
