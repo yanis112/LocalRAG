@@ -1,0 +1,4 @@
+Analyze the cinematic project description within the beacon:
+<project_description> {project_description} <project_description>
+Provide a concise stylistic report for the whole movie project (not only for some scenes) in the form of a single 5-6 sentence paragraph. Detail the visual language and technical jargon necessary for a coherent and stunning realization. Avoid film or director names; use only technical cinematic terminology. Cover color palette, filters, lighting, camera movement, shot composition, mise-en-scène, type of movie (blockbuster movie, high budget action movie...) and editing style.
+Return the description paragraph without preamble.

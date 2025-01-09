@@ -33,6 +33,8 @@ class IntentClassifier:
         #load the classification prompt template from a txt file
         with open("prompts/llm_text_classification.txt", "r",encoding='utf-8') as file:
             self.classification_prompt = file.read()
+            
+        self.system_prompt="You are an agent in charge of classificating user's queries into different categories of tasks."
         
         # Instantiation using from_template (recommended)
         self.classification_prompt = PromptTemplate.from_template(self.classification_prompt)
@@ -57,7 +59,7 @@ class IntentClassifier:
 
     def classify(self, text,method="zero-shot"):
         """
-        Classify the given text into one of the predefined labels.
+        Classify the given text into one of the predefined labels from the config.
 
         Args:
             text (str): The text to be classified.
@@ -76,8 +78,9 @@ class IntentClassifier:
         elif method=="LLM":
             from src.main_utils.generation_utils_v2 import LLM_answer_v3
             full_prompt=self.classification_prompt.format(user_query=text,labels_dict=str(self.labels_dict))
+            print("LAbels dict used:",self.labels_dict)
 
-            answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,stream=False)
+            answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,system_prompt=self.system_prompt,stream=False)
         
             return answer
             

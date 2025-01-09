@@ -1,9 +1,12 @@
-API_KEY='AIzaSyApmdUmjkeoh9uDjxFNaIEmoI-Cdj-eE7E'
 
 import os
 import google.generativeai as genai
+from dotenv import load_dotenv
 
-genai.configure(api_key=API_KEY)
+load_dotenv()
+VERTEX_API_KEY = os.getenv("VERTEX_API_KEY")
+
+genai.configure(api_key=VERTEX_API_KEY)
 
 imagen = genai.ImageGenerationModel("imagen-3.0-generate-001")
 

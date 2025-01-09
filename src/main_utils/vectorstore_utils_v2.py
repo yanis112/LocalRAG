@@ -310,7 +310,7 @@ class VectorAgent:
         return loader
 
     @log_execution_time
-    def filter_and_split_chunks(self):
+    def filter_and_split_into_chunks(self):
         """
         Filters and prepares chunks based on the specified splitting method, apply pre-processing to the raw documents before chunking, and remove duplicates.
 
@@ -555,7 +555,7 @@ class VectorAgent:
         self.load_vectordb_V3()
         self.find_already_processed()  # find the already processed documents
         self.process_all_documents()  # process the documents
-        self.filter_and_split_chunks()  # filter and split the chunks
+        self.filter_and_split_into_chunks()  # filter and split the chunks
         print(
             "Number of total documents currently processed:",
             len(self.total_documents),
@@ -572,7 +572,7 @@ class VectorAgent:
     def get_chunks(self):
         """Return the chunks without pushing them to the vectorstore."""
         self.process_all_documents()  # process the documents
-        self.filter_and_split_chunks()  # filter and split the chunks
+        self.filter_and_split_into_chunks()  # filter and split the chunks
         return self.total_chunks
 
 

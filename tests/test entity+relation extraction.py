@@ -1,10 +1,9 @@
 from gliner import GLiNER
-
 import json
 from src.knowledge_graph import KnowledgeGraphIndex,EntityExtractor
 
 text = """
-Elles Bougent Pour l’Orientation MARTZLOFF Alice SCHALCK Elsa 7 décembre 2023 ‹#› Plan 01 02 Témoignage Temps d’échanges ‹#› Alice MARTZLOFF INTERVENANTE Data Scientist à Euranova - Consultante pour un client dans le bâtiment et les énergies - Responsable du projet Sustainable Computing Formation scientifique Bac Scientifique option Maths / Physique Classe préparatoire aux grandes Écoles en PCSI École d’ingénieur.e.s Centrale Marseille et Master d’Intelligence Artificielle et Apprentissage Automatique Personne d’autre que vous n’a le droit de vous dire que quoi vous êtes capable ! ; ; Avoir un impact positif Elsa SCHALCK INTERVENANTE Data Scientist à Euranova Responsable des projets de R&D en imagerie médicale Consultante pour un client dans le microbiote et l’oncologie Formation scientifique Bac Scientifique option Maths Classe préparatoire aux grandes Écoles en BCPST École d’ingénieur.e.s AgroParisTech (Institut national des sciences et industries du vivant et de l'environnement) : Option Ingénierie et santé Spécialité Data Science Comment ai-je été attiré par ces études ? La biologie et les maths.
+Hello, I am a software engineer at Google. I am currently working on a project with Facebook. 
 """
 
 # labels = ["person", "project", "location", "company"]

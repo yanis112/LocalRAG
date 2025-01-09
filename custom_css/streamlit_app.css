@@ -1,0 +1,14 @@
+/* Only modify toggle background color */
+.st-key-toggle1 [data-testid="stCheckbox"] > label > div {
+    background: linear-gradient(to right, #2b5876, #4e4376);
+}
+
+/* Hover effect only changes gradient direction */
+.st-key-toggle1 [data-testid="stCheckbox"] > label > div:hover {
+    background: linear-gradient(to right, #4e4376, #2b5876);
+}
+
+/* Remove label color */
+.st-key-toggle1 [data-testid="stWidgetLabel"] p {
+    color: unset;
+}

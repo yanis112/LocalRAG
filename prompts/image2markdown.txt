@@ -1,39 +1,162 @@
-Extract all relevant information from the attached image, including but not limited to text. Analyze the image content and determine if it is best represented in Markdown or JSON format.
 
-Format Guidelines:
+**Objective:**
 
-Markdown: Use for text-heavy content like social media posts, documents, and general text blocks. Also, use it to describe visual elements that are not easily represented in JSON (e.g. the general look of an image). Preserve original formatting where possible (bold, italics, headings, lists, tables).
+The goal is to accurately and comprehensively convert the content of the image given to you into either Markdown or JSON format, or a combination of both, based on the nature of the information present. The output should be a well-structured, accurate representation of the image's content, suitable for programmatic use or human readability.
 
-JSON: Use for structured data like charts, graphs, tables, diagrams, and code snippets, but also for describing other relevant data points that are not text.
+**Input:**
 
-Charts/Graphs: Extract data into a JSON format that includes labels, axes, data points, and legends. If relevant, include information about colors, shapes, and other visual characteristics. For example, for a bar chart:
+An image file (various formats accepted).
 
-{
-  "type": "bar",
-  "labels": ["Jan", "Feb", "Mar"],
-  "data": [12, 19, 3],
-  "colors": ["red", "blue", "green"]
-}
-Use code with caution.
-Json
-Tables: Represent as an array of objects, each with keys as column headers. Include additional information about cell formatting or styling if pertinent.
+**Process:**
 
-Diagrams: Create a JSON structure with nodes, connections, and labels. Add information about node shapes, colors, and connection types if relevant.
+1. **Optical Character Recognition (OCR):**
+    *   Perform high-fidelity OCR to extract all text present in the image.
+    *   Preserve the spatial relationships between text elements as much as possible to aid in context and format reconstruction.
 
-Code: Extract to a code property. Identify the language in a language property if possible.
+2. **Content Analysis and Classification:**
+    *   Analyze the image's content holistically, identifying key elements such as:
+        *   Text blocks (paragraphs, headings, lists, captions)
+        *   Structured data (tables, charts, graphs, diagrams)
+        *   Code snippets
+        *   Visual elements (icons, logos, layout, style)
+        *   Relationships between elements (hierarchy, connections, spatial arrangement)
+    *   Determine the dominant content type:
+        *   **Text-heavy:** Documents, social media posts, articles, general text.
+        *   **Data-intensive:** Charts, graphs, tables, diagrams.
+        *   **Code:** Programming language snippets.
+        *   **Mixed:** Combinations of the above.
 
-Instructions:
+3. **Format Selection:**
+    *   **Markdown:** Choose Markdown when the content is primarily text-based, or when describing visual aspects that are not easily represented in JSON. Preserve original text formatting (bold, italics, headings, lists, etc.) as accurately as possible.
+    *   **JSON:** Select JSON for structured data, code snippets, and when representing data points and relationships between elements is crucial.
+    *   **Hybrid Approach:** Combine Markdown and JSON if the image contains both text and structured data that are best represented separately. For instance, use Markdown for descriptive text and JSON for an embedded chart's data.
 
-Perform accurate OCR.
+4. **Data Extraction and Transformation:**
 
-Identify and extract all relevant information: text, data, visual elements, relationships between elements, and overall context.
+    *   **Text:**
+        *   Convert extracted text into Markdown, preserving original formatting to the best extent possible.
 
-Classify the content type (social media, document, chart, table, diagram, code, etc.).
+    *   **Charts/Graphs:**
+        *   Extract all data points, labels, axis information, legends, and any other relevant annotations.
+        *   **Handle Missing Information:**
+            *   **Missing Axis Labels/Units:** If axis labels or units are missing, attempt to infer them based on the context, data point values, and any available text clues. Document any assumptions made in a separate "inferences" field within the JSON.
+            *   **Missing Data Points:** If data points are obscured or missing, use interpolation or extrapolation techniques (e.g., linear interpolation for bar charts, trendline analysis for line graphs) to estimate the missing values. Indicate estimated values clearly (e.g., with a different marker or flag in the JSON).
+            *   **Legend:** If no legend is given and there are more than one series, enumerate them with "Series 1", "Series 2", and so on.
+        *   Structure the data into a JSON format like the following:
 
-Choose Markdown or JSON based on the dominant content type and the best way to structure the extracted information. You may also combine both if needed.
+            ```json
+            {
+              "type": "bar", // or "line", "pie", etc.
+              "title": "Chart Title (if present)",
+              "x_axis": {
+                "label": "X-Axis Label (inferred if missing)",
+                "values": ["Jan", "Feb", "Mar", ...] // x-axis values
+              },
+              "y_axis": {
+                "label": "Y-Axis Label (inferred if missing)",
+                "min": 0,  // Optional: if scale is clear
+                "max": 100 // Optional: if scale is clear
+              },
+              "data": [
+                {
+                  "label": "Series 1", // or label from legend
+                  "values": [12, 19, 3, ...], // y-axis values for the series
+                  "color": "red", // Optional: if color is discernible
+                  "marker": "circle" // Optional: if marker style is discernible
+                },
+                {
+                  "label": "Series 2",
+                  "values": [5, 9, 11, ...],
+                  "color": "blue"
+                } // ... more series if present
+              ],
+              "inferences": { // Optional: record assumptions made
+                "x_axis_label": "Inferred based on data point values",
+                "y_axis_label": "Assumed to be units of measurement",
+                "missing_data": [
+                  { "series": "Series 1", "index": 2, "method": "linear interpolation" }
+                ]
+              }
+            }
+            ```
 
-Generate the output, prioritizing accuracy, format fidelity, and completeness of information.
+    *   **Diagrams:**
+        *   Identify nodes, connections, and labels.
+        *   Extract information about node shapes, colors, and connection types (e.g., solid, dashed, arrowheads).
+        *   Represent the diagram in JSON using a structure that captures the relationships between nodes:
 
-If no information is found, return an empty JSON or Markdown document.
+            ```json
+            {
+              "type": "flowchart", // or "mindmap", "network", etc.
+              "nodes": [
+                {
+                  "id": "node1",
+                  "label": "Start",
+                  "shape": "circle",
+                  "color": "green"
+                },
+                {
+                  "id": "node2",
+                  "label": "Process Data",
+                  "shape": "rectangle",
+                  "color": "blue"
+                }
+              ],
+              "connections": [
+                {
+                  "source": "node1",
+                  "target": "node2",
+                  "type": "solid",
+                  "label": "Input" // Optional: if a label is on the connection
+                }
+              ]
+            }
+            ```
 
-Return the formatted output without preamble."
+    *   **Tables:**
+        *   Extract table headers and cell data.
+        *   Represent the table in JSON as an array of objects, where each object represents a row, or as a Markdown table.
+
+            ```json
+            // JSON representation
+            [
+              { "Column 1": "Value 1", "Column 2": "Value 2" },
+              { "Column 1": "Value 3", "Column 2": "Value 4" }
+            ]
+            ```
+
+            ```markdown
+            // Markdown representation
+            | Column 1 | Column 2 |
+            |---|---|
+            | Value 1 | Value 2 |
+            | Value 3 | Value 4 |
+            ```
+
+    *   **Code Snippets:**
+        *   Extract code snippets and attempt to identify the programming language (if not explicitly stated).
+        *   Represent the code as a string within the JSON, optionally with a language identifier.
+
+            ```json
+            {
+              "language": "python",
+              "code": "def my_function():\n  print(\"Hello, world!\")"
+            }
+            ```
+
+
+5. **Output:**
+
+    *   Generate the output in the selected format (Markdown, JSON, or a combination).
+    *   Prioritize accuracy, completeness, and structural integrity.
+    *   If the image contains no discernible information, return an empty JSON object (`{}`) or an empty Markdown document.
+    *   **Do not add any preamble or introductory text.** Output only the formatted content.
+    * IF A SOURCE IS PROVIDED (person, website, link, publication, etc.), INCLUDE IT IN THE OUTPUT !
+
+
+**Error Handling:**
+
+*   If OCR fails to produce reliable results, attempt to extract as much information as possible from the visual elements and their relationships. If no information can be extracted, return an empty output as described above.
+*   Clearly document any assumptions or inferences made during the process, especially when dealing with missing data.
+
+Return the output without preamble or introductory text.

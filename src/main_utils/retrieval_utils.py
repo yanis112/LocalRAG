@@ -167,7 +167,7 @@
 #         start_time = time.time()
         
 #         # split documents into chunks and remove duplicates
-#         total_chunks = filter_and_split_chunks(
+#         total_chunks = filter_and_split_into_chunks(
 #             list_documents=list_documents,
 #             semantic_threshold=semantic_threshold,
 #         )
@@ -477,7 +477,7 @@
 
 
 # @log_execution_time
-# def filter_and_split_chunks(
+# def filter_and_split_into_chunks(
 #     list_documents, semantic_threshold
 # ):
 #     """

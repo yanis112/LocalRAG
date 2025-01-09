@@ -1,11 +1,10 @@
 # Final Prompt Refiner Expert Knowledge
 
-This document contains expert knowledge for refining image descriptions to make them clear, concise, and coherent. The goal is to reduce the length of the image descriptions by 20% while ensuring it remains effective for text-to-image generation models.
+This document contains expert knowledge for refining image descriptions to make them clear, concise, and coherent. The goal is to reduce the length of the image description at between 5 and 7 sentences while ensuring it remains effective for text-to-image generation models.
 
 ## Guidelines for Refining Prompts
 
-1. **Clarity**: Ensure that the image description is easy to understand. Avoid ambiguous terms and use precise language.
-2. **Conciseness**: Reduce unnecessary long words and phrases. Focus on the essential elements of the description, remove things such as atmosphere, emotions, concentrate on clear visual elements.
-3. **Coherence**: Maintain logical flow and consistency in the description. Ensure that all elements (lighting, camera angles, etc.) are well-integrated.
-4. **Visual Elements**: Emphasize visual details such as lighting, camera angles, and scene composition. Avoid describing emotions, atmosphere, or intangible elements. Make sure there are not too much visual instructions that could be confusing.
-5. **Image Description Order/Structure** : Make sure, without removing any information, that the description is structured the following way: 1/ the precise type of the image and camera angle: e.g 'a blockbuster movie scene..', 2/ the elemants of the image 3/ the stylistic instructions: e.g 'in a noir style'
+You will make sure that the prompt if formated exactly in this order:
+1/ The type of image: e.g. A high budget movie still, a professional photograph...
+2/ The visual content of the image: a description of each elements in the image their relative position and size, background, colors, and lighting.
+3/ Stylistic jargon: e.g. Dutch angle, chiaroscuro, high-key lighting, cinematic look..

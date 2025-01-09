@@ -14,7 +14,7 @@ class BaseExpert(ABC):
         llm_provider (str): Provider of the LLM service
     """
 
-    def __init__(self, model_name, llm_provider):
+    def __init__(self, model_name, llm_provider,global_stylistic_guidelines=None):
         """Initialize BaseExpert with model configuration.
         
         Args:
@@ -24,6 +24,7 @@ class BaseExpert(ABC):
         self.model_name = model_name
         self.llm_provider = llm_provider
         self.system_prompt="You are an expert charged of image descriptions refining."
+        self.global_stylistic_guidelines=global_stylistic_guidelines
         
     def load_expert_prompt(self):
         """Load expert prompt template from file.
@@ -34,6 +35,7 @@ class BaseExpert(ABC):
         with open(f"prompts/{self.prompt_file}", "r", encoding='utf-8') as f:
             template = f.read()
         return PromptTemplate.from_template(template)
+    
     
     def load_expert_knowledge(self):
         """Load expert knowledge from file.
@@ -56,10 +58,15 @@ class BaseExpert(ABC):
         template = self.load_expert_prompt()
         formatted_prompt = template.format(
             prompt=prompt,
-            expert_knowledge=self.load_expert_knowledge()
+            expert_knowledge=self.load_expert_knowledge(),
+            global_stylistic_guidelines=self.global_stylistic_guidelines
         )
         return LLM_answer_v3(formatted_prompt, model_name=self.model_name, 
                             llm_provider=self.llm_provider, temperature=1,system_prompt=self.system_prompt)
+        
+    
+        
+        
 
 class RefinementExpert(BaseExpert):
     """Expert for refining general prompt structure and content."""
@@ -98,7 +105,7 @@ class AgentCinematicExpert:
         experts (dict): Dictionary of available experts
     """
 
-    def __init__(self, model_name, llm_provider):
+    def __init__(self, model_name, llm_provider,global_stylistic_guidelines=None):
         """Initialize AgentCinematicExpert with model configuration.
         
         Args:
@@ -107,11 +114,12 @@ class AgentCinematicExpert:
         """
         self.model_name = model_name
         self.llm_provider = llm_provider
+        self.global_stylistic_guidelines=global_stylistic_guidelines    
         self.experts = {
-            'refinement': RefinementExpert(model_name, llm_provider),
-            'lighting': LightingExpert(model_name, llm_provider),
-            'camera': CameraAngleExpert(model_name, llm_provider),
-            'post_production': PostProductionExpert(model_name, llm_provider),
+            'refinement': RefinementExpert(model_name, llm_provider,global_stylistic_guidelines),
+            'lighting': LightingExpert(model_name, llm_provider,global_stylistic_guidelines),
+            'camera': CameraAngleExpert(model_name, llm_provider,global_stylistic_guidelines),
+            'post_production': PostProductionExpert(model_name, llm_provider,global_stylistic_guidelines),
             'final': FinalPromptRefiner(model_name, llm_provider)
         }
     
@@ -163,6 +171,28 @@ class AgentCinematicExpert:
             print("##############################################")
         return current_prompt
     
+    def project2style(self, project_description):
+        """Find the appropriate cinematic style instructions and jargon based
+        on the project description (e.g genre, color palette, mood, etc.) using informations from internet.
+        Args:
+            project_description (str): the description of the project, what is it, e.g. A high  budget Tolkien's Silmarillion cinematic adaptation
+        Returns:
+            str: the cinematic style instructions and jargon
+        """
+        
+        from src.aux_utils.internet_utils import GeminiInternetAgent
+        
+        #load the instruction prompt
+        with open("prompts/project_description2cinematic_style.txt", "r", encoding='utf-8') as f:
+            template = f.read()
+        prompt = PromptTemplate.from_template(template).format(project_description=project_description)
+        
+        #answer using the GeminiInternetAgent
+        
+        agent = GeminiInternetAgent()
+        
+        #return the answer
+        return agent.answer(prompt)
 
 if __name__=="__main__":
     agent = AgentCinematicExpert(model_name="llama-3.3-70b-versatile", llm_provider="groq")

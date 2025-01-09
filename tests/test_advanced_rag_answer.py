@@ -7,7 +7,7 @@ if __name__ == "__main__":
     with open("config/config.yaml") as f:
         config = yaml.safe_load(f)
 
-    # query = "Qui est Simon Boiko ?"
+    # query = "Qui est Simon B. ?"
     # agent = RAGAgent(default_config=config, config={"stream": False, "return_chunks": False})
     # answer = agent.RAG_answer(query)
     # print("Answer:", answer)

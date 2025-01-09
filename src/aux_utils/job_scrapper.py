@@ -1,11 +1,9 @@
 import os
 from functools import lru_cache
 import streamlit as st
-from jobspy import scrape_jobs
 from time import sleep
-from requests.exceptions import RequestException
 import pandas as pd
-from typing import Union, List
+from langchain_core.tools import tool
     
     
 class JobAgent:
@@ -54,6 +52,7 @@ class JobAgent:
             pd.DataFrame: Job listings or None if error occurs
         """
         try:
+            from jobspy import scrape_jobs
             return scrape_jobs(
                 site_name=["indeed", "linkedin", "glassdoor", "google"],
                 google_search_term=google_search_term,

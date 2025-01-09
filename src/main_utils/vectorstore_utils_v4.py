@@ -181,6 +181,7 @@ class VectorAgent:
         print(
             f"Number of already processed documents: {len(self.already_processed_docs)}"
         )
+        
     def save_processed_docs(self):
         """
         Saves the processed documents mapping to a log file
@@ -328,19 +329,43 @@ class VectorAgent:
     @log_execution_time
     def filter_and_split_into_chunks(self):
         """
-        Filters and prepares chunks based on the specified splitting method, apply pre-processing to the raw documents before chunking, and remove duplicates.
-
-        Args:
-            total_chunks (list): A list of Document objects representing the total chunks.
-            splitting_method (str): The method used for splitting the chunks. Can be "recursive" or any other value.
-            embedding_model (str): The name of the embedding model to be used.
-            semantic_threshold (float): The threshold value for semantic chunking.
-
-        Returns:
-            list: A list of Document objects representing the filtered and prepared chunks.
+        Filter documents based on their source and split them into chunks.
+        This method processes the documents stored in `self.total_documents` by 
+        separating them into two categories: documents to split and documents not 
+        to split. It then splits the documents based on the specified splitting 
+        method in the configuration (`self.config`). The supported splitting methods 
+        are "semantic" and "character".
+        For the "semantic" splitting method, it uses a `SemanticChunker` to create 
+        chunks based on semantic content. For the "character" splitting method, it 
+        uses `RecursiveCharacterTextSplitter` to create chunks based on character 
+        count and overlap.
+        After splitting the documents, it removes duplicate chunks and stores the 
+        cleaned chunks in `self.total_chunks`.
+        Prints:
+            Status messages indicating the progress of the splitting and cleaning 
+            process.
         """
         print("STARTING TO SPLIT THE DOCUMENTS INTO CHUNKS ...")
 
+        # Sépare les documents en fonction de leur provenance
+        docs_to_split = []
+        docs_not_to_split = []
+        for doc in self.total_documents:
+            if "sheets" in doc[0].metadata["source"]: #we dont split the sheets !
+                #print the metadata of the doc to not split:
+                print("Document not to split Metadata:",doc[0].metadata)
+                print("Document not to split:",doc[0].metadata["source"])
+                docs_not_to_split.append(doc)
+            else:
+                docs_to_split.append(doc)
+
+        # Traitement des documents à ne pas splitter
+        chunks_not_to_split = [
+            Document(page_content=doc[0].page_content, metadata=doc[0].metadata)
+            for doc in docs_not_to_split
+        ]
+
+        # Traitement des documents à splitter
         if self.config["splitting_method"] == "semantic":
             semantic_splitter = SemanticChunker(
                 embeddings=self.chunking_embedding_model,
@@ -348,50 +373,46 @@ class VectorAgent:
                 breakpoint_threshold_amount=self.config["semantic_threshold"],
             )
 
-            # get the total content of the documents
             total_docs_content = [
-                text_preprocessing(chunk[0].page_content)
-                for chunk in self.total_documents
+                text_preprocessing(doc[0].page_content) for doc in docs_to_split
             ]
-            # get the total metadata of the documents
-            total_docs_metadata = [chunk[0].metadata for chunk in self.total_documents]
+            total_docs_metadata = [doc[0].metadata for doc in docs_to_split]
 
-            chunks = semantic_splitter.create_documents(
+            chunks_to_split = semantic_splitter.create_documents(
                 texts=total_docs_content, metadatas=total_docs_metadata
             )
         else:
             from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-            chunk_size = self.config["chunk_size"]  # default chunk size
-            chunk_overlap = self.config["chunk_overlap"]  # default chunk overlap
+            chunk_size = self.config["chunk_size"]
+            chunk_overlap = self.config["chunk_overlap"]
 
             character_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=chunk_size, chunk_overlap=chunk_overlap
             )
 
-            # get the total content of the documents
             total_docs_content = [
-                text_preprocessing(chunk[0].page_content)
-                for chunk in self.total_documents
+                text_preprocessing(doc[0].page_content) for doc in docs_to_split
             ]
-            # get the total metadata of the documents
-            total_docs_metadata = [chunk[0].metadata for chunk in self.total_documents]
+            total_docs_metadata = [doc[0].metadata for doc in docs_to_split]
 
-            chunks = [
+            chunks_to_split = [
                 Document(page_content=content, metadata=metadata)
                 for content, metadata in zip(total_docs_content, total_docs_metadata)
             ]
 
-            # Split the documents into chunks
-            chunks = character_splitter.create_documents(
-                texts=[doc.page_content for doc in chunks],
-                metadatas=[doc.metadata for doc in chunks],
+            chunks_to_split = character_splitter.create_documents(
+                texts=[doc.page_content for doc in chunks_to_split],
+                metadatas=[doc.metadata for doc in chunks_to_split],
             )
 
         print("SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ...")
 
+        # Concaténer les chunks
+        chunks = chunks_to_split + chunks_not_to_split
+
         # remove duplicate chunks
-        cleaned_chunks = self.remove_duplicate_chunks(chunks) #REMOVE duplicate chunks était en dehors du vector agant avant
+        cleaned_chunks = self.remove_duplicate_chunks(chunks)
 
         # add the result to class variable
         self.total_chunks = cleaned_chunks
@@ -499,7 +520,7 @@ class VectorAgent:
             
             # Delete physical files
             for doc_name in docs_to_remove_physically:
-                file_path = os.path.join(self.processed_docs_data[doc_name]["subfolder_path"],self.processed_docs_data[doc_name]) #we join the subfolder path and the file name
+                file_path = os.path.join(self.processed_docs_data[doc_name]["subfolder_path"],doc_name) #we join the subfolder path and the file name
                 try:
                     os.remove(file_path)
                 except Exception as e :
@@ -587,17 +608,6 @@ class VectorAgent:
             # obtain the modification date of the chunk based on the source
             modif_date = get_modif_date(chunk.metadata["source"])
 
-            # Get custom id from processed_docs_data if it exist
-            file_name= os.path.basename(chunk.metadata["source"]) # Get the file name from the path
-            custom_id = None
-            
-            for doc_name, data in self.processed_docs_data.items():
-                if doc_name == file_name:
-                    custom_id = data["id"]
-            
-            # If custom_id is None (for new files), assign an incrementing id
-            if custom_id is None:
-                custom_id = str(len(self.processed_docs_data))
                 
             # print("FIELD:", source_field)
             # print("Source:", source)
@@ -610,7 +620,6 @@ class VectorAgent:
                         "chunk_length": chunk_length,
                         "field": source_field,  # Add the new field to the metadata
                         "modif_date": modif_date,
-                        "id": custom_id,  # Add the custom id
                     },
                 )
             )
@@ -643,7 +652,6 @@ class VectorAgent:
                     if not self.client.collection_exists(self.collection_name):
                         from qdrant_client.http.models import (
                             Distance,
-                            SparseVectorParams,
                             VectorParams,
                         )
 
@@ -673,17 +681,19 @@ class VectorAgent:
                         retrieval_mode=RetrievalMode.HYBRID,
                     )
 
-                    # Add documents
-                    self.id_list=self.vectordb.add_documents(documents=self.total_chunks)
-                    #make a dictionnary mapping ids to documents path:
-                    
-                    
-                    print("ID_lIST OF THE DOCUMENT CREATED :",id_list)
-
-                else:
-                    logger.info("Adding documents to existing vectorstore...")
-                    self.vectordb.add_documents(documents=self.total_chunks)
-
+                # Modification: add the ids mapping to the log file, by adding the ids to the metadata
+                logger.info("Adding documents to existing vectorstore...")
+                id_list = self.vectordb.add_documents(documents=self.total_chunks)
+                
+                #Mapping of ids to path for the deletion method
+                for i,chunk in enumerate(self.total_chunks):
+                    file_name= os.path.basename(chunk.metadata["source"]) # Get the file name from the path
+                    #check if the file name is in the dictionnary
+                    if file_name in self.processed_docs_data:
+                        self.processed_docs_data[file_name]["id"] = id_list[i]
+                    else:
+                        self.processed_docs_data[file_name] = {"id": id_list[i]}
+                
                 logger.info("Qdrant database successfully updated with new documents!")
 
         except Exception as e:
@@ -698,6 +708,7 @@ class VectorAgent:
         # use v3 to load the vectorstore
         self.load_vectordb_V3()
         self.find_already_processed()  # find the already processed documents
+        print("Number of already processed documents:", len(self.already_processed_docs))
         self.process_all_documents()  # process the documents
         self.filter_and_split_into_chunks()  # filter and split the chunks
         print(

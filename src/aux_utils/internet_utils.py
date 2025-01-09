@@ -1,5 +1,16 @@
 import asyncio
 import yaml
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+load_dotenv()
+
+
+import os
+from google import genai
+from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
+
 
 class InternetAgent:
     
@@ -85,7 +96,7 @@ class InternetAgent:
         return urls
     
     def fill_internet_vectorstore(self):
-        from src.main_utils.vectorstore_utils_v2 import VectorAgent
+        from src.main_utils.vectorstore_utils_v4 import VectorAgent
         
         #create a vector agent
         vector_agent = VectorAgent(default_config=self.internet_config)
@@ -129,25 +140,117 @@ class InternetAgent:
 
 
 
-if __name__ == "__main__":
-    agent = InternetAgent()
-    #define user's query
-    # query = "Qui est Pierre-Yves Rougeyron ?"
-    # #get urls
-    # urls = agent.get_urls(query, num_results=5)
-    #scrape contents
-    urls=['https://www.linkedin.com/posts/salom%C3%A9-saqu%C3%A9-499563105_cest-la-campagne-%C3%A9lectorale-la-plus-violente-activity-7256560321585205248-Te2A?utm_source=share&utm_medium=member_desktop']
+class GeminiInternetAgent:
     
-    contents = agent.scrape_contents(urls)
-    #print contents separately, correctly presented
-    # for i, content in enumerate(contents):
-    #     print(f"Content {i+1}: {content}\n")
-    print("Contents: ", contents)
+    """
+    A class to interact with the Gemini API for generating content with internet-grounded search.
+    Attributes:
+        client (genai.Client): The client to interact with the Gemini API.
+        model_id (str): The ID of the model to use for generating content.
+        google_search_tool (Tool): The tool for performing Google searches.
+    Methods:
+        __init__():
+            Initializes the GeminiInternetAgent with the necessary API key and tools.
+        answer(prompt: str) -> str:
+                prompt (str): The question or prompt to answer.
+                str: A string containing the answer.
+        answer_and_get_grounding_metadata(prompt: str) -> tuple[str, str]:
+                prompt (str): The question or prompt to answer.
+                tuple[str, str]: A tuple containing the answer and the grounding metadata.
+    """
+
+    def __init__(self):
+        api_key = os.environ.get("GOOGLE_API_KEY")
+        if not api_key:
+            raise ValueError("GOOGLE_API_KEY not found in environment variable")
+
+        self.client = genai.Client(api_key=api_key) # API key passed to client
+        self.model_id = "gemini-2.0-flash-exp"  # Make sure this model id is correct
+        self.google_search_tool = Tool(google_search=GoogleSearch())
+
+    def answer(self, prompt: str) -> str:
+        """
+        Answers a prompt using Gemini with internet-grounded search.
+
+        Args:
+            prompt: The question or prompt to answer.
+
+        Returns:
+            A string containing the answer.
+        """
+        response = self.client.models.generate_content(
+            model=self.model_id,
+            contents=prompt,
+            config=GenerateContentConfig(
+                tools=[self.google_search_tool],
+                response_modalities=["TEXT"],
+            )
+        )
+        if response.candidates and response.candidates[0].content.parts:
+            answer = "".join(part.text for part in response.candidates[0].content.parts)
+        else:
+            answer = "No answer available."
+
+        return answer
+
+    def answer_and_get_grounding_metadata(self, prompt: str) -> tuple[str, str]:
+        """
+         Answers a prompt using Gemini with internet-grounded search and returns grounding metadata.
+
+        Args:
+            prompt: The question or prompt to answer.
+
+        Returns:
+            A tuple containing the answer and the grounding metadata.
+        """
+        response = self.client.models.generate_content(
+            model=self.model_id,
+            contents=prompt,
+            config=GenerateContentConfig(
+                tools=[self.google_search_tool],
+                response_modalities=["TEXT"],
+            )
+        )
+        if response.candidates and response.candidates[0].content.parts:
+          answer = "".join(part.text for part in response.candidates[0].content.parts)
+        else:
+          answer = "No answer available."
+
+
+        grounding_metadata = (
+            response.candidates[0].grounding_metadata.search_entry_point.rendered_content
+            if response.candidates
+            and response.candidates[0].grounding_metadata
+            and hasattr(response.candidates[0].grounding_metadata, "search_entry_point")
+            and hasattr(response.candidates[0].grounding_metadata.search_entry_point, "rendered_content")
+            else "No grounding metadata available."
+        )
+        return answer, grounding_metadata
+
+if __name__ == "__main__":
+    # agent = InternetAgent()
+    # #define user's query
+    # # query = "Qui est Pierre-Yves Rougeyron ?"
+    # # #get urls
+    # # urls = agent.get_urls(query, num_results=5)
+    # #scrape contents
+    # urls=['https://www.linkedin.com/posts/salom%C3%A9-saqu%C3%A9-499563105_cest-la-campagne-%C3%A9lectorale-la-plus-violente-activity-7256560321585205248-Te2A?utm_source=share&utm_medium=member_desktop']
+    
+    # contents = agent.scrape_contents(urls)
+    # #print contents separately, correctly presented
+    # # for i, content in enumerate(contents):
+    # #     print(f"Content {i+1}: {content}\n")
+    # print("Contents: ", contents)
     
     #clean the content
     #cleaned_content = agent.linkedin_post_cleaner(contents[0])
     #print(f"Cleaned content: {cleaned_content}")
-            
+    # Example usage:
+    agent = GeminiInternetAgent()
+    question = "What are today news and today date ?"
+    answer = agent.answer(question)
+    print(f"Question: {question}")
+    print(f"Answer: {answer}")
     
         
 

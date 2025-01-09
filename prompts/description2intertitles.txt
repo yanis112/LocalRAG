@@ -1,0 +1,7 @@
+Analyze the cinematic project description within the beacon:
+<project_description> {project_description} <project_description>
+Provide a list of short and consise texts/sentences/groups of works for 10 intertitles
+sequences for the epic movie trailer. Each intertitle sentences must convey meaning and context relative to the theme
+while being poetic. You will also return a prompt describing the same style used for all intertitle sequence, usually a
+nearly uniform background  like dark stone, and the text in the middle in a bold font, like golden letters with complex
+designs. The text should be in a font that is easy to read and understand. 

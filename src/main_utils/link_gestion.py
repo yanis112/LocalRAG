@@ -280,6 +280,7 @@ class ExternalKnowledgeManager:
             )
 
             print("Topic Finded by classifier: ", topic)
+            st.toast(f"Associated Topic: {topic}")
 
             # get the directory associated to the topic (the key associated to the topic in the dictionary)
             directory = topic
@@ -298,7 +299,7 @@ class ExternalKnowledgeManager:
                 )
 
             # we index the rescource in the database !
-            from src.main_utils.vectorstore_utils_v2 import VectorAgent
+            from src.main_utils.vectorstore_utils_v4 import VectorAgent
             # check if qdrant client is in session state
 
             vector_agent = VectorAgent(

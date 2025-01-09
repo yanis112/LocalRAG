@@ -5,6 +5,9 @@ import qrcode
 import streamlit as st
 import yaml
 import time 
+from typing import List
+
+
 
 from src.aux_utils.job_scrapper import JobAgent
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
@@ -181,9 +184,50 @@ def save_uploaded_pdf(uploaded_file, temp_dir="temp"):
     # Retourner le chemin du fichier sauvegardé
     return file_path
 
+import concurrent.futures
+from typing import List
+import streamlit as st
+from threading import Lock
+
+# Lock for thread-safe progress updates
+spinner_lock = Lock()
+
+@st.cache_data
+def handle_multiple_uploaded_files(uploaded_files, parallel: bool = False):
+    """
+    Handles multiple uploaded files with optional parallel processing.
+    
+    Args:
+        uploaded_files: List of uploaded files to process
+        parallel: If True, process files in parallel using threading. If False, process sequentially.
+    """
+    total_files = len(uploaded_files)
+    
+    def thread_safe_handle_file(file):
+        with spinner_lock:
+            with st.spinner(f'Processing: {file.name}'):
+                return handle_single_file(file)
+    
+    if parallel:
+        # Determine optimal number of workers
+        max_workers = min(total_files, 4)  # Limit concurrent threads
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all files for processing
+            futures = [executor.submit(thread_safe_handle_file, file) 
+                      for file in uploaded_files]
+            # Wait for all to complete
+            concurrent.futures.wait(futures)
+    
+    else:
+        # Sequential processing
+        for idx, file in enumerate(uploaded_files, 1):
+            with st.spinner(f'Processing file {idx}/{total_files}: {file.name}'):
+                handle_single_file(file)
+
+
 
 @st.fragment
-def handle_uploaded_file(uploaded_file):
+def handle_single_file(uploaded_file):
     """
     Handles the uploaded file and processes it based on its extension.
     Parameters:
@@ -234,6 +278,7 @@ def handle_uploaded_file(uploaded_file):
       
         st.session_state["uploaded_file"] = True
         st.session_state["audio_transcription"] = transcription
+        st.session_state["external_resources_list"].append(transcription)
         
         # txt = create_transcription_txt(transcription)
         # print("TXT FILE CREATED !")
@@ -280,6 +325,9 @@ def handle_uploaded_file(uploaded_file):
                 }
             )
             st.session_state["uploaded_file"] = True
+            
+            #append the external resources obtained to the session state 'external_resources_list'
+            st.session_state["external_resources_list"].append(output)
 
         st.toast("Image analysis successfull !", icon="🎉")
 
@@ -305,6 +353,11 @@ def handle_uploaded_file(uploaded_file):
             }
         )
         st.session_state["uploaded_file"] = True
+        #append the external resources obtained to the session state 'external_resources_list'
+        st.session_state["external_resources_list"].append(doc_pdf)
+    
+    
+    
     
     #refresh the displaying of chat messages
     display_chat_history()
@@ -613,7 +666,7 @@ def process_query(query, streamlit_config, rag_agent):
                 #email_utils.disconnect()
 
             # fill the vectorstore withg the new emails
-            from src.main_utils.vectorstore_utils_v2 import VectorAgent
+            from src.main_utils.vectorstore_utils_v4 import VectorAgent
 
             with st.spinner("Filling the vectorstore with new emails..."):
                 agent = VectorAgent(
@@ -681,9 +734,9 @@ def process_query(query, streamlit_config, rag_agent):
             with st.spinner("Scraping job offers..."):
                 try:
                     print("Initializing job scrapper...")
-                    job_scrapper = JobAgent(
-                        #search_terms="Data Scientist",
-                        #locations="Aix en Provence",
+                    job_scrapper = JobAgent(is_remote=False)
+                       
+                    job_scrapper.scrape_and_convert(
                         search_terms=search_terms,
                         locations=locations,
                         hours_old=200,
@@ -692,7 +745,6 @@ def process_query(query, streamlit_config, rag_agent):
                         google_search_terms=[search_term+" "+location for search_term in search_terms for location in locations],
                         is_remote=False,
                     )
-                    job_scrapper.scrape_and_convert()
                 except Exception as e:
                     print("EXCEPTION IN JOB SCRAPPING:", e)
                     st.error(
@@ -700,7 +752,7 @@ def process_query(query, streamlit_config, rag_agent):
                     )
 
             # fill the vectorstore with the new job offers
-            from src.main_utils.vectorstore_utils_v2 import VectorAgent
+            from src.main_utils.vectorstore_utils_v4 import VectorAgent
 
             with st.spinner("Filling the vectorstore with new job offers..."):
                 agent = VectorAgent(
@@ -774,14 +826,41 @@ def process_query(query, streamlit_config, rag_agent):
                 #add a toast to notify the user that the meeting summary has been saved
                 st.toast("Meeting summary saved !", icon="🎉")
                 #fill the vectorstore with the new meeting summary
-                from src.main_utils.vectorstore_utils_v2 import VectorAgent
+                from src.main_utils.vectorstore_utils_v4 import VectorAgent
                 vector_agent = VectorAgent(default_config=st.session_state["config"],qdrant_client=rag_agent.client)
                 vector_agent.fill()
                 print("Vectorstore filled with new meeting summary !")
                 st.toast("Meeting summary indexed !", icon="📋")
                 #put st.session_state["audio_transcription"] to None now that the meeting summary has been saved
                 del st.session_state["audio_transcription"]
-                
+        elif intent == "sheet or table info extraction":
+            config["data_sources"] = ["sheets"]
+            config["enable_source_filter"] = True
+            config["field_filter"] = ["sheets"]
+            #put back config to the rag agent
+            rag_agent.merged_config=config
+            #initialize the vector agent
+            from src.main_utils.vectorstore_utils_v4 import VectorAgent
+            vector_agent = VectorAgent(default_config=st.session_state["config"],qdrant_client=rag_agent.client)
+            #remove all the current files of data/sheets
+            vector_agent.delete(folders=["data/sheets"])
+            #fetch all sheets using sheet agent
+            from src.aux_utils.google_sheets_agent import GoogleSheetsAgent
+            sheet_agent = GoogleSheetsAgent(
+                credentials_path='google_json_key/python-sheets-446015-aa8eef72c872.json',
+                save_path='data/sheets',
+                temp_path='temp'
+            )
+            with st.spinner("Fetching the sheets..."):
+                sheet_agent.fetch_and_save(spreadsheet_name='RechercheEmploi')
+            #fill the vectorstore with the new sheets
+            vector_agent.fill()
+            #answer the query
+            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+                answer, docs, sources = rag_agent.RAG_answer(query)
+            
+
+            
         elif intent == "prompt engineering request":
             config["data_sources"] = ["prompts"]
             config["enable_source_filter"] = True

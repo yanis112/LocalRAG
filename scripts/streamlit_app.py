@@ -1,7 +1,6 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-
 from src.main_utils.streamlit_app_utils import (
     display_chat_history,
     initialize_session_state,
@@ -13,10 +12,19 @@ from src.main_utils.streamlit_app_utils import (
 
 def main():
     load_dotenv()
+    
+    def load_css(file_path:str):
+        with open(file_path) as f:
+            st.markdown(f"<style>{f.read()}</style>",unsafe_allow_html=True)
+                
+    css_path = "custom_css/stunning_button.css"
+    load_css(css_path)  # Add this line to load the CSS
 
+    
+   
     os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "5000"
 
-    st.sidebar.image("assets/no_back_logo.png", output_format="PNG")
+    st.sidebar.image("assets/cropped_logo_v4.png", output_format="PNG")
 
     # load configuration
     load_config()
@@ -32,6 +40,7 @@ def main():
     use_cot = st.sidebar.toggle(
         "Enable Justification 📝",
         value=False,
+        key="justification_toggle",
         help="Enable or disable the use of Chain-of-Thought prompting. This will affect the LLM answer: longer, interpretable, less prown to hallucination, \
             step-by-step answer with document citation, but longer.... If disabled, the answer will be direct and synthetic.",
     )
@@ -39,6 +48,7 @@ def main():
     deep_search = st.sidebar.toggle(
         "Enable Deep Search 🔥",
         value=False,
+        key="deep_search_toggle",
         help="Enable or disable the deep search. This will make a search divided in several steps, fit to solve complex queries, more powerfull but longer...",
     )
     
@@ -48,7 +58,8 @@ def main():
         "Select the LLM model",
         options=formatted_options,
         index=0,
-        help="Select the LLM model you want to use for the answer generation."
+        help="Select the LLM model you want to use for the answer generation.",
+        key="llm_selectbox",
     )
     
     
@@ -70,6 +81,9 @@ def main():
    
     # Load configuration from config.yaml file and initialize session state
     initialize_session_state()
+    
+    if "external_resources_list" not in st.session_state:
+        st.session_state["external_resources_list"]=[]
     
     st.sidebar.header("Audio Recording/Uploading")
 
@@ -118,46 +132,58 @@ def main():
         
          
 
-    uploaded_file = st.sidebar.file_uploader(
+    uploaded_files = st.sidebar.file_uploader(
         label="Choose a file (audio or image)",
         type=["mp3", "jpg", "png", "wav", "jpeg", "m4a", "mp4", "pdf"],
+        key="file_uploader",
+        accept_multiple_files=True,
         help="You can upload any audio file and it will be immediately transcribed (with all speakers identification 🔥). You can also upload an image file and it will be OCRized (image-to-text). Delete previous audio or image manually before uploading a new one ! WARNING: transcriptions or ocerized text isn't used by the chatbot to provide answers. ",
     )
 
     # if no file uploaded (or an uploaded file is removed), remove the uploaded_file session state
-    if uploaded_file is None:
+    if uploaded_files is None:
         if "uploaded_file" in st.session_state:
             st.session_state.pop("uploaded_file")
+            
+    if uploaded_files and "uploaded_files_processed" not in st.session_state:
+        st.toast(f"{len(uploaded_files)} file(s) uploaded successfully!", icon="✅")
+        print("FILES UPLOADED!")
+        st.session_state["uploaded_files_processed"] = True
+        from src.main_utils.streamlit_app_utils import handle_multiple_uploaded_files
+        handle_multiple_uploaded_files(uploaded_files, parallel=False)
 
-    if uploaded_file and "uploaded_file" not in st.session_state:
-        st.toast("File uploaded successfully!", icon="✅")
-        print("FILE UPLOADED !")
-        st.session_state["uploaded_file"] = True
-        from src.main_utils.streamlit_app_utils import handle_uploaded_file
-        output_file = handle_uploaded_file(uploaded_file)
+    # if uploaded_file and "uploaded_file" not in st.session_state:
+    #     st.toast("File uploaded successfully!", icon="✅")
+    #     print("FILE UPLOADED !")
+    #     st.session_state["uploaded_file"] = True
+    #     from src.main_utils.streamlit_app_utils import handle_uploaded_file
+    #     output_file = handle_uploaded_file(uploaded_file)
 
-        # si le type de output file c'est des bytes on met le download button
-        if isinstance(output_file, bytes):
-            st.download_button(
-                label="Download transcription as txt",
-                data=output_file,
-                file_name="transcription.txt",
-                mime="text/plain",
-            )
+        # # si le type de output file c'est des bytes on met le download button
+        # if isinstance(output_file, bytes):
+        #     st.download_button(
+        #         label="Download transcription as txt",
+        #         data=output_file,
+        #         file_name="transcription.txt",
+        #         mime="text/plain",
+        #     )
 
-            st.session_state["transcription"] = str(output_file.decode("utf-8"))
-            from src.main_utils.streamlit_app_utils import show_submission_form
-            show_submission_form()
+        #     st.session_state["transcription"] = str(output_file.decode("utf-8"))
+        #     from src.main_utils.streamlit_app_utils import show_submission_form
+        #     show_submission_form()
             
     #we define the rag agent 
     rag_agent=load_rag_agent()
             
-    if st.sidebar.button(label="Index 🗃️",help="Index the last message in the chat to the database"):
+    if st.sidebar.button(label="Index 🗃️",help="Index the last message in the chat to the database",key="button1"):
         from src.main_utils.link_gestion import ExternalKnowledgeManager
-        link_manager=ExternalKnowledgeManager(config=rag_agent.merged_config,client=rag_agent.client)
-        #the text is the last message in the chat
-        link_manager.extract_rescource(text=st.session_state["messages"][-1]["content"])
-        link_manager.index_rescource()
+        from stqdm import stqdm
+        resource_manager=ExternalKnowledgeManager(config=rag_agent.merged_config,client=rag_agent.client)
+        #the texts/resources are contained in a list in the session state "external_resources_list"
+        for text in stqdm(st.session_state["external_resources_list"]):
+            resource_manager.extract_rescource(text=text)
+            resource_manager.index_rescource()
+      
         #we stop the process here
         st.toast("New rescource indexed !", icon="🎉")
             
@@ -165,11 +191,12 @@ def main():
     if st.sidebar.button(
         label="Clear Chat 🧹",
         help="Clear the chat history on the visual interface 🧹",
+        key="button2",
     ):
         from src.main_utils.streamlit_app_utils import clear_chat_history
         clear_chat_history()
     
-    if st.sidebar.toggle("Qrcode", False):
+    if st.sidebar.toggle("Qrcode", value=False,key="qrcode_toggle"):
         from src.main_utils.streamlit_app_utils import create_qrcode
         create_qrcode()
         st.sidebar.image("assets/qr_code.png", output_format="PNG")

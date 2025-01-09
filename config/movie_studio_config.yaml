@@ -3,8 +3,8 @@ config_path: "config/config.yaml"
 
 # Database initialization parameters
 vectordb_provider: "Qdrant" # Provider of the vector database (Qdrant or Faiss)
-persist_directory: "data/vector_stores/qdrant_semantic_snowflake_v2" #"data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
-path: "data" # Path of the root folder of the documents you want to put in the index 
+persist_directory: "data/vector_stores/qdrant_movie_studio" #"data/vector_stores/qdrant_semantic_bge_jinai"  #Directory to store the index (give the name you want, just dont change "data/vector_stores/"  # Method to split the documents into chunks (semantic or "recursive")
+path: "subprojects/movie_studio/data_movie_studio" # Path of the root folder of the documents you want to put in the index 
 process_log_file: "processed_docs.log"
 collection_name: "qdrant_vectorstore" # Name of the vector collection
 
@@ -50,8 +50,6 @@ data_sources: {
     "food": "Food,food recipes, and cooking instructions",
     "linkedin": "LinkedIn posts, technical articles, data science and AI content",
     "prompts": "refined prompts made by the user",
-    "sheets": "Google sheets, excel files, and other tabular data",
-    "charts": "Charts, graphs, and diagrams containing curves, lines, tendencies showing economic, political, or social data",
 }
 
    
@@ -101,7 +99,6 @@ models_dict: {"llama-3.3-70b-versatile":"groq",
               "gemini-1.5-pro":"google",
               "gemini-1.5-flash":"google",
               "gemini-2.0-flash-exp":"google",
-              "gemini-exp-1206":"google",
               
 }
 
@@ -110,7 +107,7 @@ fr_rag_prompt_path: "prompts/base_rag_prompt_fr.txt" #Path to the file containin
 en_rag_prompt_path: "prompts/base_rag_prompt_en.txt" #Path to the file containing the RAG prompt
 
 #vllm parameters
-vllm_model_name: "gemini-exp-1206" #VLLM model to use for the generation
+vllm_model_name: "gemini-2.0-flash-exp" #VLLM model to use for the generation
 vllm_provider: "gemini" # Provider of the VLLM model
 
 #LLM parameters
@@ -145,16 +142,9 @@ description_llm_provider: "ollama" # Provider of the LLM model for the entity de
 
 # Possible actions
 actions_dict: {
-    "employer contact writing": "Writing professional communication like cover letters and outreach messages to potential employers",
-    "email support inquiry": "User asks a question (whatever the subject), asking explicitely to use emails as information source.",
-    "job search assistance": "Providing guidance and help with finding job opportunities, including search strategies and job board navigation",
-    "document content question": "Addressing general queries about document content, or any particular request that is not covered properly by the other actions",
-    "graph creation request": "User asks explicitelly to create charts, graphs, and diagrams",
-    "meeting notes summarization": "Converting meeting recordings or raw notes into concise, structured summaries",
-    #"previous answer correction": "User asks to correct a previous answer, modifying an already created content, shortening or expanding it, or changing the content or wanting to add more information that was not included in the previous answer (e.g. user starts his prompt with 'no, more details about...','make this shorter', 'no i search for...') the object of the modification is not explicitely present in his query.",
-    "prompt engineering request": "User asks the system to generate a detailed prompt for articial image creation, refining the prompt until it meets the user's needs",
-    "political question": "User asks a question about political, geopolitical, or economic issues, or about a personnality, or ask the assistant to do a task related to political thinking",
-    "sheet or table info extraction":"User asks to extract information from a table or a sheet, like google sheets, excel files, or any tabular data",
+    "artificial voice creation": "User asks the system to generate a specific artificial voice or audio for a chartacter.",
+    "document content question": "Addressing general queries about document content, or any particular request that is not covered properly by the other actions.",
+    "prompt engineering request": "User asks the system to generate a detailed textual prompt for an image creation model.",
 }
 
 #Agentic RAG parameters

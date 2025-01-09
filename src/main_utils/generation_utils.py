@@ -125,8 +125,6 @@ def LLM_answer_v3(
         ValidationError: If an error occurs during JSON parsing when json_formatting is True.
     """
     
-    logging.info("TEMPERATURE USED IN LLM CALL: %s", temperature)
-    
     # if llm_provider == 'github':
     #     token = os.environ["GITHUB_TOKEN"]
     #     endpoint = "https://models.inference.ai.azure.com"
