@@ -24,7 +24,7 @@ def main():
    
     os.environ["STREAMLIT_SERVER_MAX_UPLOAD_SIZE"] = "5000"
 
-    st.sidebar.image("assets/cropped_logo_v4.png", output_format="PNG")
+    st.sidebar.image("assets/logo_v5.png", output_format="PNG")
 
     # load configuration
     load_config()

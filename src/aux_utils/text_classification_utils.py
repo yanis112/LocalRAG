@@ -80,8 +80,9 @@ class IntentClassifier:
             full_prompt=self.classification_prompt.format(user_query=text,labels_dict=str(self.labels_dict))
             print("LAbels dict used:",self.labels_dict)
 
-            answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,system_prompt=self.system_prompt,stream=False)
-        
+            answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,system_prompt=self.system_prompt,stream=False,tool_list=[])
+            print("Answer:",answer)
+            print("Type:",type(answer))
             return answer
             
         

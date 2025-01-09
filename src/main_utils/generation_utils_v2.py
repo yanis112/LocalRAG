@@ -1,8 +1,6 @@
 import os
 import time
 from functools import lru_cache
-from json import tool
-from pyexpat import model
 
 import streamlit as st
 import yaml
@@ -240,6 +238,7 @@ def LLM_answer_v3(
             # chaine normale
             chain = prompt_template | chat
         if stream:
+            chain = prompt_template | chat | StrOutputParser()
             return chain.stream({"text": prompt})
         else:
             if (
@@ -248,6 +247,7 @@ def LLM_answer_v3(
                 answer = chain.invoke({"text": prompt})
                 return answer.content, answer.tool_calls
             else:
+                chain = prompt_template | chat | StrOutputParser()
                 return chain.invoke({"text": prompt})
 
 
@@ -368,6 +368,7 @@ class RAGAgent:
             stream=merged_config["stream"],
             temperature=merged_config["temperature"],
             system_prompt=system_prompt,
+            tool_list=[],
         )
 
         if merged_config["return_chunks"]:

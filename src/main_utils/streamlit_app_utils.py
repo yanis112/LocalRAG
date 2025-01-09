@@ -833,6 +833,7 @@ def process_query(query, streamlit_config, rag_agent):
                 st.toast("Meeting summary indexed !", icon="📋")
                 #put st.session_state["audio_transcription"] to None now that the meeting summary has been saved
                 del st.session_state["audio_transcription"]
+                
         elif intent == "sheet or table info extraction":
             config["data_sources"] = ["sheets"]
             config["enable_source_filter"] = True
@@ -868,18 +869,6 @@ def process_query(query, streamlit_config, rag_agent):
             
             from src.aux_utils.cinematic_agent_prompter import AgentCinematicExpert
             
-            #define system prompt
-            #system_prompt="""You are a prompt engineering assistant in charge of creating and refining professional prompts."""
-            
-            # config["en_rag_prompt_path"]="prompts/image_prompt_engineering.txt"
-            
-            #actualize the rag agent config to the new config
-    
-            
-            # with st.spinner(
-            #     "Searching relevant documents and formulating answer 📄 ..."
-            # ):
-            #     answer, docs, sources = rag_agent.RAG_answer(query,system_prompt=system_prompt)
             with st.spinner("🧠 Refining your prompt..."):
                 print("model currently used: ",config["model_name"])
                 agent = AgentCinematicExpert(model_name=config["model_name"], llm_provider=config["llm_provider"])
