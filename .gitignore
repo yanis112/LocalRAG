@@ -70,7 +70,6 @@ video_urls.csv
 *.mp3
 *.mp4
 *.pkl
-*.png
 *.pyd
 *.so
 *.srt
