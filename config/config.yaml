@@ -102,6 +102,7 @@ models_dict: {"llama-3.3-70b-versatile":"groq",
               "gemini-1.5-flash":"google",
               "gemini-2.0-flash-exp":"google",
               "gemini-exp-1206":"google",
+              "gemini-2.0-flash-thinking-exp-01-21":"google"
               
 }
 

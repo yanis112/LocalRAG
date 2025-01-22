@@ -103,14 +103,17 @@ class CustomChatModel:
 
 
       elif self.llm_provider == "google":
-            from langchain_google_genai import ChatGoogleGenerativeAI
+            from langchain_google_genai import ChatGoogleGenerativeAI, HarmBlockThreshold,HarmCategory
 
             self.chat_model = ChatGoogleGenerativeAI(
                 model=self.model_name,
                 temperature=self.llm_temperature,
                 max_tokens=self.max_tokens,
                 timeout=None,
-                max_retries=1,
+                max_retries=2,
+                safety_settings={
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    },
                 top_k=self.top_k,
                 top_p=self.top_p,
             )

@@ -59,8 +59,10 @@ class JobWriterAgent:
         
         #check for url in the user query
         url = extract_url(query) #returns None if no url is found and url if found
-        resource = self.extract_resource(url) #extract the resource content from the url
-        query = self.reformulate_prompt(query, resource) #reformulate the prompt (instruction + url) replacing the url with the content
+        if url is not None:
+            resource = self.extract_resource(url) #extract the resource content from the url
+            query = self.reformulate_prompt(query, resource)
+        #reformulate the prompt (instruction + url) replacing the url with the content
         print("Reformulated prompt: ", query)  #print the reformulated prompt
         
             

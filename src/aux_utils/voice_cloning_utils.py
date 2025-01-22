@@ -2,17 +2,18 @@ from gradio_client import Client, file
 import os
 import shutil  # Import the shutil module
 from src.aux_utils.transcription_utils import YouTubeTranscriber
+import os 
+
 
 class VoiceCloningAgent:
-    def __init__(self, endpoint_url="fishaudio/fish-speech-1"):
-        """
-        Initializes the VoiceCloningAgent with the given endpoint URL.
-
-        Args:
-            endpoint_url (str): The URL of the Gradio endpoint for voice cloning.
-        """
-        self.client = Client(endpoint_url)
+    def __init__(self, method="fish_speech"):
+        self.method = method
+        # Use full Hugging Face space URL for XTTS
+        self.endpoint_url = ("fishaudio/fish-speech-1" if method == "fish_speech" 
+                           else "https://coqui-xtts.hf.space/--replicas/5891u/")
+        self.client = Client(self.endpoint_url)
         self.yt_transcriber = YouTubeTranscriber()
+
 
     def normalize_text(self, user_input, use_normalization=False):
         """
@@ -62,80 +63,85 @@ class VoiceCloningAgent:
         )
         return result
 
-    def clone_voice(self, text, reference_audio_path, output_dir='cloned_voices', normalize=False, max_new_tokens=1024, chunk_length=200, top_p=0.7, repetition_penalty=1.2, temperature=0.7, seed=0, use_memory_cache="never"):
-        """
-        Clones a voice based on the reference audio and generates speech for the given text.
-
-        Args:
-            text (str): The text to be spoken by the cloned voice.
-            reference_audio_path (str): Path to the reference audio file.
-            output_dir (str): The directory where the cloned audio will be saved.
-            normalize (bool): Whether to use text normalization.
-            max_new_tokens (float): Maximum tokens per batch.
-            chunk_length (float): Iterative prompt length.
-            top_p (float): Top-P sampling parameter.
-            repetition_penalty (float): Repetition penalty.
-            temperature (float): Temperature for sampling.
-            seed (float): Random seed.
-            use_memory_cache (str): Memory cache usage.
-
-        Returns:
-            tuple: A tuple containing the filepath of the generated audio (in the specified output directory) and any error message.
-        """
-
-        # Get the reference text via the transcribe function
+    def clone_voice_fish_speech(self, text, reference_audio_path, **kwargs):
+        """Fish Speech implementation of voice cloning"""
         reference_text = self.transcribe_audio(reference_audio_path)
-
-        # Normalize the text if needed
-        if normalize:
-            text = self.normalize_text(text, use_normalization=normalize)
-
-        # Ensure the reference audio file exists
+        
+        result = self.client.predict(
+            text=text,
+            normalize=kwargs.get('normalize', False),
+            reference_audio=file(reference_audio_path),
+            reference_text=reference_text,
+            max_new_tokens=kwargs.get('max_new_tokens', 1024),
+            chunk_length=kwargs.get('chunk_length', 200),
+            top_p=kwargs.get('top_p', 0.7),
+            repetition_penalty=kwargs.get('repetition_penalty', 1.2),
+            temperature=kwargs.get('temperature', 0.7),
+            seed=kwargs.get('seed', 0),
+            use_memory_cache=kwargs.get('use_memory_cache', "never"),
+            api_name="/inference_wrapper"
+        )
+        return result
+    
+    def clone_voice_xtts(self, text, reference_audio_path, **kwargs):
+        """XTTS v2 implementation of voice cloning"""
+        try:
+            result = self.client.predict(
+                text,  # Text Prompt
+                kwargs.get('language', 'en,en'),  # Language
+                reference_audio_path,  # Reference Audio
+                reference_audio_path,  # Use Microphone for Reference
+                kwargs.get('use_mic', False),  # Use Microphone
+                kwargs.get('cleanup_voice', True),  # Cleanup Reference Voice
+                kwargs.get('no_lang_auto_detect', True),  # Do not use language auto-detect
+                True,  # Agree checkbox
+                fn_index=1
+            )
+            
+            if isinstance(result, tuple) and len(result) >= 2:
+                return result[1], None  # Return synthesized audio path
+            return None, "Invalid API response format"
+            
+        except Exception as e:
+            return None, f"XTTS API error: {str(e)}"
+    
+    def clone_voice(self, text, reference_audio_path, output_dir='cloned_voices', **kwargs):
         if not os.path.exists(reference_audio_path):
             raise FileNotFoundError(f"Reference audio file not found: {reference_audio_path}")
 
-        # Make API call to clone voice
-        result = self.client.predict(
-            text=text,
-            normalize=normalize,
-            reference_audio=file(reference_audio_path),
-            reference_text=reference_text,
-            max_new_tokens=max_new_tokens,
-            chunk_length=chunk_length,
-            top_p=top_p,
-            repetition_penalty=repetition_penalty,
-            temperature=temperature,
-            seed=seed,
-            use_memory_cache=use_memory_cache,
-            api_name="/inference_wrapper"
-        )
+        os.makedirs(output_dir, exist_ok=True)
 
-        cloned_audio_path, error_message = result
+        if self.method == "fish_speech":
+            cloned_audio_path, error_message = self.clone_voice_fish_speech(text, reference_audio_path, **kwargs)
+        else:
+            cloned_audio_path, error_message = self.clone_voice_xtts(text, reference_audio_path, **kwargs)
 
-        # Move the cloned audio to the specified output directory
         if cloned_audio_path and os.path.exists(cloned_audio_path):
-          
             output_filename = os.path.basename(cloned_audio_path)
             destination_path = os.path.join(output_dir, output_filename)
             shutil.move(cloned_audio_path, destination_path)
-            cloned_audio_path = destination_path 
+            cloned_audio_path = destination_path
 
         return cloned_audio_path, error_message
 
-# Example usage:
+
 if __name__ == "__main__":
-    agent = VoiceCloningAgent()
+    agent = VoiceCloningAgent(method="xtts_v2")
 
-    # Example 1: Clone voice using a local audio file and save to a specific directory
     try:
-        reference_audio = "subprojects/movie_studio/voice_library/agamemnon.mp3"  # Replace with your reference audio file
-        text_to_speak = "Burn Guiss ! Burn it for the glory of Valyria !"  # Replace with your desired text
-        output_directory = "cloned_voices" # Specify your desired output directory
+        reference_audio = "subprojects/movie_studio/voice_library/agamemnon.mp3"
+        text_to_speak = "Burn Guiss ! Burn it for the glory of Valyria !"
+        output_directory = "cloned_voices"
 
-        # Create the output directory if it doesn't exist
-        os.makedirs(output_directory, exist_ok=True)
-
-        cloned_audio, error_message = agent.clone_voice(text_to_speak, reference_audio)
+        cloned_audio, error_message = agent.clone_voice(
+            text_to_speak, 
+            reference_audio,
+            output_dir=output_directory,
+            language="en,en",
+            use_mic=False,
+            cleanup_voice=True,
+            no_lang_auto_detect=True
+        )
 
         if cloned_audio:
             print(f"Cloned audio saved to: {cloned_audio}")
