@@ -1,0 +1,6 @@
+Given the following image that can represent a scene, a landscape, a character, we want to make 
+a stunning movie still, like a lifelike, hyper-realistic, blockbuster movie adapatation of the image/scene.
+For this we want to use the following cinematic style instructions:  <style_instructions> {style_instructions} <\style_instructions>.
+Return a one paragraph prompt that describes the image as a movie still, using jargon and the cinematic style instructions provided,
+describe in details the scene, the characters, the setting, the key elements and details, but don't use any proper noun of fictional characters or places, only precise visual description so that we can recognize the image in the movie still.
+Answer the prompt without preamble.

@@ -1,0 +1,65 @@
+{
+    "name": "Python RAG Development",
+    // Use the existing Dockerfile in the root
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": ".."
+    },
+
+    // Configure environment variables
+    "remoteEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}"
+    },
+
+    // Configure container-specific settings
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Python settings
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.testing.pytestEnabled": true,
+                
+                "[python]": {
+                    "editor.formatOnSave": true,
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": true,
+                        "source.organizeImports": true
+                    }
+                },
+                
+                // File associations
+                "files.associations": {
+                    "*.yaml": "yaml",
+                    "*.yml": "yaml"
+                },
+                
+                // Add VSCode extensions
+                "extensions": [
+                    "ms-python.python",
+                    "ms-python.vscode-pylance",
+                    "charliermarsh.ruff",
+                    "njpwerner.autodocstring",
+                    "streetsidesoftware.code-spell-checker",
+                    "ms-azuretools.vscode-docker",
+                    "eamodio.gitlens",
+                    "github.copilot",
+                    "tamasfe.even-better-toml"
+                ]
+            }
+        }
+    },
+
+    // Use 'postCreateCommand' to run commands after the container is created
+    "postCreateCommand": "uv venv && . .venv/bin/activate && uv pip install -e .[dev] && pre-commit install",
+
+    // Comment out the next line to run as root instead
+    "remoteUser": "vscode",
+
+    // Configure features
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest"
+        }
+    }
+}

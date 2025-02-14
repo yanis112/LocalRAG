@@ -134,7 +134,7 @@ def pull_model(model_name):
     import subprocess
 
     try:
-        with st.spinner("Model not loaded yet, pulling the model... ⚙️"):
+        with st.spinner("Model not loaded yet, pulling the model... ⚙️",show_time=True):
             # Construct the command
             command = ["ollama", "pull", model_name]
 
@@ -156,15 +156,17 @@ def pull_model(model_name):
 
 @log_execution_time
 def LLM_answer_v3(
-    prompt,
-    json_formatting=False,
+    prompt: str ,
+    prompt_file: str =None,
+    prompt_variables: dict =None,
+    json_formatting: bool=False,
     pydantic_object=None,
     format_type=None,
-    model_name=None,
-    temperature=1,
-    stream=False,
-    llm_provider=None,
-    system_prompt=None,
+    model_name: str =None,
+    temperature: float = 1,
+    stream: bool =False,
+    llm_provider: str =None,
+    system_prompt: str=None,
     tool_list=[],
 ):
     """
@@ -191,6 +193,16 @@ def LLM_answer_v3(
     # If the tool list is not empty we cannot stream the answer
     if len(tool_list) > 0:
         stream = False
+        
+    #if prompt_file is different from None that means we are loading the prompt from the file and insert prompt variables in it
+    if prompt_file is not None:
+        from langchain_core.prompts import PromptTemplate
+        with open(prompt_file) as f:
+            prompt = f.read()
+        prompt_template = PromptTemplate.from_template(prompt)
+        #format the prompt with the prompt variables
+        prompt = prompt_template.format(**prompt_variables)
+
 
     # Load the chat model with the specified parameters
     llm = load_chat_model(
@@ -276,7 +288,7 @@ class RAGAgent:
                 Defaults to None.
         Returns:
             generator: A generator that yields the language model's response in chunks.
-            list: A list of document contents used for generating the response (if `return_chunks` is True).
+            list: A list of Langchain documents used for generating the response (if `return_chunks` is True).
             list: A list of document sources used for generating the response (if `return_chunks` is True).
         Raises:
             ValueError: If the language model provider specified in the configuration is not supported.
@@ -310,7 +322,8 @@ class RAGAgent:
         logger.info("NUMBER OF DOCS FROM QUERY DATABASE : %d", len(useful_docs))
 
         start_time = time.time()
-        list_content = [doc.page_content for doc in useful_docs]
+        list_content = useful_docs
+        #[doc.page_content for doc in useful_docs]
         list_metadata = [doc.metadata for doc in useful_docs]
         list_sources = [metadata["source"] for metadata in list_metadata]
 
@@ -418,7 +431,7 @@ class RAGAgent:
         flag_emoji = language_flags.get(detected_language)
         st.toast("Language detected", icon=flag_emoji)
 
-        with st.spinner("Getting intermediate thinking steps..."):
+        with st.spinner("Getting intermediate thinking steps...",show_time=True):
             intermediate_steps = query_breaker.break_query(query, context=chat_history)
             intermediate_steps = [str(step) for step in intermediate_steps]
 
@@ -433,11 +446,11 @@ class RAGAgent:
             print("TREATING STEP NUMBER:", step_number)
             with st.spinner(
                 f"🔄 Working on step {step_number + 1} out of {len(intermediate_steps)}..."
-            ):
+            ,show_time=True):
                 prompt = task_translator.get_prompt(step, context=memory.get_content())
                 print("#################################################")
                 print("TASK PROMPT:", prompt)
-            with st.spinner(f"🤖 Answering intermediate query: {prompt}"):
+            with st.spinner(f"🤖 Answering intermediate query: {prompt}",show_time=True):
                 answer, docs, sources = self.RAG_answer(
                     prompt, system_prompt=system_prompt
                 )
@@ -479,7 +492,7 @@ class RAGAgent:
                 prompt_template = PromptTemplate.from_template(prompt)
                 prompt = prompt_template.format(query=query, context=str_context)
 
-        with st.spinner("Working on the final answer... 🤔⚙️ "):
+        with st.spinner("Working on the final answer... 🤔⚙️ ",show_time=True):
             # we turn the streaming back on for the final answer
             # turn back the stream to True
             self.merged_config["stream"] = True

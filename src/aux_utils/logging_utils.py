@@ -2,6 +2,7 @@ import logging
 import os
 from pathlib import Path
 from functools import wraps
+from logging.handlers import TimedRotatingFileHandler
 import time
 
 def setup_logger(name, log_file, level=logging.INFO, log_format=None):
@@ -24,8 +25,14 @@ def setup_logger(name, log_file, level=logging.INFO, log_format=None):
     # Remove existing handlers
     logger.handlers = []
     
-    # Create file handler
-    file_handler = logging.FileHandler(log_dir / log_file, encoding="utf-8")
+    # Create timed rotating file handler (rotation à minuit, garde 24h d'historique)
+    file_handler = TimedRotatingFileHandler(
+        log_dir / log_file,
+        when="midnight",
+        interval=1,
+        backupCount=1,  # Ne garde que 24h d'historique
+        encoding="utf-8"
+    )
     
     # Set format
     if log_format is None:

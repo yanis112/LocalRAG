@@ -1,4 +1,4 @@
-import argparse
+### import argparse
 import json
 import os
 import sys
@@ -17,6 +17,7 @@ from langchain_qdrant import (
 )
 from qdrant_client import QdrantClient, models
 from tqdm import tqdm
+from rapidfuzz import process, fuzz
 
 from src.aux_utils.logging_utils import log_execution_time, setup_logger
 
@@ -41,6 +42,27 @@ logger = setup_logger(
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=UserWarning, module="pypdf._reader")
 
+def trouver_correspondance_approximative(document, motif, seuil=95):
+    """
+    Recherche une correspondance approximative du motif dans le document.
+
+    :param document: Le texte dans lequel effectuer la recherche.
+    :param motif: La chaîne à rechercher.
+    :param seuil: Le score minimal de similarité pour considérer une correspondance (0 à 100).
+    :return: Un tuple (indice_debut, indice_fin, score) ou None si aucune correspondance n'est trouvée.
+    """
+    resultats = process.extract(
+        motif, [document], scorer=fuzz.partial_ratio, score_cutoff=seuil
+    )
+
+    if resultats:
+        meilleur_resultat = resultats[0]
+        score = meilleur_resultat[1]
+        indice_debut = meilleur_resultat[2]
+        indice_fin = indice_debut + len(motif)
+        return indice_debut, indice_fin, score
+
+    return None
 
 class VectorAgent:
     """
@@ -312,8 +334,8 @@ class VectorAgent:
 
         docs_to_split = []
         docs_not_to_split = []
-        for doc in self.total_documents: #a doc object is like this: Document(page_content=content, metadata={"source: path})"}
-            if "sheets" in doc[0].metadata["source"]: #Some docs can't be split due to their structured nature (tables)
+        for doc in self.total_documents:
+            if "sheets" in doc[0].metadata["source"]:
                 print("Document not to split Metadata:", doc[0].metadata)
                 print("Document not to split:", doc[0].metadata["source"])
                 docs_not_to_split.append(doc)
@@ -324,21 +346,59 @@ class VectorAgent:
             Document(page_content=doc[0].page_content, metadata=doc[0].metadata)
             for doc in docs_not_to_split
         ]
-
-        if self.config["splitting_method"] == "semantic": #Semantic chunking 
+        
+        if self.config["splitting_method"] == "semantic":
             semantic_splitter = SemanticChunker(
                 embeddings=self.chunking_embedding_model,
                 breakpoint_threshold_type="percentile",
                 breakpoint_threshold_amount=self.config["semantic_threshold"],
             )
-            total_docs_content = [
-                text_preprocessing(doc[0].page_content) for doc in docs_to_split
-            ]
+            total_docs_content = [doc[0].page_content for doc in docs_to_split]
             total_docs_metadata = [doc[0].metadata for doc in docs_to_split]
-            chunks_to_split = semantic_splitter.create_documents(
+            
+            # Create temporary documents for semantic splitting
+            temp_chunks = semantic_splitter.create_documents(
                 texts=total_docs_content, metadatas=total_docs_metadata
             )
-        else: #Base Chunking (constant defined chunk lenght)
+            
+            chunks_to_split = []
+            for i, temp_chunk in enumerate(temp_chunks):
+                # Find the index of original document
+                original_doc_indices = [
+                    idx for idx, doc in enumerate(docs_to_split) 
+                    if doc[0].metadata['source'] == temp_chunk.metadata['source']
+                ]
+                
+                if not original_doc_indices:
+                    print(f"Original document not found for chunk {i}")
+                    start_index, end_index = -1, -1
+                else:
+                    original_doc_index = original_doc_indices[0]
+                    original_doc_content = total_docs_content[original_doc_index]
+                    
+                    # Use string find to locate the chunk in the original document
+                    start_index = original_doc_content.find(temp_chunk.page_content)
+                    if start_index != -1:
+                        end_index = start_index + len(temp_chunk.page_content)
+                    else:
+                        start_index, end_index = -1, -1
+                        print(f"Chunk content not found in original document for chunk {i}")
+
+                # Clean the chunk content
+                cleaned_content = text_preprocessing(temp_chunk.page_content)
+
+                chunks_to_split.append(
+                    Document(
+                        page_content=cleaned_content,
+                        metadata={
+                            **temp_chunk.metadata,
+                            "start_index": start_index,
+                            "end_index": end_index
+                        }
+                    )
+                )
+            
+        else:
             from langchain.text_splitter import RecursiveCharacterTextSplitter
 
             chunk_size = self.config["chunk_size"]
@@ -346,18 +406,54 @@ class VectorAgent:
             character_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=chunk_size, chunk_overlap=chunk_overlap
             )
-            total_docs_content = [
-                text_preprocessing(doc[0].page_content) for doc in docs_to_split
-            ]
+            total_docs_content = [doc[0].page_content for doc in docs_to_split]
             total_docs_metadata = [doc[0].metadata for doc in docs_to_split]
-            chunks_to_split = [
+            
+            # Create temporary documents for index calculation
+            temp_docs = [
                 Document(page_content=content, metadata=metadata)
                 for content, metadata in zip(total_docs_content, total_docs_metadata)
             ]
-            chunks_to_split = character_splitter.create_documents(
-                texts=[doc.page_content for doc in chunks_to_split],
-                metadatas=[doc.metadata for doc in chunks_to_split],
-            )
+            
+            # Split documents into chunks
+            temp_chunks = character_splitter.split_documents(temp_docs)
+            
+            chunks_to_split = []
+            for i, temp_chunk in enumerate(temp_chunks):
+                # Find the index of original document
+                original_doc_indices = [
+                    idx for idx, doc in enumerate(docs_to_split) 
+                    if doc[0].metadata['source'] == temp_chunk.metadata['source']
+                ]
+
+                if not original_doc_indices:
+                    print(f"Original document not found for chunk {i}")
+                    start_index, end_index = -1, -1
+                else:
+                    original_doc_index = original_doc_indices[0]
+                    original_doc_content = total_docs_content[original_doc_index]
+                    
+                    # Use string find to locate the chunk in the original document
+                    start_index = original_doc_content.find(temp_chunk.page_content)
+                    if start_index != -1:
+                        end_index = start_index + len(temp_chunk.page_content)
+                    else:
+                        start_index, end_index = -1, -1
+                        print(f"Chunk content not found in original document for chunk {i}")
+                
+                # Clean the chunk content
+                cleaned_content = text_preprocessing(temp_chunk.page_content)
+
+                chunks_to_split.append(
+                    Document(
+                        page_content=cleaned_content,
+                        metadata={
+                            **temp_chunk.metadata,
+                            "start_index": start_index,
+                            "end_index": end_index
+                        }
+                    )
+                )
 
         print("SPLITTING DONE!, STARTING TO REMOVE DUPLICATE CHUNKS ...")
 
@@ -366,13 +462,15 @@ class VectorAgent:
 
     def _create_document_objects(self, chunks):
         """
-        Creates Document objects from a list of chunks, removing duplicates and adding metadata.
+        Creates Document objects from a list of chunks, removing duplicates and adding metadata, 
+        including start and end character indices.
 
         Args:
             chunks (list): A list of Chunk objects.
+            original_docs (list): A list of the original, unsplit Document objects.
 
         Returns:
-            list: A list of Document objects.
+            list: A list of Document objects with added metadata.
         """
         unique_chunks = []
         seen_contents = set()
@@ -398,6 +496,8 @@ class VectorAgent:
                         "chunk_length": len(chunk.page_content.split()),
                         "field": source_field,
                         "modif_date": modif_date,
+                        "start_index": chunk.metadata.get("start_index", -1),
+                        "end_index": chunk.metadata.get("end_index", -1),
                     },
                 )
             )
@@ -532,6 +632,7 @@ class VectorAgent:
         if os.path.exists(self.persist_directory):
             try:
                 import shutil
+
                 shutil.rmtree(self.persist_directory)
                 print("Vectorstore deleted successfully!")
             except PermissionError as e:
@@ -659,9 +760,7 @@ class VectorAgent:
         self.split_documents_into_chunks()
         return self.total_chunks
 
-
 # --- Helper Functions ---
-
 
 def get_modif_date(path):
     """
@@ -684,7 +783,6 @@ def get_modif_date(path):
         logger.error(f"Error getting modification date for {path}: {e}")
         return None
 
-
 def truncate_path_to_data(path):
     """
     Truncates the given path to start from '/data' if '/data' is present in the path.
@@ -701,73 +799,87 @@ def truncate_path_to_data(path):
     else:
         return path
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Build or manage a vector database from a config file."
-    )
-    parser.add_argument(
-        "--config",
-        type=str,
-        default="config/config.yaml",
-        help="Path to config file (default: config/config.yaml)",
-    )
-    parser.add_argument(
-        "--delete_ids",
-        type=str,
-        nargs="*",
-        help="List of document ids to delete",
-    )
-    parser.add_argument(
-        "--delete_paths",
-        type=str,
-        nargs="*",
-        help="List of document paths to delete",
-    )
-    parser.add_argument(
-        "--delete_folders",
-        type=str,
-        nargs="*",
-        help="List of folders to delete",
-    )
-    parser.add_argument(
-        "--delete_all",
-        action="store_true",
-        help="Delete all data in the vectorstore",
-    )
+    # load the config file
+    with open("config/config.yaml", "r") as file:
+        config = yaml.safe_load(file)
 
-    args = parser.parse_args()
-    config_path = Path(args.config)
+    # initialize the VectorAgent
+    agent = VectorAgent(default_config=config)
 
+    # try to build the vectorstore
     try:
-        if not config_path.exists():
-            print(f"Error: Config file not found at {config_path}")
-            sys.exit(1)
-
-        with open(config_path, "r") as file:
-            config = yaml.safe_load(file)
-
-        print(f"Loading config from: {config_path}")
-        agent = VectorAgent(default_config=config)
-
-        if args.delete_ids or args.delete_paths or args.delete_folders:
-            ids_to_delete = [id for id in args.delete_ids] if args.delete_ids else None
-            result = agent.delete(
-                ids=ids_to_delete, paths=args.delete_paths, folders=args.delete_folders
-            )
-            if result:
-                print("Successfully deleted the selected files from the vectorstore")
-            else:
-                print("No files were deleted")
-            sys.exit(0)
-        elif args.delete_all:
-            agent.delete_all()
-            sys.exit(0)
-
-        print("Building vector database...")
         agent.build_vectorstore()
         print("Database built successfully!")
-
     except Exception as e:
         print(f"Error: {str(e)}")
         sys.exit(1)
+
+# parser = argparse.ArgumentParser(
+#     description="Build or manage a vector database from a config file."
+# )
+# parser.add_argument(
+#     "--config",
+#     type=str,
+#     default="config/config.yaml",
+#     help="Path to config file (default: config/config.yaml)",
+# )
+# parser.add_argument(
+#     "--delete_ids",
+#     type=str,
+#     nargs="*",
+#     help="List of document ids to delete",
+# )
+# parser.add_argument(
+#     "--delete_paths",
+#     type=str,
+#     nargs="*",
+#     help="List of document paths to delete",
+# )
+# parser.add_argument(
+#     "--delete_folders",
+#     type=str,
+#     nargs="*",
+#     help="List of folders to delete",
+# )
+# parser.add_argument(
+#     "--delete_all",
+#     action="store_true",
+#     help="Delete all data in the vectorstore",
+# )
+
+# args = parser.parse_args()
+# config_path = Path(args.config)
+
+# try:
+#     if not config_path.exists():
+#         print(f"Error: Config file not found at {config_path}")
+#         sys.exit(1)
+
+#     with open(config_path, "r") as file:
+#         config = yaml.safe_load(file)
+
+#     print(f"Loading config from: {config_path}")
+#     agent = VectorAgent(default_config=config)
+
+#     if args.delete_ids or args.delete_paths or args.delete_folders:
+#         ids_to_delete = [id for id in args.delete_ids] if args.delete_ids else None
+#         result = agent.delete(
+#             ids=ids_to_delete, paths=args.delete_paths, folders=args.delete_folders
+#         )
+#         if result:
+#             print("Successfully deleted the selected files from the vectorstore")
+#         else:
+#             print("No files were deleted")
+#         sys.exit(0)
+#     elif args.delete_all:
+#         agent.delete_all()
+#         sys.exit(0)
+
+#     print("Building vector database...")
+#     agent.build_vectorstore()
+#     print("Database built successfully!")
+
+# except Exception as e:
+#     print(f"Error: {str(e)}")
+#     sys.exit(1) ###

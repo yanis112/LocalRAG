@@ -1,41 +1,23 @@
 
 import os
-import google.generativeai as genai
+#import google.generativeai as genai
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 load_dotenv()
-VERTEX_API_KEY = os.getenv("VERTEX_API_KEY")
 
-genai.configure(api_key=VERTEX_API_KEY)
+# Only run this block for Gemini Developer API
+client = genai.Client(api_key=os.getenv('IMAGEN_API_KEY'))
 
-imagen = genai.ImageGenerationModel("imagen-3.0-generate-001")
-
-
-# List available models
-models = genai.list_models()
-
-# Print the available models
-for model in models:
-    print(model)
-
-result = imagen.generate_images(
-    prompt="Fuzzy bunnies in my kitchen",
-    number_of_images=4,
-    safety_filter_level="block_only_high",
-    person_generation="allow_adult",
-    aspect_ratio="3:4",
-    negative_prompt="Outside",
+response1 = client.models.generate_images(
+    model='imagen-3.0-generate-002',
+    prompt='An umbrella in the foreground, and a rainy night sky in the background',
+    config=types.GenerateImagesConfig(
+        number_of_images=1,
+        include_rai_reason=True,
+        output_mime_type='image/jpeg',
+    ),
 )
+response1.generated_images[0].image.show()
 
-for image in result.images:
-  print(image)
-
-# The output should look similar to this:
-# <vertexai.preview.vision_models.GeneratedImage object at 0x78f3396ef370>
-# <vertexai.preview.vision_models.GeneratedImage object at 0x78f3396ef700>
-# <vertexai.preview.vision_models.GeneratedImage object at 0x78f33953c2b0>
-# <vertexai.preview.vision_models.GeneratedImage object at 0x78f33953c280>
-
-for image in result.images:
-  # Open and display the image using your local operating system.
-  image._pil_image.show()

@@ -1,40 +1,73 @@
+"""Module for handling job-related content generation and processing."""
 
-from weakref import ref
-from src.main_utils.utils import extract_url
 from langchain_core.prompts import PromptTemplate
 import json
 import yaml
 import streamlit as st
+from src.main_utils.utils import extract_url
 from src.main_utils.link_gestion import ExternalKnowledgeManager
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
 
+
 class JobWriterAgent:
+    """Agent responsible for generating job application content and processing job-related queries."""
+
     def __init__(self, config):
+        """Initialize the JobWriterAgent.
+
+        Args:
+            config: Configuration dictionary containing model and provider settings.
+        """
         self.config = config
         self.knowledge_manager = ExternalKnowledgeManager(config)
     
-    
     def extract_resource(self, url):
-        """Extract resource content from URL"""
+        """Extract resource content from URL.
+
+        Args:
+            url: The URL to extract content from.
+
+        Returns:
+            str: The extracted content.
+        """
         return self.knowledge_manager.extract_rescource_from_link(url)
     
-    def reformulate_prompt(self, original_query, resource=None):
-        """Reformulate prompt with extracted resource
+    def read_motivation_intro(self, intro_path="aux_data/amorce_motivation.txt"):
+        """Read the motivation letter introduction from a file.
+
         Args:
-            original_query (str): Original user query
-            resource (str): Extracted resource content
+            intro_path: Path to the file containing the introduction text.
+
         Returns:
-            str: Reformulated prompt
+            str: The introduction text.
+        """
+        try:
+            with open(intro_path, "r", encoding="utf-8") as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return ""
+
+    def reformulate_prompt(self, original_query, resource=None):
+        """Reformulate prompt with extracted resource.
+
+        Args:
+            original_query: Original user query.
+            resource: Extracted resource content.
+
+        Returns:
+            str: Reformulated prompt.
         """
         if resource:
-            system_prompt= "You are a prompt engineer in charge of reformulating prompts for a language model."
-            formulating_prompt= f"""Reformulate the following prompt by replacing the URL with the formatted content 
-                of the website associated with appropriate delimitors, you can reformulate better the user  
-                query to make it better written without changing the main idea/goal. Here is the original prompt: \n\n{original_query} and
-                here is the content extracted from the URL: \n\n{resource}, return the reformulated / restructured prompt without preamble. """
+            system_prompt = "You are a prompt engineer reformulating prompts for a language model."
+            formulating_prompt = (
+                f"Reformulate this prompt by replacing the URL with the formatted content "
+                f"of the website. Improve the writing while keeping the main idea. "
+                f"Original prompt:\n\n{original_query}\n\n"
+                f"Content from URL:\n\n{resource}\n\n"
+                f"Return the reformulated prompt without preamble."
+            )
             
-            #get LLM answer
-            with st.spinner("Formulating the query for the agent..."):
+            with st.spinner("Formulating the query for the agent...", show_time=True):
                 reformulated_query = LLM_answer_v3(
                     prompt=formulating_prompt,
                     stream=False,
@@ -46,41 +79,39 @@ class JobWriterAgent:
         return reformulated_query
         
     def generate_content(self, query):
-        """Takes the user query that want to write to an employer
-        and find out if there is a job offer or company description url in the query.
-        if there is, it extracts the content from the url and reformulate the prompt with the content.
-        
+        """Generate job application content based on user query.
+
+        Takes a user query about writing to an employer, extracts any URLs, reformulates
+        the prompt if needed, and generates appropriate content.
+
         Args:
-            query (str): User query
+            query: User query string.
+
         Returns:
-            str: Generated response
+            tuple: Generated response and empty list (for compatibility).
         """
-        
-        
-        #check for url in the user query
-        url = extract_url(query) #returns None if no url is found and url if found
+        url = extract_url(query)
         if url is not None:
-            resource = self.extract_resource(url) #extract the resource content from the url
+            resource = self.extract_resource(url)
             query = self.reformulate_prompt(query, resource)
-        #reformulate the prompt (instruction + url) replacing the url with the content
-        print("Reformulated prompt: ", query)  #print the reformulated prompt
+        print("Reformulated prompt: ", query)
         
-            
         # Load templates and data
-        with open("prompts/company_contact_prompt.txt", "r", encoding='utf-8') as f:
+        with open("prompts/company_contact_prompt.txt", "r", encoding="utf-8") as f:
             template = f.read()
         template = PromptTemplate.from_template(template)
         
         info_dict = json.dumps(yaml.safe_load(open("aux_data/info.yaml", "r")))
         cv = json.dumps(open("aux_data/cv.txt", "r").read())
+        amorce = self.read_motivation_intro()
         
-        # Format prompt
-        full_prompt = template.format(query=query, infos=info_dict, cv=cv)
+        # Format prompt with amorce
+        full_prompt = template.format(query=query, infos=info_dict, cv=cv, amorce=amorce)
         
         # Generate response
-        system_prompt = """You are a job application assistant in charge of writing messages to potential employers."""
+        system_prompt = "You are a job application assistant for potential employers."
         
-        with st.spinner("Generating a text for a job offer..."):
+        with st.spinner("Generating a text for a job offer...", show_time=True):
             answer = LLM_answer_v3(
                 prompt=full_prompt,
                 stream=True,
@@ -90,5 +121,4 @@ class JobWriterAgent:
             )
             
         return answer, []
-        
-       
+

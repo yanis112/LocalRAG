@@ -13,15 +13,15 @@ print(multiply.description)
 print(multiply.args)
 
 if __name__=="__main__":
-    #prompt="multiply those two numbers: {'first_int': 4, 'second_int': 5} and also say 'bonjour'"
-    prompt="Trouve des offres d'emplois de datascientist sur aix en provence"
+    prompt="multiply those two numbers: {'first_int': 4, 'second_int': 5} and also say 'bonjour'"
+    #prompt="Trouve des offres d'emplois de datascientist sur aix en provence"
     answer,tool_calls=LLM_answer_v3(
         prompt=prompt,
-        model_name= "gemini-2.0-flash-exp", #"llama-3.3-70b-versatile",
+        model_name= "gemini-2.0-flash", #"llama-3.3-70b-versatile",
         llm_provider="google", #"ollama", #,
         temperature=1,
         stream=False,
-        tool_list=[multiply,JobAgent.scrape_and_convert],
+        tool_list=[multiply],
         
     )
     print("Answer:",answer)

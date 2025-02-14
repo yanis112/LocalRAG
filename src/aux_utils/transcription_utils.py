@@ -26,6 +26,20 @@ logging.basicConfig(
 
 class YouTubeTranscriber:
     def __init__(self, chunk_size: int = 0, batch_size: int = 1, language: str = 'en'):
+        """
+        Initialize the transcription utility.
+
+        Args:
+            chunk_size (int): Size of each chunk in seconds. Default is 0.
+            batch_size (int): Number of chunks to process in a batch. Default is 1.
+            language (str): Language code for transcription. Default is 'en'.
+
+        Attributes:
+            chunk_size (int): Size of each chunk in milliseconds.
+            batch_size (int): Number of chunks to process in a batch.
+            language (str): Language code for transcription.
+            temp_dir (str): Path to the temporary directory for storing intermediate files.
+        """
         self.chunk_size = chunk_size * 1000  # Convertir en millisecondes
         self.batch_size = batch_size
         self.language = language
@@ -72,6 +86,15 @@ class YouTubeTranscriber:
     
     
     def chunk_audio(self, file_path: str) -> List[str]:
+        """
+        Splits an audio file into smaller chunks and exports them as separate files.
+        Args:
+            file_path (str): The path to the audio file to be chunked.
+        Returns:
+            List[str]: A list of file paths to the exported audio chunks.
+        Raises:
+            Exception: If an error occurs during the audio chunking process.
+        """
         from concurrent.futures import ThreadPoolExecutor
         logging.info(f"Découpage de l'audio: {file_path}")
         try:
@@ -224,7 +247,7 @@ class YouTubeTranscriber:
                         model='whisper-large-v3',
                         response_format="json",
                         #language=self.language,
-                        #temperature=0.0
+                        temperature=1.0
                     )
                     if translation and hasattr(translation, 'text'):
                         logging.info(f"Chunk transcrit avec succès avec le modèle de secours: {chunk}")

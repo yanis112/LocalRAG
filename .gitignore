@@ -56,6 +56,8 @@ test.m4a
 transcript_creator.py
 vector_store_building.log
 video_urls.csv
+scripts/streamlit_tind.py
+google_json_key
 
 # Fichiers de configuration
 .env

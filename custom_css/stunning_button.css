@@ -3,10 +3,11 @@
     background: linear-gradient(to right, #2b5876, #4e4376);
     color: white;
     border: none;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
+    /* Réduction de 40% par rapport aux valeurs d'origine */
+    padding: 0.36em 0.72em;   /* anciennement 0.6em 1.2em */
+    font-size: 0.6em;         /* anciennement 1em */
     font-weight: 500;
-    border-radius: 25px;
+    border-radius: 15px;      /* anciennement 25px */
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -19,13 +20,14 @@
 /* Hover effects */
 .stButton button:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    /* Ombre renforcée pour un effet plus élégant */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     background: linear-gradient(to right, #4e4376, #2b5876);
 }
 
 /* Active/Click effect */
 .stButton button:active {
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.98);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -34,3 +36,8 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(43, 88, 118, 0.5);
 }
+
+
+/* ============================ */
+/* Toggle Buttons Streamlit     */
+/* ============================ */

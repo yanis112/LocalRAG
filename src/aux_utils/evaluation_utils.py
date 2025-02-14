@@ -14,7 +14,7 @@ from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification
 
 # custom imports
-from src.main_utils.generation_utils import LLM_answer_v3
+from src.main_utils.generation_utils_v2 import LLM_answer_v3
 from src.main_utils.utils import (
     get_k_random_chunks,
     text_preprocessing,

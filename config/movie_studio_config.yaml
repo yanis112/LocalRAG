@@ -85,9 +85,15 @@ auto_merging_threshold: 7  # Threshold for the merging of the chunks (number of 
 
 
 # Generation parameters
-llm_provider: "groq" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
-model_name: "llama-3.3-70b-versatile" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
-models_dict: {"llama-3.3-70b-versatile":"groq",
+llm_provider: "google" #"github" #"github" #"groq" #"sambanova" #"sambanova" #"groq" # Provider of the LLM model ('cerebras or ollama or groq') don't forget to change the provider if you change the llm. Pay attention the model name can vary depending on the provider !
+model_name: "gemini-2.0-pro-exp-02-05" #"meta-Llama-3.1-405B-Instruct" #"llama3-405b" #gpt-4o" #llama-3.1-70b-versatile" #"llama-3.2-90b-text-preview" #"llama3-405b" # "llama-3.2-90b-text-preview" #"llama3-405b" #LLM used for inference the name can be in the following list, pay attention that the llm name should correspond to the llm provider: "hermes3" (ollama);"llama-3.1-8b-instant (groq)"
+models_dict: {"gemini-2.0-flash":"google",
+              "gemini-2.0-pro-exp-02-05":"google",
+              "gemini-2.0-flash-thinking-exp-01-21":"google",
+             "gemini-2.0-flash-lite-preview-02-05":"google",
+              "o3-mini":"github",
+              "deepseek-r1-distill-llama-70b":"groq",
+              "llama-3.3-70b-versatile":"groq",
               "gpt-4o": "github",
               "meta-Llama-3.1-405B-Instruct": "github",
               "gpt-4o-mini": "github",
@@ -96,18 +102,15 @@ models_dict: {"llama-3.3-70b-versatile":"groq",
               "llama3-405b": "sambanova",
               "llama-3.1-8b-instant": "groq",
               "llama-3.2-3b-preview": "groq",
-              "gemini-1.5-pro":"google",
-              "gemini-1.5-flash":"google",
-              "gemini-2.0-flash-exp":"google",
-              
-}
+              "DeepSeek-R1":"github",
+            }
 
 #Prompting parameters
 fr_rag_prompt_path: "prompts/base_rag_prompt_fr.txt" #Path to the file containing the RAG prompt
 en_rag_prompt_path: "prompts/base_rag_prompt_en.txt" #Path to the file containing the RAG prompt
 
 #vllm parameters
-vllm_model_name: "gemini-2.0-flash-exp" #VLLM model to use for the generation
+vllm_model_name: "gemini-2.0-pro-exp-02-05" #VLLM model to use for the generation
 vllm_provider: "gemini" # Provider of the VLLM model
 
 #LLM parameters

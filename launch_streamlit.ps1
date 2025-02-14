@@ -20,7 +20,7 @@ try {
     }
 
     # Run streamlit
-    & $streamlitPath run scripts\streamlit_app.py
+    & $streamlitPath run app\streamlit_app.py
 } catch {
     Write-Host "Error: $_"
     Read-Host "Press Enter to exit"

@@ -1,0 +1,2 @@
+Here is a text, i want you to output a title for this text (e.g if its a motivation letter, output a title like 'motivation letter for...').
+Answer the relevant and concise title for the text, without preamble. Here is the text: <text> {text} </text>.

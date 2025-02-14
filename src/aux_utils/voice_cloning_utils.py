@@ -1,19 +1,71 @@
-from gradio_client import Client, file
+import logging
 import os
-import shutil  # Import the shutil module
+import shutil
+import base64
+import time
+from functools import wraps
 from src.aux_utils.transcription_utils import YouTubeTranscriber
-import os 
+from zyphra import ZyphraClient, ZyphraError
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
+def retry_on_timeout(max_retries=3, base_delay=1):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except ZyphraError as e:
+                    if e.status_code == 524:  # Timeout error
+                        retries += 1
+                        if retries < max_retries:
+                            delay = base_delay * (2 ** (retries - 1))  # Exponential backoff
+                            logger.warning(f"Timeout occurred. Retrying in {delay} seconds... (Attempt {retries}/{max_retries})")
+                            time.sleep(delay)
+                            continue
+                    raise
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+class VoiceCloneError(Exception):
+    """Custom exception for voice cloning errors"""
+    pass
 
 class VoiceCloningAgent:
-    def __init__(self, method="fish_speech"):
+    def __init__(self, method="zonos"):
         self.method = method
-        # Use full Hugging Face space URL for XTTS
-        self.endpoint_url = ("fishaudio/fish-speech-1" if method == "fish_speech" 
-                           else "https://coqui-xtts.hf.space/--replicas/5891u/")
-        self.client = Client(self.endpoint_url)
         self.yt_transcriber = YouTubeTranscriber()
-
+        
+        if self.method == "zonos":
+            try:
+                # Initialize Zonos client with API key from environment variable
+                self.client = ZyphraClient(api_key=os.getenv("ZONOS_API_KEY"))
+                logger.info("Successfully initialized Zonos API client")
+            except Exception as e:
+                logger.error(f"Failed to initialize Zonos client: {str(e)}")
+                raise VoiceCloneError(f"Failed to initialize voice cloning client: {str(e)}")
+        else:
+            # Initialize Hugging Face client for other methods
+            try:
+                from gradio_client import Client
+                self.endpoint_url = {
+                    "fish_speech": "fishaudio/fish-speech-1",
+                    "xtts": "https://coqui-xtts.hf.space/--replicas/5891u/"
+                }.get(method, "fishaudio/fish-speech-1")
+                self.client = Client(self.endpoint_url, hf_token=os.getenv("HUGGINGFACE_TOKEN"))
+                logger.info(f"Successfully connected to endpoint: {self.endpoint_url}")
+            except Exception as e:
+                logger.error(f"Failed to initialize client for {self.endpoint_url}: {str(e)}")
+                raise VoiceCloneError(f"Failed to initialize voice cloning client: {str(e)}")
 
     def normalize_text(self, user_input, use_normalization=False):
         """
@@ -105,48 +157,128 @@ class VoiceCloningAgent:
         except Exception as e:
             return None, f"XTTS API error: {str(e)}"
     
+    @retry_on_timeout(max_retries=3, base_delay=1)
+    def clone_voice_zonos(self, text, reference_audio_path, **kwargs):
+        """Voice cloning using direct Zonos API with retry logic"""
+        try:
+            logger.info(f"Attempting voice cloning with Zonos API")
+            logger.info(f"Input text: {text[:50]}...")
+            logger.info(f"Reference audio: {reference_audio_path}")
+            
+            # Split long text into chunks if needed (to prevent timeouts)
+            max_chars_per_request = 500
+            if len(text) > max_chars_per_request:
+                logger.info(f"Text length ({len(text)} chars) exceeds recommended maximum. Splitting into chunks.")
+                text_chunks = [text[i:i+max_chars_per_request] for i in range(0, len(text), max_chars_per_request)]
+            else:
+                text_chunks = [text]
+            
+            # Read and encode reference audio file
+            with open(reference_audio_path, "rb") as f:
+                audio_base64 = base64.b64encode(f.read()).decode('utf-8')
+            
+            final_audio_data = None
+            for i, chunk in enumerate(text_chunks):
+                logger.info(f"Processing chunk {i+1}/{len(text_chunks)}")
+                
+                # Generate speech with cloned voice
+                chunk_audio = self.client.audio.speech.create(
+                    text=chunk,
+                    speaker_audio=audio_base64,
+                    speaking_rate=kwargs.get('speaking_rate', 15),
+                    language_iso_code=kwargs.get('language', 'en-us'),
+                    mime_type=kwargs.get('mime_type', 'audio/mp3')
+                )
+                
+                if isinstance(chunk_audio, bytes):
+                    if final_audio_data is None:
+                        final_audio_data = chunk_audio
+                    else:
+                        # TODO: Implement proper audio concatenation if needed
+                        final_audio_data = chunk_audio
+            
+            # Save the final audio data to a file
+            output_file = os.path.join(kwargs.get('output_dir', 'cloned_voices'), 'output.mp3')
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+            
+            with open(output_file, 'wb') as f:
+                f.write(final_audio_data)
+            
+            logger.info(f"Successfully generated voice clone: {output_file}")
+            return output_file, None
+                
+        except ZyphraError as e:
+            error_msg = f"Zonos API error: {e.status_code} - {e.response_text}"
+            logger.error(error_msg)
+            return None, error_msg
+        except Exception as e:
+            error_msg = f"Unexpected error: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            return None, error_msg
+
     def clone_voice(self, text, reference_audio_path, output_dir='cloned_voices', **kwargs):
-        if not os.path.exists(reference_audio_path):
-            raise FileNotFoundError(f"Reference audio file not found: {reference_audio_path}")
+        try:
+            if not os.path.exists(reference_audio_path):
+                error_msg = f"Reference audio file not found: {reference_audio_path}"
+                logger.error(error_msg)
+                raise FileNotFoundError(error_msg)
 
-        os.makedirs(output_dir, exist_ok=True)
+            logger.info(f"Creating output directory: {output_dir}")
+            os.makedirs(output_dir, exist_ok=True)
 
-        if self.method == "fish_speech":
-            cloned_audio_path, error_message = self.clone_voice_fish_speech(text, reference_audio_path, **kwargs)
-        else:
-            cloned_audio_path, error_message = self.clone_voice_xtts(text, reference_audio_path, **kwargs)
+            logger.info(f"Starting voice cloning with method: {self.method}")
+            if self.method == "zonos":
+                cloned_audio_path, error_message = self.clone_voice_zonos(text, reference_audio_path, output_dir=output_dir, **kwargs)
+            elif self.method == "fish_speech":
+                cloned_audio_path, error_message = self.clone_voice_fish_speech(text, reference_audio_path, **kwargs)
+            elif self.method == "xtts":
+                cloned_audio_path, error_message = self.clone_voice_xtts(text, reference_audio_path, **kwargs)
+            else:
+                error_msg = f"Unsupported method: {self.method}"
+                logger.error(error_msg)
+                return None, error_msg
 
-        if cloned_audio_path and os.path.exists(cloned_audio_path):
-            output_filename = os.path.basename(cloned_audio_path)
-            destination_path = os.path.join(output_dir, output_filename)
-            shutil.move(cloned_audio_path, destination_path)
-            cloned_audio_path = destination_path
+            if error_message:
+                logger.error(f"Error during voice cloning: {error_message}")
+                return None, error_message
 
-        return cloned_audio_path, error_message
+            if cloned_audio_path and os.path.exists(cloned_audio_path):
+                return cloned_audio_path, None
+            
+            error_msg = "No output file generated"
+            logger.error(error_msg)
+            return None, error_msg
+
+        except Exception as e:
+            error_msg = f"Unexpected error during voice cloning: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            return None, error_msg
 
 
 if __name__ == "__main__":
-    agent = VoiceCloningAgent(method="xtts_v2")
-
     try:
+        # Example usage with Zonos
+        agent = VoiceCloningAgent(method="zonos")
         reference_audio = "subprojects/movie_studio/voice_library/agamemnon.mp3"
         text_to_speak = "Burn Guiss ! Burn it for the glory of Valyria !"
         output_directory = "cloned_voices"
+
+        logger.info("Starting voice cloning test")
+        logger.info(f"Reference audio: {reference_audio}")
+        logger.info(f"Text to speak: {text_to_speak}")
 
         cloned_audio, error_message = agent.clone_voice(
             text_to_speak, 
             reference_audio,
             output_dir=output_directory,
-            language="en,en",
-            use_mic=False,
-            cleanup_voice=True,
-            no_lang_auto_detect=True
+            language="en-us",
+            model_choice="Zyphra/Zonos-v0.1-hybrid"
         )
 
         if cloned_audio:
-            print(f"Cloned audio saved to: {cloned_audio}")
+            logger.info(f"Success! Cloned audio saved to: {cloned_audio}")
         if error_message:
-            print(f"Error: {error_message}")
+            logger.error(f"Failed to clone voice: {error_message}")
 
-    except FileNotFoundError as e:
-        print(e)
+    except Exception as e:
+        logger.error("Critical error in main execution:", exc_info=True)

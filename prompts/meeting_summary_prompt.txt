@@ -12,9 +12,9 @@ Actions à entreprendre: Liste les actions à entreprendre, qui est responsable 
 
 Prochaines étapes: Quelles sont les prochaines étapes prévues ?
 
-Utilise le format Markdown suivant (les majuscules/text en gras ne sont que pour les titres, utilise des sauts de lignes) pour structurer ton résumé :
+Utilise le format Markdown suivant (les majuscules/text en gras ne sont que pour les titres, utilise des sauts de lignes) pour structurer ton résumé, complète avec la date et le titre pertinant :
 
-# Résumé de la réunion du [Date de la réunion]
+# [title summarazing the reunion (e.g what its about)] [Date de la réunion]
 
 ## Objectifs
 

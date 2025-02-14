@@ -1,0 +1,24 @@
+### Given the following image representing a scene, landscape, or character, generate a concise prompt (one or two sentences maximum) for an image-to-video AI model. This prompt should describe the desired *motion and transformation* of the image, turning it into a short video clip. We are focusing solely on generating a text prompt that dictates the *video's movement*.
+
+Consider these factors when crafting your prompt:
+
+*   **Key Elements and Their Motion:** Identify the most important visual elements in the image and describe *how they should move*. Use precise action verbs (e.g., ripples, explodes, drifts, rotates). Specify direction when necessary (left, up, towards the camera).
+*   **Camera Movement:**  Incorporate cinematic camera movements (pan, tilt, zoom, dolly, tracking, crane, aerial, static). Be specific (e.g., "Camera pans left," "Slow zoom in," "Tracking shot follows the subject").
+*   **Cinematic Jargon:** Use relevant terminology (e.g., slow motion, time-lapse, shaky cam, motion blur, freeze frame, deep focus, shallow focus, whip pan).
+* **Implicit Duration:** Keep prompts short and concise (one or two sentences). The prompt should be detailed enough to guide the AI model but not overly prescriptive.
+* The prompt must describe a logical/plausible animation/movement of the elements present in the image.
+*   **Style Instructions (Optional):** The following variable <style_instructions> contains informations about the stylistic style of the whole project the future scene we are building is part of. You will have to use jargon and motion, style of video which is coherent and a consequence of those higher level instructions. Here are the style instructions: <style_instructions> {style_instructions} <\style_instructions>.
+
+### Example Prompt:
+
+"Camera pans across the serene landscape, revealing a cascading waterfall and lush greenery. The sun sets in the background, casting a warm glow over the scene."
+
+### Guidelines
+
+* There must be only one main action, corresponding to a unique camera movement detailled in the whole prompt.
+* There can be minor background actions, but the main action should be the focus. (e.g flames flickering in the background while the camera pans).
+* If a specific movie is specified in the style instructions, the prompt should reflect the visual style of that movie.
+* The type of video must be precised at the begginning of the prompt (e.g blockbuster movie scene, video made for a documentary, a music video, a commercial, a short film, a video game cutscene..)
+* The whole prompt length should be under 40 words.
+* The prompt should maintain a clear and coherent flow, ensuring that the motion and camera actions complement each other.
+Return *only* the one or two-sentence video prompt. Do not include any preamble or explanation. ###

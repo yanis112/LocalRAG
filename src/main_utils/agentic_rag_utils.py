@@ -160,8 +160,9 @@ class QueryBreaker:
         self.model_name = config["model_name"]
         self.llm_provider = config["llm_provider"]
         self.prompt_language = config["prompt_language"]
+        self.temperature = config["temperature"]
 
-    def break_query(self, query, context=None):
+    def break_query(self, query, context=None,unitary_actions=[]):
         """
         Breaks down a given query into sub-steps using a language model.
 
@@ -178,7 +179,7 @@ class QueryBreaker:
             template = file.read()
 
         prompt_template = PromptTemplate.from_template(template)
-        prompt = prompt_template.format(query=query)
+        prompt = prompt_template.format(query=query,unitary_actions=unitary_actions)
 
         if context:
             prompt = f"{prompt}\nContext: {context}"
@@ -190,7 +191,7 @@ class QueryBreaker:
             format_type="list",
             model_name=self.model_name,
             llm_provider=self.llm_provider,
-            temperature=0,
+            temperature=self.temperature
         )
 
         if isinstance(answer, list):
@@ -247,4 +248,22 @@ class AggregatorReranker:
 
 
 if __name__ == "__main__":
-    pass
+    # Test du QueryBreaker avec une tâche complexe
+    config = {
+        "model_name": "gemini-2.0-flash",
+        "llm_provider": "google",
+        "prompt_language": "fr",
+        "temperature": 0.7
+    }
+    
+    query_breaker = QueryBreaker(config)
+    test_query = "Analyse les performances commerciales de notre entreprise du dernier trimestre et prépare un rapport détaillé avec des recommandations"
+    
+    print("Test du QueryBreaker avec la requête:")
+    print(f"Query: {test_query}\n")
+    
+    steps = query_breaker.break_query(test_query)
+    print("Résultat de la décomposition en étapes:")
+    for i, step in enumerate(steps, 1):
+        print(f"{i}. {step}")
+

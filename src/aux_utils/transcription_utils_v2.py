@@ -546,11 +546,15 @@ def run_diarization(audio_path, auth_token):
         # pipeline: pyannote.audio Pipeline object
 
         # Setup GPU if available
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        else:
+            print("FATAL ISSUE: No GPU available for diarization !")
         pipeline.to(device)
 
         # Load and validate audio
         waveform, sample_rate = torchaudio.load(audio_path)
+        print("CURRENT SAMPLE RATE:", sample_rate)
         # waveform: torch.Tensor representing the audio waveform
         # sample_rate: integer representing the sample rate of the audio
         

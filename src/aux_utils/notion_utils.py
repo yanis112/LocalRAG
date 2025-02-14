@@ -2,9 +2,11 @@ import os
 from notion_client import Client
 import re
 from dotenv import load_dotenv
+from typing import List, Dict, Any
 
 load_dotenv()
-class NotionScrapper:
+
+class NotionAgent:
     def __init__(self):
         self.notion = Client(auth=os.getenv("NOTION_API_KEY"))
         self.data_folder = "data/notion"
@@ -166,296 +168,447 @@ class NotionScrapper:
                 self.download_page(page_id)
                 print(f"Page downloaded: {page_id}")
 
-    
-    def create_page_from_markdown(self, markdown_content, page_title, parent_page_id = None):
+    def create_page_from_markdown(self, markdown_content: str, page_title: str) -> str:
         """
-        Creates a new Notion page with content from markdown text.
+        Creates a new page in Notion from the given markdown content.
+
         Args:
-            markdown_content (str): The markdown text content for the page.
-            page_title (str): The title of the new Notion page.
-            parent_page_id (str, optional): The ID of the parent page, if the new page should be nested. Defaults to None.
+            markdown_content (str): The markdown content to convert into Notion blocks.
+            page_title (str): The title of the new page.
+
         Returns:
             str: The ID of the newly created Notion page.
         
-        Parses markdown into a list of Notion blocks, creates a new Notion page
-        with the given title, and adds the parsed blocks as content.
-        The function supports headings, paragraphs, lists, to-do lists, toggle,
-        code, quotes, and dividers.
         Raises:
-            Exception: If there is a error while creating the notion page
+            Exception: If there is an error creating the page in Notion.
+        """
+        blocks = self.markdown_to_blocks(markdown_content)
+
+        # To create a page at the top level, use the "workspace" parent type.
+        #parent = {"type": "workspace", "workspace": True}
+        parent = {"type": "database_id", "database_id": os.getenv("MOTHER_NOTION_PAGE_ID")}
+        
+        
+
+        try:
+            new_page = self.notion.pages.create(
+                parent=parent,
+                properties={
+                    # Use the provided page title in the properties.
+                    "title": {
+                        "title": [{"type": "text", "text": {"content": page_title}}]
+                    }
+                },
+                children=blocks
+            )
+            return new_page["id"]
+        except Exception as e:
+            raise Exception(f"Erreur de création de page: {str(e)}")
+
+    def markdown_to_blocks(self, markdown_content: str) -> List[Dict[str, Any]]:
+        """
+        Converts a markdown string to a list of Notion blocks.
+        
+        Args:
+            markdown_content (str): The markdown content to convert.
+        
+        Returns:
+            List[Dict[str, Any]]: A list of Notion blocks.
         """
         blocks = []
-        lines = markdown_content.splitlines()
+        lines = markdown_content.split('\n')
         i = 0
+
         while i < len(lines):
-             line = lines[i].strip()
-             if line.startswith('# '):
-                blocks.append({
-                   "type": "heading_1",
-                   "heading_1": {
-                       "rich_text": [{"type": "text", "text": {"content": line[2:].strip()}}]
-                       }
-                   })
-             elif line.startswith('## '):
-                blocks.append({
-                   "type": "heading_2",
-                   "heading_2": {
-                       "rich_text": [{"type": "text", "text": {"content": line[3:].strip()}}]
-                       }
-                   })
-             elif line.startswith('### '):
-                  blocks.append({
-                    "type": "heading_3",
-                    "heading_3": {
-                        "rich_text": [{"type": "text", "text": {"content": line[4:].strip()}}]
-                    }
-                  })
-             elif line.startswith('* '):
-                  blocks.append({
-                      "type": "bulleted_list_item",
-                      "bulleted_list_item": {
-                          "rich_text": [{"type": "text", "text": {"content": line[2:].strip()}}]
-                      }
-                  })
-             elif line.startswith('1. '):
-                 blocks.append({
-                    "type": "numbered_list_item",
-                    "numbered_list_item": {
-                        "rich_text": [{"type": "text", "text": {"content": line[3:].strip()}}]
-                    }
-                  })
-             elif line.startswith('- ['):
-                 is_checked = line[3] == 'x'
-                 text_content = line[6:].strip()
-                 blocks.append({
-                     "type": "to_do",
-                     "to_do":{
-                         "rich_text": [{"type": "text", "text": {"content": text_content}}],
-                         "checked": is_checked
-                    }
-                })
-             elif line.startswith('<details>'):
-                 i += 1
-                 summary_line = lines[i].strip()
-                 if not summary_line.startswith('<summary>'):
-                     raise ValueError(f"invalid toggle format: {summary_line}")
-                 summary_text = summary_line[9:-10].strip()
+            line = lines[i].strip()
+            raw_line = lines[i]
 
-                 i+= 1
-                 content_lines = []
-                 while i < len(lines) and not lines[i].strip().startswith('</details>'):
-                     content_lines.append(lines[i])
-                     i+=1
-                 content_text = "\n".join(content_lines).strip()
+            # Gestion des titres
+            if line.startswith('### '):
+                blocks.append(self._create_heading_block(line, 3))
+                i += 1
+            elif line.startswith('## '):
+                blocks.append(self._create_heading_block(line, 2))
+                i += 1
+            elif line.startswith('# '):
+                blocks.append(self._create_heading_block(line, 1))
+                i += 1
 
-                 blocks.append({
-                    "type":"toggle",
-                    "toggle":{
-                       "rich_text": [{"type":"text", "text":{"content": summary_text}}],
-                         }
-                    })
-                 blocks.extend(self.markdown_to_blocks(content_text))
-                 
-             elif line.startswith('```'):
-                 code_language = line[3:].strip()
-                 i+=1
-                 code_lines = []
-                 while i < len(lines) and not lines[i].strip().startswith('```'):
-                     code_lines.append(lines[i])
-                     i+=1
-                 code_text = "\n".join(code_lines)
-                 blocks.append({
-                     "type": "code",
-                     "code": {
-                        "language": code_language,
-                        "rich_text": [{"type": "text", "text": {"content": code_text}}]
-                     }
-                    })
-             elif line.startswith('> '):
-                 blocks.append({
-                     "type":"quote",
-                     "quote": {
-                         "rich_text":[{"type":"text", "text": {"content": line[2:].strip()}}]
-                     }
-                 })
-             elif line == '---':
-                blocks.append({"type": "divider"})
-             elif line:
-                blocks.append({
-                   "type": "paragraph",
-                   "paragraph": {
-                       "rich_text": [{"type": "text", "text": {"content": line}}]
-                       }
-                    })
-             i+=1
+            # Listes à puces
+            elif line.startswith('* ') or line.startswith('- '):
+                list_blocks, i = self._handle_list(lines, i, "bulleted")
+                blocks.extend(list_blocks)
+            
+            # Listes numérotées
+            elif re.match(r'^\d+\. ', line):
+                list_blocks, i = self._handle_list(lines, i, "numbered")
+                blocks.extend(list_blocks)
+            
+            # Checklist
+            elif line.startswith('- [ ] ') or line.startswith('- [x] '):
+                blocks.append(self._create_todo_block(line))
+                i += 1
+            
+            # Code blocks
+            elif line.startswith('```'):
+                blocks.append(self._create_code_block(lines, i))
+                i = self._skip_code_block(lines, i)
+            
+            # Citation
+            elif line.startswith('> '):
+                blocks.append(self._create_quote_block(lines, i))
+                i += 1
+            
+            # Divider
+            elif line == '---':
+                blocks.append({"object": "block", "type": "divider", "divider": {}})
+                i += 1
+            
+            # Toggle (détails)
+            elif line.startswith('<details>'):
+                toggle_block, i = self._create_toggle_block(lines, i)
+                blocks.append(toggle_block)
+            
+             # Tableaux
+            if line.startswith('|'):
+                table_block, i = self._handle_table(lines, i)
+                if table_block:  # Check if _handle_table returned a valid block
+                    blocks.append(table_block)
+            
+            # Paragraphe standard
+            elif line:
+                paragraph_block = self._create_paragraph_block(raw_line)
+                blocks.append(paragraph_block)
+                i += 1
+            
+            else:
+                i += 1
 
-        page_properties = {
-           "title": {
-                "title": [{"type": "text", "text": {"content": page_title}}]
+        return blocks
+    
+    def _handle_table(self, lines: List[str], index: int) -> tuple:
+        """
+        Handles markdown tables and converts them to Notion table blocks.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+
+        Returns:
+            tuple: A tuple containing the Notion table block and the updated index.
+        """
+        table_lines = []
+        while index < len(lines) and lines[index].strip().startswith('|'):
+            table_lines.append(lines[index].strip())
+            index += 1
+
+        if len(table_lines) < 2:  # Not a valid table
+            return None, index
+
+        # Parse table data
+        header_row = [cell.strip() for cell in table_lines[0].split('|') if cell.strip()]
+        num_cols = len(header_row)
+        table_rows = []
+
+        for row in table_lines[2:]:  # Skip header and separator lines
+            row_data = [cell.strip() for cell in row.split('|') if cell.strip()]
+            # Handle rows with incorrect number of columns
+            if len(row_data) != num_cols:
+                print(f"Warning: Skipping row with incorrect number of columns: {row_data}")
+                continue
+            # CORRECTION ICI : Chaque cellule doit être dans une liste
+            table_rows.append([[{ "type": "text", "text": { "content": cell } }] for cell in row_data])
+
+        # Create Notion table block
+        table_block = {
+            "object": "block",
+            "type": "table",
+            "table": {
+                "table_width": num_cols,
+                "has_column_header": True,
+                "has_row_header": False,
+                "children": [
+                    {
+                        "object": "block",
+                        "type": "table_row",
+                        "table_row": {
+                            # CORRECTION ICI : Chaque cellule doit être dans une liste
+                            "cells": [[{ "type": "text", "text": { "content": cell } }] for cell in header_row]
+                        }
+                    }
+                ]
             }
         }
 
-        if parent_page_id:
-           if not isinstance(parent_page_id, str) or not re.match(r"^[0-9a-f]{32}$", parent_page_id):
-               raise ValueError("parent_page_id must be a valid 32 character long Notion page ID")
-           parent = {"type": "page_id", "page_id": parent_page_id}
-        else:
-            # Use workspace as parent
-            parent = {"type": "workspace"}
-        try:
-            new_page = self.notion.pages.create(parent=parent, properties=page_properties, children=blocks)
-        except Exception as e:
-            raise Exception(f"Error while creating a new page in the database: {e}")
-        return new_page["id"]
-    
-    def markdown_to_blocks(self, markdown_content):
+        # Add table rows to the table block
+        for row in table_rows:
+            table_block["table"]["children"].append(
+                {
+                    "object": "block",
+                    "type": "table_row",
+                    "table_row": {
+                        "cells": row
+                    }
+                }
+            )
+
+        return table_block, index
+
+    def _create_heading_block(self, line: str, level: int) -> Dict:
         """
-         Converts markdown to a list of Notion block objects for create_page_from_markdown
-         Args:
-            markdown_content (str): markdown text
-         Returns:
-           list: list of notion block objects 
+        Creates a Notion heading block.
+
+        Args:
+            line (str): The line containing the heading text.
+            level (int): The heading level (1, 2, or 3).
+
+        Returns:
+            Dict: A Notion heading block.
+        """
+        return {
+            "object": "block",
+            "type": f"heading_{level}",
+            f"heading_{level}": {
+                "rich_text": [{"type": "text", "text": {"content": line[level+1:].strip()}}]
+            }
+        }
+
+    def _handle_list(self, lines: List[str], index: int, list_type: str) -> tuple:
+        """
+        Handles bulleted and numbered lists.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+            list_type (str): The type of list ("bulleted" or "numbered").
+
+        Returns:
+            tuple: A tuple containing the list of Notion blocks and the updated index.
+        """
+        items = []
+        first_line = lines[index]
+        base_indent = len(first_line) - len(first_line.lstrip())
+
+        while index < len(lines):
+            line = lines[index]
+            indent = len(line) - len(line.lstrip())
+
+            if indent < base_indent or not line.strip():
+                break  # Fin de la liste
+
+            content = line.strip().lstrip('*-1234567890. ').strip()
+
+            if indent == base_indent:  # Même niveau
+                items.append({
+                    "type": f"{list_type}_list_item",
+                    "content": content,
+                    "children": []
+                })
+            else:  # Sous-niveau
+                if not items:  # Pas de parent, on crée un au même niveau
+                    items.append({
+                        "type": f"{list_type}_list_item",
+                        "content": "",
+                        "children": []
+                    })
+                items[-1]["children"].append({
+                    "type": f"{list_type}_list_item",
+                    "content": content
+                })
+
+            index += 1
+
+        return self._build_list_blocks(items, list_type), index
+
+    def _build_list_blocks(self, items: List[Dict], list_type: str) -> List[Dict]:
+        """
+        Builds a nested list structure for Notion blocks, handling children.
+
+        Args:
+            items (List[Dict]): A list of list items, potentially nested.
+            list_type (str): The type of list ("bulleted" or "numbered").
+
+        Returns:
+            List[Dict]: A list of Notion blocks representing the nested list.
         """
         blocks = []
-        lines = markdown_content.splitlines()
-        i = 0
-        while i < len(lines):
-             line = lines[i].strip()
-             if line.startswith('# '):
-                blocks.append({
-                   "type": "heading_1",
-                   "heading_1": {
-                       "rich_text": [{"type": "text", "text": {"content": line[2:].strip()}}]
-                       }
-                   })
-             elif line.startswith('## '):
-                blocks.append({
-                   "type": "heading_2",
-                   "heading_2": {
-                       "rich_text": [{"type": "text", "text": {"content": line[3:].strip()}}]
-                       }
-                   })
-             elif line.startswith('### '):
-                  blocks.append({
-                    "type": "heading_3",
-                    "heading_3": {
-                        "rich_text": [{"type": "text", "text": {"content": line[4:].strip()}}]
-                    }
-                  })
-             elif line.startswith('* '):
-                  blocks.append({
-                      "type": "bulleted_list_item",
-                      "bulleted_list_item": {
-                          "rich_text": [{"type": "text", "text": {"content": line[2:].strip()}}]
-                      }
-                  })
-             elif line.startswith('1. '):
-                 blocks.append({
-                    "type": "numbered_list_item",
-                    "numbered_list_item": {
-                        "rich_text": [{"type": "text", "text": {"content": line[3:].strip()}}]
-                    }
-                  })
-             elif line.startswith('- ['):
-                 is_checked = line[3] == 'x'
-                 text_content = line[6:].strip()
-                 blocks.append({
-                     "type": "to_do",
-                     "to_do":{
-                         "rich_text": [{"type": "text", "text": {"content": text_content}}],
-                         "checked": is_checked
-                    }
-                })
-             elif line.startswith('<details>'):
-                 i += 1
-                 summary_line = lines[i].strip()
-                 if not summary_line.startswith('<summary>'):
-                     raise ValueError(f"invalid toggle format: {summary_line}")
-                 summary_text = summary_line[9:-10].strip()
-
-                 i+= 1
-                 content_lines = []
-                 while i < len(lines) and not lines[i].strip().startswith('</details>'):
-                     content_lines.append(lines[i])
-                     i+=1
-                 content_text = "\n".join(content_lines).strip()
-
-                 blocks.append({
-                    "type":"toggle",
-                    "toggle":{
-                       "rich_text": [{"type":"text", "text":{"content": summary_text}}],
-                         }
-                    })
-                 blocks.extend(self.markdown_to_blocks(content_text))
-                 
-             elif line.startswith('```'):
-                 code_language = line[3:].strip()
-                 i+=1
-                 code_lines = []
-                 while i < len(lines) and not lines[i].strip().startswith('```'):
-                     code_lines.append(lines[i])
-                     i+=1
-                 code_text = "\n".join(code_lines)
-                 blocks.append({
-                     "type": "code",
-                     "code": {
-                        "language": code_language,
-                        "rich_text": [{"type": "text", "text": {"content": code_text}}]
-                     }
-                    })
-             elif line.startswith('> '):
-                 blocks.append({
-                     "type":"quote",
-                     "quote": {
-                         "rich_text":[{"type":"text", "text": {"content": line[2:].strip()}}]
-                     }
-                 })
-             elif line == '---':
-                blocks.append({"type": "divider"})
-             elif line:
-                blocks.append({
-                   "type": "paragraph",
-                   "paragraph": {
-                       "rich_text": [{"type": "text", "text": {"content": line}}]
-                       }
-                    })
-             i+=1
+        for item in items:
+            block = {
+                "object": "block",
+                "type": item["type"],
+                item["type"]: {
+                    "rich_text": [{"type": "text", "text": {"content": item["content"]}}]
+                }
+            }
+            if "children" in item and item["children"]:
+                block[item["type"]]["children"] = self._build_list_blocks(item["children"], list_type)
+            blocks.append(block)
         return blocks
 
+    def _create_todo_block(self, line: str) -> Dict:
+        """
+        Creates a Notion to-do block.
+
+        Args:
+            line (str): The line containing the to-do item.
+
+        Returns:
+            Dict: A Notion to-do block.
+        """
+        checked = 'x' in line
+        return {
+            "object": "block",
+            "type": "to_do",
+            "to_do": {
+                "rich_text": [{"type": "text", "text": {"content": line[5:].strip()}}],
+                "checked": checked
+            }
+        }
+
+    def _create_code_block(self, lines: List[str], index: int) -> Dict:
+        """
+        Creates a Notion code block.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+
+        Returns:
+            Dict: A Notion code block.
+        """
+        language = lines[index][3:].strip()
+        code_lines = []
+        index += 1
+        
+        while index < len(lines) and not lines[index].strip().startswith('```'):
+            code_lines.append(lines[index])
+            index += 1
+        
+        return {
+            "object": "block",
+            "type": "code",
+            "code": {
+                "rich_text": [{"type": "text", "text": {"content": '\n'.join(code_lines)}}],
+                "language": language if language else "plain text"
+            }
+        }
+
+    def _skip_code_block(self, lines: List[str], index: int) -> int:
+        """
+        Skips the lines of a code block.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+
+        Returns:
+            int: The updated index after skipping the code block.
+        """
+        while index < len(lines) and not lines[index].strip().startswith('```'):
+            index += 1
+        return index + 1
+
+    def _create_quote_block(self, lines: List[str], index: int) -> Dict:
+        """
+        Creates a Notion quote block.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+
+        Returns:
+            Dict: A Notion quote block.
+        """
+        quote_lines = []
+        while index < len(lines) and lines[index].strip().startswith('> '):
+            quote_lines.append(lines[index].lstrip('> ').strip())
+            index += 1
+        return {
+            "object": "block",
+            "type": "quote",
+            "quote": {
+                "rich_text": [{"type": "text", "text": {"content": ' '.join(quote_lines)}}]
+            }
+        }
+
+    def _create_toggle_block(self, lines: List[str], index: int) -> tuple:
+        """
+        Creates a Notion toggle block.
+
+        Args:
+            lines (List[str]): The list of lines in the markdown content.
+            index (int): The current index in the lines list.
+
+        Returns:
+            tuple: A tuple containing the Notion toggle block and the updated index.
+        """
+        index += 1  # Skip <details>
+        summary = lines[index].replace('<summary>', '').replace('</summary>', '').strip()
+        index += 1
+        content = []
+        
+        while index < len(lines) and not lines[index].strip().startswith('</details>'):
+            content.append(lines[index])
+            index += 1
+        
+        return {
+            "object": "block",
+            "type": "toggle",
+            "toggle": {
+                "rich_text": [{"type": "text", "text": {"content": summary}}],
+                "children": self.markdown_to_blocks('\n'.join(content))
+            }
+        }, index
+
+    def _create_paragraph_block(self, line: str) -> Dict:
+        """
+        Creates a Notion paragraph block.
+
+        Args:
+            line (str): The line containing the paragraph text.
+
+        Returns:
+            Dict: A Notion paragraph block.
+        """
+        return {
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [{"type": "text", "text": {"content": line.strip()}}]
+            }
+        }
+
 if __name__ == "__main__":
-    import asyncio
-   
-    scrapper = NotionScrapper()
-        # Example of scraping pages
-        #scrapper.scrape()
-        # Example of creating a page from markdown
-    markdown_text = """
-    # My New Page Title
+    converter = NotionAgent()
+    markdown_content = """
+# Titre Principal
 
-    This is a paragraph of text.
+## Section 1
 
-    ## A Subheading
+- Liste item 1
+ - Sous-item
+ - Sous-item 2
+- Liste item 2
 
-    - Bullet point 1
-    - Bullet point 2
-        - Nested bullet
-        
-    1. Numbered list item 1
-    2. Numbered list item 2
-        
-    - [ ] To do item 1
-    - [x] To do item 2
+1. Premier point
+ 1. Sous-point
+2. Second point
 
-    <details>
-    <summary>Toggle Summary</summary>
+```python
+print("Hello World!")
+Une citation inspirante
 
-    this is the content of a toggle
+Tâche non faite
 
-    </details>
+Tâche faite
 
-    ```python
-    print("Hello, world!")"""
- 
-    #try creating this new page
-    new_page_id = scrapper.create_page_from_markdown(markdown_text, "My New Page Title")
-    print("new page id : ", new_page_id)
+<details>
+<summary>Cliquez pour voir plus</summary>
+Contenu caché ici
+</details>
+"""
+    page_id = converter.create_page_from_markdown(
+    markdown_content,
+    page_title="Nouvelle Page TESTE"
+    )
+    print(f"La page a été créée avec succès. ID de la page : {page_id}")

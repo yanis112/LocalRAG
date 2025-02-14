@@ -1,0 +1,60 @@
+# Enable only essential checks
+select = ["E", "F", "W"]  # E=pycodestyle errors, F=Pyflakes (basic), W=warnings
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "W191",  # Indentation contains tabs
+    "W293",  # Blank line contains whitespace
+    "E402",  # Module level import not at top of file
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Line length settings
+line-length = 100
+
+# Number of spaces per indentation level
+indent-width = 4
+
+# Assume Python 3.11
+target-version = "py311"
+
+[mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[pydocstyle]
+# Use Google-style docstrings.
+convention = "google"
+
+[per-file-ignores]
+# Ignore unused imports in __init__.py files
+"__init__.py" = ["F401"]
+# Ignore documentation requirements in tests
+"tests/**/*.py" = ["D"]

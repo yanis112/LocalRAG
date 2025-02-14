@@ -19,9 +19,15 @@ try {
         throw "Streamlit not found at: $streamlitPath"
     }
 
-    # Run streamlit
-    & $streamlitPath run subprojects\movie_studio\streamlit_app_movie_studio.py
+    # Start streamlit and store the process
+    $process = Start-Process -FilePath $streamlitPath -ArgumentList "run", "subprojects\movie_studio\streamlit_app_movie_studio.py" -PassThru
+
+    # Wait for the process to complete
+    $process.WaitForExit()
+
+    # Kill any remaining streamlit processes
+    Get-Process | Where-Object {$_.Name -like "*streamlit*"} | Stop-Process -Force
 } catch {
     Write-Host "Error: $_"
-    Read-Host "Press Enter to exit"
+    Exit 1
 }

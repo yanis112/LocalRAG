@@ -1,27 +1,18 @@
 
 
 
-from src.retrieval_utils import query_database_v2
-from main_utils.generation_utils import RAG_answer, pull_model
+from src.main_utils.retrieval_utils_v2 import RetrievalAgent
+import yaml
 
 
 if __name__=='__main__':
     
-    # #load the config file
-    # import yaml
-    # with open('config/config.yaml', 'r') as f:
-    #     config = yaml.safe_load(f)
-    
-    # # Test the query_database_v2 function
-    # query = "Qui est Alice ?"
-    # output=query_database_v2(query,default_config=config,config={})
-    
-    # print(output)
-    # print("###########################################")
-    
-    # #test the rag answer
-    # output_rag=RAG_answer(query,default_config=config,config={'return_chunks':True})
-    
-    # print(output_rag)
-    
-    print(pull_model("llama3"))
+    with open("config/test_config.yaml") as f:
+        config = yaml.safe_load(f)
+
+    agent = RetrievalAgent(config)
+
+    # Query the database
+    query = "Qui doit assumer face à la France périphérique le discours de Mélenchon?"
+    compressed_docs = agent.query_database(query)
+    print("Compressed documents:", compressed_docs)

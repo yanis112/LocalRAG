@@ -35,6 +35,9 @@ This project isn't just a tool; it's your **intelligent partner**, your **ultima
 - **Advanced OCR Capabilities**: Extracts text from images using a state-of-the-art OCR model or Vision LLMs. Extracts information from charts and tables and generates structured equivalents in JSON or Markdown format.
 - **Intelligent Mail Assistant**: Reads and responds to emails, extracts key information, and performs actions based on the content of the emails.
 
+## Architecture overview 🏗️
+<img src="assets/architecture_shema.png" alt="Architecture Schema" width="800">
+
 ## 🛠️ Installation: Choose Your Path to AI Mastery! 🚀
 
 Ready to unleash the power of our revolutionary AI assistant? 🤩 You have two epic paths to choose from:

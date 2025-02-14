@@ -21,7 +21,7 @@ class IntentClassifier:
         classify(text):
             Classifies the given text and returns the most probable class label.
     """
-    def __init__(self, config,labels_dict=None):
+    def __init__(self, config: dict,labels_dict: dict =None, classifier_system_prompt="You are an agent in charge of classificating user's queries into different categories of tasks.", query_classification_model=None, query_classification_provider=None):
         #get the labels dictionary from the config file
         if labels_dict is None:
             self.labels_dict = config["actions_dict"]
@@ -34,12 +34,20 @@ class IntentClassifier:
         with open("prompts/llm_text_classification.txt", "r",encoding='utf-8') as file:
             self.classification_prompt = file.read()
             
-        self.system_prompt="You are an agent in charge of classificating user's queries into different categories of tasks."
+        self.system_prompt=classifier_system_prompt
         
         # Instantiation using from_template (recommended)
         self.classification_prompt = PromptTemplate.from_template(self.classification_prompt)
-        self.query_classification_model = config["query_classification_model"]
-        self.query_classification_provider = config["query_classification_provider"]
+        if query_classification_model is None:
+            self.query_classification_model = config["query_classification_model"]
+        else:
+            self.query_classification_model = query_classification_model
+        if query_classification_provider is None:
+            self.query_classification_provider = config["query_classification_provider"]
+        else:
+            self.query_classification_provider = query_classification_provider
+            
+            
         
     @lru_cache(maxsize=None)
     def _get_pipeline(self):
@@ -57,7 +65,7 @@ class IntentClassifier:
         """
         return pipeline("zero-shot-classification", model="knowledgator/comprehend_it-base", device='cuda',torch_dtype=torch.float16)
 
-    def classify(self, text,method="zero-shot"):
+    def classify(self, text: str,method: str="zero-shot"):
         """
         Classify the given text into one of the predefined labels from the config.
 
@@ -78,14 +86,13 @@ class IntentClassifier:
         elif method=="LLM":
             from src.main_utils.generation_utils_v2 import LLM_answer_v3
             full_prompt=self.classification_prompt.format(user_query=text,labels_dict=str(self.labels_dict))
-            print("LAbels dict used:",self.labels_dict)
+            #print("LAbels dict used:",self.labels_dict)
 
             answer=LLM_answer_v3(prompt=full_prompt,model_name=self.query_classification_model,llm_provider=self.query_classification_provider,system_prompt=self.system_prompt,stream=False,tool_list=[])
-            print("Answer:",answer)
-            print("Type:",type(answer))
+            #print("Answer:",answer)
+            #print("Type:",type(answer))
             return answer
             
-        
         return None
 
 if __name__ == "__main__":

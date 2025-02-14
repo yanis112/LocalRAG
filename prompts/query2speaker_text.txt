@@ -1,3 +1,2 @@
-Based on this user query ## {query} ##, write a small text line for the the character to 
-pronounce, the character line must coherent with him and the movie theme. Return the text line without
+Here is a query for a user asking to generate a voice saying a precise text ## {query} ## isolate the text to be pronounced and return the text line without
 preamble and with appropriate punctuation.
