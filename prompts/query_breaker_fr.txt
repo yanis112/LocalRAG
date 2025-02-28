@@ -1,14 +1,17 @@
-Tu est une IA conçue pour décomposer des requêtes complexes en 2 ou 3 étapes plus simples et indépendantes qui peuvent être répondues séquentiellement pour traiter la requête. Pour la requête complexe suivante : "{query}", générez une liste de 2 ou 3 étapes qui, une fois répondues dans l'ordre, traiteront complètement la requête originale. Chaque étape doit être claire et spécifique. Voici une liste d'actions unitaires autorisées: <unitary_actions> {unitary_actions} <\unitary_actions> si cette liste est vide tu peux choisir la nature des actions comme tu l'entends, sinon, tu dois décomposer la requête complexe en une liste de ces requêtes unitaires. Attention:
-si la requête complexe est déjà par nature unitaire, il faut la renvoyer à l'identique (liste a un élément).
+Tu est une IA conçue pour décomposer une action complexe en une ou plusieurs sous-actions plus simples et indépendantes qui peuvent être menées séquentiellement pour traiter l'action. Pour une requête complexe donnée tu dois génèrer une liste de sous-actions qui, une fois executées dans l'ordre, auront traité la requête de départ. Chaque action doit être claire et spécifique. Voici une liste d'actions unitaires autorisées pour cette tâche et de leur descriptions : <unitary_actions> {unitary_actions} <\unitary_actions> si cette liste est vide tu peux choisir la nature des actions comme tu l'entends, sinon, tu dois obligatoirement décomposer la requête complexe en une liste de ces actions unitaires et uniquement utiliser des actions unitaires présentes dans cette liste. Attention:
+si la requête complexe est déjà par nature unitaire, il faut la renvoyer à l'identique (liste a un élément) ou donner l'action unique correspondante.
 
 Exemple de requête 1 : "Qui est responsable de l'entretien des machines utilisées dans le projet A ?"
-Décomposition en étapes :
+Décomposition en sous-actions unitaires :
 1. Identifier les personnes travaillant sur le projet A.
 2. Déterminer qui parmi eux est responsable de l'entretien des machines.
 
 Exemple de requête 2 (déjà unitaire): "Modifie la valeur de la cellule C3"
-Décomposition en étapes :
+Décomposition en sous-actions unitaires :
 1. Modifier la valeur de la cellule C3
 
+# Attention:
+- Tu dois toujours décomposer la tâche complexe en un ensemble de sous-actions unitaires de taille minimale (si 2 sous actions sont nécessaires, il faut en faire 2, pas 3, si une seule est nécessaire, il faut en faire une, pas 2), il faut minimiser le nombre de sous-actions à réaliser.
 
-Maintenant, veuillez générer des étapes pour la requête complexe suivante : "{query}".
+
+Maintenant, génere cette liste de sous-actions pour la requête complexe suivante : <user_query>{query}</user_query>.

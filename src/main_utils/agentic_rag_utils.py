@@ -7,6 +7,7 @@ from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
+from src.aux_utils.text_classification_utils import IntentClassifier
 
 load_dotenv()
 
@@ -200,6 +201,51 @@ class QueryBreaker:
             return answer["list_steps"]
         else:
             return "ISSUE WITH THE ANSWER FORMAT !"
+        
+class SupervisorAgent:
+    
+    """
+    An AI Agent whose goal is to plan tasks based on initial query, to supervise
+    and give tasks to other agents that it initializes and then aggregate the results.
+    """
+    
+    def __init__(self, config: dict, sub_agents_list: list):
+        self.config = config
+        self.model_name = config["model_name"]
+        self.llm_provider = config["llm_provider"]
+        self.temperature = config["temperature"]
+        self.query_breaker = QueryBreaker(config=config)
+        self.intent_classifier = IntentClassifier(config=config)
+        
+        self.sub_agents_list = sub_agents_list #a list containing the sub-agents to be used
+        #build a dictionary of sub-agents containing the sub-agents instances and their/associated docstring using __class__.__doc__ and agent name
+        self.sub_agents_dict = {agent.__class__.__doc__: agent for agent in sub_agents_list}
+        self.list_sub_tasks=[]
+        
+        if not self.sub_agents_dict:
+            raise ValueError("The sub_agents_list must contain at least one agent.")
+        
+        
+    def planify(self, query):
+        """
+        Breaks down the query into sub-steps using the QueryBreaker.
+        """
+        
+        self.list_sub_tasks = self.query_breaker.break_query(query) #unitary_actions=[agent.__class__.__doc__ for agent in self.sub_agents_list])
+        return self.list_sub_tasks
+    
+    def root_task(self, query):
+        """
+        The root task is the main task that the supervisor agent is responsible for.
+        """
+        #classify the intent of the query
+        intent = self.intent_classifier.classify_intent(query)
+        
+        
+        
+    
+    
+        
 
 
 class AggregatorReranker:

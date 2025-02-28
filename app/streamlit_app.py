@@ -1,3 +1,4 @@
+from jobspy import scrape_jobs
 import os
 import torch
 import streamlit as st
@@ -42,7 +43,7 @@ def main():
     # defining the allowed data sources in the variable options
     # options = st.session_state["config"]["data_sources"]
     
-    st.sidebar.page_link(page="pages/sources_page.py", label="Data Sources")
+    st.sidebar.page_link(page="pages/sources_page.py", label="Data Sources",icon="📜",help="Acces to the sources used by the AI to answer")
 
     # Define sidebar parameters
     st.sidebar.header("Search Settings")

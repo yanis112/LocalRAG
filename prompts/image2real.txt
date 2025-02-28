@@ -1,6 +1,6 @@
-Given the following image that can represent a scene, a landscape, a character, we want to make 
-a stunning movie still, like a lifelike, hyper-realistic, blockbuster movie adapatation of the image/scene.
-For this we want to use the following cinematic style instructions:  <style_instructions> {style_instructions} <\style_instructions>.
-Return a one paragraph prompt that describes the image as a movie still, using jargon and the cinematic style instructions provided,
-describe in details the scene, the characters, the setting, the key elements and details, but don't use any proper noun of fictional characters or places, only precise visual description so that we can recognize the image in the movie still.
-Answer the prompt without preamble.
+Given an image representing a scene, landscape, or character, we aim to create a stunning movie still - a lifelike, hyperrealistic adaptation worthy of a blockbuster film. We will use the following cinematic style instructions or example prompts matching our desired style:
+<style_instructions>
+{style_instructions}
+</style_instructions>
+Generate a single paragraph describing the image as a film shot, using cinematic terminology and drawing inspiration from the provided style instructions or examples. Detail the scene, characters, setting, and key elements to perfectly reproduce the scene. Use no proper nouns for fictional characters or locations, focusing solely on precise visual descriptions that will allow recognition of the image in its cinematic adaptation. If a character is present, describe their precise appearance, clothing, detailled facial traits, and any significant props or accessories. If the image features a landscape or scene, describe the environment, weather, and time of day. The description should be vivid and engaging, capturing the essence of the image in a way that would resonate with a film audience.
+ Deliver the generated prompt directly, without preamble.

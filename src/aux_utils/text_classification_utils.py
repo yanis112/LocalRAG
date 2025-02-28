@@ -29,7 +29,7 @@ class IntentClassifier:
         else:
             self.labels_dict = labels_dict
             self.labels = list(labels_dict.keys())
-        self.pipeline = self._get_pipeline()
+        
         #load the classification prompt template from a txt file
         with open("prompts/llm_text_classification.txt", "r",encoding='utf-8') as file:
             self.classification_prompt = file.read()
@@ -78,6 +78,7 @@ class IntentClassifier:
         """
         
         if method=="zero-shot":
+            self.pipeline = self._get_pipeline()
             results = self.pipeline(text, self.labels)
             if results:
                 most_probable_class = max(results["labels"], key=lambda x: results["scores"][results["labels"].index(x)])

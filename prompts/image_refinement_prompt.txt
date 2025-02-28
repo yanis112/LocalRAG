@@ -1,0 +1,33 @@
+Given the following initial description of a movie scene derived from the image given
+
+<previous_description>
+{previous_description}
+</previous_description>
+
+And maintaining the cinematic style instructions of the previous description.
+Refine and expand upon this description, transforming it into an even more stunning and hyperrealistic movie still representation.  Your task is to analyse again the given image, to identify and add any missing key visual details, enhancing the richness and accuracy of the scene. Consider the following aspects and incorporate them into the revised description where appropriate:
+
+*   **Characters Details:** Elaborate on the precise physical characteristics of any characters present.  This includes, but is not limited to:
+    *   Facial features (shape, specific details like scars, wrinkles, eye shape, nose shape, etc.)
+    *   Hair (color, texture, style, length)
+    *   Build (height, weight, musculature, posture)
+    *   Posture and actions (standing, sitting, running, etc.)
+    *   Skin tone and texture (blemishes, freckles, pores, etc.)
+    *   Minute details of clothing (fabric texture, wear and tear, specific patterns, fastenings)
+    *   Accessories (jewelry, watches, bags, weapons, tools – describe their materials, condition, and any unique markings)
+
+*   **Setting and Environment Details:**
+    *   Specific types of flora and fauna.
+    *   Precise weather conditions (type of cloud cover, intensity and direction of light, presence and type of precipitation, wind strength).
+    *   Ground texture and composition (e.g., cracked earth, smooth stones, loose gravel).
+    *   Architectural details (materials, style, condition, specific ornamentation).
+    *   Background elements (distant objects, their relative size and clarity).
+    *   Color Palette: enrich the color description. Specify hues, shades, and tones. Describe the interplay of light and shadow on the colors.
+
+*   **Prop Details:**
+    *   Material composition of props.
+    *   Condition (new, worn, damaged, rusty, etc.).
+    *   Specific markings or engravings.
+    *   How the props are held or positioned.
+
+Maintain the cinematic terminology and description structure and descriptive style of the original prompt.  The revised description should be a single, cohesive paragraph that builds upon the `previous_description`, adding depth and detail without changing the core scene. Avoid proper nouns for fictional characters and locations. Focus on providing a vividly detailed and engaging description, suitable for translating the image into a blockbuster film scene. Deliver the refined prompt directly without preamble.

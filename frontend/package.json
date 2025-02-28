@@ -1,0 +1,40 @@
+{
+  "name": "@frontend/frontend",
+  "version": "1.0.0",
+  "main": "postcss.config.js",
+  "dependencies": {
+    "browserslist": "^4.24.4",
+    "camelcase-css": "^2.0.1",
+    "caniuse-lite": "^1.0.30001695",
+    "css-selector-tokenizer": "^0.8.0",
+    "cssesc": "^3.0.0",
+    "culori": "^3.3.0",
+    "electron-to-chromium": "^1.5.88",
+    "escalade": "^3.2.0",
+    "fastparse": "^1.1.2",
+    "fraction.js": "^4.3.7",
+    "nanoid": "^3.3.8",
+    "node-releases": "^2.0.19",
+    "normalize-range": "^0.1.2",
+    "picocolors": "^1.1.1",
+    "postcss-js": "^4.0.1",
+    "postcss-value-parser": "^4.2.0",
+    "source-map-js": "^1.2.1",
+    "update-browserslist-db": "^1.1.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.23",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./src/styles.css -o ./styles.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": ""
+}

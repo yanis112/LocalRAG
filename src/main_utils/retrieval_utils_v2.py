@@ -34,7 +34,7 @@ logger = setup_logger(
 
 
 class RetrievalAgent:
-    def __init__(self, default_config, config={}):
+    def __init__(self, default_config, config={},qdrant_client=None):
         """
         Initialize the retrieval utility with the given configuration.
 
@@ -51,14 +51,20 @@ class RetrievalAgent:
             raw_database: The existing Qdrant database retrieved using the configuration.
         """
         self.config = {**default_config, **config}
+        #get dense embedding model
         self.embedding_model = get_embedding_model(
             model_name=self.config["embedding_model"]
         )
+        #get sparse embedding model
         self.sparse_embedding_model = get_sparse_embedding_model(
             model_name=self.config["sparse_embedding_model"]
         )
         # self.raw_database = self.get_existing_qdrant(self.config["persist_directory"], self.config["embedding_model"])
-        self.client = QdrantClient(path=self.config["persist_directory"])
+        if qdrant_client:
+            self.client = qdrant_client
+        else:
+            print("path",self.config["persist_directory"])
+            self.client = QdrantClient(path=self.config["persist_directory"])
         self.raw_database = self.get_existing_qdrant_v3()
 
     def apply_field_filter_qdrant(

@@ -164,6 +164,8 @@ def LLM_answer_v3(
     format_type=None,
     model_name: str =None,
     temperature: float = 1,
+    top_p: float = 0.95,
+    top_k: int =45,
     stream: bool =False,
     llm_provider: str =None,
     system_prompt: str=None,
@@ -210,6 +212,8 @@ def LLM_answer_v3(
         llm_provider=llm_provider,
         temperature=temperature,
         tool_list=tool_list,
+        top_p=top_p,
+        top_k=top_k,
     )
     if system_prompt is not None:
         llm.system_prompt = system_prompt
@@ -264,14 +268,20 @@ def LLM_answer_v3(
 
 
 class RAGAgent:
-    def __init__(self, default_config, config={"stream": False}):
+    def __init__(self, default_config, config={"stream": False},qdrant_client=None):
         self.default_config = default_config
         self.config = config
         self.merged_config = {**default_config, **config}
-        self.retrieval_agent = RetrievalAgent(
-            default_config=default_config, config=config
-        )
-        self.client = self.retrieval_agent.client  # client transmission to the RAGAgent
+        if qdrant_client is None:
+            self.retrieval_agent = RetrievalAgent(
+                default_config=default_config, config=config
+            )
+            self.client = self.retrieval_agent.client  # client transmission to the RAGAgent
+        else:
+            self.client = qdrant_client
+            self.retrieval_agent = RetrievalAgent(
+                default_config=default_config, config=config, qdrant_client=qdrant_client
+            )
         self.system_prompt = None
 
     @log_execution_time

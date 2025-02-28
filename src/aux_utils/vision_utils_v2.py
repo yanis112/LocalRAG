@@ -2,21 +2,29 @@ from PIL import Image
 from groq import Groq
 import google.generativeai as genai
 import os
-from typing import Optional, List, Union
-from concurrent.futures import ThreadPoolExecutor
+from typing import Optional
 import tempfile
 import time
-from tqdm import tqdm
-from transformers import AutoProcessor, AutoModelForCausalLM
 import torch
+from transformers import AutoProcessor, AutoModelForCausalLM
+from langchain.prompts import PromptTemplate
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import (
+    SystemMessage,
+    UserMessage,
+    TextContentItem,
+    ImageContentItem,
+    ImageUrl,
+    ImageDetailLevel,
+)
+from azure.core.credentials import AzureKeyCredential
 
 class ImageAnalyzerAgent:
     """
     A class for analyzing and describing images using various AI models.
 
     This class provides a unified interface to interact with different vision models,
-    including Groq, Hugging Face's Florence-2, and Google's Gemini.
-    It supports optional grid processing for more detailed image descriptions.
+    including Groq, Hugging Face's Florence-2, Google's Gemini.
 
     Attributes:
         prompt (str): The default prompt used for image descriptions.
@@ -30,25 +38,21 @@ class ImageAnalyzerAgent:
         processor (transformers.PreTrainedProcessor): The processor for preparing inputs for the model.
         groq_client (Groq): The client for accessing the Groq service.
         gemini_token (str): The API key for accessing the Google Gemini service.
-
-    Methods:
-        __init__(model_name="gpt-4o-mini"): Initializes the ImageAnalyzerAgent.
-        load_florence_model(): Loads the Florence-2 model and processor.
-        get_image_data_url(image_file: str, image_format: str) -> str: Converts an image file to a data URL string.
-        _describe_piece(client, image_data_url, prompt, i, j) -> str: Describes a piece of the image using OpenAI's model.
-        resize_image(image: Image, max_size: int = 512) -> Image: Resizes the image while maintaining aspect ratio.
-        _describe_openai(image_path: str, prompt: str, grid_size: int, model_name:str="gpt-4o-mini", max_size: int = 768) -> str: Describes an image using OpenAI's model with optional grid processing.
-        _describe_with_groq(image_path: str, prompt: str, model_name: str="llama-3.2-90b-vision-preview", max_size: int = 768) -> str: Describes an image using Groq's vision model.
-        _describe_gemini(image_path: str, prompt: str, model_name: str="gemini-1.5-flash") -> str: Describes an image using a specified Gemini model.
-        _describe_with_florence(image_path: str, prompt: str, grid_size: int) -> str: Describes an image using the florence2 model.
-        describe(image_path: str, prompt: Optional[str] = None, vllm_provider: str = "florence2", model_name: Optional[str]=None , grid_size: int = 1) -> str: Unified method to describe an image using a specified provider.
     """
 
     prompt = "<MORE_DETAILED_CAPTION>"
 
-    def __init__(self):
-        """Initializes the ImageAnalyzerAgent."""
+    def __init__(self, config=None):
+        """
+        Initializes the ImageAnalyzerAgent.
+        
+        Args:
+            config (dict, optional): Configuration dictionary containing generation parameters.
+                                   Defaults to None.
+        """
         from dotenv import load_dotenv
+        
+        self.config = config
 
         load_dotenv()
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -60,6 +64,9 @@ class ImageAnalyzerAgent:
         self.gemini_token = os.environ.get("GOOGLE_API_KEY")
         if self.gemini_token:
             genai.configure(api_key=self.gemini_token)
+        
+        # Default refinement prompt template path
+        self.default_refinement_prompt_path = "prompts/image_refinement_prompt.txt"
 
     def load_florence_model(self):
          """Load the Florence-2 model and processor."""
@@ -70,6 +77,12 @@ class ImageAnalyzerAgent:
             "microsoft/Florence-2-large", trust_remote_code=True
         )
     
+    def load_refinement_prompt(self, prompt_path: str) -> PromptTemplate:
+        """Load and return the refinement prompt template."""
+        with open(prompt_path, "r", encoding='utf-8') as f:
+            template = f.read()
+        return PromptTemplate.from_template(template)
+
     def get_image_data_url(self, image_file: str, image_format: str) -> str:
         """Convert an image file to a data URL string."""
         import base64
@@ -80,9 +93,73 @@ class ImageAnalyzerAgent:
             print(f"Could not read '{image_file}'.")
             exit()
         return f"data:image/{image_format};base64,{image_data}"
+
+    def resize_image(self, image: Image, max_size: int = 512) -> Image:
+        """Resize image if it exceeds maximum dimension while maintaining aspect ratio."""
+        width, height = image.size
+        if width > max_size or height > max_size:
+            if width > height:
+                new_width = max_size
+                new_height = int(height * (max_size / width))
+            else:
+                new_height = max_size
+                new_width = int(width * (max_size / height))
+            return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        return image
     
-    def _describe_piece(self, client, image_data_url, prompt, i, j) -> str:
-        """Describe a piece of the image using OpenAI's model."""
+    def _describe_openai(self, image_path: str, prompt: str, model_name:str="gpt-4o-mini", max_size: int = 768, 
+                        refinement_steps: int = 1, refinement_prompt_path: Optional[str] = None) -> str:
+        """
+        Describe an image using OpenAI's model with optional refinement steps.
+    
+        Args:
+            image_path (str): Path to the image file.
+            prompt (str): The prompt to guide the image description.
+            model_name (str): The name of the OpenAI model to use.
+            max_size (int): Maximum size of the image dimension before resizing.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
+    
+        Returns:
+            str: The generated image description text.
+        """
+        from openai import OpenAI
+        
+        client = OpenAI(
+            base_url=self.endpoint,
+            api_key=self.token,
+        )
+        
+        # Initial image processing
+        image = Image.open(image_path)
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        image = self.resize_image(image, max_size)
+        
+        # Save resized image to temporary file
+        image_format = image_path.split('.')[-1]
+        with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
+            image.save(temp_file.name)
+            image_data_url = self.get_image_data_url(temp_file.name, image_format)
+        
+        # Initial description
+        current_description = self._get_openai_description(client, image_data_url, prompt, model_name)
+        
+        # Refinement steps
+        if refinement_steps > 1:
+            template = self.load_refinement_prompt(refinement_prompt_path or self.default_refinement_prompt_path)
+            
+            for _ in range(refinement_steps - 1):
+                refined_prompt = template.format(
+                    original_query=prompt,
+                    previous_answer=current_description
+                )
+                current_description = self._get_openai_description(client, image_data_url, refined_prompt, model_name)
+        
+        return current_description
+
+    def _get_openai_description(self, client, image_data_url: str, prompt: str, model_name: str) -> str:
+        """Helper method to get description from OpenAI."""
         response = client.chat.completions.create(
             messages=[
                 {
@@ -106,125 +183,30 @@ class ImageAnalyzerAgent:
                     ],
                 },
             ],
-            model=self.model_name,
-        )
-        piece_caption_text = f"({i}, {j}) description: " + response.choices[0].message.content
-        print("Piece caption:", piece_caption_text)
-        return piece_caption_text
-
-    def resize_image(self, image: Image, max_size: int = 512) -> Image:
-        """Resize image if it exceeds maximum dimension while maintaining aspect ratio."""
-        width, height = image.size
-        if width > max_size or height > max_size:
-            if width > height:
-                new_width = max_size
-                new_height = int(height * (max_size / width))
-            else:
-                new_height = max_size
-                new_width = int(width * (max_size / height))
-            return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        return image
-    
-    def _describe_openai(self, image_path: str, prompt: str, grid_size: int, model_name:str="gpt-4o-mini", max_size: int = 768) -> str:
-        """
-        Describe an image using OpenAI's model with optional grid processing.
-    
-        Args:
-            image_path (str): Path to the image file.
-            prompt (str): The prompt to guide the image description.
-            grid_size (int): The number of grid cells in a row/column (for grid processing).
-            model_name (str): The name of the OpenAI model to use.
-            max_size (int): Maximum size of the image dimension before resizing.
-    
-        Returns:
-            str: The generated image description text.
-        """
-        from openai import OpenAI
-        
-        client = OpenAI(
-            base_url=self.endpoint,
-            api_key=self.token,
-        )
-        
-        # Open and resize the image
-        image = Image.open(image_path)
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-        image = self.resize_image(image, max_size)
-        
-        # Save resized image to temporary file
-        image_format = image_path.split('.')[-1]
-        with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
-            image.save(temp_file.name)
-            image_data_url = self.get_image_data_url(temp_file.name, image_format)
-        
-        # Get global description
-        global_response = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant that describes images in details.",
-                },
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": prompt,
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": image_data_url,
-                                "detail": "low"
-                            },
-                        },
-                    ],
-                },
-            ],
             model=model_name,
+            temperature=self.config["temperature"],
+            max_tokens=self.config["max_tokens"]
         )
-        global_caption_text = global_response.choices[0].message.content
-        
-        if grid_size > 1:
-            width, height = image.size
-            piece_width, piece_height = width // grid_size, height // grid_size
-            tasks = []
-            
-            with ThreadPoolExecutor() as executor:
-                for i in range(grid_size):
-                    for j in range(grid_size):
-                        left = j * piece_width
-                        upper = i * piece_height
-                        right = left + piece_width
-                        lower = upper + piece_height
-                        piece = image.crop((left, upper, right, lower))
-            
-                        with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
-                            piece.save(temp_file.name)
-                            piece_data_url = self.get_image_data_url(temp_file.name, image_format)
-                            tasks.append(executor.submit(self._describe_piece, client, piece_data_url, prompt, i, j))
-                
-                captions = [task.result() for task in tasks]
-            return global_caption_text + "\n" + "\n".join(captions)
-        else:
-            return global_caption_text
+        return response.choices[0].message.content
 
-    def _describe_with_groq(self, image_path: str, prompt: str, model_name: str="llama-3.2-90b-vision-preview", max_size: int = 768) -> str:
+    def _describe_with_groq(self, image_path: str, prompt: str, model_name: str="llama-3.2-90b-vision-preview", 
+                           max_size: int = 768, refinement_steps: int = 1, 
+                           refinement_prompt_path: Optional[str] = None) -> str:
         """
-        Describe an image using Groq's vision model.
+        Describe an image using Groq's vision model with optional refinement steps.
     
         Args:
             image_path (str): Path to the image file.
             prompt (str): The prompt to guide the image description.
             model_name (str): The name of the Groq model to use.
             max_size (int): Maximum size of the image dimension before resizing.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
     
         Returns:
             str: The generated image description text.
         """
-        
-        # Open and resize image
+        # Image processing
         image = Image.open(image_path)
         if image.mode != 'RGB':
             image = image.convert('RGB')
@@ -235,8 +217,25 @@ class ImageAnalyzerAgent:
         with tempfile.NamedTemporaryFile(suffix=f".{image_format}", delete=False) as temp_file:
             image.save(temp_file.name)
             image_data_url = self.get_image_data_url(temp_file.name, image_format)
-    
-        # Get global description
+        
+        # Initial description
+        current_description = self._get_groq_description(image_data_url, prompt, model_name)
+        
+        # Refinement steps
+        if refinement_steps > 1:
+            template = self.load_refinement_prompt(refinement_prompt_path or self.default_refinement_prompt_path)
+            
+            for _ in range(refinement_steps - 1):
+                refined_prompt = template.format(
+                    original_query=prompt,
+                    previous_answer=current_description
+                )
+                current_description = self._get_groq_description(image_data_url, refined_prompt, model_name)
+        
+        return current_description
+
+    def _get_groq_description(self, image_data_url: str, prompt: str, model_name: str) -> str:
+        """Helper method to get description from Groq."""
         completion = self.groq_client.chat.completions.create(
             model=model_name,
             messages=[
@@ -256,91 +255,187 @@ class ImageAnalyzerAgent:
                     ]
                 }
             ],
-            temperature=1,
-            max_tokens=1024
+            temperature=self.config["temperature"],
+            max_tokens=self.config["max_tokens"]
         )
-        
         return completion.choices[0].message.content
-    
-    def _describe_gemini(self, image_path: str, prompt: str, model_name: str="gemini-1.5-flash") -> str:
-         """
-         Describes an image using a specified Gemini model.
+
+    def _describe_gemini(self, image_path: str, prompt: str, model_name: str="gemini-1.5-flash",
+                        refinement_steps: int = 1, refinement_prompt_path: Optional[str] = None) -> str:
+        """
+        Describes an image using a specified Gemini model with optional refinement steps.
     
         Args:
             image_path (str): Path to the image file.
             prompt (str): The prompt to guide the image description.
             model_name (str): The name of the Gemini model to use.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
         Returns:
-             str: The generated image description text.
-         """
-         try:
-             # Load the image
-             image = Image.open(image_path)
-             if image.mode != 'RGB':
-                 image = image.convert('RGB')
-             model = genai.GenerativeModel(model_name)
-             response = model.generate_content([prompt, image])
-             return response.text
-         except Exception as e:
-             return f"Error during Gemini description: {e}"
-    
-    def _describe_with_florence(self, image_path: str, prompt: str, grid_size: int) -> str:
-        """Describe an image using the florence2 model."""
+            str: The generated image description text.
+        """
+        try:
+            generation_config = {
+                "temperature": self.config["temperature"],
+                "top_p": self.config["top_p"],
+                "top_k": self.config["top_k"],
+                "max_output_tokens": self.config["max_tokens"],
+                "response_mime_type": "text/plain",
+            }
+
+            # Load the image
+            image = Image.open(image_path)
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+            
+            model = genai.GenerativeModel(model_name=model_name, generation_config=generation_config)
+            
+            # Initial description
+            current_description = model.generate_content([prompt, image]).text
+            
+            # Refinement steps
+            if refinement_steps > 1:
+                print("Refining the prompt for extra steps...")
+                template = self.load_refinement_prompt(refinement_prompt_path or self.default_refinement_prompt_path)
+                
+                for _ in range(refinement_steps - 1):
+                    refined_prompt = template.format(
+                        previous_description=current_description
+                    )
+                    current_description = model.generate_content([refined_prompt, image]).text
+            
+            return current_description
+        except Exception as e:
+            return f"Error during Gemini description: {e}"
+
+    def _describe_with_florence(self, image_path: str, prompt: str, 
+                              refinement_steps: int = 1, refinement_prompt_path: Optional[str] = None) -> str:
+        """
+        Describe an image using the florence2 model with optional refinement steps.
+        
+        Args:
+            image_path (str): Path to the image file.
+            prompt (str): The prompt to guide the image description.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
+        Returns:
+            str: The generated image description text.
+        """
         self.load_florence_model()
         image = Image.open(image_path)
         if image.mode != 'RGB':
-                image = image.convert('RGB')
-        start_time = time.time()
+            image = image.convert('RGB')
+        
+        # Initial description
+        current_description = self._get_florence_description(image, prompt)
+        
+        # Refinement steps
+        if refinement_steps > 1:
+            template = self.load_refinement_prompt(refinement_prompt_path or self.default_refinement_prompt_path)
+            
+            for _ in range(refinement_steps - 1):
+                refined_prompt = template.format(
+                    original_query=prompt,
+                    previous_answer=current_description
+                )
+                current_description = self._get_florence_description(image, refined_prompt)
+        
+        return current_description
+
+    def _get_florence_description(self, image: Image, prompt: str) -> str:
+        """Helper method to get description from Florence model."""
         inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device, self.torch_dtype)
         generated_ids = self.model.generate(
-             input_ids=inputs["input_ids"],
+            input_ids=inputs["input_ids"],
             pixel_values=inputs["pixel_values"],
-            max_new_tokens=1024,
+            max_new_tokens=self.config["max_tokens"],
             num_beams=3,
-            do_sample=False,
-         )
-        global_caption = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
-        global_caption = self.processor.post_process_generation(global_caption, task="<CAPTION>", image_size=(image.width, image.height))
-        global_caption_text = "whole image description: " + global_caption["<CAPTION>"]
-        width, height = image.size
-        piece_width, piece_height = width // grid_size, height // grid_size
-        captions = [global_caption_text]
-        for i in tqdm(range(grid_size), desc="Processing rows"):
-            for j in range(grid_size):
-                left = j * piece_width
-                upper = i * piece_height
-                right = left + piece_width
-                lower = upper + piece_height
-                piece = image.crop((left, upper, right, lower))
-                if piece.mode != 'RGB':
-                     piece = piece.convert('RGB')
-                inputs = self.processor(text=prompt, images=piece, return_tensors="pt").to(self.device, self.torch_dtype)
-                generated_ids = self.model.generate(
-                    input_ids=inputs["input_ids"],
-                    pixel_values=inputs["pixel_values"],
-                    max_new_tokens=1024,
-                    num_beams=3,
-                    do_sample=False,
-                )
-                piece_caption = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
-                piece_caption = self.processor.post_process_generation(piece_caption, task="<CAPTION>", image_size=(piece.width, piece.height))
-                piece_caption_text = f"({i}, {j}) description: " + piece_caption["<CAPTION>"]
-                print("Piece caption:", piece_caption_text)
-                captions.append(piece_caption_text)
-        end_time = time.time()
-        print("Time taken to generate captions: ", end_time - start_time)
-        return "\n".join(captions)
+            do_sample=True,
+            temperature=self.config["temperature"],
+            top_p=self.config["top_p"],
+            top_k=self.config["top_k"]
+        )
+        caption = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
+        caption = self.processor.post_process_generation(caption, task="<CAPTION>", image_size=(image.width, image.height))
+        return caption["<CAPTION>"]
     
-    def describe(self, image_path: str, prompt: Optional[str] = None, vllm_provider: str = "florence2", vllm_name: Optional[str]=None, grid_size: int = 1) -> str:
+    def _describe_phi4(self, image_path: str, prompt: str, model_name: str="Phi-4-multimodal-instruct", 
+                      refinement_steps: int = 1, refinement_prompt_path: Optional[str] = None) -> str:
+        """
+        Describe an image using Microsoft's Phi-4 multimodal model with optional refinement steps.
+    
+        Args:
+            image_path (str): Path to the image file.
+            prompt (str): The prompt to guide the image description.
+            model_name (str): The name of the Phi-4 model to use.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
+    
+        Returns:
+            str: The generated image description text.
+        """
+        # Create Azure client
+        client = ChatCompletionsClient(
+            endpoint=self.endpoint,
+            credential=AzureKeyCredential(self.token),
+        )
+        
+        # Get image format
+        image_format = image_path.split('.')[-1].lower()
+        
+        # Initial description
+        current_description = self._get_phi4_description(client, image_path, prompt, image_format, model_name)
+        
+        # Refinement steps
+        if refinement_steps > 1:
+            template = self.load_refinement_prompt(refinement_prompt_path or self.default_refinement_prompt_path)
+            
+            for _ in range(refinement_steps - 1):
+                refined_prompt = template.format(
+                    previous_description=current_description
+                )
+                current_description = self._get_phi4_description(client, image_path, refined_prompt, image_format, model_name)
+        
+        return current_description
+
+    def _get_phi4_description(self, client, image_path: str, prompt: str, image_format: str, model_name: str) -> str:
+        """Helper method to get description from Phi-4 model."""
+        try:
+            response = client.complete(
+                messages=[
+                    UserMessage(
+                        content=[
+                            TextContentItem(text=prompt),
+                            ImageContentItem(
+                                image_url=ImageUrl.load(
+                                    image_file=image_path,
+                                    image_format=image_format,
+                                    detail=ImageDetailLevel.LOW)
+                            ),
+                        ],
+                    ),
+                ],
+                model=model_name,
+                temperature=self.config["temperature"] if self.config else 1.0,
+                max_tokens=self.config["max_tokens"] if self.config else 8000,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Error during Phi-4 description: {e}"
+
+    def describe(self, image_path: str, prompt: Optional[str] = None, vllm_provider: str = "florence2", 
+                vllm_name: Optional[str]=None, refinement_steps: int = 1, 
+                refinement_prompt_path: Optional[str] = None) -> str:
         """
         Unified method to describe an image using a specified provider.
 
         Args:
             image_path (str): Path to the image file.
-            prompt (str, optional): The prompt to guide the image description. Defaults to None.
-            vllm_provider (str, optional): The provider of the vision model. Defaults to "florence2".
-            model_name (str, optional): The name of the model to use. Defaults to None.
-            grid_size (int, optional): The number of grid cells in a row/column for grid processing. Defaults to 1.
+            prompt (str, optional): The prompt to guide the image description.
+            vllm_provider (str, optional): The provider of the vision model.
+            vllm_name (str, optional): The name of the model to use.
+            refinement_steps (int): Number of refinement iterations. Default is 1 (no refinement).
+            refinement_prompt_path (str, optional): Path to the refinement prompt template.
 
         Returns:
             str: The generated image description text.
@@ -352,19 +447,43 @@ class ImageAnalyzerAgent:
             prompt = self.prompt
 
         if vllm_provider == "florence2":
-            return self._describe_with_florence(image_path, prompt, grid_size)
+            return self._describe_with_florence(image_path, prompt, refinement_steps, refinement_prompt_path)
         elif vllm_provider == "groq":
             if not self.groq_client:
                 raise ValueError("Groq API key not found in environment variables")
-            return self._describe_with_groq(image_path, prompt, model_name= vllm_name if vllm_name else "llama-3.2-90b-vision-preview")
+            return self._describe_with_groq(
+                image_path, prompt, 
+                model_name=vllm_name if vllm_name else "llama-3.2-90b-vision-preview",
+                refinement_steps=refinement_steps,
+                refinement_prompt_path=refinement_prompt_path
+            )
         elif vllm_provider == "github":
-             return self._describe_openai(image_path, prompt, grid_size, model_name=vllm_name if vllm_name else 'gpt-4o-mini')
+            if vllm_name == "phi-4-multimodal-instruct":
+                return self._describe_phi4(
+                    image_path, prompt,
+                    model_name=vllm_name,
+                    refinement_steps=refinement_steps,
+                    refinement_prompt_path=refinement_prompt_path
+                )
+            else:
+                return self._describe_openai(
+                    image_path, prompt, 
+                    model_name=vllm_name if vllm_name else 'gpt-4o-mini',
+                    refinement_steps=refinement_steps,
+                    refinement_prompt_path=refinement_prompt_path
+                )
         elif vllm_provider == "gemini":
-             return self._describe_gemini(image_path, prompt, model_name= vllm_name if vllm_name else "gemini-1.5-flash")
+            return self._describe_gemini(
+                image_path, prompt, 
+                model_name=vllm_name if vllm_name else "gemini-1.5-flash",
+                refinement_steps=refinement_steps,
+                refinement_prompt_path=refinement_prompt_path
+            )
         else:
             raise ValueError(
-                "Unsupported provider. Choose from 'florence2', 'groq', 'github' or 'gemini'."
+                "Unsupported provider. Choose from 'florence2', 'groq', 'github', or 'gemini'."
             )
+
 # Example usage
 if __name__ == "__main__":
     analyzer = ImageAnalyzerAgent()
@@ -393,13 +512,23 @@ if __name__ == "__main__":
     
     print("#############################################")
 
-    # Example using github
+    # Example using github with GPT-4o-mini
     start_time = time.time()
     description_github = analyzer.describe(
         image_path, prompt=prompt, vllm_provider="github", vllm_name="gpt-4o-mini"
     )
     end_time = time.time()
-    print(f"\nGithub Description:\n{description_github}")
-    print("Github process took:", end_time - start_time, "seconds.")
+    print(f"\nGithub (GPT-4o-mini) Description:\n{description_github}")
+    print("Github (GPT-4o-mini) process took:", end_time - start_time, "seconds.")
+    
+    print("#############################################")
+    
+    # Example using Github with Phi-4
+    start_time = time.time()
+    description_phi4 = analyzer.describe(
+        image_path, prompt=prompt, vllm_provider="github", vllm_name="Phi-4-multimodal-instruct"
+    )
+    end_time = time.time()
+    print(f"\nGithub (Phi-4) Description:\n{description_phi4}")
+    print("Github (Phi-4) process took:", end_time - start_time, "seconds.")
 
-   

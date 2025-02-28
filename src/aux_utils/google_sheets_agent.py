@@ -4,9 +4,12 @@ import os
 import traceback
 from src.main_utils.generation_utils_v2 import LLM_answer_v3
 from src.main_utils.agentic_rag_utils import QueryBreaker
+from src.main_utils.utils import extract_url
+from src.main_utils.link_gestion import ExternalKnowledgeManager
 from langchain.tools import tool
 from langchain_core.prompts import PromptTemplate
 from tqdm import tqdm
+from thefuzz import process
 
 class GoogleSheetsAgent:
     """
@@ -38,14 +41,53 @@ class GoogleSheetsAgent:
         self._authenticate()
         os.makedirs(save_path, exist_ok=True)
         os.makedirs(temp_path, exist_ok=True)
-        # Initialize query breaker with same configuration
+        
+        # Initialize config for various components
         self.config = {
             "model_name": model_name,
             "llm_provider": llm_provider,
-            "prompt_language": "en",  # Using English for consistency
+            "prompt_language": "fr",
             "temperature": 0.7
         }
         self.query_breaker = QueryBreaker(self.config)
+        self.knowledge_manager = ExternalKnowledgeManager(self.config)
+
+    def extract_resource(self, url):
+        """Extract resource content from URL.
+
+        Args:
+            url: The URL to extract content from.
+
+        Returns:
+            str: The extracted content.
+        """
+        return self.knowledge_manager.extract_rescource_from_link(url)
+
+    def reformulate_prompt(self, query, resource=None):
+        """Reformulate prompt with extracted resource.
+        
+        Args:
+            query: Original user query containing a URL.
+            resource: Extracted content from URL.
+        
+        Returns:
+            str: Reformulated prompt.
+        """
+        if resource:
+            with open("prompts/google_sheets_resource_prompt.txt", "r", encoding="utf-8") as f:
+                parser_prompt = f.read()
+            template = PromptTemplate.from_template(parser_prompt)
+            formatted_prompt = template.format(original_query=query, resource_content=resource)
+            
+            result = LLM_answer_v3(
+                prompt=formatted_prompt,
+                stream=False,
+                model_name=self.model_name,
+                llm_provider=self.llm_provider,
+                system_prompt="You are a content parser that integrates external resource content into queries."
+            )
+            return result
+        return query
 
     def _authenticate(self):
         """Authenticates with Google Sheets API."""
@@ -138,10 +180,28 @@ class GoogleSheetsAgent:
             print(f"Error listing sheet names: {str(e)}")
             traceback.print_exc()
             raise
+
+    def list_accessible_spreadsheets(self) -> list:
+        """Lists the names of all spreadsheets the service account has access to.
+
+        Returns:
+            list: A list of spreadsheet names.
+        """
+        try:
+            # List all spreadsheets using gspread's spreadsheets method
+            spreadsheet_list = self.client.list_spreadsheet_files()
+            spreadsheet_names = [spreadsheet['name'] for spreadsheet in spreadsheet_list]
+            return spreadsheet_names
+
+        except Exception as e:
+            print(f"Error listing accessible spreadsheets: {str(e)}")
+            traceback.print_exc()
+            return []
+
     @staticmethod
     @tool(return_direct=True)
-    def add_row(spreadsheet_name: str, sheet_name: str, row_data: list[str]) -> str:
-        """Adds a row to a Google Sheet.
+    def add_row_with_content(spreadsheet_name: str, sheet_name: str, row_data: list[str]) -> str:
+        """Adds a new row (with given values as a list) to a Google Sheet at the bottom of the sheet.
 
         Args:
             spreadsheet_name (str): Name of the spreadsheet.
@@ -164,15 +224,17 @@ class GoogleSheetsAgent:
             values = worksheet.get_all_values()
             next_row = len(values) + 1 if values else 1
             range_to_update = f'A{next_row}'
-            worksheet.update(range_to_update, [row_data], value_input_option='USER_ENTERED')
+            
+            # Emballer row_data dans une liste pour créer la structure [[val1, val2, ...]] attendue par l'API
+            worksheet.update(values=[row_data], range_name=range_to_update, value_input_option='USER_ENTERED')
             return f"Row added successfully at position {next_row}"
         except Exception as e:
             return f"Error adding row: {str(e)}"
 
     @staticmethod
     @tool(return_direct=True)
-    def add_column(spreadsheet_name: str, sheet_name: str, column_data: list[str], column_index: int | None = None) -> str:
-        """Adds a column to a Google Sheet.
+    def add_column_with_content(spreadsheet_name: str, sheet_name: str, column_data: list[str], column_index: int | None = None) -> str:
+        """Adds a new column (with column content given as a list) to a Google Sheet.
 
         Args:
             spreadsheet_name (str): Name of the spreadsheet.
@@ -322,31 +384,106 @@ class GoogleSheetsAgent:
             return f"Cell ({row, col}) cleared successfully"
         except Exception as e:
             return f"Error clearing cell: {str(e)}"
-    def act(self, query: str, spreadsheet_name: str) -> bool:
-        """Process a natural language query to perform actions on a Google Sheet.
-        Now includes query breaking and sequential execution of sub-tasks.
+
+    def choose_target_table(self, query: str) -> str:
+        """Determines the most appropriate spreadsheet for a given query.
+        Uses fuzzy matching to find the best match.
         
         Args:
             query (str): Natural language query describing the action to perform
-            spreadsheet_name (str): Name of the spreadsheet to operate on
+            
+        Returns:
+            str: Name of the selected spreadsheet
+        """
+        try:
+            # Get list of available spreadsheets
+            available_spreadsheets = self.list_accessible_spreadsheets()
+            
+            # Load the table selection prompt
+            with open("prompts/table_selection_prompt.txt", "r", encoding='utf-8') as f:
+                template = f.read()
+            
+            prompt_template = PromptTemplate.from_template(template)
+            
+            # Format prompt with available spreadsheets
+            formatted_prompt = prompt_template.format(
+                spreadsheets="\n".join(available_spreadsheets),
+                query=query
+            )
+            
+            # Get LLM's selection
+            content = LLM_answer_v3(
+                prompt=formatted_prompt,
+                model_name=self.model_name,
+                llm_provider=self.llm_provider,
+                stream=False
+            )
+            
+            selected_table = content.strip()
+            
+            # First try exact match
+            if selected_table in available_spreadsheets:
+                print(f"Selected spreadsheet: {selected_table}")
+                return selected_table
+            
+            # If exact match fails, use fuzzy matching to find the best match
+            print(f"Selected table '{selected_table}' not found. Finding best fuzzy match...")
+            best_match = process.extractOne(selected_table, available_spreadsheets)
+            
+            if best_match:
+                selected_table = best_match[0]
+                print(f"Found best match: '{selected_table}' with {best_match[1]}% similarity")
+                return selected_table
+            
+            # This should never happen since extractOne always returns a match,
+            # but keeping as a safeguard
+            print("No matches found. Using first available spreadsheet.")
+            return available_spreadsheets[0]
+            
+        except Exception as e:
+            print(f"Error selecting target table: {str(e)}")
+            traceback.print_exc()
+            return self.list_accessible_spreadsheets()[0]
+
+    def act(self, query: str) -> bool:
+        """Process a natural language query to perform actions on a Google Sheet.
+        Handles URLs in the query, then breaks down and executes the actions.
+        
+        Args:
+            query (str): Natural language query describing the action to perform
             
         Returns:
             bool: True if the action was successful, False otherwise
         """
         try:
+            # First, check for and process any URLs in the query
+            url = extract_url(query)
+            if url is not None:
+                resource = self.extract_resource(url)
+                print(f"Extracted resource from URL: {resource}")
+                query = self.reformulate_prompt(query, resource=resource)
+                print(f"Reformulated query: {query}")
+
+            # Choose the target spreadsheet
+            spreadsheet_name = self.choose_target_table(query)
+            print(f"Selected spreadsheet for operation: {spreadsheet_name}")
+            
             # Get available tools
             tools = [
-                GoogleSheetsAgent.add_row,
-                GoogleSheetsAgent.add_column,
+                GoogleSheetsAgent.add_row_with_content,
+                GoogleSheetsAgent.add_column_with_content,
                 GoogleSheetsAgent.modify_cell,
                 GoogleSheetsAgent.delete_row,
                 GoogleSheetsAgent.delete_column,
                 GoogleSheetsAgent.clear_cell
             ]
-            # Extract tool names for the query breaker
             tool_names = [tool.name for tool in tools]
             
-            # First get the sheet names
+            #create a dictionnary containing tool name and docstring for each tool
+            tool_description_dict={tool.name: tool.__doc__ for tool in tools}
+            
+            
+            # Get the sheet names
             sheet_names = self.list_sheet_names(spreadsheet_name)
             
             # Fetch and save the current state of sheets
@@ -360,34 +497,30 @@ class GoogleSheetsAgent:
                     with open(md_path, 'r', encoding='utf-8') as f:
                         table_content += f"# {sheet_name}\n{f.read()}\n\n"
 
-            # Step 1: Break down the query into sub-tasks using QueryBreaker
+            # Break down the query into sub-tasks
             print("Breaking down query into sub-tasks...")
-            print("TOOL NAMES:", tool_names)
-            sub_tasks = self.query_breaker.break_query(query, context=table_content, unitary_actions=tool_names)
+            sub_tasks = self.query_breaker.break_query(query, context=table_content, unitary_actions=tool_description_dict)
             print(f"Sub-tasks identified: {sub_tasks}")
 
-            # Load and format the prompt template for tool selection
+            # Load and format the prompt template
             with open("prompts/google_sheets_agent_prompt.txt", "r", encoding='utf-8') as f:
                 template = f.read()
-            
             prompt_template = PromptTemplate.from_template(template)
 
-            # Step 2: Process each sub-task sequentially
+            # Process each sub-task sequentially
             overall_success = True
             import time
             for sub_task in tqdm(sub_tasks, desc="Processing sub-tasks"):
                 time.sleep(1)  # Add a delay to avoid rate limiting
                 print(f"\nProcessing sub-task: {sub_task}")
                 
-                # Format prompt for this specific sub-task
                 formatted_prompt = prompt_template.format(
                     spreadsheet_name=spreadsheet_name,
                     sheet_names=sheet_names,
                     table_content=table_content,
-                    query=sub_task  # Using sub-task instead of original query
+                    query=sub_task
                 )
 
-                # Get tool calls for this sub-task
                 content, tool_calls = LLM_answer_v3(
                     prompt=formatted_prompt,
                     model_name=self.model_name,
@@ -398,7 +531,6 @@ class GoogleSheetsAgent:
                 print(f"LLM Response for sub-task: {content}")
                 print(f"Tool calls for sub-task: {tool_calls}")
                 
-                # Execute the tool calls for this sub-task
                 for tool_call in tool_calls:
                     print(f"Executing tool call: {tool_call}")
                     try:
@@ -423,17 +555,21 @@ if __name__ == "__main__":
         credentials_path='google_json_key/python-sheets-key.json',
         save_path='data/sheets',
         temp_path='temp',
-        model_name= "gemini-2.0-flash", #"deepseek-r1-distill-llama-70b", # "deepseek-r1-distill-llama-70b", #, "gemini-2.0-flash", #"deepseek-r1-distill-llama-70b",
-        llm_provider='google'
+        model_name="deepseek-r1-distill-llama-70b",# "gemini-2.0-flash", #"deepseek-r1-distill-llama-70b", # "deepseek-r1-distill-llama-70b", #, "gemini-2.0-flash", #"deepseek-r1-distill-llama-70b",
+        llm_provider="groq" # 'google'
         #"google" #'groq'
     )
     
-    # Test the act method with a natural language query
-    spreadsheet_name = "test_google_sheet"
-    query = "Add a new row to the table with values ['Company ABC', 'Software Engineer', '2024-03-15', 'Applied'] to the first sheet, then modify the applied status for Thales to not applied"
-    #query = "add two random website names, one for Thales one for Boeing"
+    # Test listing accessible spreadsheets
+    print("\nListing all accessible spreadsheets:")
+    accessible_sheets = agent.list_accessible_spreadsheets()
+    print("Accessible spreadsheets:", accessible_sheets)
+    
+    # # Test the act method with a natural language query
+    # query = "Add a new random but coherent line to the table 'test_google_sheet'"
+    # #query = "add two random website names, one for Thales one for Boeing"
 
     
-    print(f"Processing query: {query}")
-    success = agent.act(query, spreadsheet_name)
-    print(f"Operation {'succeeded' if success else 'failed'}")
+    # print(f"Processing query: {query}")
+    # success = agent.act(query)
+    # print(f"Operation {'succeeded' if success else 'failed'}")

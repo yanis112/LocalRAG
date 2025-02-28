@@ -11,6 +11,8 @@ from html import unescape
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from src.main_utils.vectorstore_utils_v5 import VectorAgent
+from src.main_utils.generation_utils_v2 import LLM_answer_v3, RAGAgent
 
 
 def cache_daily(func):
@@ -45,13 +47,15 @@ def cache_daily(func):
 
 
 class EmailAgent:
-    def __init__(self):
+    def __init__(self, config=None, rag_client=None):
         """Initialize the EmailUtils class and load environment variables."""
         load_dotenv()
         self.imap_server = os.getenv("IMAP_SERVER")
         self.email_address = os.getenv("EMAIL_ADDRESS")
         self.password = os.getenv("EMAIL_PASSWORD")
         self.imap = None
+        self.config = config
+        self.rag_client = rag_client
 
     def get_emails(self, last_k=100):
         """
@@ -193,6 +197,49 @@ class EmailAgent:
             datetime: The parsed datetime object.
         """
         return parsedate_to_datetime(date_str)
+
+    def fill_vectorstore(self):
+        """
+        Fill the vectorstore with new emails.
+        Uses VectorAgent to index the emails in the vector database.
+        """
+        if not self.config or not self.rag_client:
+            raise ValueError("Config and RAG client must be provided to fill vectorstore")
+
+        agent = VectorAgent(default_config=self.config, qdrant_client=self.rag_client)
+        agent.build_vectorstore()
+        print("Vectorstore filled with new emails!")
+        return agent
+
+    def act(self, query: str):
+        """
+        Answer an email-related query using the RAG system.
+        
+        Args:
+            query (str): The user's question about emails
+            
+        Returns:
+            tuple: (answer, docs, sources)
+        """
+        if not self.config or not self.rag_client:
+            raise ValueError("Config and RAG client must be provided to answer queries")
+
+        # Configure for email search
+        email_config = self.config.copy()
+        email_config["data_sources"] = ["emails"]
+        email_config["enable_source_filter"] = True
+        email_config["field_filter"] = ["emails"]
+        
+
+        # Fetch new emails and update vectorstore
+        self.fetch_new_emails(last_k=100)
+        self.fill_vectorstore()
+
+        # Create RAG agent reusing the existing client
+        rag_agent = RAGAgent(default_config=email_config, config={"stream": True}, qdrant_client=self.rag_client)
+        
+        answer, docs, sources = rag_agent.RAG_answer(query)
+        return answer, docs, sources
 
 
 def clean_text(text):

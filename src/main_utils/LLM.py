@@ -25,7 +25,7 @@ class CustomChatModel:
         top_p (float, optional): The top-p value for text generation. Defaults to 0.01.
         system_prompt (str, optional): A custom system prompt. Defaults to "You are a helpful assistant."
     """
-    def __init__(self, model_name, llm_provider, temperature=1.0, max_tokens=8000,top_k=1,top_p=0.01,system_prompt=None):
+    def __init__(self, model_name, llm_provider, temperature=1.0, max_tokens=20000,top_k=45,top_p=0.95,system_prompt=None):
         self.model_name = model_name
         self.chat_model = None
         self.chat_prompt_template = None
@@ -33,11 +33,11 @@ class CustomChatModel:
 
         self.system_prompt = system_prompt if system_prompt is not None else "You are a helpful assistant."
 
-        #parameters
-        self.llm_temperature = temperature #controls the randomness of the output
-        self.max_tokens = max_tokens #maximum number of tokens to generate
-        self.top_k = top_k  #controls the diversity of the output
-        self.top_p = top_p #controls the diversity of the output
+        # parameters
+        self.llm_temperature = temperature  # controls the randomness of the output
+        self.max_tokens = max_tokens  # maximum number of tokens to generate
+        self.top_k = top_k  # controls the diversity of the output
+        self.top_p = top_p  # controls the diversity of the output
         self.context_window_size = 0
 
 
@@ -110,7 +110,7 @@ class CustomChatModel:
                 temperature=self.llm_temperature,
                 max_tokens=self.max_tokens,
                 timeout=None,
-                max_retries=1,
+                max_retries=2,
                 safety_settings={
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
     },

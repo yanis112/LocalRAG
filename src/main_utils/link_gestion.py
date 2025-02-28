@@ -12,6 +12,7 @@ from src.aux_utils.logging_utils import setup_logger
 
 link_logger = setup_logger(__name__, "external_resource_scrapper.log")
 
+
 def clean_linkedin_post(text):
     link_logger.info("Cleaning LinkedIn post content.")
     # Remove cookie/consent banner and header UI
@@ -50,16 +51,10 @@ def clean_linkedin_post(text):
     link_logger.debug("Removed URLs.")
 
     # Remove social interaction elements and counts
-    text = re.sub(
-        r"\d+\s*(Reactions?|Comments?|shares?)", "", text, flags=re.IGNORECASE
-    )
-    text = re.sub(
-        r"(Like|Comment|Share|Copy|Report this)\s*(post|comment)?", "", text
-    )
+    text = re.sub(r"\d+\s*(Reactions?|Comments?|shares?)", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"(Like|Comment|Share|Copy|Report this)\s*(post|comment)?", "", text)
     text = re.sub(r"(LinkedIn|Facebook|Twitter)", "", text)
-    text = re.sub(
-        r"To view or add a comment, sign in.*", "", text, flags=re.DOTALL
-    )
+    text = re.sub(r"To view or add a comment, sign in.*", "", text, flags=re.DOTALL)
     link_logger.debug("Removed social interaction elements and counts.")
     # Remove hashtags and "More Relevant Posts" section
     text = re.sub(r"(#\w+\s*)+", "", text)
@@ -69,8 +64,10 @@ def clean_linkedin_post(text):
     link_logger.info("Finished cleaning LinkedIn post content.")
     return text.strip()
 
+
 def clean_scrapped_content(
-    text: str, model_name: str, llm_provider: str, resource_type: str ='linkedin') -> str:
+    text: str, model_name: str, llm_provider: str, resource_type: str = "linkedin"
+) -> str:
     """
     Takes a text crawled from a website and cleans it by removing irrelevant noisy infos using an LLM model.
 
@@ -86,7 +83,7 @@ def clean_scrapped_content(
     link_logger.info(f"Cleaning scrapped content. Resource type: {resource_type}")
     from langchain_core.prompts import PromptTemplate
     from src.main_utils.generation_utils_v2 import LLM_answer_v3
-    
+
     if resource_type == "linkedin":
         cleaning_prompt_path = "prompts/linkedin_cleaning.txt"
     else:
@@ -112,9 +109,10 @@ def clean_scrapped_content(
     link_logger.info("Content cleaned successfully using LLM.")
     return cleaned_text
 
-    
-    
-def extract_resource(link: str, timeout: int = 30,resource_type: str = "linkedin") -> Optional[str]:
+
+def extract_resource(
+    link: str, timeout: int = 60, resource_type: str = "linkedin"
+) -> Optional[str]:
     """
     Takes a Linkedin post link as input and extracts the content of the post.
 
@@ -142,39 +140,79 @@ def extract_resource(link: str, timeout: int = 30,resource_type: str = "linkedin
     async def main(url: str) -> Optional[str]:
         try:
             from fake_useragent import UserAgent
+            from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
             from crawl4ai import AsyncWebCrawler, BrowserConfig, CacheMode, CrawlerRunConfig
+
             ua = UserAgent()
-            #generate random user agent
-            random_profile=ua.random
-        
+            # generate random user agent
+            random_profile = ua.random
+
+            crawler_config = CrawlerRunConfig(
+                markdown_generator=DefaultMarkdownGenerator(),
+                cache_mode=CacheMode.BYPASS,
+                wait_for="document.readyState === 'complete'", #TRES UTILE POUR WELCOME TO THE JUNGLE
+                page_timeout=30000, # 3 seconds timeout for page load  #TRES UTILE POUR WELCOME TO THE JUNGLE
+                 # Petite pause avant de capturer le HTML
+                delay_before_return_html=2.0, #TRES UTILE
+                #wait_for="networkidle",
+                # Injecte le JS qui clique sur le bouton de cookies
+                js_code=[
+                    """
+    document.addEventListener('DOMContentLoaded', function() {
+        var acceptButton = document.querySelector('#axeptio_btn_acceptAll');
+        if (acceptButton) {
+            acceptButton.click();
+        }
+    });
+    """,
+                    "document.querySelector('#axeptio_btn_acceptAll')?.click();",
+                ],
+            )
+
             browser_config = BrowserConfig(
                 browser_type="chromium",
-                headless=True, #dont forget to put to True after debugging
+                headless=False,  # dont forget to put to True after debugging
                 verbose=True,
                 java_script_enabled=True,
-                text_mode=True,  # return the text content of the page without the images and css
+                text_mode=False,  # was True before  # return the text content of the page without the images and css
                 user_agent_mode=None,  # randomize the user agent to avoid detection with "random"
                 user_agent=random_profile,  # set the user agent to a random profile
-            )   
-            async with AsyncWebCrawler(verbose=True, headless=True,config=browser_config) as crawler:
+            )
+            async with AsyncWebCrawler(
+                verbose=True, config=browser_config
+            ) as crawler:
                 # Add timeout to the crawl operation
                 link_logger.debug(f"Crawling URL: {url} with timeout {timeout} seconds.")
-                result = await asyncio.wait_for(
-                    crawler.arun(url=url, cache_mode=CacheMode.BYPASS),
+                raw_html_result = await asyncio.wait_for(
+                    crawler.arun(
+                        url=url, cache_mode=CacheMode.BYPASS, config=crawler_config
+                    ),  # the config parameter was added ! not there before
                     timeout=timeout,
                 )
-                raw_text = str(result.markdown_v2.raw_markdown)
-                link_logger.info(f"Raw text scrapped:\n{raw_text}") #log the raw text scrapped
-                
-                cleaned_text = clean_scrapped_content(
-                        raw_text,
-                        model_name="llama-3.3-70b-versatile",
-                        llm_provider="groq",
-                        resource_type=resource_type,
-                    ) #clean the resource depending of its type (will change the cleaning prompt depending on if its from website or linkedin)
-                
-                link_logger.info(f"Cleaned text:\n{cleaned_text}") #log the cleaned text
-                return cleaned_text if result and result.markdown else None
+                link_logger.debug("Raw HTML result obtained.")
+                print("RAW HTML RESULT:", raw_html_result)
+                print("####################")
+                raw_markdown_result = (
+                    raw_html_result.markdown
+                )  # markdown_v2.raw_markdown #) AVANT MAIS NE MARCHE PAS EST VIDE
+                link_logger.info(f"Raw Markdown scrapped:\n{raw_markdown_result}")  # log the raw markdown scrapped
+
+                if not raw_markdown_result:
+                    link_logger.warning("No content extracted from the link !")
+                    return None
+
+                print("####################")
+                print("RAW MARKDOWN RESULT:", raw_markdown_result)
+                print("####################")
+                cleaned_markdown_result = clean_scrapped_content(
+                    raw_markdown_result,
+                    model_name="llama-3.3-70b-versatile",
+                    llm_provider="groq",
+                    resource_type=resource_type,
+                )  # clean the resource depending on its type (will change the cleaning prompt depending on if it's from a website or linkedin)
+
+                link_logger.info(f"Cleaned text:\n{cleaned_markdown_result}")  # log the cleaned markdown result
+                return cleaned_markdown_result # Return the cleaned markdown result
 
         except asyncio.TimeoutError:
             link_logger.warning(f"Extraction timed out after {timeout} seconds")
@@ -198,6 +236,7 @@ def extract_resource(link: str, timeout: int = 30,resource_type: str = "linkedin
         link_logger.error(f"Error in event loop: {str(e)}")
         traceback.print_exc()
         return None
+
 
 class ExternalKnowledgeManager:
     def __init__(self, config, client=None):
@@ -245,48 +284,50 @@ class ExternalKnowledgeManager:
         """
         link_logger.info(f"Extracting resource from link: {link}")
 
-        with st.spinner("⛏️ Extracting the url content ...",show_time=True):
+        with st.spinner("⛏️ Extracting the url content ...", show_time=True):
             if self.classify_rescource(link) == "video":
-                st.toast("Video resource detected!",icon="📺")
+                st.toast("Video resource detected!", icon="📺")
                 from src.aux_utils.transcription_utils_v3 import YouTubeTranscriber
 
-                transcriber = YouTubeTranscriber(chunk_size=st.session_state["config"]["transcription_chunk_size"], batch_size=1)
-                #YouTubeTranscriber(chunk_size=self.config["transcription_chunk_size"],batch_size=1)
+                transcriber = YouTubeTranscriber(
+                    chunk_size=st.session_state["config"]["transcription_chunk_size"], batch_size=1
+                )
+                # YouTubeTranscriber(chunk_size=self.config["transcription_chunk_size"],batch_size=1)
                 # transcription = transcriber.transcribe(
                 #     input_path=link, method="groq",diarization=True
                 # )
-                transcription = transcriber.transcribe(input_path=link, method="groq",diarization=st.session_state["diarization_enabled"])
-
-                self.current_rescource = (
-                    "### This is a video transcription ### " + transcription
+                transcription = transcriber.transcribe(
+                    input_path=link,
+                    method="groq",
+                    diarization=st.session_state["diarization_enabled"],
                 )
+
+                self.current_rescource = "### This is a video transcription ### " + transcription
                 link_logger.info("Video resource extracted successfully !")
                 link_logger.debug(f"Extracted transcription: {transcription[:500]}...")
                 return transcription
 
             elif self.classify_rescource(link) == "linkedin":
-                rescource = str(extract_resource(link,resource_type="linkedin"))
-                self.current_rescource = (
-                    "### This is a linkedin post ### " + rescource
-                )
+                rescource = str(extract_resource(link, resource_type="linkedin"))
+                self.current_rescource = "### This is a linkedin post ### " + rescource
                 link_logger.info("Linkedin resource extracted successfully !")
                 return rescource
             else:
-                #extract using website type
-                rescource = str(extract_resource(link,resource_type="website"))
-                self.current_rescource = (
-                    "### This is a website content ### " + rescource
-                )
+                # extract using website type
+                rescource = str(extract_resource(link, resource_type="website"))
+                self.current_rescource = "### This is a website content ### " + rescource
                 link_logger.info("Website resource extracted successfully !")
                 return rescource
-            
-    def extract_rescource(self,text):
+
+    def extract_rescource_from_raw_text(self, text):
         """Extract the rescource from the given text. no link.
         Args:
             text (str): The text to be extracted.
         """
         link_logger.info("Extracting resource from text.")
-        self.current_rescource = text.replace("```markdown","").replace("```","") #remove markdown code block indicators
+        self.current_rescource = text.replace("```markdown", "").replace(
+            "```", ""
+        )  # remove markdown code block indicators
         link_logger.info("Resource extracted successfully !")
         link_logger.debug(f"Extracted resource: {text[:500]}...")
         return text
@@ -316,15 +357,13 @@ class ExternalKnowledgeManager:
         # First we save the rescource in a file in the appropriate folder
         from src.aux_utils.text_classification_utils import IntentClassifier
 
-        with st.spinner("Indexing the resource...",show_time=True):
-            topic_classifier = IntentClassifier(config=self.config,
-                labels_dict=self.config["data_sources"])
-            
+        with st.spinner("Indexing the resource...", show_time=True):
+            topic_classifier = IntentClassifier(
+                config=self.config, labels_dict=self.config["data_sources"]
+            )
 
             # get the associated topic description
-            topic = topic_classifier.classify(
-                self.current_rescource, method="LLM"
-            )
+            topic = topic_classifier.classify(self.current_rescource, method="LLM")
 
             link_logger.info(f"Topic found by classifier: {topic}")
             st.toast(f"Associated Topic: {topic}")
@@ -345,24 +384,19 @@ class ExternalKnowledgeManager:
             from src.main_utils.vectorstore_utils_v5 import VectorAgent
             # check if qdrant client is in session state
 
-            vector_agent = VectorAgent(
-                default_config=self.config, qdrant_client=self.client
-            )
+            vector_agent = VectorAgent(default_config=self.config, qdrant_client=self.client)
             vector_agent.build_vectorstore()
             link_logger.info("Resource indexed in the database.")
 
+
 if __name__ == "__main__":
     # load config using yaml from config/config.yaml
-    # import yaml
-    # with open('config/config.yaml', 'r') as file:
-    #     config = yaml.safe_load(file)
-    # manager=ExternalKnowledgeManager(config)
-    # link="https://youtu.be/_4ZoBEmcFXI?si=LLManhdxYnzJMc7K"
-    # manager.extract_rescource_from_link(link)
+    import yaml
+    with open('config/config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+    manager=ExternalKnowledgeManager(config)
+    link="https://www.welcometothejungle.com/fr/companies/inoco/jobs/developpeur-ia-f-h_paris?q=61f7ded5e9ee049906b00987edc59132&o=266b2d6c-2211-4390-b5a8-4686576d11ca"
+    manager.extract_rescource_from_link(link)
     # manager.index_rescource()
-    link = "https://www.linkedin.com/posts/yanis-labeyrie-67b11b225_openai-gpt5-o1-activity-7240116943750385664-uxzS?utm_source=share&utm_medium=member_desktop"
-    content = extract_resource(link)
-    print("Type of the content: ", type(content))
-    print("##############################################")
-    print(content)
-    print("##############################################")
+    #link = "https://www.welcometothejungle.com/fr/companies/inoco/jobs/developpeur-ia-f-h_paris?q=61f7ded5e9ee049906b00987edc59132&o=266b2d6c-2211-4390-b5a8-4686576d11ca"
+  

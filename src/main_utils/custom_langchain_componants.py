@@ -14,7 +14,7 @@ from typing import (
 
 import numpy as np
 import torch
-from docling.document_converter import DocumentConverter
+
 from dotenv import load_dotenv
 from langchain.retrievers.document_compressors.base import (
     BaseDocumentCompressor,
@@ -64,7 +64,9 @@ def default_preprocessing_func(text: str) -> List[str]:
 
 
 class DoclingPDFLoader(BaseLoader):
+    
     def __init__(self, file_path: str | list[str]) -> None:
+        from docling.document_converter import DocumentConverter
         self._file_paths = file_path if isinstance(file_path, list) else [file_path]
         self._converter = DocumentConverter()
 

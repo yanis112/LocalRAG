@@ -1,0 +1,10 @@
+Your task is to determine the next web interaction for a web automation agent.
+
+Consider the following:
+
+Global Objective, what the user wants to achieve (for the current sub-task): {global_objective}
+OmniParser Output (detailed analysis of the current web page state and components): {omni_parser_output}
+Previous Actions (history of executed actions): {previous_actions}
+Allowed Actions (available tool calls with required parameters): {action_dict}
+
+Based on the above, generate an appropriate tool call the agent should execute next.

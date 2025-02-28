@@ -1,0 +1,15 @@
+
+#LLM config for the agent
+llm_provider: "google"
+model_name: "gemini-2.0-flash"
+temperature: 0.7
+prompt_language: "fr"
+
+#Possible actions for the agent
+allowed_actions: {
+            "write": "write text into a field e.g: write('username', into='Username')",
+            "click": "click on a button or other clickable element e.g: click(element='Login')",
+            "press": "press a key e.g: press(key=ENTER)",
+            "go_to": "go to a specific url e.g: go_to(url='https://www.google.com')"
+        }
+

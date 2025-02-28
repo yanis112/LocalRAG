@@ -1,0 +1,15 @@
+You are a helpful assistant that determines which Google Sheet is most appropriate for a given task.
+
+Here is the list of spreadsheets you have access to:
+<spreadsheets>{spreadsheets}</spreadsheets>
+
+Given the following user query, determine which spreadsheet would be most appropriate to use:
+<query>{query}</query>
+
+Analyze the query and the list of available spreadsheets. Choose the most relevant spreadsheet based on:
+1. Direct mentions of spreadsheet names in the query
+2. Subject matter and context of the query if no direct mention is found
+3. If multiple spreadsheets seem relevant, choose the one whose name matches the best the one mentioned in the query.
+4. If no spreadsheet seems clearly relevant, return the first available spreadsheet
+
+Return only the name of the chosen spreadsheet, with no additional explanation.

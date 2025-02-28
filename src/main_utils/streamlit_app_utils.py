@@ -1,15 +1,17 @@
-import concurrent.futures
 import os
 import time
 from pathlib import Path
-from threading import Lock
 
 import qrcode
 import streamlit as st
 import yaml
+from streamlit import switch_page
+from streamlit_extras.stylable_container import stylable_container
 
 from src.aux_utils.job_scrapper import JobAgent
-from src.main_utils.generation_utils_v2 import LLM_answer_v3
+from src.aux_utils.email_utils import EmailAgent
+from src.main_utils.generation_utils_v2 import LLM_answer_v3, RAGAgent
+from src.main_utils.vectorstore_utils_v5 import VectorAgent
 
 
 def get_network_url():
@@ -127,9 +129,7 @@ def show_submission_form():
     with st.expander("Save in vectorstore options", expanded=True):
         # Champs à compléter
         with st.form(key="Save document in vectorstore"):
-            st.write(
-                "Dont press enter key when entering inputs, it will submit the form !"
-            )
+            st.write("Dont press enter key when entering inputs, it will submit the form !")
             st.session_state["document_title"] = st.text_input(
                 "Name to give to the document in vectorstore"
             )
@@ -141,9 +141,7 @@ def show_submission_form():
                 print("Document title:", st.session_state["document_title"])
                 # save the file in data/meeting_transcriptions with the given name
                 with open(
-                    "data/meeting_transcriptions/"
-                    + st.session_state["document_title"]
-                    + ".txt",
+                    "data/meeting_transcriptions/" + st.session_state["document_title"] + ".txt",
                     "w",
                 ) as f:
                     f.write(
@@ -186,17 +184,6 @@ def save_uploaded_pdf(uploaded_file, temp_dir="temp"):
     # Retourner le chemin du fichier sauvegardé
     return file_path
 
-import asyncio
-from pathlib import Path
-import os
-
-import asyncio
-import concurrent.futures
-import os
-from pathlib import Path
-
-import streamlit as st
-
 
 import asyncio
 import concurrent.futures
@@ -209,7 +196,7 @@ import streamlit as st
 def handle_multiple_uploaded_files(uploaded_files, parallel: bool = False):
     """
     Traite plusieurs fichiers uploadés avec option de traitement en parallèle (async) ou séquentiel.
-    
+
     Args:
         uploaded_files: Liste des fichiers uploadés à traiter.
         parallel: Si True, traite les fichiers en parallèle (en utilisant asyncio).
@@ -220,32 +207,26 @@ def handle_multiple_uploaded_files(uploaded_files, parallel: bool = False):
     async def process_files():
         if parallel:
             # Crée une tâche async pour chaque fichier et attend leur exécution en parallèle.
-            tasks = [
-                handle_single_file(file)
-                for file in uploaded_files
-            ]
+            tasks = [handle_single_file(file) for file in uploaded_files]
             await asyncio.gather(*tasks)
         else:
             # Traitement séquentiel : on attend le traitement de chaque fichier l'un après l'autre.
             for idx, file in enumerate(uploaded_files, 1):
-                with st.spinner(f"Processing file {idx}/{total_files}: {file.name}",show_time=True):
+                with st.spinner(
+                    f"Processing file {idx}/{total_files}: {file.name}", show_time=True
+                ):
                     await handle_single_file(file)
-    
+
     asyncio.run(process_files())
     # On affiche l'historique de chat mis à jour (une seule fois et à la fin sinon on risque de le rafraîchir plusieurs !)
     display_chat_history()
-
-
-
-
-
 
 
 @st.fragment
 async def handle_single_file(uploaded_file):
     """
     Traite le fichier uploadé et l'analyse en fonction de son extension.
-    
+
     Pour :
     - Les fichiers audio (.mp3, .wav, .m4a, .mp4) :
          - Sauvegarde le fichier audio en format wav.
@@ -258,7 +239,7 @@ async def handle_single_file(uploaded_file):
     - Les fichiers PDF (.pdf) :
          - Sauvegarde le PDF.
          - Exécute l'OCR sur le PDF avec StructuredPDFOcerizer.
-    
+
     La fonction met à jour l'état de l'application (st.session_state) avec les résultats.
     """
     temp_dir = "temp"
@@ -266,13 +247,21 @@ async def handle_single_file(uploaded_file):
 
     if extension in [".mp3", ".wav", ".m4a", ".mp4"]:
         from src.aux_utils.transcription_utils_v3 import YouTubeTranscriber
+
         file_path = save_audio_as_wav(uploaded_file, temp_dir)
-        with st.spinner("Transcribing audio 🎤 ...",show_time=True):
+        with st.spinner("Transcribing audio 🎤 ...", show_time=True):
             # On exécute ici la transcription de manière asynchrone.
-            yt = YouTubeTranscriber(chunk_size=st.session_state["config"]["transcription_chunk_size"], batch_size=1)
+            yt = YouTubeTranscriber(
+                chunk_size=st.session_state["config"]["transcription_chunk_size"], batch_size=1
+            )
             # On suppose que yt.transcribe peut être awaité ou, sinon, vous pouvez utiliser asyncio.to_thread(...)
-            transcription = await asyncio.to_thread(yt.transcribe, file_path, method="groq", diarization=st.session_state["diarization_enabled"])
-        
+            transcription = await asyncio.to_thread(
+                yt.transcribe,
+                file_path,
+                method="groq",
+                diarization=st.session_state["diarization_enabled"],
+            )
+
         st.toast("Transcription successful !", icon="🎤")
         st.session_state.messages.append(
             {
@@ -292,8 +281,11 @@ async def handle_single_file(uploaded_file):
         with open(os.path.join(temp_dir, uploaded_file.name), "wb") as f:
             f.write(uploaded_file.read())
         from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
-        with st.spinner("Analyzing the image... it should take less than 2 minutes 😜",show_time=True):
-            analyser = ImageAnalyzerAgent()
+
+        with st.spinner(
+            "Analyzing the image... it should take less than 2 minutes 😜", show_time=True
+        ):
+            analyser = ImageAnalyzerAgent(config=st.session_state["config"])    
             with open("prompts/image2markdown.txt", "r", encoding="utf-8") as f:
                 prompt = f.read()
             # Supposons que analyser.describe soit synchrone : on le lance dans un thread.
@@ -307,7 +299,8 @@ async def handle_single_file(uploaded_file):
             st.session_state.messages.append(
                 {
                     "role": "assistant",
-                    "content": "Here is the content I extracted from your image 🖼️: \n\n" + str(output),
+                    "content": "Here is the content I extracted from your image 🖼️: \n\n"
+                    + str(output),
                 }
             )
             st.session_state["uploaded_file"] = True
@@ -316,11 +309,14 @@ async def handle_single_file(uploaded_file):
 
     elif extension in [".pdf"]:
         from src.main_utils.utils import StructuredPDFOcerizer
+
         save_uploaded_pdf(uploaded_file)
         pdf_loader = StructuredPDFOcerizer()
-        with st.spinner("Performing OCR on the PDF...",show_time=True):
+        with st.spinner("Performing OCR on the PDF...", show_time=True):
             # Lance le traitement OCR dans un thread pour éviter le blocage
-            doc_pdf = await asyncio.to_thread(pdf_loader.extract_text, pdf_path=os.path.join(temp_dir, str(uploaded_file.name)))
+            doc_pdf = await asyncio.to_thread(
+                pdf_loader.extract_text, pdf_path=os.path.join(temp_dir, str(uploaded_file.name))
+            )
         st.toast("OCR process successful!", icon="🎉")
         st.session_state.messages.append(
             {
@@ -330,187 +326,6 @@ async def handle_single_file(uploaded_file):
         )
         st.session_state["uploaded_file"] = True
         st.session_state["external_resources_list"].append(doc_pdf)
-    
-    
-
-# Lock for thread-safe progress updates
-# spinner_lock = Lock()
-
-
-# def handle_multiple_uploaded_files(uploaded_files, parallel: bool = False):
-#     """
-#     Handles multiple uploaded files with optional parallel processing.
-
-#     Args:
-#         uploaded_files: List of uploaded files to process
-#         parallel: If True, process files in parallel using threading. If False, process sequentially.
-#     """
-#     total_files = len(uploaded_files)
-
-#     def thread_safe_handle_file(file):
-#         with spinner_lock:
-#             with st.spinner(f"Processing: {file.name}"):
-#                 return handle_single_file(file)
-
-#     if parallel:
-#         # Determine optimal number of workers
-#         max_workers = min(total_files, 4)  # Limit concurrent threads
-#         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-#             # Submit all files for processing
-#             futures = [
-#                 executor.submit(thread_safe_handle_file, file)
-#                 for file in uploaded_files
-#             ]
-#             # Wait for all to complete
-#             concurrent.futures.wait(futures)
-
-#     else:
-#         # Sequential processing
-#         for idx, file in enumerate(uploaded_files, 1):
-#             with st.spinner(f"Processing file {idx}/{total_files}: {file.name}"):
-#                 handle_single_file(file)
-
-
-# @st.fragment
-# def handle_single_file(uploaded_file):
-#     """
-#     Handles the uploaded file and processes it based on its extension.
-#     Parameters:
-#     uploaded_file (UploadedFile): The file uploaded by the user.
-#     Returns:
-#     bytes: The data of the processed file if applicable.
-#     Processes:
-#     - For audio files (mp3, wav, m4a, mp4):
-#         - Saves the audio file as a wav file.
-#         - Transcribes the audio using YouTubeTranscriber.
-#         - Creates a transcription text file.
-#         - Displays success messages and returns the transcription data.
-#     - For image files (png, jpg, jpeg):
-#         - Displays the image.
-#         - Saves the image in the temp folder.
-#         - Analyzes the image using UniversalImageLoader.
-#         - Displays success messages and the extracted content from the image.
-#     - For PDF files (pdf):
-#         - Saves the uploaded PDF.
-#         - Performs OCR on the PDF using StructuredPDFOcerizer.
-#         - Displays success messages and the extracted text from the PDF.
-#     """
-
-#     temp_dir = "temp"
-#     extension = str(Path(uploaded_file.name).suffix)
-
-#     if extension in [".mp3", ".wav", ".m4a", ".mp4"]:
-#         from src.aux_utils.transcription_utils_v3 import (
-#             YouTubeTranscriber,  # try v0 if it doesnt work
-#         )
-
-#         file_path = save_audio_as_wav(uploaded_file, temp_dir)
-#         # st.success(f"File saved as {file_path}")
-
-#         with st.spinner("Transcribing audio 🎤 ..."):
-#             yt = YouTubeTranscriber(chunk_size=st.session_state["config"]["transcription_chunk_size"], batch_size=1)
-#             transcription = yt.transcribe(
-#                 file_path,
-#                 method="groq",
-#                 diarization=st.session_state["diarization_enabled"],
-#             )
-
-#         # print("TRANSCRIPTION: ", transcription)
-#         st.toast("Transcription successful !", icon="🎤")
-
-#         st.session_state.messages.append(
-#             {
-#                 "role": "assistant",
-#                 "content": "Here is your transcribed audio 🔉📜 ! \n\n"
-#                 + str(transcription),
-#             }
-#         )
-
-#         st.session_state["uploaded_file"] = True
-#         st.session_state["audio_transcription"] = transcription
-#         st.session_state["external_resources_list"].append(transcription)
-
-#         # txt = create_transcription_txt(transcription)
-#         # print("TXT FILE CREATED !")
-
-#         # with open(txt, "rb") as f:
-#         #     data = f.read()
-
-#         # st.toast("Transcription successful!", icon="🎉")
-#         # print("DOWNLOAD BUTTON CREATED !")
-
-#         # return data
-
-#     elif extension in [".png", ".jpg", ".jpeg"]:
-#         st.image(uploaded_file)
-#         # save the image in the temp folder
-#         uploaded_file.seek(0)
-
-#         # create the temp folder if not existing yet
-#         if not os.path.exists("temp"):
-#             os.makedirs("temp")
-
-#         with open("temp/" + uploaded_file.name, "wb") as f:
-#             f.write(uploaded_file.read())
-
-#         from src.aux_utils.vision_utils_v2 import ImageAnalyzerAgent
-
-#         with st.spinner("Analyzing the image... it should take less than 2 minutes 😜"):
-#             # load the universal image loader
-#             analyser = ImageAnalyzerAgent()
-#             # load the task prompt from prompts/image2markdown.txt
-#             with open("prompts/image2markdown.txt", "r", encoding="utf-8") as f:
-#                 prompt = f.read()
-
-#             output = analyser.describe(
-#                 image_path="temp/" + uploaded_file.name,
-#                 prompt=prompt,
-#                 vllm_provider=st.session_state["config"]["vllm_provider"],
-#                 vllm_name=st.session_state["config"]["vllm_model_name"],
-#             )
-#             print("IMAGE ANALYSIS OUTPUT: ", output)
-
-#             st.session_state.messages.append(
-#                 {
-#                     "role": "assistant",
-#                     "content": "Here is the content i extracted from your image 🖼️: \n\n"
-#                     + str(output),
-#                 }
-#             )
-#             st.session_state["uploaded_file"] = True
-
-#             # append the external resources obtained to the session state 'external_resources_list'
-#             st.session_state["external_resources_list"].append(output)
-
-#         st.toast("Image analysis successfull !", icon="🎉")
-
-#     elif extension in [".pdf"]:
-#         from src.main_utils.utils import StructuredPDFOcerizer
-
-#         save_uploaded_pdf(uploaded_file)
-
-#         pdf_loader = StructuredPDFOcerizer()
-#         with st.spinner("Performing OCR on the PDF..."):
-#             doc_pdf = pdf_loader.extract_text(
-#                 pdf_path="temp/" + str(uploaded_file.name)
-#             )
-
-#         st.toast("OCR process successful!", icon="🎉")
-
-#         # Display the extracted text from the PDF
-#         st.session_state.messages.append(
-#             {
-#                 "role": "assistant",
-#                 "content": "Here is the extracted text from the given PDF 📄: \n\n"
-#                 + doc_pdf,
-#             }
-#         )
-#         st.session_state["uploaded_file"] = True
-#         # append the external resources obtained to the session state 'external_resources_list'
-#         st.session_state["external_resources_list"].append(doc_pdf)
-
-#     # refresh the displaying of chat messages
-#     display_chat_history()
 
 
 @st.fragment
@@ -546,7 +361,7 @@ def query_suggestion(query):
     context = "The query's answer is in the database of a company named Euranova which is specialized in AI and data science and R&D. \
         This company is located in France and Belgium, has several client and works on projects such as medical imaging, autonomous driving, and natural language processing."
 
-    with st.spinner("Breaking down the query into subqueries...",show_time=True):
+    with st.spinner("Breaking down the query into subqueries...", show_time=True):
         # We first break the query into subqueries
         breaker = QueryBreaker()
         list_sub_queries = breaker.break_query(query=query, context=context)[0:3]
@@ -564,7 +379,7 @@ def display_chat_history():
     This function iterates through the messages in the session state and displays
     them in the Streamlit app. It handles messages differently based on their content
     and role:
-    
+
     - If the message is from the assistant and contains an "<output>" tag, it splits
       the content at the tag, displays the final output, and provides an expander to
       show the intermediate reasoning steps.
@@ -577,8 +392,8 @@ def display_chat_history():
     Raises:
         AttributeError: If `st.session_state.messages` is not defined.
     """
-    
-    #test for the existance of this variable
+
+    # test for the existance of this variable
     if "messages" in st.session_state:
         for message in st.session_state.messages:
             if isinstance(message["content"], str):
@@ -595,37 +410,37 @@ def display_chat_history():
                             st.write(reasoning.strip())
                 else:
                     # For all other messages, display normally
-                    #with st.session_state["chat_container"]: #NOUVEAU
+                    # with st.session_state["chat_container"]: #NOUVEAU
                     st.chat_message(message["role"], avatar="assets/icon_ai_2.jpg").write(
                         message["content"]
                     )
             elif isinstance(message["content"], dict):
-                #with st.session_state["chat_container"]: #NOUVEAU
+                # with st.session_state["chat_container"]: #NOUVEAU
                 st.chat_message(message["role"], avatar="assets/icon_ai_2.jpg").json(
                     message["content"]
                 )
-                
-                
+
+
 def export_to_notion(text):
     """
-    This function when called takes the last message in session state and sends it for it to be converted to a 
+    This function when called takes the last message in session state and sends it for it to be converted to a
     notion page with appropriate name
     """
+    from langchain_core.prompts import PromptTemplate
+
     from src.aux_utils.notion_utils import NotionAgent
     from src.main_utils.generation_utils_v2 import LLM_answer_v3
-    from langchain_core.prompts import PromptTemplate
-    notion_agent= NotionAgent()
+
+    notion_agent = NotionAgent()
 
     # load the meeting summarization prompt from prompts/meeting_summary_prompt.txt
     with open("prompts/text2title.txt", "r", encoding="utf-8") as f:
         template = f.read()
 
     template = PromptTemplate.from_template(template)
-    full_prompt = template.format(
-        text=text
-    )
+    full_prompt = template.format(text=text)
     # give it to the LLM
-    with st.spinner("Generating title for Notion page...",show_time=True):
+    with st.spinner("Generating title for Notion page...", show_time=True):
         title = LLM_answer_v3(
             prompt=full_prompt,
             stream=False,
@@ -633,15 +448,9 @@ def export_to_notion(text):
             llm_provider="groq",
             temperature=st.session_state["streamlit_config"]["temperature"],
         )
-        
 
-    
-    page_id = notion_agent.create_page_from_markdown(
-    text,
-    page_title=title
-    )
+    page_id = notion_agent.create_page_from_markdown(text, page_title=title)
     st.toast(f"Notion page created with name '{title}'!", icon="📋")
-    
 
 
 def clear_chat_history():
@@ -674,15 +483,17 @@ def process_audio_recording(audio):
 
     print("Audio saved as recorded_audio.wav")
 
-    with st.spinner("Transcribing audio...🎤",show_time=True):
+    with st.spinner("Transcribing audio...🎤", show_time=True):
         yt = YouTubeTranscriber(chunk_size=st.session_state["config"]["transcription_chunk_size"])
-        transcription = yt.transcribe("temp/recorded_audio.wav", method="groq",diarization=st.session_state["diarization_enabled"])
+        transcription = yt.transcribe(
+            "temp/recorded_audio.wav",
+            method="groq",
+            diarization=st.session_state["diarization_enabled"],
+        )
 
     print("TRANSCRIPTION: ", transcription)
 
-    st.chat_message("assistant").write(
-        "🎤 Audio recorded and transcribed: \n\n" + transcription
-    )
+    st.chat_message("assistant").write("🎤 Audio recorded and transcribed: \n\n" + transcription)
     st.toast("Transcription successful!", icon="🎉")
 
     # add transcription to the session state
@@ -745,7 +556,7 @@ def process_query(query, streamlit_config, rag_agent):
     if config[
         "deep_search"
     ]:  # if deep search is enabled we use the advanced_RAG_answer function and no intent classifier !
-        with st.spinner("Searching relevant documents and formulating answer...",show_time=True):
+        with st.spinner("Searching relevant documents and formulating answer...", show_time=True):
             answer, sources = rag_agent.advanced_RAG_answer(query)
             docs = []
 
@@ -755,7 +566,7 @@ def process_query(query, streamlit_config, rag_agent):
         # we check if the query contains the command @add to add a document to the vectorstore
         if "@add" in query:
             # we create a clean query without the @add command
-            if extract_url(query)!=None:
+            if extract_url(query) != None:
                 query = extract_url(query)
             # we import the external knowledge manager
 
@@ -771,17 +582,16 @@ def process_query(query, streamlit_config, rag_agent):
                 return None
             else:
                 # we extract directly the pasted rescource
-                st.toast(
-                    "No url detected, processing the pasted rescource...", icon="🔍"
-                )
+                st.toast("No url detected, processing the pasted rescource...", icon="🔍")
                 from src.main_utils.link_gestion import ExternalKnowledgeManager
+
                 link_manager = ExternalKnowledgeManager(config, client=rag_agent.client)
-                link_manager.extract_rescource(query) #extract raw text resource
+                link_manager.extract_rescource_from_raw_text(query)  # extract raw text resource
                 link_manager.index_rescource()
-                
+
                 pass
 
-        with st.spinner("Determining query intent 🧠 ...",show_time=True):
+        with st.spinner("Determining query intent 🧠 ...", show_time=True):
             # we detect the intent of the query
             intent = st.session_state["intent_classifier"].classify(query, method="LLM")
             st.toast("Intent detected: " + intent, icon="🧠")
@@ -796,135 +606,26 @@ def process_query(query, streamlit_config, rag_agent):
             docs = []
 
         elif intent == "email support inquiry":
-            # fetch the last 100 emails and search for the answer
-            from src.aux_utils.email_utils import EmailAgent
+            # Initialize EmailAgent with config and RAG client
+            email_agent = EmailAgent(config=config, rag_client=rag_agent.client)
+            
+            # Use the integrated methods to handle the query
+            with st.spinner("Processing email query...", show_time=True):
+                answer, docs, sources = email_agent.act(query)
 
-            with st.spinner("Fetching new emails...",show_time=True):
-                email_utils = EmailAgent()
-                # email_utils.connect()
-                email_utils.fetch_new_emails(last_k=100)
-                # email_utils.disconnect()
-
-            # fill the vectorstore withg the new emails
-            from src.main_utils.vectorstore_utils_v4 import VectorAgent
-
-            with st.spinner("Filling the vectorstore with new emails...",show_time=True):
-                agent = VectorAgent(
-                    default_config=config, qdrant_client=rag_agent.client
-                )
-                agent.fill()
-                print("Vectorstore filled with new emails !")
-
-            config["data_sources"] = ["emails"]
-            config["enable_source_filter"] = True
-            config["field_filter"] = ["emails"]
-            # actualize the rag agent config to the new config
-            rag_agent.merged_config = config
-            with st.spinner(
-                "Searching relevant documents and formulating answer 📄 ...",show_time=True
-            ):
-                answer, docs, sources = rag_agent.RAG_answer(query)
 
         elif intent == "job search assistance":
-            print("Launched job search !")
-
-            # from src.aux_utils.job_scrapper import JobAgent
-
-            config["data_sources"] = ["jobs"]
-            config["enable_source_filter"] = True
-            config["field_filter"] = ["jobs"]
-
-            prompt = f'''Here is a textual query for a job search from a user "{query}", 
-            please provide the structured search parameters in the following dictionary format:
-            {{"search_terms": ["keywords_1", "keywords_2", ...], "locations": ["location_1", "location_2", ...]}}. Return the
-            the str dict without preamble.'''
-
-            answer = LLM_answer_v3(
-                prompt,
-                model_name=config["model_name"],
-                llm_provider=config["llm_provider"],
-                stream=False,
-                temperature=st.session_state["streamlit_config"]["temperature"],
-            )
-            # transform the str dict into real dict
-            import ast
-
-            def str_to_dict(dict_str: str) -> dict:
-                """
-                Convert a string representation of a dictionary to an actual dictionary.
-
-                Args:
-                    dict_str (str): String representation of dictionary
-
-                Returns:
-                    dict: Converted dictionary
-
-                Raises:
-                    ValueError: If string cannot be converted to dictionary
-                """
-                try:
-                    # Remove any whitespace and normalize quotes
-                    cleaned_str = dict_str.strip().replace("'", '"')
-                    return ast.literal_eval(cleaned_str)
-                except (ValueError, SyntaxError) as e:
-                    raise ValueError(f"Invalid dictionary string: {e}")
-
-            print("Raw dict answer:", answer)
-            dict_params = str_to_dict(answer)
-            print("Obtained dict parameters:", dict_params)
-            # get search terms from the dict
-            search_terms = dict_params["search_terms"]
-            locations = dict_params["locations"]
-
-            # scrapping jobs
-            with st.spinner("Scraping job offers...",show_time=True):
-                try:
-                    print("Initializing job scrapper...")
-                    job_scrapper = JobAgent(is_remote=False)
-
-                    job_scrapper.scrape_and_convert(
-                        search_terms=search_terms,
-                        locations=locations,
-                        hours_old=200,
-                        results_wanted=20,
-                        # add locations to each of the search_terms as google_search terms
-                        google_search_terms=[
-                            search_term + " " + location
-                            for search_term in search_terms
-                            for location in locations
-                        ],
-                        is_remote=False,
-                    )
-                except Exception as e:
-                    print("EXCEPTION IN JOB SCRAPPING:", e)
-                    st.error("An error occured while scrapping the job offers !")
-
-            # fill the vectorstore with the new job offers
-            from src.main_utils.vectorstore_utils_v4 import VectorAgent
-
-            with st.spinner("Filling the vectorstore with new job offers...",show_time=True):
-                agent = VectorAgent(
-                    default_config=config, qdrant_client=rag_agent.client
+                # Initialize JobAgent with current LLM configuration and RAG client
+                job_agent = JobAgent(config=config,
+                    qdrant_client=rag_agent.client
                 )
-                agent.fill()
-                print("Vectorstore filled with new job offers !")
 
-            with st.spinner("Searching relevant jobs and formulating answer 📄 ...",show_time=True):
-                answer, docs, sources = rag_agent.RAG_answer(query)
-
-        # elif intent == "social media content creation":
-        #     from src.aux_utils.auto_instagram_publi import (
-        #         instagram_descr_prompt,
-        #     )
-
-        #     with st.spinner("Generating a text for an instagram post..."):
-        #         answer = LLM_answer_v3(
-        #             prompt=instagram_descr_prompt(query),
-        #             stream=True,
-        #             model_name=config["model_name"],
-        #             llm_provider=config["llm_provider"],
-        #         )
-        #         sources = []
+                # Process the job search query and get RAG answer
+                with st.spinner("🔍 Searching and analyzing job listings...",show_time=True):
+                    answer, docs, sources = job_agent.act(query)
+                    if not answer:
+                        st.error("Failed to process job search query")
+                        return
 
         elif intent == "graph creation request":
             from src.aux_utils.graph_maker_utils import GraphMaker
@@ -944,127 +645,87 @@ def process_query(query, streamlit_config, rag_agent):
                 answer = (line for line in [answer])
 
         elif intent == "meeting notes summarization":
-            from langchain_core.prompts import PromptTemplate
-            from src.aux_utils.notion_utils import NotionAgent
+            from src.aux_utils.meeting_utils import MeetingAgent
 
-            # load the meeting summarization prompt from prompts/meeting_summary_prompt.txt
-            with open("prompts/meeting_summary_prompt.txt", "r", encoding="utf-8") as f:
-                template = f.read()
-
-            template = PromptTemplate.from_template(template)
-            full_prompt = template.format(
-                transcription=st.session_state["audio_transcription"], user_query=query
+            # Initialize MeetingAgent with current LLM configuration and RAG client
+            meeting_agent = MeetingAgent(
+                config=config,
+                qdrant_client=rag_agent.client
             )
 
-            # give it to the LLM
-            with st.spinner("Generating the meeting summary...",show_time=True):
-                raw_answer = LLM_answer_v3(
-                    prompt=full_prompt,
-                    stream=False,
-                    model_name=config["model_name"],
-                    llm_provider=config["llm_provider"],
-                    temperature=st.session_state["streamlit_config"]["temperature"],
+            # Process the meeting transcription
+            with st.spinner("Generating the meeting summary...", show_time=True):
+                summary, file_path, notion_page_id = meeting_agent.process_meeting(
+                    transcription=st.session_state["audio_transcription"],
+                    user_query=query
                 )
-                sources = []
-                docs = []
-                # transform the answer into a stream / generator object
                 
-                #(line for line in raw_answer.split("\n"))
-                # save the transcription in a file, the name of the file is the date of the meeting (today)
-
-                with open(
-                    "data/meeting_summary/" + str(time.strftime("%Y-%m-%d")) + ".txt",
-                    "w",
-                    encoding="utf-8",
-                ) as f:
-                    # write a header with the date at the beginning of the file
-                    f.write(
-                        "Meeting summary for the date: "
-                        + str(time.strftime("%Y-%m-%d"))
-                        + "\n\n"
-                    )
-                    f.write(raw_answer)
-                    
-                #create a notion page with the meeting summary
-                notion_agent = NotionAgent()
+                if notion_page_id:
+                    st.toast("Notion page created!", icon="📋")
                 
-                with st.spinner("Creating a Notion page for transcription...",show_time=True):
-                    notion_agent.create_page_from_markdown(
-                    markdown_content=raw_answer,
-                    #for page title we take first line of raw_answer
-                    page_title = raw_answer.split('\n')[0]
-                    )
-                    st.toast("Notion page created !", icon="📋")
-                    
-                    
-
-                # add a toast to notify the user that the meeting summary has been saved
-                st.toast("Meeting summary saved !", icon="🎉")
-                # fill the vectorstore with the new meeting summary
-                from src.main_utils.vectorstore_utils_v4 import VectorAgent
-
-                vector_agent = VectorAgent(
-                    default_config=st.session_state["config"],
-                    qdrant_client=rag_agent.client,
-                )
-                vector_agent.fill()
-                print("Vectorstore filled with new meeting summary !")
-                st.toast("Meeting summary indexed !", icon="📋")
-                # put st.session_state["audio_transcription"] to None now that the meeting summary has been saved
+                st.toast("Meeting summary saved!", icon="🎉")
+                st.toast("Meeting summary indexed!", icon="📋")
+                
+                # Clear the transcription now that we're done with it
                 del st.session_state["audio_transcription"]
-                answer = "📋 Meeting summary saved in your Notion workspace and in the database !"
-                answer= (line for line in answer.split("\n"))
-
-        elif intent == "sheet or table info extraction":
-            config["data_sources"] = ["sheets"]
-            config["enable_source_filter"] = True
-            config["field_filter"] = ["sheets"]
-            # put back config to the rag agent
-            rag_agent.merged_config = config
-            # initialize the vector agent
-            from src.main_utils.vectorstore_utils_v4 import VectorAgent
-
-            vector_agent = VectorAgent(
-                default_config=st.session_state["config"],
-                qdrant_client=rag_agent.client,
-            )
-            # remove all the current files of data/sheets
-            vector_agent.delete(folders=["data/sheets"])
-            # fetch all sheets using sheet agent
-            from src.aux_utils.google_sheets_agent import GoogleSheetsAgent
-
-            sheet_agent = GoogleSheetsAgent(
-                credentials_path="google_json_key/python-sheets-446015-aa8eef72c872.json",
-                save_path="data/sheets",
-                temp_path="temp",
-            )
-            with st.spinner("Fetching the sheets..."):
-                sheet_agent.fetch_and_save(spreadsheet_name="RechercheEmploi")
-            # fill the vectorstore with the new sheets
-            vector_agent.fill()
-            # answer the query
-            with st.spinner(
-                "Searching relevant documents and formulating answer 📄 ..."
-            ):
-                answer, docs, sources = rag_agent.RAG_answer(query)
-
-        elif intent == "prompt engineering request":
-            config["data_sources"] = ["prompts"]
-            config["enable_source_filter"] = True
-            config["field_filter"] = ["prompts"]
-
-            from src.aux_utils.cinematic_agent_prompter import AgentCinematicExpert
-
-            with st.spinner("🧠 Refining your prompt..."):
-                print("model currently used: ", config["model_name"])
-                agent = AgentCinematicExpert(
-                    model_name=config["model_name"], llm_provider=config["llm_provider"]
-                )
-                answer = agent.transform_chain(query)
-                sources = []
-                docs = []
-                # transform the answer into a stream / generator object
+                
+                # Transform the answer into a stream for consistent UI
+                answer = "📋 Meeting summary saved in your Notion workspace and in the database!"
                 answer = (line for line in answer.split("\n"))
+
+        # elif intent == "sheet or table info extraction":
+        #     config["data_sources"] = ["sheets"]
+        #     config["enable_source_filter"] = True
+        #     config["field_filter"] = ["sheets"]
+        #     # put back config to the rag agent
+        #     rag_agent.merged_config = config
+        #     # initialize the vector agent
+        #     from src.main_utils.vectorstore_utils_v4 import VectorAgent
+
+        #     vector_agent = VectorAgent(
+        #         default_config=st.session_state["config"],
+        #         qdrant_client=rag_agent.client,
+        #     )
+        #     # remove all the current files of data/sheets
+        #     vector_agent.delete(folders=["data/sheets"])
+        #     # fetch all sheets using sheet agent
+        #     from src.aux_utils.google_sheets_agent import GoogleSheetsAgent
+
+        #     sheet_agent = GoogleSheetsAgent(
+        #         credentials_path="google_json_key/python-sheets-446015-aa8eef72c872.json",
+        #         save_path="data/sheets",
+        #         temp_path="temp",
+        #     )
+        #     with st.spinner("Fetching the sheets..."):
+        #         sheet_agent.fetch_and_save(spreadsheet_name="RechercheEmploi")
+        #     # fill the vectorstore with the new sheets
+        #     vector_agent.fill()
+        #     # answer the query
+        #     with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
+        #         answer, docs, sources = rag_agent.RAG_answer(query)
+    
+        elif intent=="table or sheet modification or completion":
+            from src.aux_utils.google_sheets_agent import GoogleSheetsAgent
+            
+            sheet_agent=GoogleSheetsAgent(
+            credentials_path='google_json_key/python-sheets-key.json',
+            save_path='data/sheets',
+            temp_path='temp',
+            model_name=config["model_name"], # Updated to use config["model_name"]
+            llm_provider=config["llm_provider"]
+            #"google" #'groq'
+        )
+            #act with the agent
+            with st.spinner("Modify the sheet...",show_time=True):
+                success = sheet_agent.act(query)
+                st.toast("Modified the sheet with success: " + str(success))
+            
+            answer='succes'
+            sources=[]
+            docs=[]
+            #transform this into a generator
+            answer = (line for line in answer.split("\n"))
+            
 
         # elif intent =="previous answer correction":
         #     from langchain_core.prompts import PromptTemplate
@@ -1092,11 +753,10 @@ def process_query(query, streamlit_config, rag_agent):
         #         sources = []
 
         else:  # normal search
-            with st.spinner(
-                "Searching relevant documents and formulating answer 📄 ..."
-            ):
+            with st.spinner("Searching relevant documents and formulating answer 📄 ..."):
                 answer, docs, sources = rag_agent.RAG_answer(query)
 
+        #we stream write the answer produced
         with st.chat_message("assistant", avatar="assets/icon_ai_2.jpg"):
             answer = st.write_stream(answer)
 
@@ -1111,83 +771,9 @@ def process_query(query, streamlit_config, rag_agent):
 
         # Add the sources list to a session state variable
         st.session_state["sources"] = sources
-        
-        
+
         display_sources(sources, docs)
-            
 
-
-# @st.fragment
-# def display_sources(sources, docs=None):
-#     """
-#     Display sources and store chunks in session_state
-#     Args:
-#         sources (list): List of source file paths.
-#         docs (list): List of langchain documents objects: Document(metadata={...},page_content="...").
-#     """
-#     import os
-#     import webbrowser
-#     from streamlit_extras.stylable_container import stylable_container
-
-#     if docs and len(docs) != len(sources):
-#         st.toast("Erreur de correspondance sources/chunks", icon="⚠️")
-#         return
-
-#     subdomain_emojis = {
-#         "jobs": "💼",
-#         "politique": "🏛️",
-#         "internet": "🌐",
-#         "emails": "📧",
-#         "prompts": "📝",
-#     }
-
-#     sources_dict = {}
-#     for idx, source in enumerate(sources):
-#         absolute_path = os.path.abspath(source)
-#         filename = os.path.basename(absolute_path)
-
-#         subdomain = next(
-#             (domain for domain in subdomain_emojis if domain in absolute_path.lower()),
-#             None,
-#         )
-#         emoji = subdomain_emojis.get(subdomain, "📄")
-
-#         entry = sources_dict.get(absolute_path, {
-#             "Filename": filename,
-#             "Count": 0,
-#             "Emoji": emoji,
-#             "Chunks": []
-#         })
-        
-#         entry["Count"] += 1
-#         if docs:
-#             entry["Chunks"].append(docs[idx])
-        
-#         sources_dict[absolute_path] = entry
-
-#     st.session_state.sources_dict = sources_dict
-
-#     # Affichage UI
-#     with st.expander("Sources 📑"):
-#         with stylable_container(
-#             key="sources_container",
-#             css_styles="""
-#             /* [CSS original conservé] */
-#             """
-#         ):
-#             for i, (path, meta) in enumerate(sources_dict.items()):
-#                 cols = st.columns([0.1, 0.5, 0.5, 0.1])
-#                 with cols[0]: st.write(meta['Emoji'])
-#                 with cols[1]: st.write(meta['Filename'])
-#                 with cols[2]: st.write(f"({meta['Count']})")
-#                 with cols[3]: 
-#                     if st.button("🔍", key=f"button_{i}"):
-#                         webbrowser.open(f"file://{path}", new=1)
-
-import os
-import streamlit as st
-from streamlit import switch_page
-from streamlit_extras.stylable_container import stylable_container
 
 @st.fragment
 def display_sources(sources, docs=None):
@@ -1221,12 +807,9 @@ def display_sources(sources, docs=None):
         )
         emoji = subdomain_emojis.get(subdomain, "📄")
 
-        entry = sources_dict.get(absolute_path, {
-            "Filename": filename,
-            "Count": 0,
-            "Emoji": emoji,
-            "Chunks": []
-        })
+        entry = sources_dict.get(
+            absolute_path, {"Filename": filename, "Count": 0, "Emoji": emoji, "Chunks": []}
+        )
 
         entry["Count"] += 1
         if docs:
@@ -1242,18 +825,24 @@ def display_sources(sources, docs=None):
             key="sources_container",
             css_styles="""
             /* [CSS original conservé] */
-            """
+            """,
         ):
             for i, (path, meta) in enumerate(sources_dict.items()):
                 cols = st.columns([0.1, 0.5, 0.5, 0.1])
-                with cols[0]: st.write(meta['Emoji'])
-                with cols[1]: st.write(meta['Filename'])
-                with cols[2]: st.write(f"({meta['Count']})")
+                with cols[0]:
+                    st.write(meta["Emoji"])
+                with cols[1]:
+                    st.write(meta["Filename"])
+                with cols[2]:
+                    st.write(f"({meta['Count']})")
                 with cols[3]:
                     # Utilisez l'ID du premier chunk comme ancre (si disponible)
-                    first_chunk_id = meta['Chunks'][0].metadata.get('_id', '') if meta['Chunks'] else ''
+                    first_chunk_id = (
+                        meta["Chunks"][0].metadata.get("_id", "") if meta["Chunks"] else ""
+                    )
                     if st.button("🔍", key=f"button_{i}"):
                         switch_page(f"pages/sources_page.py")
+
 
 if __name__ == "__main__":
     pass

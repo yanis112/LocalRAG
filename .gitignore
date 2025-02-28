@@ -82,3 +82,9 @@ __pycache__/
 build/
 dist/
 *.pyc
+
+#frontend
+frontend/node_modules/
+
+#temp folder content
+temp/
